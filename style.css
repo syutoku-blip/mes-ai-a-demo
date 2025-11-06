@@ -1,222 +1,111 @@
-/* ======================== リセット ======================== */
 *,
 *::before,
 *::after {
   box-sizing: border-box;
 }
 
-/* ======================== 全体 ======================== */
 body {
-  font-family: "Noto Sans JP", system-ui, -apple-system, sans-serif;
   margin: 0;
-  background-color: #666666; /* 画面全体の背景グレー */
-  color: #ffffff;
-  line-height: 1.8;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  background: #666666;     /* 指定の背景色 */
+  color: #f9fafb;
 }
 
-/* メインコンテンツ（スマホ前提） */
-.content {
-  padding: 16px 0 32px;
+.page {
+  min-height: 100vh;
+  background: #666666;
 }
 
-/* 画面中央の白いカード領域（スマホ幅） */
-.main-inner {
+/* 上のなみなみ画像部分 */
+.wave-header {
   width: 100%;
-  max-width: 430px;       /* スマホ想定の横幅 */
-  margin: 0 auto;
-  padding: 16px 12px 20px;
-  background-color: #555555;
-  border-radius: 12px;
+  overflow: hidden;
+  line-height: 0;
+  background: #666666;
 }
 
-/* ======================== 波線 ======================== */
-.wave-header img,
-.wave-footer img {
-  width: 100%;
+.wave-header img {
   display: block;
-}
-
-/* 下の波線は上下反転 */
-.wave-footer img {
-  transform: rotate(180deg);
-}
-
-/* ======================== ヘッダー（タイトル＋説明＋GIF） ======================== */
-
-.intro {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  align-items: center;
-}
-
-.text-block {
   width: 100%;
-}
-
-h1 {
-  font-size: 1.4rem;
-  font-weight: 700;
-  color: #ffffff;
-  margin: 0 0 6px;
-}
-
-p {
-  margin: 0 0 6px;
-  font-size: 0.9rem;
-  color: #f3f3f3;
-}
-
-/* ヒーローイラスト（スマホは下に縦配置） */
-.hero-illust img {
-  width: 220px;
-  max-width: 100%;
   height: auto;
+  /* 画像の向きを逆にする（180度回転） */
+  transform: rotate(180deg);
+  transform-origin: center;
+}
+
+/* ヒーローエリア全体（なみなみの下） */
+.hero-section {
+  background: #666666;
+  padding: 16px 16px 32px;
+}
+
+.hero-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;       /* スマホは縦並び */
+  align-items: center;
+  gap: 16px;
+}
+
+.hero-illust {
+  flex: 0 0 auto;
+  width: 220px;
+  max-width: 70vw;
+}
+
+.hero-illust img {
   display: block;
-  margin: 4px auto 0;
-  border-radius: 12px;
-}
-
-/* ======================== Stage1 パネル ======================== */
-
-.stage1-panel {
-  margin-top: 16px;
-}
-
-/* スマホは縦積み */
-.stage1-container {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-/* ---------- 左側：種セラーIDカード ---------- */
-.seller-card {
   width: 100%;
-  border: 1px solid #d0d0d0;
-  border-radius: 6px;
-  background-color: #555555;
+  height: auto;
 }
 
-.seller-card-header {
-  background-color: #b8c8ff; /* 水色ヘッダ */
-  color: #ffffff;
-  text-align: center;
-  padding: 6px 8px;
-  font-size: 0.9rem;
-  font-weight: 700;
-}
-
-.seller-card-row {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 10px;
-  border-top: 1px solid #d0d0d0;
-}
-
-.seller-num {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background-color: #444444;
-  color: #ffffff;
-  font-size: 0.7rem;
-}
-
-.seller-id-text {
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: #ffffff;
-}
-
-/* ---------- 右側：貼り付け＋ASIN抽出カード ---------- */
-.paste-card {
-  width: 100%;
-  border: 1px solid #d0d0d0;
-  border-radius: 6px;
-  background-color: #555555;
-}
-
-/* 上下のヘッダ */
-.paste-header,
-.paste-sub-header {
-  background-color: #b8c8ff;
-  color: #ffffff;
-  text-align: center;
-  padding: 6px 8px;
-  font-size: 0.9rem;
-  font-weight: 700;
-}
-
-/* ①〜③ の入力行：横3分割 */
-.paste-input-row {
-  display: flex;
-  border-bottom: 1px solid #d0d0d0;
-}
-
-.paste-cell {
+.hero-text {
   flex: 1;
-  display: flex;
-  align-items: center;
-  padding: 4px 6px;
-  background-color: #f3eac2; /* クリーム色 */
-  border-right: 1px solid #d0d0d0;
+  text-align: left;
 }
 
-.paste-cell:last-child {
-  border-right: none;
+.hero-title {
+  margin: 0 0 10px;
+  font-size: 20px;
+  font-weight: 800;
+  color: #f3f4ff;              /* 少し明るめの白っぽい青 */
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
 }
 
-/* 丸数字 */
-.cell-num {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 20px;
-  height: 20px;
-  margin-right: 4px;
-  border-radius: 50%;
-  background-color: #555555;
-  color: #ffffff;
-  font-size: 0.7rem;
+.hero-paragraph {
+  margin: 0 0 6px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #f5f5f5;
 }
 
-/* 入力欄 */
-.seller-input {
-  width: 100%;
-  border: none;
-  background-color: transparent;
-  font-size: 0.8rem;
-  color: #333333;
-  outline: none;
-}
+/* 画面が広いときは「左:GIF / 右:テキスト」にする */
+@media (min-width: 768px) {
+  .hero-section {
+    padding: 24px 32px 40px;
+  }
 
-.seller-input::placeholder {
-  color: #999999;
-}
+  .hero-inner {
+    flex-direction: row;
+    align-items: center;
+    gap: 32px;
+  }
 
-/* ASINリスト3列（スマホでも3列のまま） */
-.asin-grid {
-  display: flex;
-}
+  .hero-illust {
+    width: 260px;
+    max-width: 260px;
+  }
 
-.asin-col {
-  flex: 1;
-  border-right: 1px solid #d0d0d0;
-  padding: 6px 8px;
-  font-size: 0.85rem;
-}
+  .hero-text {
+    text-align: left;
+  }
 
-.asin-col:last-child {
-  border-right: none;
-}
+  .hero-title {
+    font-size: 26px;
+  }
 
-.asin-item {
-  padding: 2px 0;
-  color: #ffffff;
-  word-break: break-all;
+  .hero-paragraph {
+    font-size: 14px;
+  }
 }
