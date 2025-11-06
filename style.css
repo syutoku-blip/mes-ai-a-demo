@@ -1,79 +1,222 @@
+/* ======================== リセット ======================== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 /* ======================== 全体 ======================== */
 body {
   font-family: "Noto Sans JP", system-ui, -apple-system, sans-serif;
   margin: 0;
-  background-color: #666666;
-  color: #fff;
+  background-color: #666666; /* 画面全体の背景グレー */
+  color: #ffffff;
   line-height: 1.8;
 }
 
-/* メインコンテンツ：PCでは画面幅いっぱいに近く広げる */
+/* メインコンテンツ（スマホ前提） */
 .content {
-  padding: 1rem 0 2rem;
+  padding: 16px 0 32px;
 }
 
+/* 画面中央の白いカード領域（スマホ幅） */
 .main-inner {
+  width: 100%;
+  max-width: 430px;       /* スマホ想定の横幅 */
   margin: 0 auto;
-  background-color: #555;
-  border-radius: 8px;
-  padding: 1rem;
+  padding: 16px 12px 20px;
+  background-color: #555555;
+  border-radius: 12px;
+}
+
+/* ======================== 波線 ======================== */
+.wave-header img,
+.wave-footer img {
+  width: 100%;
+  display: block;
+}
+
+/* 下の波線は上下反転 */
+.wave-footer img {
+  transform: rotate(180deg);
+}
+
+/* ======================== ヘッダー（タイトル＋説明＋GIF） ======================== */
+
+.intro {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+}
+
+.text-block {
+  width: 100%;
+}
+
+h1 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 6px;
+}
+
+p {
+  margin: 0 0 6px;
+  font-size: 0.9rem;
+  color: #f3f3f3;
+}
+
+/* ヒーローイラスト（スマホは下に縦配置） */
+.hero-illust img {
+  width: 220px;
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 4px auto 0;
+  border-radius: 12px;
 }
 
 /* ======================== Stage1 パネル ======================== */
+
+.stage1-panel {
+  margin-top: 16px;
+}
+
+/* スマホは縦積み */
 .stage1-container {
   display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
+  flex-direction: column;
+  gap: 12px;
 }
 
-/* 左のカード（種セラーID） */
+/* ---------- 左側：種セラーIDカード ---------- */
 .seller-card {
-  width: 280px;
+  width: 100%;
   border: 1px solid #d0d0d0;
+  border-radius: 6px;
   background-color: #555555;
 }
 
-/* 右側のカード（貼り付け＆ASIN出力） */
+.seller-card-header {
+  background-color: #b8c8ff; /* 水色ヘッダ */
+  color: #ffffff;
+  text-align: center;
+  padding: 6px 8px;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.seller-card-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-top: 1px solid #d0d0d0;
+}
+
+.seller-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: #444444;
+  color: #ffffff;
+  font-size: 0.7rem;
+}
+
+.seller-id-text {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+/* ---------- 右側：貼り付け＋ASIN抽出カード ---------- */
 .paste-card {
-  flex: 1;
+  width: 100%;
   border: 1px solid #d0d0d0;
+  border-radius: 6px;
   background-color: #555555;
 }
 
-/* 入力行：比率を固定（1:1:1列） */
+/* 上下のヘッダ */
+.paste-header,
+.paste-sub-header {
+  background-color: #b8c8ff;
+  color: #ffffff;
+  text-align: center;
+  padding: 6px 8px;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+/* ①〜③ の入力行：横3分割 */
 .paste-input-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  display: flex;
   border-bottom: 1px solid #d0d0d0;
 }
 
-/* ASINリスト3列：Googleスプレッドシート風の比率 */
+.paste-cell {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  padding: 4px 6px;
+  background-color: #f3eac2; /* クリーム色 */
+  border-right: 1px solid #d0d0d0;
+}
+
+.paste-cell:last-child {
+  border-right: none;
+}
+
+/* 丸数字 */
+.cell-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  margin-right: 4px;
+  border-radius: 50%;
+  background-color: #555555;
+  color: #ffffff;
+  font-size: 0.7rem;
+}
+
+/* 入力欄 */
+.seller-input {
+  width: 100%;
+  border: none;
+  background-color: transparent;
+  font-size: 0.8rem;
+  color: #333333;
+  outline: none;
+}
+
+.seller-input::placeholder {
+  color: #999999;
+}
+
+/* ASINリスト3列（スマホでも3列のまま） */
 .asin-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  min-height: 250px; /* 行数が多い想定で広げる */
+  display: flex;
 }
 
-/* ======================== スマホ用調整 ======================== */
-@media (max-width: 767px) {
-  .main-inner {
-    width: 100%;
-    padding: 0.5rem;
-  }
-
-  .stage1-container {
-    flex-direction: column;
-  }
-
-  .paste-card {
-    min-width: auto;
-    width: 100%;
-  }
-
-  .asin-grid {
-    grid-template-columns: 1fr; /* 縦並び */
-  }
+.asin-col {
+  flex: 1;
+  border-right: 1px solid #d0d0d0;
+  padding: 6px 8px;
+  font-size: 0.85rem;
 }
 
+.asin-col:last-child {
+  border-right: none;
+}
+
+.asin-item {
+  padding: 2px 0;
+  color: #ffffff;
+  word-break: break-all;
+}
