@@ -19,6 +19,7 @@ body {
 /* 上のなみなみ画像部分 */
 .wave-header {
   width: 100%;
+  height: 80px;            /* 波の高さだけ表示 */
   overflow: hidden;
   line-height: 0;
   background: #666666;
@@ -27,10 +28,11 @@ body {
 .wave-header img {
   display: block;
   width: 100%;
-  height: auto;
-  /* 画像の向きを逆にする（180度回転） */
-  transform: rotate(180deg);
-  transform-origin: center;
+  height: 100%;
+  object-fit: cover;
+  object-position: center bottom;
+  /* これが上下逆転の原因なので削除 */
+  /* transform: rotate(180deg); */
 }
 
 /* ヒーローエリア全体（なみなみの下） */
@@ -39,19 +41,20 @@ body {
   padding: 16px 16px 32px;
 }
 
+/* ★スマホでも左右並びにする */
 .hero-inner {
   max-width: 1200px;
   margin: 0 auto;
   display: flex;
-  flex-direction: column;       /* スマホは縦並び */
-  align-items: center;
+  flex-direction: row;        /* ← 常に横並び */
+  align-items: flex-start;
   gap: 16px;
 }
 
+/* 左側：イラスト（スマホで大きくなりすぎないよう調整） */
 .hero-illust {
-  flex: 0 0 auto;
-  width: 220px;
-  max-width: 70vw;
+  flex: 0 0 38%;              /* 横幅の約4割 */
+  max-width: 150px;           /* 上限を決めておく */
 }
 
 .hero-illust img {
@@ -60,6 +63,7 @@ body {
   height: auto;
 }
 
+/* 右側：テキスト */
 .hero-text {
   flex: 1;
   text-align: left;
@@ -67,7 +71,7 @@ body {
 
 .hero-title {
   margin: 0 0 10px;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 800;
   color: #f3f4ff;              /* 少し明るめの白っぽい青 */
   text-shadow: 0 1px 2px rgba(0,0,0,0.3);
@@ -75,34 +79,28 @@ body {
 
 .hero-paragraph {
   margin: 0 0 6px;
-  font-size: 13px;
+  font-size: 12px;
   line-height: 1.8;
   color: #f5f5f5;
 }
 
-/* 画面が広いときは「左:GIF / 右:テキスト」にする */
+/* 画面が広いときは少しゆったり＆文字・画像を大きく */
 @media (min-width: 768px) {
   .hero-section {
     padding: 24px 32px 40px;
   }
 
   .hero-inner {
-    flex-direction: row;
-    align-items: center;
     gap: 32px;
   }
 
   .hero-illust {
-    width: 260px;
+    flex: 0 0 260px;
     max-width: 260px;
   }
 
-  .hero-text {
-    text-align: left;
-  }
-
   .hero-title {
-    font-size: 26px;
+    font-size: 24px;
   }
 
   .hero-paragraph {
