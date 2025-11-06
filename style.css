@@ -20,6 +20,7 @@ body {
 /* ── 波線ヘッダー ── */
 .wave-header {
   width: 100%;
+  height: 90px;           /* 見せたい高さだけを切り出す */
   overflow: hidden;
   line-height: 0;
   background: #666666;
@@ -28,44 +29,33 @@ body {
 .wave-header img {
   display: block;
   width: 100%;
-  height: auto;
+  height: 140px;          /* 画像の高さより少し大きめにしてトリミング */
   object-fit: cover;
-  object-position: center top;
-  transform: rotate(180deg); /* ← 上下が逆なら180degで修正 */
+  object-position: center bottom;  /* 下側の波を見せる */
+  transform: rotate(0deg);        /* スクショと同じ向き（不要ならここを180degに） */
 }
 
-/* ── ヒーローセクション ── */
+/* ── グレーのメインエリア ── */
 .hero-section {
   background: #666666;
-  padding: 20px 16px 40px;
+  padding: 24px 16px 40px;
   max-width: 1200px;
   margin: 0 auto;
 }
 
-/* タイトル（上部中央寄せ） */
-.hero-title {
-  margin: 0 0 16px;
-  font-size: 22px;
-  font-weight: 900;
-  color: #f3f4ff;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
-  text-align: left;
-}
-
-/* タイトルの下で「左：画像／右：文章」 */
-.hero-inner {
+/* 上段：左に画像・右にタイトル */
+.hero-top-row {
   display: flex;
-  flex-direction: row;  /* スマホから横並び */
-  align-items: flex-start;
-  justify-content: flex-start;
-  gap: 12px;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
 }
 
-/* 左のイラスト：スマホで大きくなりすぎないように調整 */
+/* 左のイラスト */
 .hero-illust {
   flex: 0 0 auto;
-  width: 32vw;          /* 画面の約1/3 */
-  max-width: 120px;     /* 上限 */
+  width: 80px;
+  max-width: 20vw;  /* スマホでも大きくなりすぎないように */
 }
 
 .hero-illust img {
@@ -74,9 +64,21 @@ body {
   height: auto;
 }
 
-/* 右側のテキスト */
-.hero-text {
+/* 右のタイトル（一行で収める） */
+.hero-title {
   flex: 1;
+  margin: 0;
+  font-size: 20px;
+  font-weight: 900;
+  color: #f3f4ff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  white-space: nowrap;        /* 一行に収める */
+  overflow: hidden;
+  text-overflow: ellipsis;    /* 万が一はみだす場合は「…」 */
+}
+
+/* 下段：本文 */
+.hero-text {
   text-align: left;
 }
 
@@ -87,27 +89,31 @@ body {
   color: #f5f5f5;
 }
 
-/* ── PC表示（768px以上）でゆったり配置 ── */
+/* ── PC表示（768px以上）で少しゆったり ── */
 @media (min-width: 768px) {
+  .wave-header {
+    height: 110px;
+  }
+
   .hero-section {
-    padding: 40px 32px 60px;
+    padding: 32px 32px 56px;
+  }
+
+  .hero-top-row {
+    gap: 24px;
+    margin-bottom: 20px;
+  }
+
+  .hero-illust {
+    width: 120px;
+    max-width: 120px;
   }
 
   .hero-title {
     font-size: 28px;
-    margin-bottom: 24px;
-  }
-
-  .hero-inner {
-    gap: 28px;
-  }
-
-  .hero-illust {
-    width: 220px;
-    max-width: 220px;
   }
 
   .hero-paragraph {
-    font-size: 15px;
+    font-size: 14px;
   }
 }
