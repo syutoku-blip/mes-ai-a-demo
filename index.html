@@ -1,48 +1,118 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <title>MES-AI-A Stage1 ヘッダー</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <!-- デザインは style.css に分離 -->
-  <link rel="stylesheet" href="style.css" />
-
-  <!-- ロジックは app.js に分離（今は中身ほぼ空でOK） -->
-  <script src="app.js" defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>セラーIDからASINを一括抽出！</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-  <div class="page">
-    <!-- 上の波線（画像を180度回転して使用） -->
-    <header class="wave-header">
-      <img src="wave-top.png" alt="wave header" />
-    </header>
 
-    <!-- グレー背景＋左GIF＋右テキストのエリア -->
-    <section class="hero-section">
-      <div class="hero-inner">
-        <!-- 左側：GIFイラスト -->
+  <!-- 上の波線：画面幅いっぱい -->
+  <div class="wave-header">
+    <img src="wave-top.png" alt="波線デザイン">
+  </div>
+
+  <!-- メインコンテンツ（中央寄せするのはこの中だけ） -->
+  <main class="content">
+    <div class="main-inner">
+      <!-- ヘッダー部分（タイトル＋説明＋左のGIF） -->
+      <section class="intro">
+        <div class="text-block">
+          <h1>セラーIDからASINを一括抽出！</h1>
+          <p>
+            Amazonでは、販売者ごとに「<strong>セラーID</strong>」が設定され、
+            商品ごとに「<strong>ASIN（商品番号）</strong>」が割り当てられています。<br>
+            売れている商品をリサーチする＝「売れているASINを見つけること」ですが、
+            まずはそのASINを取得しなければ始まりません。
+          </p>
+          <p>
+            このツールでは、セラーIDを入力するだけで、
+            そのセラーが出品しているASINを一括で抽出できます。<br>
+            わずか数秒でASINリストを自動生成できるため、
+            売れ筋商品のリサーチを圧倒的に効率化できるのが特徴です！
+          </p>
+          <p>まずは、ASINのリストを作成してみましょう！ 💪</p>
+        </div>
         <div class="hero-illust">
-          <img src="hero-boy.gif" alt="研究している人のイラスト" />
+          <img src="hero-boy.gif" alt="研究している人のイラスト">
         </div>
+      </section>
 
-        <!-- 右側：タイトルと説明文 -->
-        <div class="hero-text">
-          <h1 class="hero-title">セラーIDからASINを一括抽出！</h1>
+      <!-- ▼ ここから下が、画像みたいな Stage1 パネル ▼ -->
+      <section class="stage1-panel">
+        <div class="stage1-container">
+          <!-- 左：種セラーIDカード -->
+          <div class="seller-card">
+            <div class="seller-card-header">種セラーID</div>
+            <div class="seller-card-row">
+              <span class="seller-num">①</span>
+              <span class="seller-id-text">A1EXAMP1E2345</span>
+            </div>
+            <div class="seller-card-row">
+              <span class="seller-num">②</span>
+              <span class="seller-id-text">B2EXAMP1E3456</span>
+            </div>
+          </div>
 
-          <p class="hero-paragraph">
-            Amazonでは、販売者ごとに「セラーID」が設定され、商品ごとに「ASIN（商品番号）」が割り当てられています。
-          </p>
-          <p class="hero-paragraph">
-            売れている商品をリサーチする＝「売れているASINを見つけること」ですが、まずはそのASINを取得しなければ始まりません。
-          </p>
-          <p class="hero-paragraph">
-            このツールでは、セラーIDを入力するだけで、そのセラーが出品しているASINを一括で抽出できます。<br>
-            わずか数秒でASINリストを自動生成できるため、売れ筋商品のリサーチを圧倒的に効率化できるのが特徴です！
-          </p>
-          <p class="hero-paragraph">
-            まずは、ASINのリストを作成してみましょう！ 💪
-          </p>
+          <!-- 右：セラーID貼り付け＋セラーASIN抽出 -->
+          <div class="paste-card">
+            <!-- 上の水色ヘッダー -->
+            <div class="paste-header">セラーID貼り付け</div>
+
+            <!-- ①〜③ の入力行 -->
+            <div class="paste-input-row">
+              <div class="paste-cell">
+                <span class="cell-num">①</span>
+                <input type="text" class="seller-input" placeholder="A1EXAMP1E2345">
+              </div>
+              <div class="paste-cell">
+                <span class="cell-num">②</span>
+                <input type="text" class="seller-input" placeholder="B2EXAMP1E3456">
+              </div>
+              <div class="paste-cell">
+                <span class="cell-num">③</span>
+                <input type="text" class="seller-input" placeholder="AXXXXXXB○○">
+              </div>
+            </div>
+
+            <!-- 下の水色ヘッダー -->
+            <div class="paste-sub-header">セラーASIN抽出</div>
+
+            <!-- ASINリスト3列 -->
+            <div class="asin-grid">
+              <div class="asin-col">
+                <div class="asin-item">B1XXXXXX</div>
+                <div class="asin-item">B2OOOOOO</div>
+                <div class="asin-item">B3XXXXXX</div>
+                <div class="asin-item">B4OOOOOO</div>
+                <div class="asin-item">B5XXXXXX</div>
+                <div class="asin-item">B6OOOOOO</div>
+                <div class="asin-item">B7XXXXXX</div>
+                <div class="asin-item">B8OOOOOO</div>
+                <div class="asin-item">B9XXXXXX</div>
+                <div class="asin-item">B10OOOOOO</div>
+              </div>
+              <div class="asin-col">
+                <!-- ここは将来②の結果用。今は空でOK -->
+              </div>
+              <div class="asin-col">
+                <!-- ここは将来③の結果用。今は空でOK -->
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
+      </section>
+      <!-- ▲ Stage1 パネルここまで ▲ -->
+
+    </div>
+  </main>
+
+  <!-- 下の波線：画面幅いっぱい（必要なければこのブロック削除でOK） -->
+  <div class="wave-footer">
+    <img src="wave-top.png" alt="波線デザイン">
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
