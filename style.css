@@ -32,7 +32,7 @@ body {
   height: 140px;          /* 画像の高さより少し大きめにしてトリミング */
   object-fit: cover;
   object-position: center bottom;  /* 下側の波を見せる */
-  transform: rotate(0deg);        /* スクショと同じ向き（不要ならここを180degに） */
+  transform: rotate(180deg);        /* スクショと同じ向き（不要ならここを180degに） */
 }
 
 /* ── グレーのメインエリア ── */
@@ -117,3 +117,4 @@ body {
     font-size: 14px;
   }
 }
+
