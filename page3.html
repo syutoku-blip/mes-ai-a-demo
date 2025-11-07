@@ -68,8 +68,8 @@
     }
 
     /* 初期位置（セラーIDカードの中） */
-    .pill-a { top: 46%; }  /* A1 行 */
-    .pill-b { top: 52%; }  /* B2 行 */
+    .pill-a { top: 43%; }  /* A1 行 */
+    .pill-b { top: 49%; }  /* B2 行 */
 
     /* ドロップ先：グレー枠の位置に合わせた透明スロット */
     .drop-slot {
@@ -77,23 +77,25 @@
       height: 6%;
       border-radius: 999px;
       z-index: 1;
-      /* デバッグ時に位置を見たい時だけコメント解除
-      outline: 1px dashed red;
-      */
+      pointer-events: none;  /* ポインタは拾わない（下のpillが操作対象） */
     }
 
-    /* 左のグレー枠 */
+    /* グレー枠おおよその位置＆幅 */
     .slot-left {
-      top: 62%;
-      left: 10%;
-      width: 37%;
+      top: 65%;
+      left: 15%;
+      width: 32%;
     }
 
-    /* 右のグレー枠 */
     .slot-right {
-      top: 62%;
+      top: 65%;
       left: 53%;
-      width: 37%;
+      width: 32%;
+    }
+
+    /* pill が重なったときの「うっすらはまった」表現 */
+    .drop-slot.slot-active {
+      background: rgba(255, 255, 255, 0.18);
     }
   </style>
 </head>
@@ -115,7 +117,7 @@
       B2EXAMP1E3456
     </div>
 
-    <!-- グレー枠に対応する透明スロット（当たり判定だけ） -->
+    <!-- グレー枠に対応する透明スロット（当たり判定＋ハイライト用） -->
     <div class="drop-slot slot-left"  data-slot="left"></div>
     <div class="drop-slot slot-right" data-slot="right"></div>
   </div>
@@ -130,8 +132,8 @@
     pills.forEach(pill => {
       const style = getComputedStyle(pill);
       pillState[pill.dataset.id] = {
-        top: style.top,
-        left: style.left,
+        top:   style.top,
+        left:  style.left,
         width: style.width
       };
     });
@@ -139,6 +141,14 @@
     let activePill = null;
     let offsetX = 0;
     let offsetY = 0;
+    let hoveredSlot = null; // いま乗っているスロット
+
+    function clearSlotHighlight() {
+      if (hoveredSlot) {
+        hoveredSlot.classList.remove('slot-active');
+        hoveredSlot = null;
+      }
+    }
 
     function onPointerDown(e) {
       activePill = e.currentTarget;
@@ -164,7 +174,46 @@
 
       activePill.style.left = x + 'px';
       activePill.style.top  = y + 'px';
-      activePill.style.transform = 'none'; // translateX(-50%) を無効化
+      activePill.style.transform = 'none';
+
+      // いったんハイライト解除
+      clearSlotHighlight();
+
+      // pill の中心座標
+      const pillRect   = activePill.getBoundingClientRect();
+      const pillCenterX = pillRect.left + pillRect.width  / 2;
+      const pillCenterY = pillRect.top  + pillRect.height / 2;
+
+      // どのスロットに乗っているかチェック
+      slots.forEach(slot => {
+        const r = slot.getBoundingClientRect();
+        if (
+          pillCenterX > r.left  &&
+          pillCenterX < r.right &&
+          pillCenterY > r.top   &&
+          pillCenterY < r.bottom
+        ) {
+          hoveredSlot = slot;
+        }
+      });
+
+      if (hoveredSlot) {
+        // スロットに重なっている間は、スロット位置＆サイズでプレビュー
+        const r = hoveredSlot.getBoundingClientRect();
+        const frameRect2 = frame.getBoundingClientRect();
+        const centerX = r.left + r.width  / 2 - frameRect2.left;
+        const centerY = r.top  + r.height / 2 - frameRect2.top;
+
+        hoveredSlot.classList.add('slot-active');
+
+        activePill.style.width = r.width * 0.96 + 'px'; // ほぼ枠サイズ
+        activePill.style.left  = centerX - activePill.offsetWidth / 2 + 'px';
+        activePill.style.top   = centerY - activePill.offsetHeight / 2 + 'px';
+      } else {
+        // スロットから外れたら元の幅に戻しつつ、ドラッグ位置を優先
+        const id = activePill.dataset.id;
+        activePill.style.width = pillState[id].width;
+      }
     }
 
     function onPointerUp(e) {
@@ -172,12 +221,12 @@
 
       activePill.releasePointerCapture(e.pointerId);
 
-      const pillRect = activePill.getBoundingClientRect();
+      const pillRect   = activePill.getBoundingClientRect();
       const pillCenterX = pillRect.left + pillRect.width  / 2;
       const pillCenterY = pillRect.top  + pillRect.height / 2;
+      const frameRect = frame.getBoundingClientRect();
 
       let snapped = false;
-      const frameRect = frame.getBoundingClientRect();
 
       slots.forEach(slot => {
         const r = slot.getBoundingClientRect();
@@ -187,21 +236,24 @@
           pillCenterY > r.top   &&
           pillCenterY < r.bottom
         ) {
-          // このスロットの中央にスナップさせる
+          // スロットに確定配置
           const centerX = r.left + r.width  / 2 - frameRect.left;
           const centerY = r.top  + r.height / 2 - frameRect.top;
 
           activePill.style.transition = 'left 0.15s ease, top 0.15s ease, width 0.15s ease';
-          activePill.style.width = r.width * 0.96 + 'px'; // 枠より少し小さく
+          activePill.style.width = r.width * 0.96 + 'px';
           activePill.style.left  = centerX - activePill.offsetWidth / 2 + 'px';
           activePill.style.top   = centerY - activePill.offsetHeight / 2 + 'px';
           activePill.style.transform = 'none';
+          slot.classList.add('slot-active');
           snapped = true;
+        } else {
+          slot.classList.remove('slot-active');
         }
       });
 
       if (!snapped) {
-        // どのスロットにも入っていなければ元の位置＆サイズに戻す
+        // どのスロットにも入らなければ、元の位置とサイズに戻す
         const id    = activePill.dataset.id;
         const state = pillState[id];
         activePill.style.transition = 'left 0.15s ease, top 0.15s ease, width 0.15s ease';
@@ -212,6 +264,7 @@
       }
 
       activePill = null;
+      hoveredSlot = null;
     }
 
     pills.forEach(pill => {
