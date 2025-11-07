@@ -71,7 +71,7 @@
       background: transparent;
     }
 
-    .slot-left { top: 61%; left: 10.5%; width: 23%; }
+    .slot-left  { top: 61%; left: 10.5%; width: 23%; }
     .slot-right { top: 61%; left: 39.5%; width: 23%; }
 
     .slot-ghost {
@@ -90,8 +90,10 @@
       opacity: 0;
       transition: opacity 0.2s ease;
     }
+    /* ゴースト（プレビュー時） */
     .drop-slot.slot-preview .slot-ghost { opacity: 0.6; }
-    .drop-slot.slot-filled .slot-ghost { opacity: 1; }
+    /* ゴースト（確定後） */
+    .drop-slot.slot-filled  .slot-ghost { opacity: 1; }
 
     /* ===== ASIN カラム ===== */
     .asin-column {
@@ -100,15 +102,15 @@
       z-index: 2;
     }
 
-    /* ★位置調整済み（下側に広めに配置） */
-    .asin-column-left { left: 10.5%; top: 64.5%; }
-    .asin-column-right { left: 39.5%; top: 64.5%; }
+    /* ★さらに下へ（背景のグレー楕円に近づける） */
+    .asin-column-left  { left: 10.5%; top: 68%; }
+    .asin-column-right { left: 39.5%; top: 68%; }
 
     .asin-pill {
       width: 100%;
       height: 2.0%;
       border-radius: 999px;
-      margin-bottom: 2.2%;
+      margin-bottom: 2.4%;
       background: transparent;
       display: flex;
       align-items: center;
@@ -117,6 +119,9 @@
       font-weight: 600;
       color: #16144d;
       transition: background-color 0.2s ease, color 0.2s ease;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .asin-pill.filled {
       background-color: #ac5e7e;
@@ -158,7 +163,7 @@
     <div class="drop-slot slot-left" data-slot="left"><div class="slot-ghost"></div></div>
     <div class="drop-slot slot-right" data-slot="right"><div class="slot-ghost"></div></div>
 
-    <!-- ASIN 表示 -->
+    <!-- ASIN 表示（左） -->
     <div class="asin-column asin-column-left" data-slot-column="left">
       <div class="asin-pill" data-index="0"></div>
       <div class="asin-pill" data-index="1"></div>
@@ -172,6 +177,7 @@
       <div class="asin-pill" data-index="9"></div>
     </div>
 
+    <!-- ASIN 表示（右） -->
     <div class="asin-column asin-column-right" data-slot-column="right">
       <div class="asin-pill" data-index="0"></div>
       <div class="asin-pill" data-index="1"></div>
@@ -191,7 +197,7 @@
     <img src="MES-AI-A (9).gif" alt="STAGE2 取得したASINをリサーチ" class="stage2-image" />
   </div>
 
-  <!-- ★ASINデータを外部ファイルから読み込み -->
+  <!-- ★ASINデータを外部ファイルから読み込み（asinDataSheet が定義されている） -->
   <script src="asin-data.js"></script>
 
   <script>
@@ -210,7 +216,7 @@
       };
     });
 
-    // ASIN表示処理
+    // ===== ASIN表示関連 =====
     function renderAsinsForSlot(slot, sellerId) {
       const slotName = slot.dataset.slot;
       const column = frame.querySelector(`.asin-column[data-slot-column="${slotName}"]`);
@@ -230,103 +236,166 @@
       });
     }
 
-    // ASINリセット処理
     function clearAsins(slot) {
       const slotName = slot.dataset.slot;
       const column = frame.querySelector(`.asin-column[data-slot-column="${slotName}"]`);
+      if (!column) return;
       const rows = column.querySelectorAll('.asin-pill');
-      rows.forEach(r => {
-        r.textContent = '';
-        r.classList.remove('filled');
+      rows.forEach(row => {
+        row.textContent = '';
+        row.classList.remove('filled');
       });
     }
 
-    // ドラッグ操作関連
+    // ===== ゴースト（残像）制御 =====
     let activePill = null;
     let offsetX = 0, offsetY = 0;
+    let currentPreviewSlot = null;
+
+    function clearPreview() {
+      slots.forEach(slot => {
+        if (!slot.classList.contains('slot-filled')) {
+          slot.classList.remove('slot-preview');
+          const ghost = slot.querySelector('.slot-ghost');
+          ghost.textContent = '';
+        }
+      });
+      currentPreviewSlot = null;
+      if (activePill) activePill.style.opacity = '1';
+    }
 
     function onPointerDown(e) {
       const pill = e.currentTarget;
       if (pill.dataset.locked === "1") return;
+
       activePill = pill;
       const rect = pill.getBoundingClientRect();
       offsetX = e.clientX - rect.left;
       offsetY = e.clientY - rect.top;
       pill.setPointerCapture(e.pointerId);
       pill.style.transition = 'none';
+      clearPreview();
     }
 
     function onPointerMove(e) {
       if (!activePill) return;
+
       const frameRect = frame.getBoundingClientRect();
       let x = e.clientX - frameRect.left - offsetX;
-      let y = e.clientY - frameRect.top - offsetY;
-      x = Math.max(0, Math.min(frameRect.width - activePill.offsetWidth, x));
+      let y = e.clientY - frameRect.top  - offsetY;
+      x = Math.max(0, Math.min(frameRect.width  - activePill.offsetWidth,  x));
       y = Math.max(0, Math.min(frameRect.height - activePill.offsetHeight, y));
 
       activePill.style.left = x + 'px';
-      activePill.style.top = y + 'px';
+      activePill.style.top  = y + 'px';
       activePill.style.transform = 'none';
+
+      const pillRect    = activePill.getBoundingClientRect();
+      const pillCenterX = pillRect.left + pillRect.width  / 2;
+      const pillCenterY = pillRect.top  + pillRect.height / 2;
+
+      let foundSlot = null;
+      slots.forEach(slot => {
+        const r = slot.getBoundingClientRect();
+        if (pillCenterX > r.left && pillCenterX < r.right &&
+            pillCenterY > r.top  && pillCenterY < r.bottom) {
+          foundSlot = slot;
+        }
+      });
+
+      if (foundSlot && !foundSlot.classList.contains('slot-filled')) {
+        if (currentPreviewSlot !== foundSlot) {
+          clearPreview();
+          currentPreviewSlot = foundSlot;
+          const ghost = foundSlot.querySelector('.slot-ghost');
+          ghost.textContent = activePill.textContent;
+          foundSlot.classList.add('slot-preview');
+          activePill.style.opacity = '0';  // ← ピルを消して残像だけ
+        }
+      } else {
+        clearPreview();
+      }
     }
 
     function onPointerUp(e) {
       if (!activePill) return;
       activePill.releasePointerCapture(e.pointerId);
-      const pillRect = activePill.getBoundingClientRect();
-      const pillCenter = {
-        x: pillRect.left + pillRect.width / 2,
-        y: pillRect.top + pillRect.height / 2
-      };
+
+      const pillRect    = activePill.getBoundingClientRect();
+      const pillCenterX = pillRect.left + pillRect.width  / 2;
+      const pillCenterY = pillRect.top  + pillRect.height / 2;
       let snapped = false;
 
       slots.forEach(slot => {
         const r = slot.getBoundingClientRect();
-        if (pillCenter.x > r.left && pillCenter.x < r.right && pillCenter.y > r.top && pillCenter.y < r.bottom) {
+        if (pillCenterX > r.left && pillCenterX < r.right &&
+            pillCenterY > r.top  && pillCenterY < r.bottom) {
+
+          const sellerId = activePill.textContent.trim();
           const ghost = slot.querySelector('.slot-ghost');
-          ghost.textContent = activePill.textContent;
+          ghost.textContent = sellerId;
           slot.classList.add('slot-filled');
+          slot.classList.remove('slot-preview');
           slot.dataset.filledId = activePill.dataset.id;
+
           activePill.style.opacity = '0';
           activePill.style.display = 'none';
           activePill.dataset.locked = "1";
-          renderAsinsForSlot(slot, activePill.textContent.trim());
+
+          renderAsinsForSlot(slot, sellerId);
           snapped = true;
         }
       });
 
       if (!snapped) {
         const id = activePill.dataset.id;
-        const s = pillState[id];
-        Object.assign(activePill.style, {
-          top: s.top, left: s.left, width: s.width, opacity: '1', transform: id === 'B2' ? 'translateX(-52%)' : 'translateX(-50%)'
-        });
+        const s  = pillState[id];
+        activePill.style.transition =
+          'left 0.2s ease, top 0.2s ease, width 0.2s ease, opacity 0.2s ease';
+        activePill.style.top  = s.top;
+        activePill.style.left = s.left;
+        activePill.style.width = s.width;
+        activePill.style.opacity = '1';
+        activePill.style.transform =
+          id === 'B2' ? 'translateX(-52%)' : 'translateX(-50%)';
       }
+
+      clearPreview();
       activePill = null;
     }
 
-    // ピル戻し処理（クリック時のみ）
+    pills.forEach(p => {
+      p.addEventListener('pointerdown',  onPointerDown);
+      p.addEventListener('pointermove',  onPointerMove);
+      p.addEventListener('pointerup',    onPointerUp);
+      p.addEventListener('pointercancel',onPointerUp);
+    });
+
+    // スロットクリックで初期位置に戻す（ドラッグでは戻さない）
     slots.forEach(slot => {
       slot.addEventListener('click', () => {
         const id = slot.dataset.filledId;
         if (!id) return;
         const pill = document.querySelector(`.seller-pill[data-id="${id}"]`);
         if (!pill) return;
+
         const s = pillState[id];
         pill.style.display = 'block';
         pill.style.opacity = '1';
         pill.dataset.locked = "0";
-        Object.assign(pill.style, { top: s.top, left: s.left, width: s.width, transform: id === 'B2' ? 'translateX(-52%)' : 'translateX(-50%)' });
-        slot.classList.remove('slot-filled');
+        pill.style.top  = s.top;
+        pill.style.left = s.left;
+        pill.style.width = s.width;
+        pill.style.transform =
+          id === 'B2' ? 'translateX(-52%)' : 'translateX(-50%)';
+
+        slot.classList.remove('slot-filled', 'slot-preview');
         slot.dataset.filledId = '';
+        const ghost = slot.querySelector('.slot-ghost');
+        ghost.textContent = '';
+
         clearAsins(slot);
       });
-    });
-
-    pills.forEach(p => {
-      p.addEventListener('pointerdown', onPointerDown);
-      p.addEventListener('pointermove', onPointerMove);
-      p.addEventListener('pointerup', onPointerUp);
-      p.addEventListener('pointercancel', onPointerUp);
     });
   </script>
 </body>
