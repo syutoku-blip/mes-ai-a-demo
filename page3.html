@@ -22,9 +22,12 @@
         #f8e088 100%
       );
       font-family: "花風テクノ", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+      /* ★ここを修正：縦方向に積む＋中央寄せ */
       display: flex;
-      justify-content: center;
-      align-items: flex-start;
+      flex-direction: column;   /* ← 追加：これで縦並びになる */
+      justify-content: flex-start;
+      align-items: center;
     }
 
     .frame {
@@ -144,7 +147,7 @@
 
 <body>
   <div class="frame">
-    <!-- 背景GIF -->
+    <!-- 背景GIF（＝添付している画像のエリア） -->
     <img src="MES-AI-A (8).gif" alt="STAGE1 セラーIDからASINを一括抽出" class="stage1" />
 
     <!-- ドラッグするセラーID -->
@@ -160,7 +163,7 @@
     </div>
   </div>
 
-  <!-- 下に表示したい画像（ファイル名は差し替えてOK） -->
+  <!-- ★ここから下が「黄色側」のコンテンツ。スクロールで見える -->
   <img src="YOUR-IMAGE.png" alt="下部イメージ" class="bottom-image" />
 
   <script>
@@ -256,7 +259,6 @@
           activePill.style.transform = 'none';
           activePill.style.opacity = '0';
 
-          // ゴーストに文字を表示（グレーが紫に置き換わったように見える）
           const ghost = slot.querySelector('.slot-ghost');
           ghost.textContent = activePill.textContent;
           slot.classList.add('slot-filled');
@@ -273,7 +275,6 @@
         }
       });
 
-      // どこにもはまらなかった → 元の位置へ戻す
       if (!snapped) {
         const id    = activePill.dataset.id;
         const state = pillState[id];
