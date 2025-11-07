@@ -14,13 +14,13 @@
       margin: 0;
       padding: 0;
       background-color: #93dee0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
       width: 100vw;
       height: 100vh;
       overflow: hidden;
       font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
     .page {
@@ -30,7 +30,7 @@
       overflow: hidden;
     }
 
-    /* MES-AI-A (3).gif を中央・全画面に合わせる */
+    /* MES-AI-A (7).gif を前面・全画面に表示 */
     .intro {
       position: absolute;
       top: 50%;
@@ -38,30 +38,42 @@
       transform: translate(-50%, -50%);
       width: 100vw;
       height: 100vh;
-      object-fit: contain; /* 比率を保ちながら画面いっぱいに表示 */
-      z-index: 2;          /* 前面表示 */
+      object-fit: contain;
+      z-index: 5;
       pointer-events: none;
-      display: block;
     }
 
-    /* NEXTボタン */
-    .next-btn {
+    /* NEXTボタンGIF（クリックできる） */
+    .next-button {
       position: absolute;
       right: 6%;
       bottom: 6%;
-      width: 22vw;
-      max-width: 90px;
+      width: 80px;
+      max-width: 22vw;
+      background: transparent;
+      border: none;
+      padding: 0;
       cursor: pointer;
-      z-index: 3;          /* intro より前面 */
+      z-index: 10;
+    }
+
+    .next-button img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .next-button:focus {
+      outline: none;
+    }
+
+    .next-button:hover {
+      transform: scale(1.05);
       transition: transform 0.1s ease;
     }
 
-    .next-btn:hover {
-      transform: scale(1.05);
-    }
-
     @media (min-width: 768px) {
-      .next-btn {
+      .next-button {
         width: 100px;
       }
     }
@@ -70,21 +82,21 @@
 
 <body>
   <div class="page">
-    <!-- MES-AI-A3のGIFを画面中央・全画面に配置 -->
-    <img src="MES-AI-A (3).gif" alt="WELCOME TO MES-AI-A DEMO" class="intro" />
+    <!-- MES-AI-A説明 -->
+    <img src="MES-AI-A (7).gif" alt="WELCOME TO MES-AI-A DEMO" class="intro" />
 
-    <!-- NEXTボタン -->
-    <a href="#" id="nextLink">
-      <img src="MES-AI-A (4).gif" alt="NEXT" class="next-btn" />
-    </a>
+    <!-- NEXTボタン（GIF＋クリック領域一体型） -->
+    <button class="next-button" id="nextButton" aria-label="次のページへ進む">
+      <img src="MES-AI-A (4).gif" alt="NEXT" />
+    </button>
   </div>
 
   <script>
-    // NEXTクリックで3ページ目へ遷移
-    document.getElementById("nextLink").addEventListener("click", function (e) {
-      e.preventDefault();
+    // NEXTボタンをクリックしたら次ページへ
+    document.getElementById("nextButton").addEventListener("click", function () {
       window.location.href = "page3.html";
     });
   </script>
 </body>
 </html>
+
