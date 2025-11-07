@@ -14,7 +14,7 @@
       width: 100vw;
       min-height: 100vh;
       overflow-y: auto;
-      /* 上はブルー → 下で #f8e088 に変わる“なめらかな”グラデーション */
+      /* 上ブルー → 下イエローのグラデーション */
       background: linear-gradient(
         to bottom,
         #93dee0 0%,
@@ -24,7 +24,7 @@
       font-family: "花風テクノ", system-ui, -apple-system, "Segoe UI", sans-serif;
     }
 
-    /* ===== GIFコンテナ（枠は消してフラットに） ===== */
+    /* ===== STAGE1：枠なしフル画面エリア ===== */
     .frame {
       position: relative;
       width: 100vw;
@@ -46,7 +46,7 @@
       z-index: 0;
     }
 
-    /* ===== ドラッグする紫ボタン（セラーID） ===== */
+    /* ドラッグするセラーIDピル */
     .seller-pill {
       position: absolute;
       left: 50%;
@@ -69,34 +69,34 @@
     }
     .seller-pill:active { cursor: grabbing; }
 
-    /* ★ 位置を「元に戻す」 */
+    /* 元の位置に戻す */
     .pill-a { top: 39%; }
     .pill-b { top: 44%; }
 
-    /* ===== セラーID貼り付けのグレー楕円に対応するスロット ===== */
+    /* セラーID貼り付けのグレー楕円に対応するスロット */
     .drop-slot {
       position: absolute;
-      height: 3.8%;          /* グレー楕円に近い縦幅 */
+      height: 3.8%;
       border-radius: 999px;
       z-index: 1;
       pointer-events: none;
       background: transparent;
-      /* 位置確認したいときだけコメントアウトを外す
+      /* 位置確認したいときだけ
       outline: 1px dashed magenta;
       */
     }
 
-    /* ★ グレー楕円とだいたい一致する位置・幅 */
+    /* 左右の楕円に合わせて位置調整（必要ならここを微調整） */
     .slot-left {
       top: 59.2%;
-      left: 14%;
-      width: 26%;
+      left: 13.5%;
+      width: 24%;
     }
 
     .slot-right {
       top: 59.2%;
-      left: 60%;
-      width: 26%;
+      left: 58.5%;
+      width: 24%;
     }
 
     .drop-slot.slot-hover {
@@ -104,7 +104,6 @@
       background: rgba(255, 0, 255, 0.12);
     }
 
-    /* ===== はめ込んだあとの残像 ===== */
     .slot-ghost {
       position: absolute;
       inset: 0;
@@ -129,28 +128,48 @@
       opacity: 1;
     }
 
-    /* ===== 下の説明用GIF（黄色エリアに表示） ===== */
-    .bottom-image {
+    /* ===== 下部：セラーIDガイド画像（少し小さく上目） ===== */
+    .guide-image {
       width: 100%;
-      max-width: 420px;
+      max-width: 360px;
       display: block;
-      margin: 40px auto 80px;
+      margin: 20px auto 30px;
       border-radius: 0;
       box-shadow: none;
+    }
+
+    /* ===== STAGE2：画面いっぱいの新しい画像 ===== */
+    .stage2-frame {
+      position: relative;
+      width: 100vw;
+      max-width: 420px;
+      aspect-ratio: 9 / 16;
+      margin: 0 auto 80px;
+      overflow: hidden;
+      background: none;
+    }
+
+    .stage2-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
     }
   </style>
 </head>
 
 <body>
-  <!-- 上部：STAGE1 GIF＋ドラッグエリア -->
+  <!-- STAGE1：セラーIDからASINを一括抽出 -->
   <div class="frame">
-    <img src="MES-AI-A (8).gif" alt="STAGE1 セラーIDからASINを一括抽出" class="stage1" />
+    <img src="MES-AI-A (8).gif"
+         alt="STAGE1 セラーIDからASINを一括抽出"
+         class="stage1" />
 
-    <!-- ドラッグするセラーID（元の位置） -->
+    <!-- ドラッグするセラーID -->
     <div class="seller-pill pill-a" data-id="A1">A1EXAMP1E2345</div>
     <div class="seller-pill pill-b" data-id="B2">B2EXAMP1E3456</div>
 
-    <!-- 「セラーID貼り付け」の2つのグレー楕円に対応するスロット -->
+    <!-- セラーID貼り付け先スロット -->
     <div class="drop-slot slot-left" data-slot="left">
       <div class="slot-ghost"></div>
     </div>
@@ -159,9 +178,17 @@
     </div>
   </div>
 
-  <!-- 下部：黄色背景に続くガイドGIF -->
+  <!-- 下部ガイド：セラーIDをコピーして貼り付け -->
   <img src="セラーIDをコピーしてここに貼り付け！ (4).gif"
-       alt="下部イメージ" class="bottom-image" />
+       alt="セラーID貼り付けガイド"
+       class="guide-image" />
+
+  <!-- STAGE2：取得したASINをリサーチ -->
+  <div class="stage2-frame">
+    <img src="MES-AI-A (9).gif"
+         alt="STAGE2 取得したASINをリサーチ"
+         class="stage2-image" />
+  </div>
 
   <script>
     const frame  = document.querySelector('.frame');
