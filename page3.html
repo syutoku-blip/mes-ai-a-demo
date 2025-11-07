@@ -16,7 +16,7 @@
       width: 100vw;
       height: 100vh;
       overflow: hidden;
-      background-color: #93dee0; /* ←シリーズ統一ブルー */
+      background-color: #93dee0;
       font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
       display: flex;
       justify-content: center;
@@ -30,7 +30,7 @@
       overflow: hidden;
     }
 
-    /* STAGE1の画像を画面いっぱいに表示 */
+    /* 背景STAGE1画像 */
     .stage1 {
       position: absolute;
       top: 50%;
@@ -38,18 +38,63 @@
       transform: translate(-50%, -50%);
       width: 100vw;
       height: 100vh;
-      object-fit: contain;  /* 縦横比を保ちながら画面全体にフィット */
+      object-fit: contain;
+      z-index: 0;
+    }
+
+    /* 共通スタイル（グレー楕円） */
+    .input-slot {
+      position: absolute;
+      width: 40%;
+      max-width: 180px;
+      z-index: 2;
+    }
+
+    .input-slot img {
+      width: 100%;
+      height: auto;
       display: block;
     }
+
+    /* 各行の配置（参考画像からおおよそ対応） */
+    /* セラーID欄（上段2つ） */
+    .slot1 { top: 43%; left: 20%; }
+    .slot2 { top: 43%; left: 55%; }
+
+    /* ASIN抽出欄（縦に10個） */
+    .slot3  { top: 58%; left: 22%; }
+    .slot4  { top: 62%; left: 22%; }
+    .slot5  { top: 66%; left: 22%; }
+    .slot6  { top: 70%; left: 22%; }
+    .slot7  { top: 74%; left: 22%; }
+    .slot8  { top: 78%; left: 22%; }
+    .slot9  { top: 82%; left: 22%; }
+    .slot10 { top: 86%; left: 22%; }
+    .slot11 { top: 90%; left: 22%; }
+    .slot12 { top: 94%; left: 22%; }
   </style>
 </head>
 
 <body>
   <div class="page">
-    <!-- STAGE1 画像 -->
-    <img src="MES-AI-A (8).gif"
-         alt="STAGE 1 セラーIDからASINを一括抽出"
-         class="stage1" />
+    <!-- 背景 -->
+    <img src="MES-AI-A (8).gif" alt="STAGE1 セラーIDからASINを一括抽出" class="stage1" />
+
+    <!-- 上部2つのセラーID入力欄 -->
+    <div class="input-slot slot1"><img src="MES-AI-A (1).png" alt="入力欄1" /></div>
+    <div class="input-slot slot2"><img src="MES-AI-A (1).png" alt="入力欄2" /></div>
+
+    <!-- 下部10個のASIN欄 -->
+    <div class="input-slot slot3"><img src="MES-AI-A (1).png" alt="入力欄3" /></div>
+    <div class="input-slot slot4"><img src="MES-AI-A (1).png" alt="入力欄4" /></div>
+    <div class="input-slot slot5"><img src="MES-AI-A (1).png" alt="入力欄5" /></div>
+    <div class="input-slot slot6"><img src="MES-AI-A (1).png" alt="入力欄6" /></div>
+    <div class="input-slot slot7"><img src="MES-AI-A (1).png" alt="入力欄7" /></div>
+    <div class="input-slot slot8"><img src="MES-AI-A (1).png" alt="入力欄8" /></div>
+    <div class="input-slot slot9"><img src="MES-AI-A (1).png" alt="入力欄9" /></div>
+    <div class="input-slot slot10"><img src="MES-AI-A (1).png" alt="入力欄10" /></div>
+    <div class="input-slot slot11"><img src="MES-AI-A (1).png" alt="入力欄11" /></div>
+    <div class="input-slot slot12"><img src="MES-AI-A (1).png" alt="入力欄12" /></div>
   </div>
 </body>
 </html>
