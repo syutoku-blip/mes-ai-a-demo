@@ -14,7 +14,6 @@
       width: 100vw;
       min-height: 100vh;
       overflow-y: auto;
-      /* ★グラデーション境目を上に（60% → 50%） */
       background: linear-gradient(
         to bottom,
         #93dee0 0%,
@@ -53,13 +52,12 @@
       transform: translateX(-50%);
       background-color: #16144d;
       color: #ffffff;
-      padding: 6px 22px;
-      min-width: 65%;
+      padding: 3px 14px;   /* ←スリムに */
       border-radius: 999px;
       font-weight: 600;
-      font-size: 14px;
+      font-size: 13px;     /* ←少し小さめ */
       text-align: center;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.05em;
       cursor: grab;
       user-select: none;
       z-index: 3;
@@ -75,35 +73,28 @@
     /* セラーID貼り付けのグレー楕円に対応するスロット */
     .drop-slot {
       position: absolute;
-      height: 3.0%; /* ★縦幅を少し細く */
+      height: 2.6%;   /* ←縦幅をさらに細く */
       border-radius: 999px;
       z-index: 1;
       pointer-events: none;
       background: transparent;
-      /* デバッグ用
-      outline: 1px dashed magenta;
-      */
     }
 
-    /* ★左スロット：少しだけ右へ（7% → 10%） */
+    /* 左スロット位置 */
     .slot-left {
       top: 60%;
       left: 10%;
       width: 26%;
     }
 
-    /* ★右スロット：もっと左へ（43% → 37%） */
+    /* 右スロット位置 */
     .slot-right {
       top: 60%;
       left: 37%;
       width: 26%;
     }
 
-    .drop-slot.slot-hover {
-      box-shadow: 0 0 0 2px rgba(255, 0, 255, 0.6);
-      background: rgba(255, 0, 255, 0.12);
-    }
-
+    /* ゴースト用（残像プレビュー） */
     .slot-ghost {
       position: absolute;
       inset: 0;
@@ -124,11 +115,17 @@
       transition: opacity 0.2s ease;
     }
 
+    /* ホバー中のプレビュー（薄い残像） */
+    .drop-slot.slot-preview .slot-ghost {
+      opacity: 0.35;
+    }
+
+    /* 確定してハマったあとの状態（しっかり表示） */
     .drop-slot.slot-filled .slot-ghost {
       opacity: 1;
     }
 
-    /* ===== 下部：セラーIDガイド画像（少し小さく上目） ===== */
+    /* ===== 下部：セラーIDガイド画像 ===== */
     .guide-image {
       width: 100%;
       max-width: 360px;
@@ -145,12 +142,12 @@
       max-width: 420px;
       margin: 0 auto 80px;
       background: none;
-      text-align: center; /* 画像を中央寄せ */
+      text-align: center;
     }
 
     .stage2-image {
-      width: auto;       /* ★元のサイズを基本に */
-      max-width: 100%;   /* はみ出しそうなときだけ縮小 */
+      width: auto;      /* 元サイズ優先 */
+      max-width: 100%;  /* はみ出しそうなときだけ縮小 */
       height: auto;
       display: inline-block;
     }
@@ -206,21 +203,33 @@
 
     let activePill = null;
     let offsetX = 0, offsetY = 0;
+    let currentPreviewSlot = null;
 
-    function clearHover() {
-      slots.forEach(s => s.classList.remove('slot-hover'));
+    function clearPreview() {
+      slots.forEach(slot => {
+        if (!slot.classList.contains('slot-filled')) {
+          slot.classList.remove('slot-preview');
+          const ghost = slot.querySelector('.slot-ghost');
+          ghost.textContent = '';
+        }
+      });
+      currentPreviewSlot = null;
+      if (activePill) {
+        activePill.style.opacity = '1';
+      }
     }
 
     function onPointerDown(e) {
       const pill = e.currentTarget;
       if (pill.dataset.locked === "1") return;
+
       activePill = pill;
       const rect = pill.getBoundingClientRect();
       offsetX = e.clientX - rect.left;
       offsetY = e.clientY - rect.top;
       pill.setPointerCapture(e.pointerId);
       pill.style.transition = 'none';
-      clearHover();
+      clearPreview();
     }
 
     function onPointerMove(e) {
@@ -238,24 +247,39 @@
       activePill.style.top  = y + 'px';
       activePill.style.transform = 'none';
 
-      clearHover();
       const pillRect    = activePill.getBoundingClientRect();
       const pillCenterX = pillRect.left + pillRect.width  / 2;
       const pillCenterY = pillRect.top  + pillRect.height / 2;
+
+      let foundSlot = null;
 
       slots.forEach(slot => {
         const r = slot.getBoundingClientRect();
         if (pillCenterX > r.left && pillCenterX < r.right &&
             pillCenterY > r.top  && pillCenterY < r.bottom) {
-          slot.classList.add('slot-hover');
+          foundSlot = slot;
         }
       });
+
+      if (foundSlot && !foundSlot.classList.contains('slot-filled')) {
+        if (currentPreviewSlot !== foundSlot) {
+          clearPreview();
+          currentPreviewSlot = foundSlot;
+          const ghost = foundSlot.querySelector('.slot-ghost');
+          ghost.textContent = activePill.textContent;
+          foundSlot.classList.add('slot-preview');
+          activePill.style.opacity = '0.35';  /* 残像っぽく */
+        }
+      } else {
+        clearPreview();
+      }
     }
 
     function onPointerUp(e) {
       if (!activePill) return;
 
       activePill.releasePointerCapture(e.pointerId);
+
       const pillRect    = activePill.getBoundingClientRect();
       const pillCenterX = pillRect.left + pillRect.width  / 2;
       const pillCenterY = pillRect.top  + pillRect.height / 2;
@@ -283,16 +307,14 @@
           const ghost = slot.querySelector('.slot-ghost');
           ghost.textContent = activePill.textContent;
           slot.classList.add('slot-filled');
+          slot.classList.remove('slot-preview');
 
           setTimeout(() => {
             activePill.style.display = 'none';
             activePill.dataset.locked = "1";
           }, 200);
 
-          slot.classList.remove('slot-hover');
           snapped = true;
-        } else {
-          slot.classList.remove('slot-hover');
         }
       });
 
@@ -308,8 +330,8 @@
         activePill.style.transform = 'translateX(-50%)';
       }
 
+      clearPreview();
       activePill = null;
-      clearHover();
     }
 
     pills.forEach(pill => {
