@@ -124,6 +124,48 @@
       opacity: 1;
     }
 
+    /* ===== ASIN 表示用カラム ===== */
+    .asin-column {
+      position: absolute;
+      width: 23%;
+      z-index: 2;
+    }
+
+    /* スロットの少し下からスタート */
+    .asin-column-left {
+      left: 10.5%;
+      top: 65%;
+    }
+    .asin-column-right {
+      left: 39.5%;
+      top: 65%;
+    }
+
+    .asin-pill {
+      width: 100%;
+      height: 1.9%;
+      border-radius: 999px;
+      margin-bottom: 1.6%;
+      background: transparent; /* 元のグレーはGIF側に任せる */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      color: #16144d;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    /* データが入ったときの色変更 */
+    .asin-pill.filled {
+      background-color: #ac5e7e; /* 指定色 */
+      color: #ffffff;
+    }
+
     /* ===== 下部：セラーIDガイド画像 ===== */
     .guide-image {
       width: 100%;
@@ -171,6 +213,34 @@
     <div class="drop-slot slot-right" data-slot="right">
       <div class="slot-ghost"></div>
     </div>
+
+    <!-- ASIN 表示カラム（左） -->
+    <div class="asin-column asin-column-left" data-slot-column="left">
+      <div class="asin-pill" data-index="0"></div>
+      <div class="asin-pill" data-index="1"></div>
+      <div class="asin-pill" data-index="2"></div>
+      <div class="asin-pill" data-index="3"></div>
+      <div class="asin-pill" data-index="4"></div>
+      <div class="asin-pill" data-index="5"></div>
+      <div class="asin-pill" data-index="6"></div>
+      <div class="asin-pill" data-index="7"></div>
+      <div class="asin-pill" data-index="8"></div>
+      <div class="asin-pill" data-index="9"></div>
+    </div>
+
+    <!-- ASIN 表示カラム（右） -->
+    <div class="asin-column asin-column-right" data-slot-column="right">
+      <div class="asin-pill" data-index="0"></div>
+      <div class="asin-pill" data-index="1"></div>
+      <div class="asin-pill" data-index="2"></div>
+      <div class="asin-pill" data-index="3"></div>
+      <div class="asin-pill" data-index="4"></div>
+      <div class="asin-pill" data-index="5"></div>
+      <div class="asin-pill" data-index="6"></div>
+      <div class="asin-pill" data-index="7"></div>
+      <div class="asin-pill" data-index="8"></div>
+      <div class="asin-pill" data-index="9"></div>
+    </div>
   </div>
 
   <!-- 下部ガイド：セラーIDをコピーして貼り付け -->
@@ -189,6 +259,34 @@
     const frame  = document.querySelector('.frame');
     const pills  = document.querySelectorAll('.seller-pill');
     const slots  = document.querySelectorAll('.drop-slot');
+
+    // ★シートの内容をベタ書きで保持
+    const asinData = {
+      'A1EXAMP1E2345': [
+        'B0AB1C2D34',
+        'B0XK9Z7H12',
+        'B0LM8P5T09',
+        'B0QF4N6Y88',
+        'B0HG2V9R51',
+        'B0WT3S8K73',
+        'B0JP6D1M42',
+        'B0RE9A5X65',
+        'B0MF7U4C98',
+        'B0NK3B0J27'
+      ],
+      'B2EXAMP1E3456': [
+        'B0FX2L9Q83',
+        'B0WR5N1A47',
+        'B0JE8H3T26',
+        'B0PA9S7V50',
+        'B0UK4M2Z39',
+        'B0LC7B8F61',
+        'B0HR3E5Y72',
+        'B0DN6T0C94',
+        'B0QT5R9K11',
+        'B0VS8X2J58'
+      ]
+    };
 
     // 初期位置を保存
     const pillState = {};
@@ -219,6 +317,37 @@
       }
     }
 
+    // ASIN表示クリア
+    function clearAsinsForSlot(slot) {
+      const slotName = slot.dataset.slot;
+      const column = frame.querySelector(`.asin-column[data-slot-column="${slotName}"]`);
+      if (!column) return;
+      const rows = column.querySelectorAll('.asin-pill');
+      rows.forEach(row => {
+        row.textContent = '';
+        row.classList.remove('filled');
+      });
+    }
+
+    // ASIN表示
+    function renderAsinsForSlot(slot, sellerId) {
+      const slotName = slot.dataset.slot;
+      const column = frame.querySelector(`.asin-column[data-slot-column="${slotName}"]`);
+      if (!column) return;
+      const rows = column.querySelectorAll('.asin-pill');
+      const list = asinData[sellerId] || [];
+      rows.forEach((row, index) => {
+        const asin = list[index];
+        if (asin) {
+          row.textContent = asin;
+          row.classList.add('filled');
+        } else {
+          row.textContent = '';
+          row.classList.remove('filled');
+        }
+      });
+    }
+
     // スロットから初期位置へ戻す処理
     function resetFromSlot(slot) {
       const id = slot.dataset.filledId;
@@ -239,6 +368,7 @@
       const ghost = slot.querySelector('.slot-ghost');
       ghost.textContent = '';
       slot.classList.remove('slot-filled', 'slot-preview');
+      clearAsinsForSlot(slot);
       slot.dataset.filledId = '';
     }
 
@@ -314,8 +444,10 @@
         if (pillCenterX > r.left && pillCenterX < r.right &&
             pillCenterY > r.top  && pillCenterY < r.bottom) {
 
+          const sellerId = activePill.textContent.trim();
+
           const ghost = slot.querySelector('.slot-ghost');
-          ghost.textContent = activePill.textContent;
+          ghost.textContent = sellerId;
           slot.classList.add('slot-filled');
           slot.classList.remove('slot-preview');
           slot.dataset.filledId = activePill.dataset.id;
@@ -323,6 +455,9 @@
           activePill.style.opacity = '0';
           activePill.style.display = 'none';
           activePill.dataset.locked = "1";
+
+          // ★ASINリストを表示
+          renderAsinsForSlot(slot, sellerId);
 
           snapped = true;
         }
