@@ -47,7 +47,7 @@
       position: absolute;
       left: 50%;
       transform: translateX(-50%);
-      background-color: #16144d;   /* 指定カラー */
+      background-color: #16144d;      /* 指定の紫 */
       color: #ffffff;
       padding: 6px 22px;
       min-width: 70%;
@@ -60,20 +60,40 @@
       user-select: none;
       z-index: 2;
       box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.25);
-      touch-action: none; /* モバイルドラッグ用 */
+      touch-action: none;             /* モバイルでドラッグを有効にする */
+      transition: left 0.15s ease, top 0.15s ease, width 0.15s ease;
     }
-
     .seller-pill:active {
       cursor: grabbing;
     }
 
-    /* ★ 配置：セラーIDカードの中に来るように下げる ★ */
-    .pill-a {
-      top: 46%;   /* A1 行：カード上部より少し下 */
+    /* 初期位置（セラーIDカードの中） */
+    .pill-a { top: 46%; }  /* A1 行 */
+    .pill-b { top: 52%; }  /* B2 行 */
+
+    /* ドロップ先：グレー枠の位置に合わせた透明スロット */
+    .drop-slot {
+      position: absolute;
+      height: 6%;
+      border-radius: 999px;
+      z-index: 1;
+      /* デバッグ時に位置を見たい時だけコメント解除
+      outline: 1px dashed red;
+      */
     }
 
-    .pill-b {
-      top: 52%;   /* B2 行：その少し下 */
+    /* 左のグレー枠 */
+    .slot-left {
+      top: 62%;
+      left: 10%;
+      width: 37%;
+    }
+
+    /* 右のグレー枠 */
+    .slot-right {
+      top: 62%;
+      left: 53%;
+      width: 37%;
     }
   </style>
 </head>
@@ -87,53 +107,119 @@
       class="stage1"
     />
 
-    <!-- セラーIDボタン -->
-    <div class="seller-pill pill-a">A1EXAMP1E2345</div>
-    <div class="seller-pill pill-b">B2EXAMP1E3456</div>
+    <!-- ドラッグ可能なセラーIDボタン -->
+    <div class="seller-pill pill-a" data-id="A1">
+      A1EXAMP1E2345
+    </div>
+    <div class="seller-pill pill-b" data-id="B2">
+      B2EXAMP1E3456
+    </div>
+
+    <!-- グレー枠に対応する透明スロット（当たり判定だけ） -->
+    <div class="drop-slot slot-left"  data-slot="left"></div>
+    <div class="drop-slot slot-right" data-slot="right"></div>
   </div>
 
   <script>
-    // シンプルなドラッグ処理
-    const frame = document.querySelector('.frame');
-    const pills = document.querySelectorAll('.seller-pill');
+    const frame  = document.querySelector('.frame');
+    const pills  = document.querySelectorAll('.seller-pill');
+    const slots  = document.querySelectorAll('.drop-slot');
+
+    // 各ピルの「元の位置＆サイズ」を保存しておく
+    const pillState = {};
+    pills.forEach(pill => {
+      const style = getComputedStyle(pill);
+      pillState[pill.dataset.id] = {
+        top: style.top,
+        left: style.left,
+        width: style.width
+      };
+    });
 
     let activePill = null;
     let offsetX = 0;
     let offsetY = 0;
 
+    function onPointerDown(e) {
+      activePill = e.currentTarget;
+      const rect = activePill.getBoundingClientRect();
+      offsetX = e.clientX - rect.left;
+      offsetY = e.clientY - rect.top;
+      activePill.setPointerCapture(e.pointerId);
+      activePill.style.transition = 'none';
+    }
+
+    function onPointerMove(e) {
+      if (!activePill) return;
+
+      const frameRect = frame.getBoundingClientRect();
+      let x = e.clientX - frameRect.left - offsetX;
+      let y = e.clientY - frameRect.top  - offsetY;
+
+      // フレーム外に出すぎないように制限
+      const maxX = frameRect.width  - activePill.offsetWidth;
+      const maxY = frameRect.height - activePill.offsetHeight;
+      x = Math.max(0, Math.min(maxX, x));
+      y = Math.max(0, Math.min(maxY, y));
+
+      activePill.style.left = x + 'px';
+      activePill.style.top  = y + 'px';
+      activePill.style.transform = 'none'; // translateX(-50%) を無効化
+    }
+
+    function onPointerUp(e) {
+      if (!activePill) return;
+
+      activePill.releasePointerCapture(e.pointerId);
+
+      const pillRect = activePill.getBoundingClientRect();
+      const pillCenterX = pillRect.left + pillRect.width  / 2;
+      const pillCenterY = pillRect.top  + pillRect.height / 2;
+
+      let snapped = false;
+      const frameRect = frame.getBoundingClientRect();
+
+      slots.forEach(slot => {
+        const r = slot.getBoundingClientRect();
+        if (
+          pillCenterX > r.left  &&
+          pillCenterX < r.right &&
+          pillCenterY > r.top   &&
+          pillCenterY < r.bottom
+        ) {
+          // このスロットの中央にスナップさせる
+          const centerX = r.left + r.width  / 2 - frameRect.left;
+          const centerY = r.top  + r.height / 2 - frameRect.top;
+
+          activePill.style.transition = 'left 0.15s ease, top 0.15s ease, width 0.15s ease';
+          activePill.style.width = r.width * 0.96 + 'px'; // 枠より少し小さく
+          activePill.style.left  = centerX - activePill.offsetWidth / 2 + 'px';
+          activePill.style.top   = centerY - activePill.offsetHeight / 2 + 'px';
+          activePill.style.transform = 'none';
+          snapped = true;
+        }
+      });
+
+      if (!snapped) {
+        // どのスロットにも入っていなければ元の位置＆サイズに戻す
+        const id    = activePill.dataset.id;
+        const state = pillState[id];
+        activePill.style.transition = 'left 0.15s ease, top 0.15s ease, width 0.15s ease';
+        activePill.style.top   = state.top;
+        activePill.style.left  = state.left;
+        activePill.style.width = state.width;
+        activePill.style.transform = 'translateX(-50%)';
+      }
+
+      activePill = null;
+    }
+
     pills.forEach(pill => {
-      pill.addEventListener('pointerdown', e => {
-        activePill = pill;
-        const rect = pill.getBoundingClientRect();
-        offsetX = e.clientX - rect.left;
-        offsetY = e.clientY - rect.top;
-        pill.setPointerCapture(e.pointerId);
-        pill.style.transition = 'none';
-      });
-
-      pill.addEventListener('pointermove', e => {
-        if (!activePill) return;
-        const frameRect = frame.getBoundingClientRect();
-        const x = e.clientX - frameRect.left - offsetX;
-        const y = e.clientY - frameRect.top - offsetY;
-        activePill.style.left = `${x}px`;
-        activePill.style.top  = `${y}px`;
-        activePill.style.transform = 'none';
-      });
-
-      pill.addEventListener('pointerup', e => {
-        if (!activePill) return;
-        activePill.releasePointerCapture(e.pointerId);
-        activePill = null;
-      });
-
-      pill.addEventListener('pointercancel', e => {
-        if (!activePill) return;
-        activePill.releasePointerCapture(e.pointerId);
-        activePill = null;
-      });
+      pill.addEventListener('pointerdown',  onPointerDown);
+      pill.addEventListener('pointermove',  onPointerMove);
+      pill.addEventListener('pointerup',    onPointerUp);
+      pill.addEventListener('pointercancel',onPointerUp);
     });
   </script>
 </body>
 </html>
-
