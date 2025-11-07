@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MES-AI-A デモ - Page 2</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #93dee0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      overflow: hidden;
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+
+    .page {
+      width: 100%;
+      max-width: 420px;
+      aspect-ratio: 9 / 16;
+      position: relative;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    /* 中央テキスト（説明部分） */
+    .intro {
+      position: absolute;
+      top: 12%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80%;
+      display: block;
+    }
+
+    /* NEXTボタン */
+    .next-btn {
+      position: absolute;
+      right: 6%;
+      bottom: 6%;
+      width: 80px;
+      cursor: pointer;
+      transition: transform 0.1s ease;
+    }
+
+    .next-btn:hover {
+      transform: scale(1.05);
+    }
+
+    @media (min-width: 768px) {
+      .page {
+        max-width: 500px;
+      }
+      .next-btn {
+        width: 90px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <!-- 中央のテキスト -->
+    <img src="MES-AI-A (3).gif" alt="WELCOME TO MES-AI-A DEMO 説明文" class="intro" />
+
+    <!-- NEXTボタン -->
+    <a href="#" id="nextLink">
+      <img src="MES-AI-A (4).gif" alt="NEXT" class="next-btn" />
+    </a>
+  </div>
+
+  <script>
+    // NEXTを押したときの動作（例：3ページ目に進む）
+    document.getElementById("nextLink").addEventListener("click", function (e) {
+      e.preventDefault();
+      // ページ遷移
+      window.location.href = "page3.html"; // ← 次のページができたらここに指定
+    });
+  </script>
+</body>
+</html>
