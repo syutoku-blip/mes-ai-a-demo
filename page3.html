@@ -67,8 +67,9 @@
     }
     .seller-pill:active { cursor: grabbing; }
 
-    .pill-a { top: 39%; }
-    .pill-b { top: 44%; }
+    /* ★初期位置を少し下げる */
+    .pill-a { top: 42%; }
+    .pill-b { top: 49%; }
 
     /* セラーID貼り付けのグレー楕円に対応するスロット */
     .drop-slot {
@@ -76,21 +77,20 @@
       height: 1.9%;
       border-radius: 999px;
       z-index: 1;
-      pointer-events: auto;       /* クリックできるように */
+      pointer-events: auto;
       background: transparent;
     }
 
-    /* 左スロット：少し左下＆幅少し狭め */
+    /* 少し右上に微調整したスロット位置 */
     .slot-left {
-      top: 61.5%;
-      left: 9%;
+      top: 61.0%;
+      left: 10.5%;
       width: 23%;
     }
 
-    /* 右スロット */
     .slot-right {
-      top: 61.5%;
-      left: 38%;
+      top: 61.0%;
+      left: 39.5%;
       width: 23%;
     }
 
@@ -116,12 +116,10 @@
       transition: opacity 0.2s ease;
     }
 
-    /* プレビュー中（少し薄く） */
     .drop-slot.slot-preview .slot-ghost {
       opacity: 0.7;
     }
 
-    /* 確定後（はっきり表示） */
     .drop-slot.slot-filled .slot-ghost {
       opacity: 1;
     }
@@ -221,6 +219,7 @@
       }
     }
 
+    // スロットから初期位置へ戻す処理
     function resetFromSlot(slot) {
       const id = slot.dataset.filledId;
       if (!id) return;
@@ -315,7 +314,6 @@
         if (pillCenterX > r.left && pillCenterX < r.right &&
             pillCenterY > r.top  && pillCenterY < r.bottom) {
 
-          // ゴーストをそのまま確定表示
           const ghost = slot.querySelector('.slot-ghost');
           ghost.textContent = activePill.textContent;
           slot.classList.add('slot-filled');
@@ -353,9 +351,15 @@
       pill.addEventListener('pointercancel',onPointerUp);
     });
 
-    // スロットをクリックしたら初期位置に戻す
+    // スロットクリック／ドラッグ開始でも初期位置に戻す
     slots.forEach(slot => {
       slot.addEventListener('click', () => resetFromSlot(slot));
+      slot.addEventListener('pointerdown', (e) => {
+        if (slot.dataset.filledId) {
+          resetFromSlot(slot);
+          e.stopPropagation();
+        }
+      });
     });
   </script>
 </body>
