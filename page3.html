@@ -22,12 +22,7 @@
         #f8e088 100%
       );
       font-family: "花風テクノ", system-ui, -apple-system, "Segoe UI", sans-serif;
-
-      /* ★ここを修正：縦方向に積む＋中央寄せ */
-      display: flex;
-      flex-direction: column;   /* ← 追加：これで縦並びになる */
-      justify-content: flex-start;
-      align-items: center;
+      /* flex解除：縦に並べる */
     }
 
     .frame {
@@ -36,7 +31,7 @@
       max-width: 420px;
       aspect-ratio: 9 / 16;
       overflow: hidden;
-      margin-top: 20px;
+      margin: 20px auto 0;   /* 中央寄せ */
     }
 
     .stage1 {
@@ -84,21 +79,18 @@
       z-index: 1;
       pointer-events: none;
       background: transparent;
-      /* 調整したいときだけガイドを表示
-      outline: 1px dashed magenta;
-      */
     }
 
     /* ★ 位置＆幅を再調整：少し左寄せ＆グレーに寄せる */
     .slot-left {
-      top: 59.2%;   /* ほんの少しだけ下げ気味に */
-      left: 14%;    /* 左に寄せる */
-      width: 26%;   /* 幅をグレーに近づける */
+      top: 59.2%;   
+      left: 14%;    
+      width: 26%;   
     }
 
     .slot-right {
       top: 59.2%;
-      left: 60%;    /* 右も内側へ */
+      left: 60%;    
       width: 26%;
     }
 
@@ -108,7 +100,7 @@
       background: rgba(255, 0, 255, 0.12);
     }
 
-    /* ===== はめ込んだあとの残像（グレー→紫に置き換わる部分） ===== */
+    /* ===== はめ込んだあとの残像 ===== */
     .slot-ghost {
       position: absolute;
       inset: 0;
@@ -118,9 +110,9 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 10px;       /* 小さめにして文字切れ防止 */
+      font-size: 10px;
       letter-spacing: 0.05em;
-      padding: 0 4px;        /* パディングも少しだけに */
+      padding: 0 4px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -138,7 +130,7 @@
       width: 100%;
       max-width: 420px;
       display: block;
-      margin: 40px auto 80px auto;
+      margin: 40px auto 80px;
       border-radius: 12px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.15);
     }
@@ -147,7 +139,7 @@
 
 <body>
   <div class="frame">
-    <!-- 背景GIF（＝添付している画像のエリア） -->
+    <!-- 背景GIF -->
     <img src="MES-AI-A (8).gif" alt="STAGE1 セラーIDからASINを一括抽出" class="stage1" />
 
     <!-- ドラッグするセラーID -->
@@ -163,7 +155,7 @@
     </div>
   </div>
 
-  <!-- ★ここから下が「黄色側」のコンテンツ。スクロールで見える -->
+  <!-- 下にスクロールで出る部分 -->
   <img src="YOUR-IMAGE.png" alt="下部イメージ" class="bottom-image" />
 
   <script>
@@ -259,6 +251,7 @@
           activePill.style.transform = 'none';
           activePill.style.opacity = '0';
 
+          // ゴーストに文字を表示
           const ghost = slot.querySelector('.slot-ghost');
           ghost.textContent = activePill.textContent;
           slot.classList.add('slot-filled');
@@ -275,6 +268,7 @@
         }
       });
 
+      // はまらなかった → 元の位置へ戻す
       if (!snapped) {
         const id    = activePill.dataset.id;
         const state = pillState[id];
