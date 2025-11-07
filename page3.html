@@ -23,7 +23,6 @@
       font-family: "花風テクノ", system-ui, -apple-system, "Segoe UI", sans-serif;
     }
 
-    /* 背景＋オーバーレイ用フレーム（9:16） */
     .frame {
       position: relative;
       width: 100vw;
@@ -32,7 +31,6 @@
       overflow: hidden;
     }
 
-    /* 背景 GIF（STAGE1） */
     .stage1 {
       position: absolute;
       inset: 0;
@@ -42,12 +40,12 @@
       z-index: 0;
     }
 
-    /* セラーIDボタン（ドラッグ可能） */
+    /* 紫のドラッグ用ボタン本体 */
     .seller-pill {
       position: absolute;
       left: 50%;
       transform: translateX(-50%);
-      background-color: #16144d;      /* 指定の紫 */
+      background-color: #16144d;
       color: #ffffff;
       padding: 6px 22px;
       min-width: 65%;
@@ -58,52 +56,47 @@
       letter-spacing: 0.08em;
       cursor: grab;
       user-select: none;
-      z-index: 2;
+      z-index: 3;
       box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.25);
-      touch-action: none;             /* モバイルでドラッグを有効にする */
+      touch-action: none;
       transition: left 0.2s ease, top 0.2s ease, width 0.2s ease, opacity 0.2s ease;
     }
+
     .seller-pill:active {
       cursor: grabbing;
     }
 
-    /* ★ 初期位置（セラーIDカードの中・少し上め） */
-    .pill-a { top: 39%; }  /* A1 行 */
-    .pill-b { top: 45%; }  /* B2 行 */
+    /* 初期位置（セラーIDカードの中） */
+    .pill-a { top: 39%; }
+    .pill-b { top: 45%; }
 
-    /* ドロップ先：グレー枠の位置に合わせた透明スロット */
+    /* グレー枠に対応するスロット（実際は透明） */
     .drop-slot {
       position: absolute;
       height: 5.5%;
       border-radius: 999px;
       z-index: 1;
       pointer-events: none;
-      /* 位置確認したいときだけ↓をコメント解除
-      outline: 1px dashed red;
+      /* デバッグしたいときだけ:
+      outline: 1px dashed magenta;
       */
-      background: transparent;
     }
 
-    /* ★ グレー枠の位置・サイズ（かなり上に寄せる） */
-    .slot-left {
-      top: 63%;      /* 足りなければ 62〜65% で微調整 */
-      left: 14%;     /* 左右位置は 13〜16% くらいで調整 */
-      width: 32%;
-    }
-    .slot-right {
-      top: 63%;
-      left: 54%;
-      width: 32%;
-    }
+    /* グレー枠の座標（ここはあとで調整する用） */
+    .slot-left  { top: 63%; left: 14%; width: 32%; }
+    .slot-right { top: 63%; left: 54%; width: 32%; }
 
-    /* pill が上に来ているとき（吸い込まれる直前のプレビュー） */
+    /* スロット上に乗ったときのゴースト枠（ピンクのガイド） */
     .drop-slot.slot-hover {
-      box-shadow: 0 0 0 2px rgba(22, 20, 77, 0.6);
-      background: rgba(22, 20, 77, 0.15);
+      box-shadow: 0 0 0 2px rgba(255, 0, 255, 0.6);
+      background: rgba(255, 0, 255, 0.12);
     }
 
-    /* 実際にはまったあとの「残像」（グレーが紫に置き換わった感じ） */
-    .drop-slot.slot-filled {
+    /* 実際にはまったあとに表示する「残像」 */
+    .slot-ghost {
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
       background: #16144d;
       color: #ffffff;
       display: flex;
@@ -111,21 +104,27 @@
       justify-content: center;
       font-size: 12px;
       letter-spacing: 0.08em;
-      box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.25);
+      opacity: 0;           /* 最初は見えない */
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .drop-slot.slot-filled .slot-ghost {
+      opacity: 1;           /* はまった瞬間に表示 */
     }
   </style>
 </head>
 
 <body>
   <div class="frame">
-    <!-- 背景 -->
+    <!-- 背景画像（STAGE 1 全体） -->
     <img
       src="MES-AI-A (8).gif"
       alt="STAGE1 セラーIDからASINを一括抽出"
       class="stage1"
     />
 
-    <!-- ドラッグ可能なセラーIDボタン -->
+    <!-- ドラッグする紫ボタン -->
     <div class="seller-pill pill-a" data-id="A1">
       A1EXAMP1E2345
     </div>
@@ -133,9 +132,13 @@
       B2EXAMP1E3456
     </div>
 
-    <!-- グレー枠に対応する透明スロット（当たり判定＋残像用） -->
-    <div class="drop-slot slot-left"  data-slot="left"></div>
-    <div class="drop-slot slot-right" data-slot="right"></div>
+    <!-- 「はめ込むグレー枠」の当たり判定＋残像表示用 -->
+    <div class="drop-slot slot-left" data-slot="left">
+      <div class="slot-ghost"></div>
+    </div>
+    <div class="drop-slot slot-right" data-slot="right">
+      <div class="slot-ghost"></div>
+    </div>
   </div>
 
   <script>
@@ -143,7 +146,7 @@
     const pills  = document.querySelectorAll('.seller-pill');
     const slots  = document.querySelectorAll('.drop-slot');
 
-    // 各ピルの「元の位置＆サイズ」を保存
+    // もとの位置・幅
     const pillState = {};
     pills.forEach(pill => {
       const style = getComputedStyle(pill);
@@ -163,15 +166,15 @@
     }
 
     function onPointerDown(e) {
-      // 既に吸い込まれて消えたピルは無視
-      if (e.currentTarget.dataset.locked === "1") return;
+      const pill = e.currentTarget;
+      if (pill.dataset.locked === "1") return; // すでにはまったものは動かさない
 
-      activePill = e.currentTarget;
-      const rect = activePill.getBoundingClientRect();
+      activePill = pill;
+      const rect = pill.getBoundingClientRect();
       offsetX = e.clientX - rect.left;
       offsetY = e.clientY - rect.top;
-      activePill.setPointerCapture(e.pointerId);
-      activePill.style.transition = 'none'; // ドラッグ中は即座に動く
+      pill.setPointerCapture(e.pointerId);
+      pill.style.transition = 'none';
       clearHover();
     }
 
@@ -191,7 +194,7 @@
       activePill.style.top  = y + 'px';
       activePill.style.transform = 'none';
 
-      // ホバーしているスロットをほんのり光らせる
+      // どのスロットの上にいるか
       clearHover();
       const pillRect    = activePill.getBoundingClientRect();
       const pillCenterX = pillRect.left + pillRect.width  / 2;
@@ -205,7 +208,7 @@
           pillCenterY > r.top   &&
           pillCenterY < r.bottom
         ) {
-          slot.classList.add('slot-hover');
+          slot.classList.add('slot-hover'); // Canva でガイドが出るイメージ
         }
       });
     }
@@ -230,28 +233,32 @@
           pillCenterY > r.top   &&
           pillCenterY < r.bottom
         ) {
-          // ★ 吸収アニメ：ボタンが枠の位置＆幅までギュッと変形しながらフェード
+          // ==== ここから「吸収＋残像」演出 ====
           const centerX = r.left + r.width  / 2 - frameRect.left;
           const centerY = r.top  + r.height / 2 - frameRect.top;
 
-          activePill.style.transition = 'left 0.2s ease, top 0.2s ease, width 0.2s ease, opacity 0.2s ease';
+          activePill.style.transition =
+            'left 0.2s ease, top 0.2s ease, width 0.2s ease, opacity 0.2s ease';
+
+          // ボタンをスロット幅に縮めて中央に移動
           activePill.style.width = r.width + 'px';
           activePill.style.left  = centerX - r.width / 2 + 'px';
           activePill.style.top   = centerY - activePill.offsetHeight / 2 + 'px';
           activePill.style.transform = 'none';
           activePill.style.opacity = '0';
 
-          // 「はまったあとの残像」を枠側で表示
-          slot.classList.remove('slot-hover');
+          // 残像（slot-ghost）にテキストをセットして表示
+          const ghost = slot.querySelector('.slot-ghost');
+          ghost.textContent = activePill.textContent;
           slot.classList.add('slot-filled');
-          slot.textContent = activePill.textContent;
 
-          // 少し待ってから完全にピルを非表示＆ロック
+          // 完全に吸い込んだあと、本体は消してロック
           setTimeout(() => {
             activePill.style.display = 'none';
             activePill.dataset.locked = "1";
           }, 200);
 
+          slot.classList.remove('slot-hover');
           snapped = true;
         } else {
           slot.classList.remove('slot-hover');
@@ -259,10 +266,11 @@
       });
 
       if (!snapped) {
-        // スロット外なら元の場所＆サイズに戻る
+        // スロット以外 → 元に戻る
         const id    = activePill.dataset.id;
         const state = pillState[id];
-        activePill.style.transition = 'left 0.2s ease, top 0.2s ease, width 0.2s ease, opacity 0.2s ease';
+        activePill.style.transition =
+          'left 0.2s ease, top 0.2s ease, width 0.2s ease, opacity 0.2s ease';
         activePill.style.top   = state.top;
         activePill.style.left  = state.left;
         activePill.style.width = state.width;
