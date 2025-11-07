@@ -52,10 +52,10 @@
       transform: translateX(-50%);
       background-color: #16144d;
       color: #ffffff;
-      padding: 3px 14px;   /* ←スリムに */
+      padding: 3px 14px;   /* スリムに */
       border-radius: 999px;
       font-weight: 600;
-      font-size: 13px;     /* ←少し小さめ */
+      font-size: 13px;
       text-align: center;
       letter-spacing: 0.05em;
       cursor: grab;
@@ -73,40 +73,41 @@
     /* セラーID貼り付けのグレー楕円に対応するスロット */
     .drop-slot {
       position: absolute;
-      height: 2.6%;   /* ←縦幅をさらに細く */
+      height: 2.4%;   /* 縦幅ちょい細く */
       border-radius: 999px;
       z-index: 1;
       pointer-events: none;
       background: transparent;
     }
 
-    /* 左スロット位置 */
+    /* 左スロット：少し下＆少し細く */
     .slot-left {
-      top: 60%;
-      left: 10%;
-      width: 26%;
+      top: 62%;
+      left: 11%;
+      width: 22%;
     }
 
-    /* 右スロット位置 */
+    /* 右スロット：同じく少し下＆細く */
     .slot-right {
-      top: 60%;
-      left: 37%;
-      width: 26%;
+      top: 62%;
+      left: 40%;
+      width: 22%;
     }
 
-    /* ゴースト用（残像プレビュー） */
+    /* ゴースト用（プレビュー＆確定両方これ） */
     .slot-ghost {
       position: absolute;
       inset: 0;
-      border-radius: inherit;
+      margin: auto;
+      border-radius: 999px;
       background: #16144d;
       color: #ffffff;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 10px;
+      font-size: 13px;      /* pill と同じ */
       letter-spacing: 0.05em;
-      padding: 0 4px;
+      padding: 3px 14px;    /* pill と同じ */
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -115,12 +116,12 @@
       transition: opacity 0.2s ease;
     }
 
-    /* ホバー中のプレビュー（薄い残像） */
+    /* ホバー中のプレビュー（薄く表示） */
     .drop-slot.slot-preview .slot-ghost {
-      opacity: 0.35;
+      opacity: 0.7;
     }
 
-    /* 確定してハマったあとの状態（しっかり表示） */
+    /* 確定してハマったあと（はっきり表示） */
     .drop-slot.slot-filled .slot-ghost {
       opacity: 1;
     }
@@ -146,8 +147,8 @@
     }
 
     .stage2-image {
-      width: auto;      /* 元サイズ優先 */
-      max-width: 100%;  /* はみ出しそうなときだけ縮小 */
+      width: auto;
+      max-width: 100%;
       height: auto;
       display: inline-block;
     }
@@ -268,7 +269,7 @@
           const ghost = foundSlot.querySelector('.slot-ghost');
           ghost.textContent = activePill.textContent;
           foundSlot.classList.add('slot-preview');
-          activePill.style.opacity = '0.35';  /* 残像っぽく */
+          activePill.style.opacity = '0';  // ← ピルは完全に消してゴーストだけ見せる
         }
       } else {
         clearPreview();
