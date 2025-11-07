@@ -14,11 +14,11 @@
       width: 100vw;
       min-height: 100vh;
       overflow-y: auto;
-      /* 上ブルー → 下イエローのグラデーション */
+      /* ★グラデーション境目を上に（60% → 50%） */
       background: linear-gradient(
         to bottom,
         #93dee0 0%,
-        #93dee0 60%,
+        #93dee0 50%,
         #f8e088 100%
       );
       font-family: "花風テクノ", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -69,7 +69,6 @@
     }
     .seller-pill:active { cursor: grabbing; }
 
-    /* 元の位置に戻す */
     .pill-a { top: 39%; }
     .pill-b { top: 44%; }
 
@@ -81,22 +80,23 @@
       z-index: 1;
       pointer-events: none;
       background: transparent;
-      /* 位置確認したいときだけ
+      /* デバッグ用
       outline: 1px dashed magenta;
       */
     }
 
-    /* 左右の楕円に合わせて位置調整（必要ならここを微調整） */
+    /* ★左スロット：もっと左＆ちょい下（top 59.2 → 60 / left 13.5 → 7） */
     .slot-left {
-      top: 59.2%;
-      left: 13.5%;
-      width: 24%;
+      top: 60%;
+      left: 7%;
+      width: 26%;
     }
 
+    /* ★右スロット：かなり左＆ちょい下（top 59.2 → 60 / left 58.5 → 43） */
     .slot-right {
-      top: 59.2%;
-      left: 58.5%;
-      width: 24%;
+      top: 60%;
+      left: 43%;
+      width: 26%;
     }
 
     .drop-slot.slot-hover {
@@ -195,7 +195,6 @@
     const pills  = document.querySelectorAll('.seller-pill');
     const slots  = document.querySelectorAll('.drop-slot');
 
-    // ピルの初期位置・幅を保存
     const pillState = {};
     pills.forEach(pill => {
       const style = getComputedStyle(pill);
@@ -298,7 +297,6 @@
         }
       });
 
-      // どこにもはまらなかった → 元の位置へ戻す
       if (!snapped) {
         const id    = activePill.dataset.id;
         const state = pillState[id];
