@@ -14,26 +14,23 @@
       width: 100vw;
       min-height: 100vh;
       overflow-y: auto;
-      /* ★グラデーション境目を上に（60% → 50%） */
+      /* グラデーションを少し上に */
       background: linear-gradient(
         to bottom,
         #93dee0 0%,
-        #93dee0 50%,
+        #93dee0 48%,
         #f8e088 100%
       );
       font-family: "花風テクノ", system-ui, -apple-system, "Segoe UI", sans-serif;
     }
 
-    /* ===== STAGE1：枠なしフル画面エリア ===== */
+    /* ===== STAGE1（枠なし・フル画面） ===== */
     .frame {
       position: relative;
       width: 100vw;
       max-width: 420px;
       aspect-ratio: 9 / 16;
       margin: 0 auto;
-      background: none;
-      border: none;
-      box-shadow: none;
       overflow: hidden;
     }
 
@@ -46,11 +43,9 @@
       z-index: 0;
     }
 
-    /* ドラッグするセラーIDピル */
+    /* ===== セラーIDピル ===== */
     .seller-pill {
       position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
       background-color: #16144d;
       color: #ffffff;
       padding: 6px 22px;
@@ -69,39 +64,31 @@
     }
     .seller-pill:active { cursor: grabbing; }
 
-    .pill-a { top: 39%; }
-    .pill-b { top: 44%; }
+    /* 元の高さ・位置調整 */
+    .pill-a { top: 39%; left: 53%; }  /* 左より→少し右に */
+    .pill-b { top: 44%; left: 41%; }  /* 右より→もっと左に */
 
-    /* セラーID貼り付けのグレー楕円に対応するスロット */
+    /* ===== グレー枠スロット（縦幅を細く） ===== */
     .drop-slot {
       position: absolute;
-      height: 3.8%;
+      height: 3.0%; /* ★縦幅を細く */
       border-radius: 999px;
       z-index: 1;
       pointer-events: none;
       background: transparent;
-      /* デバッグ用
-      outline: 1px dashed magenta;
-      */
+      /* outline: 1px dashed magenta; */
     }
 
-    /* ★左スロット：もっと左＆ちょい下（top 59.2 → 60 / left 13.5 → 7） */
     .slot-left {
       top: 60%;
-      left: 7%;
+      left: 8%;
       width: 26%;
     }
 
-    /* ★右スロット：かなり左＆ちょい下（top 59.2 → 60 / left 58.5 → 43） */
     .slot-right {
       top: 60%;
-      left: 43%;
+      left: 44%;
       width: 26%;
-    }
-
-    .drop-slot.slot-hover {
-      box-shadow: 0 0 0 2px rgba(255, 0, 255, 0.6);
-      background: rgba(255, 0, 255, 0.12);
     }
 
     .slot-ghost {
@@ -124,11 +111,9 @@
       transition: opacity 0.2s ease;
     }
 
-    .drop-slot.slot-filled .slot-ghost {
-      opacity: 1;
-    }
+    .drop-slot.slot-filled .slot-ghost { opacity: 1; }
 
-    /* ===== 下部：セラーIDガイド画像（少し小さく上目） ===== */
+    /* ===== セラーID貼り付けガイド（少し小さく上目） ===== */
     .guide-image {
       width: 100%;
       max-width: 360px;
@@ -138,7 +123,7 @@
       box-shadow: none;
     }
 
-    /* ===== STAGE2：画面いっぱいの新しい画像 ===== */
+    /* ===== STAGE2（画面いっぱいのまま） ===== */
     .stage2-frame {
       position: relative;
       width: 100vw;
@@ -146,7 +131,6 @@
       aspect-ratio: 9 / 16;
       margin: 0 auto 80px;
       overflow: hidden;
-      background: none;
     }
 
     .stage2-image {
@@ -159,17 +143,15 @@
 </head>
 
 <body>
-  <!-- STAGE1：セラーIDからASINを一括抽出 -->
+  <!-- STAGE1 -->
   <div class="frame">
     <img src="MES-AI-A (8).gif"
          alt="STAGE1 セラーIDからASINを一括抽出"
          class="stage1" />
 
-    <!-- ドラッグするセラーID -->
     <div class="seller-pill pill-a" data-id="A1">A1EXAMP1E2345</div>
     <div class="seller-pill pill-b" data-id="B2">B2EXAMP1E3456</div>
 
-    <!-- セラーID貼り付け先スロット -->
     <div class="drop-slot slot-left" data-slot="left">
       <div class="slot-ghost"></div>
     </div>
@@ -178,12 +160,12 @@
     </div>
   </div>
 
-  <!-- 下部ガイド：セラーIDをコピーして貼り付け -->
+  <!-- ガイド画像 -->
   <img src="セラーIDをコピーしてここに貼り付け！ (4).gif"
        alt="セラーID貼り付けガイド"
        class="guide-image" />
 
-  <!-- STAGE2：取得したASINをリサーチ -->
+  <!-- STAGE2（画面いっぱい） -->
   <div class="stage2-frame">
     <img src="MES-AI-A (9).gif"
          alt="STAGE2 取得したASINをリサーチ"
@@ -208,9 +190,7 @@
     let activePill = null;
     let offsetX = 0, offsetY = 0;
 
-    function clearHover() {
-      slots.forEach(s => s.classList.remove('slot-hover'));
-    }
+    function clearHover() { slots.forEach(s => s.classList.remove('slot-hover')); }
 
     function onPointerDown(e) {
       const pill = e.currentTarget;
@@ -226,7 +206,6 @@
 
     function onPointerMove(e) {
       if (!activePill) return;
-
       const frameRect = frame.getBoundingClientRect();
       let x = e.clientX - frameRect.left - offsetX;
       let y = e.clientY - frameRect.top  - offsetY;
@@ -234,16 +213,13 @@
       const maxY = frameRect.height - activePill.offsetHeight;
       x = Math.max(0, Math.min(maxX, x));
       y = Math.max(0, Math.min(maxY, y));
-
       activePill.style.left = x + 'px';
       activePill.style.top  = y + 'px';
       activePill.style.transform = 'none';
-
       clearHover();
-      const pillRect    = activePill.getBoundingClientRect();
+      const pillRect = activePill.getBoundingClientRect();
       const pillCenterX = pillRect.left + pillRect.width  / 2;
       const pillCenterY = pillRect.top  + pillRect.height / 2;
-
       slots.forEach(slot => {
         const r = slot.getBoundingClientRect();
         if (pillCenterX > r.left && pillCenterX < r.right &&
@@ -255,69 +231,52 @@
 
     function onPointerUp(e) {
       if (!activePill) return;
-
       activePill.releasePointerCapture(e.pointerId);
-      const pillRect    = activePill.getBoundingClientRect();
-      const pillCenterX = pillRect.left + pillRect.width  / 2;
-      const pillCenterY = pillRect.top  + pillRect.height / 2;
-      const frameRect   = frame.getBoundingClientRect();
+      const pillRect = activePill.getBoundingClientRect();
+      const pillCenterX = pillRect.left + pillRect.width / 2;
+      const pillCenterY = pillRect.top + pillRect.height / 2;
+      const frameRect = frame.getBoundingClientRect();
       let snapped = false;
-
       slots.forEach(slot => {
         const r = slot.getBoundingClientRect();
-
         if (pillCenterX > r.left && pillCenterX < r.right &&
-            pillCenterY > r.top  && pillCenterY < r.bottom) {
-
+            pillCenterY > r.top && pillCenterY < r.bottom) {
           const centerX = r.left + r.width / 2 - frameRect.left;
-          const centerY = r.top  + r.height / 2 - frameRect.top;
-
-          activePill.style.transition =
-            'left 0.2s ease, top 0.2s ease, width 0.2s ease, opacity 0.2s ease';
-
+          const centerY = r.top + r.height / 2 - frameRect.top;
+          activePill.style.transition = 'left 0.2s ease, top 0.2s ease, width 0.2s ease, opacity 0.2s ease';
           activePill.style.width = r.width + 'px';
-          activePill.style.left  = centerX - r.width / 2 + 'px';
-          activePill.style.top   = centerY - activePill.offsetHeight / 2 + 'px';
-          activePill.style.transform = 'none';
+          activePill.style.left = centerX - r.width / 2 + 'px';
+          activePill.style.top = centerY - activePill.offsetHeight / 2 + 'px';
           activePill.style.opacity = '0';
-
           const ghost = slot.querySelector('.slot-ghost');
           ghost.textContent = activePill.textContent;
           slot.classList.add('slot-filled');
-
           setTimeout(() => {
             activePill.style.display = 'none';
             activePill.dataset.locked = "1";
           }, 200);
-
           slot.classList.remove('slot-hover');
           snapped = true;
-        } else {
-          slot.classList.remove('slot-hover');
         }
       });
-
       if (!snapped) {
-        const id    = activePill.dataset.id;
+        const id = activePill.dataset.id;
         const state = pillState[id];
-        activePill.style.transition =
-          'left 0.2s ease, top 0.2s ease, width 0.2s ease, opacity 0.2s ease';
-        activePill.style.top       = state.top;
-        activePill.style.left      = state.left;
-        activePill.style.width     = state.width;
-        activePill.style.opacity   = '1';
-        activePill.style.transform = 'translateX(-50%)';
+        activePill.style.transition = 'left 0.2s ease, top 0.2s ease, width 0.2s ease, opacity 0.2s ease';
+        activePill.style.top = state.top;
+        activePill.style.left = state.left;
+        activePill.style.width = state.width;
+        activePill.style.opacity = '1';
       }
-
       activePill = null;
       clearHover();
     }
 
     pills.forEach(pill => {
-      pill.addEventListener('pointerdown',  onPointerDown);
-      pill.addEventListener('pointermove',  onPointerMove);
-      pill.addEventListener('pointerup',    onPointerUp);
-      pill.addEventListener('pointercancel',onPointerUp);
+      pill.addEventListener('pointerdown', onPointerDown);
+      pill.addEventListener('pointermove', onPointerMove);
+      pill.addEventListener('pointerup', onPointerUp);
+      pill.addEventListener('pointercancel', onPointerUp);
     });
   </script>
 </body>
