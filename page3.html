@@ -52,10 +52,10 @@
       transform: translateX(-50%);
       background-color: #16144d;
       color: #ffffff;
-      padding: 2px 10px;   /* ←さらにスリム＆文字余裕 */
+      padding: 2px 10px;
       border-radius: 999px;
       font-weight: 600;
-      font-size: 11px;     /* ←小さくして収まりやすく */
+      font-size: 11px;
       text-align: center;
       letter-spacing: 0.05em;
       cursor: grab;
@@ -73,28 +73,28 @@
     /* セラーID貼り付けのグレー楕円に対応するスロット */
     .drop-slot {
       position: absolute;
-      height: 1.9%;   /* ←縦幅かなり細め */
+      height: 1.9%;
       border-radius: 999px;
       z-index: 1;
-      pointer-events: none;
+      pointer-events: auto;       /* クリックできるように */
       background: transparent;
     }
 
-    /* 左スロット：少し上・やや細め */
+    /* 左スロット：少し左下＆幅少し狭め */
     .slot-left {
-      top: 60%;       /* ←62% から少し上へ */
-      left: 11%;
-      width: 24%;     /* ←やや広げて文字を収める */
+      top: 61.5%;
+      left: 9%;
+      width: 23%;
     }
 
     /* 右スロット */
     .slot-right {
-      top: 60%;
-      left: 40%;
-      width: 24%;
+      top: 61.5%;
+      left: 38%;
+      width: 23%;
     }
 
-    /* ゴースト（プレビュー＆確定） */
+    /* ゴースト（プレビュー＆確定共通） */
     .slot-ghost {
       position: absolute;
       inset: 0;
@@ -105,9 +105,9 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 11px;     /* pill と完全一致 */
+      font-size: 11px;
       letter-spacing: 0.05em;
-      padding: 2px 10px;   /* pill と完全一致 */
+      padding: 2px 10px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -116,12 +116,12 @@
       transition: opacity 0.2s ease;
     }
 
-    /* プレビュー時（少し薄く） */
+    /* プレビュー中（少し薄く） */
     .drop-slot.slot-preview .slot-ghost {
       opacity: 0.7;
     }
 
-    /* 確定時（はっきり） */
+    /* 確定後（はっきり表示） */
     .drop-slot.slot-filled .slot-ghost {
       opacity: 1;
     }
@@ -192,6 +192,7 @@
     const pills  = document.querySelectorAll('.seller-pill');
     const slots  = document.querySelectorAll('.drop-slot');
 
+    // 初期位置を保存
     const pillState = {};
     pills.forEach(pill => {
       const style = getComputedStyle(pill);
@@ -218,6 +219,28 @@
       if (activePill) {
         activePill.style.opacity = '1';
       }
+    }
+
+    function resetFromSlot(slot) {
+      const id = slot.dataset.filledId;
+      if (!id) return;
+      const pill = document.querySelector(`.seller-pill[data-id="${id}"]`);
+      if (!pill) return;
+
+      const state = pillState[id];
+      pill.style.display   = 'block';
+      pill.style.opacity   = '1';
+      pill.style.transition = 'none';
+      pill.style.top       = state.top;
+      pill.style.left      = state.left;
+      pill.style.width     = state.width;
+      pill.style.transform = 'translateX(-50%)';
+      pill.dataset.locked  = "0";
+
+      const ghost = slot.querySelector('.slot-ghost');
+      ghost.textContent = '';
+      slot.classList.remove('slot-filled', 'slot-preview');
+      slot.dataset.filledId = '';
     }
 
     function onPointerDown(e) {
@@ -269,7 +292,7 @@
           const ghost = foundSlot.querySelector('.slot-ghost');
           ghost.textContent = activePill.textContent;
           foundSlot.classList.add('slot-preview');
-          activePill.style.opacity = '0';  // ピルは消してゴーストのみ表示
+          activePill.style.opacity = '0';  // ピルを消してゴーストだけ見せる
         }
       } else {
         clearPreview();
@@ -284,7 +307,6 @@
       const pillRect    = activePill.getBoundingClientRect();
       const pillCenterX = pillRect.left + pillRect.width  / 2;
       const pillCenterY = pillRect.top  + pillRect.height / 2;
-      const frameRect   = frame.getBoundingClientRect();
       let snapped = false;
 
       slots.forEach(slot => {
@@ -293,27 +315,16 @@
         if (pillCenterX > r.left && pillCenterX < r.right &&
             pillCenterY > r.top  && pillCenterY < r.bottom) {
 
-          const centerX = r.left + r.width / 2 - frameRect.left;
-          const centerY = r.top  + r.height / 2 - frameRect.top;
-
-          activePill.style.transition =
-            'left 0.2s ease, top 0.2s ease, width 0.2s ease, opacity 0.2s ease';
-
-          activePill.style.width = r.width + 'px';
-          activePill.style.left  = centerX - r.width / 2 + 'px';
-          activePill.style.top   = centerY - activePill.offsetHeight / 2 + 'px';
-          activePill.style.transform = 'none';
-          activePill.style.opacity = '0';
-
+          // ゴーストをそのまま確定表示
           const ghost = slot.querySelector('.slot-ghost');
           ghost.textContent = activePill.textContent;
           slot.classList.add('slot-filled');
           slot.classList.remove('slot-preview');
+          slot.dataset.filledId = activePill.dataset.id;
 
-          setTimeout(() => {
-            activePill.style.display = 'none';
-            activePill.dataset.locked = "1";
-          }, 200);
+          activePill.style.opacity = '0';
+          activePill.style.display = 'none';
+          activePill.dataset.locked = "1";
 
           snapped = true;
         }
@@ -340,6 +351,11 @@
       pill.addEventListener('pointermove',  onPointerMove);
       pill.addEventListener('pointerup',    onPointerUp);
       pill.addEventListener('pointercancel',onPointerUp);
+    });
+
+    // スロットをクリックしたら初期位置に戻す
+    slots.forEach(slot => {
+      slot.addEventListener('click', () => resetFromSlot(slot));
     });
   </script>
 </body>
