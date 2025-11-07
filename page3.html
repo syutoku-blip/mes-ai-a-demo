@@ -50,7 +50,7 @@
       background-color: #16144d;      /* 指定の紫 */
       color: #ffffff;
       padding: 6px 22px;
-      min-width: 70%;
+      min-width: 65%;
       border-radius: 999px;
       font-weight: 600;
       font-size: 14px;
@@ -67,9 +67,9 @@
       cursor: grabbing;
     }
 
-    /* 初期位置（セラーIDカードの中） */
-    .pill-a { top: 43%; }  /* A1 行 */
-    .pill-b { top: 49%; }  /* B2 行 */
+    /* ★ 初期位置（セラーIDカードの中・前より上め） */
+    .pill-a { top: 40%; }  /* A1 行 */
+    .pill-b { top: 46%; }  /* B2 行 */
 
     /* ドロップ先：グレー枠の位置に合わせた透明スロット */
     .drop-slot {
@@ -77,20 +77,20 @@
       height: 6%;
       border-radius: 999px;
       z-index: 1;
-      pointer-events: none;  /* ポインタは拾わない（下のpillが操作対象） */
+      pointer-events: none;
     }
 
-    /* グレー枠おおよその位置＆幅 */
+    /* ★ グレー枠の位置により近づける（前より上＆少し細く） */
     .slot-left {
-      top: 65%;
-      left: 15%;
-      width: 32%;
+      top: 59%;   /* もっと上 */
+      left: 18%;
+      width: 30%;
     }
 
     .slot-right {
-      top: 65%;
-      left: 53%;
-      width: 32%;
+      top: 59%;
+      left: 52%;
+      width: 30%;
     }
 
     /* pill が重なったときの「うっすらはまった」表現 */
@@ -127,7 +127,7 @@
     const pills  = document.querySelectorAll('.seller-pill');
     const slots  = document.querySelectorAll('.drop-slot');
 
-    // 各ピルの「元の位置＆サイズ」を保存しておく
+    // 各ピルの「元の位置＆サイズ」を保存
     const pillState = {};
     pills.forEach(pill => {
       const style = getComputedStyle(pill);
@@ -141,7 +141,7 @@
     let activePill = null;
     let offsetX = 0;
     let offsetY = 0;
-    let hoveredSlot = null; // いま乗っているスロット
+    let hoveredSlot = null;
 
     function clearSlotHighlight() {
       if (hoveredSlot) {
@@ -166,7 +166,6 @@
       let x = e.clientX - frameRect.left - offsetX;
       let y = e.clientY - frameRect.top  - offsetY;
 
-      // フレーム外に出すぎないように制限
       const maxX = frameRect.width  - activePill.offsetWidth;
       const maxY = frameRect.height - activePill.offsetHeight;
       x = Math.max(0, Math.min(maxX, x));
@@ -176,15 +175,13 @@
       activePill.style.top  = y + 'px';
       activePill.style.transform = 'none';
 
-      // いったんハイライト解除
+      // スロットハイライトの判定
       clearSlotHighlight();
 
-      // pill の中心座標
-      const pillRect   = activePill.getBoundingClientRect();
+      const pillRect    = activePill.getBoundingClientRect();
       const pillCenterX = pillRect.left + pillRect.width  / 2;
       const pillCenterY = pillRect.top  + pillRect.height / 2;
 
-      // どのスロットに乗っているかチェック
       slots.forEach(slot => {
         const r = slot.getBoundingClientRect();
         if (
@@ -198,19 +195,19 @@
       });
 
       if (hoveredSlot) {
-        // スロットに重なっている間は、スロット位置＆サイズでプレビュー
+        hoveredSlot.classList.add('slot-active');
+
+        // プレビューとしてスロット位置＆サイズに合わせる
         const r = hoveredSlot.getBoundingClientRect();
         const frameRect2 = frame.getBoundingClientRect();
         const centerX = r.left + r.width  / 2 - frameRect2.left;
         const centerY = r.top  + r.height / 2 - frameRect2.top;
 
-        hoveredSlot.classList.add('slot-active');
-
-        activePill.style.width = r.width * 0.96 + 'px'; // ほぼ枠サイズ
+        activePill.style.width = r.width * 0.9 + 'px';  // 前より小さく
         activePill.style.left  = centerX - activePill.offsetWidth / 2 + 'px';
         activePill.style.top   = centerY - activePill.offsetHeight / 2 + 'px';
       } else {
-        // スロットから外れたら元の幅に戻しつつ、ドラッグ位置を優先
+        // スロットから外れたら幅だけ元に近づける
         const id = activePill.dataset.id;
         activePill.style.width = pillState[id].width;
       }
@@ -221,10 +218,10 @@
 
       activePill.releasePointerCapture(e.pointerId);
 
-      const pillRect   = activePill.getBoundingClientRect();
+      const pillRect    = activePill.getBoundingClientRect();
       const pillCenterX = pillRect.left + pillRect.width  / 2;
       const pillCenterY = pillRect.top  + pillRect.height / 2;
-      const frameRect = frame.getBoundingClientRect();
+      const frameRect   = frame.getBoundingClientRect();
 
       let snapped = false;
 
@@ -236,12 +233,11 @@
           pillCenterY > r.top   &&
           pillCenterY < r.bottom
         ) {
-          // スロットに確定配置
           const centerX = r.left + r.width  / 2 - frameRect.left;
           const centerY = r.top  + r.height / 2 - frameRect.top;
 
           activePill.style.transition = 'left 0.15s ease, top 0.15s ease, width 0.15s ease';
-          activePill.style.width = r.width * 0.96 + 'px';
+          activePill.style.width = r.width * 0.9 + 'px';
           activePill.style.left  = centerX - activePill.offsetWidth / 2 + 'px';
           activePill.style.top   = centerY - activePill.offsetHeight / 2 + 'px';
           activePill.style.transform = 'none';
@@ -253,7 +249,6 @@
       });
 
       if (!snapped) {
-        // どのスロットにも入らなければ、元の位置とサイズに戻す
         const id    = activePill.dataset.id;
         const state = pillState[id];
         activePill.style.transition = 'left 0.15s ease, top 0.15s ease, width 0.15s ease';
