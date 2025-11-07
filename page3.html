@@ -16,7 +16,7 @@
       width: 100vw;
       height: 100vh;
       overflow: hidden;
-      background-color: #93dee0;
+      background-color: #93dee0; /* いつものブルー */
       font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
       display: flex;
       justify-content: center;
@@ -30,7 +30,7 @@
       overflow: hidden;
     }
 
-    /* 背景STAGE1画像 */
+    /* STAGE1の背景画像（中央固定） */
     .stage1 {
       position: absolute;
       top: 50%;
@@ -40,61 +40,94 @@
       height: 100vh;
       object-fit: contain;
       z-index: 0;
+      display: block;
     }
 
-    /* 共通スタイル（グレー楕円） */
-    .input-slot {
+    /* 共通：グレー楕円 */
+    .pill {
       position: absolute;
-      width: 40%;
+      width: 38%;
       max-width: 180px;
       z-index: 2;
     }
 
-    .input-slot img {
+    .pill img {
+      display: block;
       width: 100%;
       height: auto;
-      display: block;
     }
 
-    /* 各行の配置（参考画像からおおよそ対応） */
-    /* セラーID欄（上段2つ） */
-    .slot1 { top: 43%; left: 20%; }
-    .slot2 { top: 43%; left: 55%; }
+    /* ── 上部：セラーID貼り付けの2つ ── */
+    /* 左の楕円 */
+    .seller-left {
+      top: 51.5%;   /* 貼り付けカードの中あたりに来るように調整 */
+      left: 30%;
+    }
+    /* 右の楕円 */
+    .seller-right {
+      top: 51.5%;
+      left: 63%;
+    }
 
-    /* ASIN抽出欄（縦に10個） */
-    .slot3  { top: 58%; left: 22%; }
-    .slot4  { top: 62%; left: 22%; }
-    .slot5  { top: 66%; left: 22%; }
-    .slot6  { top: 70%; left: 22%; }
-    .slot7  { top: 74%; left: 22%; }
-    .slot8  { top: 78%; left: 22%; }
-    .slot9  { top: 82%; left: 22%; }
-    .slot10 { top: 86%; left: 22%; }
-    .slot11 { top: 90%; left: 22%; }
-    .slot12 { top: 94%; left: 22%; }
+    /* ── 下部：セラーASIN抽出エリア 2列×10段 ── */
+    /* 左列のベース位置 */
+    .asin-left-base  { left: 30%; }
+    /* 右列のベース位置（右側のB1〜B10の少し左） */
+    .asin-right-base { left: 60%; }
+
+    /* 縦方向は等間隔で10段にする */
+    .row1 { top: 61%; }
+    .row2 { top: 64.5%; }
+    .row3 { top: 68%; }
+    .row4 { top: 71.5%; }
+    .row5 { top: 75%; }
+    .row6 { top: 78.5%; }
+    .row7 { top: 82%; }
+    .row8 { top: 85.5%; }
+    .row9 { top: 89%; }
+    .row10 { top: 92.5%; }
   </style>
 </head>
 
 <body>
   <div class="page">
-    <!-- 背景 -->
-    <img src="MES-AI-A (8).gif" alt="STAGE1 セラーIDからASINを一括抽出" class="stage1" />
+    <!-- STAGE1 全体画像 -->
+    <img src="MES-AI-A (8).gif"
+         alt="STAGE1 セラーIDからASINを一括抽出"
+         class="stage1" />
 
-    <!-- 上部2つのセラーID入力欄 -->
-    <div class="input-slot slot1"><img src="MES-AI-A (1).png" alt="入力欄1" /></div>
-    <div class="input-slot slot2"><img src="MES-AI-A (1).png" alt="入力欄2" /></div>
+    <!-- ── 上部 セラーID貼り付け 2つ ── -->
+    <div class="pill seller-left">
+      <img src="MES-AI-A (1).png" alt="セラーID入力欄 左" />
+    </div>
+    <div class="pill seller-right">
+      <img src="MES-AI-A (1).png" alt="セラーID入力欄 右" />
+    </div>
 
-    <!-- 下部10個のASIN欄 -->
-    <div class="input-slot slot3"><img src="MES-AI-A (1).png" alt="入力欄3" /></div>
-    <div class="input-slot slot4"><img src="MES-AI-A (1).png" alt="入力欄4" /></div>
-    <div class="input-slot slot5"><img src="MES-AI-A (1).png" alt="入力欄5" /></div>
-    <div class="input-slot slot6"><img src="MES-AI-A (1).png" alt="入力欄6" /></div>
-    <div class="input-slot slot7"><img src="MES-AI-A (1).png" alt="入力欄7" /></div>
-    <div class="input-slot slot8"><img src="MES-AI-A (1).png" alt="入力欄8" /></div>
-    <div class="input-slot slot9"><img src="MES-AI-A (1).png" alt="入力欄9" /></div>
-    <div class="input-slot slot10"><img src="MES-AI-A (1).png" alt="入力欄10" /></div>
-    <div class="input-slot slot11"><img src="MES-AI-A (1).png" alt="入力欄11" /></div>
-    <div class="input-slot slot12"><img src="MES-AI-A (1).png" alt="入力欄12" /></div>
+    <!-- ── 下部 ASIN抽出 左列×10 ── -->
+    <div class="pill asin-left-base row1"><img src="MES-AI-A (1).png" alt="ASIN 1 左" /></div>
+    <div class="pill asin-left-base row2"><img src="MES-AI-A (1).png" alt="ASIN 2 左" /></div>
+    <div class="pill asin-left-base row3"><img src="MES-AI-A (1).png" alt="ASIN 3 左" /></div>
+    <div class="pill asin-left-base row4"><img src="MES-AI-A (1).png" alt="ASIN 4 左" /></div>
+    <div class="pill asin-left-base row5"><img src="MES-AI-A (1).png" alt="ASIN 5 左" /></div>
+    <div class="pill asin-left-base row6"><img src="MES-AI-A (1).png" alt="ASIN 6 左" /></div>
+    <div class="pill asin-left-base row7"><img src="MES-AI-A (1).png" alt="ASIN 7 左" /></div>
+    <div class="pill asin-left-base row8"><img src="MES-AI-A (1).png" alt="ASIN 8 左" /></div>
+    <div class="pill asin-left-base row9"><img src="MES-AI-A (1).png" alt="ASIN 9 左" /></div>
+    <div class="pill asin-left-base row10"><img src="MES-AI-A (1).png" alt="ASIN 10 左" /></div>
+
+    <!-- ── 下部 ASIN抽出 右列×10 ── -->
+    <div class="pill asin-right-base row1"><img src="MES-AI-A (1).png" alt="ASIN 1 右" /></div>
+    <div class="pill asin-right-base row2"><img src="MES-AI-A (1).png" alt="ASIN 2 右" /></div>
+    <div class="pill asin-right-base row3"><img src="MES-AI-A (1).png" alt="ASIN 3 右" /></div>
+    <div class="pill asin-right-base row4"><img src="MES-AI-A (1).png" alt="ASIN 4 右" /></div>
+    <div class="pill asin-right-base row5"><img src="MES-AI-A (1).png" alt="ASIN 5 右" /></div>
+    <div class="pill asin-right-base row6"><img src="MES-AI-A (1).png" alt="ASIN 6 右" /></div>
+    <div class="pill asin-right-base row7"><img src="MES-AI-A (1).png" alt="ASIN 7 右" /></div>
+    <div class="pill asin-right-base row8"><img src="MES-AI-A (1).png" alt="ASIN 8 右" /></div>
+    <div class="pill asin-right-base row9"><img src="MES-AI-A (1).png" alt="ASIN 9 右" /></div>
+    <div class="pill asin-right-base row10"><img src="MES-AI-A (1).png" alt="ASIN 10 右" /></div>
+
   </div>
 </body>
 </html>
