@@ -61,15 +61,15 @@
       z-index: 2;
       box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.25);
       touch-action: none;             /* モバイルでドラッグを有効にする */
-      transition: left 0.18s ease, top 0.18s ease, width 0.18s ease;
+      transition: left 0.2s ease, top 0.2s ease, width 0.2s ease, opacity 0.2s ease;
     }
     .seller-pill:active {
       cursor: grabbing;
     }
 
-    /* ★ 初期位置（セラーIDカードの中・やや上め） */
-    .pill-a { top: 40%; }  /* A1 行 */
-    .pill-b { top: 46%; }  /* B2 行 */
+    /* ★ 初期位置（セラーIDカードの中・少し上め） */
+    .pill-a { top: 39%; }  /* A1 行 */
+    .pill-b { top: 45%; }  /* B2 行 */
 
     /* ドロップ先：グレー枠の位置に合わせた透明スロット */
     .drop-slot {
@@ -78,23 +78,40 @@
       border-radius: 999px;
       z-index: 1;
       pointer-events: none;
+      /* 位置確認したいときだけ↓をコメント解除
+      outline: 1px dashed red;
+      */
+      background: transparent;
     }
 
-    /* ★ グレー枠の位置・サイズ（だいたいこのあたり） */
+    /* ★ グレー枠の位置・サイズ（かなり上に寄せる） */
     .slot-left {
-      top: 58%;
-      left: 18%;
-      width: 30%;
+      top: 63%;      /* 足りなければ 62〜65% で微調整 */
+      left: 14%;     /* 左右位置は 13〜16% くらいで調整 */
+      width: 32%;
     }
     .slot-right {
-      top: 58%;
-      left: 52%;
-      width: 30%;
+      top: 63%;
+      left: 54%;
+      width: 32%;
     }
 
-    /* pill が上に来たときの「うっすら」演出（吸収前のプレビュー） */
+    /* pill が上に来ているとき（吸い込まれる直前のプレビュー） */
     .drop-slot.slot-hover {
-      background: rgba(255, 255, 255, 0.18);
+      box-shadow: 0 0 0 2px rgba(22, 20, 77, 0.6);
+      background: rgba(22, 20, 77, 0.15);
+    }
+
+    /* 実際にはまったあとの「残像」（グレーが紫に置き換わった感じ） */
+    .drop-slot.slot-filled {
+      background: #16144d;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.25);
     }
   </style>
 </head>
@@ -116,7 +133,7 @@
       B2EXAMP1E3456
     </div>
 
-    <!-- グレー枠に対応する透明スロット（当たり判定＋ハイライト用） -->
+    <!-- グレー枠に対応する透明スロット（当たり判定＋残像用） -->
     <div class="drop-slot slot-left"  data-slot="left"></div>
     <div class="drop-slot slot-right" data-slot="right"></div>
   </div>
@@ -146,12 +163,16 @@
     }
 
     function onPointerDown(e) {
+      // 既に吸い込まれて消えたピルは無視
+      if (e.currentTarget.dataset.locked === "1") return;
+
       activePill = e.currentTarget;
       const rect = activePill.getBoundingClientRect();
       offsetX = e.clientX - rect.left;
       offsetY = e.clientY - rect.top;
       activePill.setPointerCapture(e.pointerId);
       activePill.style.transition = 'none'; // ドラッグ中は即座に動く
+      clearHover();
     }
 
     function onPointerMove(e) {
@@ -209,17 +230,28 @@
           pillCenterY > r.top   &&
           pillCenterY < r.bottom
         ) {
-          // ★ 吸収アニメ：グレー枠の中心＆幅に向かって「ぎゅっ」と変形
+          // ★ 吸収アニメ：ボタンが枠の位置＆幅までギュッと変形しながらフェード
           const centerX = r.left + r.width  / 2 - frameRect.left;
           const centerY = r.top  + r.height / 2 - frameRect.top;
 
-          activePill.style.transition = 'left 0.18s ease, top 0.18s ease, width 0.18s ease';
-          activePill.style.width = r.width * 1.02 + 'px';     // 枠よりほんの少し大きくして完全にかぶせる
-          activePill.style.left  = centerX - activePill.offsetWidth / 2 + 'px';
+          activePill.style.transition = 'left 0.2s ease, top 0.2s ease, width 0.2s ease, opacity 0.2s ease';
+          activePill.style.width = r.width + 'px';
+          activePill.style.left  = centerX - r.width / 2 + 'px';
           activePill.style.top   = centerY - activePill.offsetHeight / 2 + 'px';
           activePill.style.transform = 'none';
+          activePill.style.opacity = '0';
 
-          slot.classList.remove('slot-hover'); // 枠は消して、紫に置き換わったように見せる
+          // 「はまったあとの残像」を枠側で表示
+          slot.classList.remove('slot-hover');
+          slot.classList.add('slot-filled');
+          slot.textContent = activePill.textContent;
+
+          // 少し待ってから完全にピルを非表示＆ロック
+          setTimeout(() => {
+            activePill.style.display = 'none';
+            activePill.dataset.locked = "1";
+          }, 200);
+
           snapped = true;
         } else {
           slot.classList.remove('slot-hover');
@@ -230,10 +262,11 @@
         // スロット外なら元の場所＆サイズに戻る
         const id    = activePill.dataset.id;
         const state = pillState[id];
-        activePill.style.transition = 'left 0.18s ease, top 0.18s ease, width 0.18s ease';
+        activePill.style.transition = 'left 0.2s ease, top 0.2s ease, width 0.2s ease, opacity 0.2s ease';
         activePill.style.top   = state.top;
         activePill.style.left  = state.left;
         activePill.style.width = state.width;
+        activePill.style.opacity = '1';
         activePill.style.transform = 'translateX(-50%)';
       }
 
