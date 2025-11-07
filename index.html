@@ -25,7 +25,7 @@
       overflow: hidden;
     }
 
-    /* 背景アニメーション（新しいgif） */
+    /* 背景GIF */
     .bg {
       position: absolute;
       inset: 0;
@@ -35,7 +35,7 @@
       z-index: 0;
     }
 
-    /* タイトル画像（上） */
+    /* タイトル画像 */
     .title {
       position: absolute;
       left: 50%;
@@ -47,35 +47,29 @@
       pointer-events: none;
     }
 
-    /* STARTボタン画像（下） */
-    .start-img {
+    /* STARTボタン（中にGIFを入れる） */
+    .start-button {
       position: absolute;
-      left: 55%;              /* ← 右に少し移動（前回53%→55%） */
-      top: 53%;               /* ← 少し上（前回55%→53%） */
+      left: 49%;          /* 位置はここで調整（左右） */
+      top: 56%;           /* 位置はここで調整（上下） */
       transform: translateX(-50%);
       width: 55%;
       max-width: 260px;
-      z-index: 1;
-      pointer-events: none;
-    }
-
-    /* 透明クリックエリア（画像とぴったり合わせ） */
-    .start-hit {
-      position: absolute;
-      left: 55%;              /* GIFと同じ位置に */
-      top: 53%;               /* GIFと同じ位置に */
-      transform: translate(-50%, -45%); /* ← 少し下げてぴったり */
-      width: 55%;
-      max-width: 260px;
-      height: 12%;            /* START画像全体をカバー */
       z-index: 2;
       background: transparent;
       border: none;
+      padding: 0;
       cursor: pointer;
     }
 
-    .start-hit:focus {
+    .start-button:focus {
       outline: none;
+    }
+
+    .start-button img {
+      display: block;
+      width: 100%;
+      height: auto;
     }
   </style>
 </head>
@@ -88,11 +82,10 @@
     <!-- タイトル -->
     <img src="MES-AI-A.png" alt="MES-AI-A DEMO" class="title" />
 
-    <!-- STARTボタン -->
-    <img src="MES-AI-A (1).gif" alt="START" class="start-img" />
-
-    <!-- クリック領域 -->
-    <button class="start-hit" id="startButton" aria-label="デモを開始する"></button>
+    <!-- STARTボタン（= 画像そのものがボタン） -->
+    <button class="start-button" id="startButton" aria-label="デモを開始する">
+      <img src="MES-AI-A (1).gif" alt="START" />
+    </button>
   </div>
 
   <script>
