@@ -67,11 +67,11 @@
     }
     .seller-pill:active { cursor: grabbing; }
 
-    /* ★初期位置を少し下げる */
-    .pill-a { top: 42%; }
-    .pill-b { top: 49%; }
+    /* 初期位置（上の見出しの下あたり） */
+    .pill-a { top: 42%; transform: translateX(-50%); }
+    .pill-b { top: 45.5%; transform: translateX(-52%); }
 
-    /* セラーID貼り付けのグレー楕円に対応するスロット */
+    /* セラーID貼り付けスロット（背景グレーの楕円と重なる位置） */
     .drop-slot {
       position: absolute;
       height: 1.9%;
@@ -81,7 +81,6 @@
       background: transparent;
     }
 
-    /* 少し右上に微調整したスロット位置 */
     .slot-left {
       top: 61.0%;
       left: 10.5%;
@@ -131,22 +130,22 @@
       z-index: 2;
     }
 
-    /* スロットの少し下からスタート */
+    /* ★右端の B1〜B10 と高さが合うよう、全体を上へ */
     .asin-column-left {
       left: 10.5%;
-      top: 65%;
+      top: 59%;
     }
     .asin-column-right {
       left: 39.5%;
-      top: 65%;
+      top: 59%;
     }
 
     .asin-pill {
       width: 100%;
-      height: 1.9%;
+      height: 2.4%;           /* 行自体の高さ */
       border-radius: 999px;
-      margin-bottom: 1.6%;
-      background: transparent; /* 元のグレーはGIF側に任せる */
+      margin-bottom: 1.0%;    /* 行間調整（B1〜B10 に揃える用） */
+      background: transparent;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -162,7 +161,7 @@
 
     /* データが入ったときの色変更 */
     .asin-pill.filled {
-      background-color: #ac5e7e; /* 指定色 */
+      background-color: #ac5e7e;
       color: #ffffff;
     }
 
@@ -260,7 +259,7 @@
     const pills  = document.querySelectorAll('.seller-pill');
     const slots  = document.querySelectorAll('.drop-slot');
 
-    // ★シートの内容をベタ書きで保持
+    // ★ASIN データ（スプレッドシートから持ってくる想定でベタ書き）
     const asinData = {
       'A1EXAMP1E2345': [
         'B0AB1C2D34',
@@ -348,7 +347,7 @@
       });
     }
 
-    // スロットから初期位置へ戻す処理
+    // スロットから初期位置へ戻す処理（クリックのみで発火）
     function resetFromSlot(slot) {
       const id = slot.dataset.filledId;
       if (!id) return;
@@ -362,7 +361,9 @@
       pill.style.top       = state.top;
       pill.style.left      = state.left;
       pill.style.width     = state.width;
-      pill.style.transform = 'translateX(-50%)';
+      pill.style.transform = pill.classList.contains('pill-b')
+        ? 'translateX(-52%)'
+        : 'translateX(-50%)';
       pill.dataset.locked  = "0";
 
       const ghost = slot.querySelector('.slot-ghost');
@@ -456,7 +457,7 @@
           activePill.style.display = 'none';
           activePill.dataset.locked = "1";
 
-          // ★ASINリストを表示
+          // ASINリストを表示
           renderAsinsForSlot(slot, sellerId);
 
           snapped = true;
@@ -472,7 +473,9 @@
         activePill.style.left      = state.left;
         activePill.style.width     = state.width;
         activePill.style.opacity   = '1';
-        activePill.style.transform = 'translateX(-50%)';
+        activePill.style.transform = activePill.classList.contains('pill-b')
+          ? 'translateX(-52%)'
+          : 'translateX(-50%)';
       }
 
       clearPreview();
@@ -486,15 +489,9 @@
       pill.addEventListener('pointercancel',onPointerUp);
     });
 
-    // スロットクリック／ドラッグ開始でも初期位置に戻す
+    // スロットクリックで初期位置に戻す（ドラッグでは戻さない）
     slots.forEach(slot => {
       slot.addEventListener('click', () => resetFromSlot(slot));
-      slot.addEventListener('pointerdown', (e) => {
-        if (slot.dataset.filledId) {
-          resetFromSlot(slot);
-          e.stopPropagation();
-        }
-      });
     });
   </script>
 </body>
