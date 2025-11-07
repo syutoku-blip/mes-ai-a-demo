@@ -20,7 +20,6 @@
       font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
     }
 
-    /* 画面全体キャンバス */
     .page {
       position: relative;
       width: 100vw;
@@ -28,22 +27,22 @@
       overflow: hidden;
     }
 
-    /* 背景アニメーション（はみ出し前提で全画面） */
+    /* ✅ 背景を最新の MES-AI-A (6).gif に変更 */
     .bg {
       position: absolute;
       inset: 0;
       width: 100%;
       height: 100%;
-      object-fit: cover;     /* 端までぴったり＋ちょいはみ出し */
+      object-fit: cover;   /* はみ出し前提で端までフィット */
       z-index: 0;
       display: block;
     }
 
-    /* タイトル（●●●＋MES-AI-A DEMO） */
+    /* 上部タイトル (PNG) */
     .title {
       position: absolute;
       left: 50%;
-      top: 32%;              /* 参考画像に合わせた位置。微調整可 */
+      top: 32%;            /* 中央よりやや上。微調整OK */
       transform: translateX(-50%);
       width: 78%;
       max-width: 360px;
@@ -52,11 +51,11 @@
       display: block;
     }
 
-    /* STARTボタン（START＋カーソル） */
+    /* 下部 STARTボタン (GIF) */
     .start-img {
       position: absolute;
       left: 50%;
-      top: 58%;              /* 参考画像に合わせた位置。微調整可 */
+      top: 58%;            /* タイトルより下。微調整OK */
       transform: translateX(-50%);
       width: 55%;
       max-width: 260px;
@@ -65,7 +64,7 @@
       display: block;
     }
 
-    /* START ボタンの透明クリック領域 */
+    /* 透明のクリック範囲 */
     .start-hit {
       position: absolute;
       left: 50%;
@@ -73,7 +72,7 @@
       transform: translate(-50%, -50%);
       width: 55%;
       max-width: 260px;
-      height: 12%;           /* START画像全体を覆うくらい */
+      height: 12%;
       z-index: 2;
       background: transparent;
       border: none;
@@ -88,22 +87,22 @@
 
 <body>
   <div class="page">
-    <!-- 背景アニメーション -->
-    <img src="MES-AI-A (2).gif" alt="背景" class="bg" />
+    <!-- 🎞 背景アニメーション -->
+    <img src="MES-AI-A (6).gif" alt="背景" class="bg" />
 
-    <!-- タイトル -->
-    <img src="MES-AI-A (1).gif" alt="MES-AI-A DEMO" class="title" />
+    <!-- ⬆️ タイトル画像 -->
+    <img src="MES-AI-A.png" alt="MES-AI-A DEMO" class="title" />
 
-    <!-- STARTボタン（見た目） -->
-    <img src="MES-AI-A.png" alt="START" class="start-img" />
+    <!-- ⬇️ STARTボタン画像 -->
+    <img src="MES-AI-A (1).gif" alt="START" class="start-img" />
 
-    <!-- STARTボタン（透明クリック領域） -->
+    <!-- 透明クリック領域 -->
     <button class="start-hit" id="startButton" aria-label="デモを開始する"></button>
   </div>
 
   <script>
+    // START押下で2ページ目へ遷移
     document.getElementById("startButton").addEventListener("click", function () {
-      // 2ページ目へ遷移
       window.location.href = "page2.html";
     });
   </script>
