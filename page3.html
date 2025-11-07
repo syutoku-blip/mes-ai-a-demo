@@ -14,38 +14,39 @@
       width: 100vw;
       min-height: 100vh;
       overflow-y: auto;
-      /* グラデーション → 下は黄色で固定 */
+      /* 上はブルー → 下で #f8e088 に変わる“なめらかな”グラデーション */
       background: linear-gradient(
         to bottom,
         #93dee0 0%,
-        #93dee0 55%,
-        #f8e088 55%,
+        #93dee0 60%,
         #f8e088 100%
       );
       font-family: "花風テクノ", system-ui, -apple-system, "Segoe UI", sans-serif;
     }
 
-    /* ===== GIFコンテナ（枠を削除・透明化） ===== */
+    /* ===== GIFコンテナ（枠は消してフラットに） ===== */
     .frame {
       position: relative;
       width: 100vw;
       max-width: 420px;
       aspect-ratio: 9 / 16;
-      margin: 0 auto; 
-      background: none;     /* 枠なし */
-      border: none;         /* 枠線なし */
-      box-shadow: none;     /* 影なし */
+      margin: 0 auto;
+      background: none;
+      border: none;
+      box-shadow: none;
       overflow: hidden;
     }
 
     .stage1 {
+      position: absolute;
+      inset: 0;
       width: 100%;
       height: 100%;
       object-fit: cover;
-      display: block;
+      z-index: 0;
     }
 
-    /* ===== ドラッグする紫ボタン ===== */
+    /* ===== ドラッグする紫ボタン（セラーID） ===== */
     .seller-pill {
       position: absolute;
       left: 50%;
@@ -68,29 +69,34 @@
     }
     .seller-pill:active { cursor: grabbing; }
 
-    .pill-a { top: 30%; }
-    .pill-b { top: 35%; }
+    /* ★ 位置を「元に戻す」 */
+    .pill-a { top: 39%; }
+    .pill-b { top: 44%; }
 
-    /* ===== セラーID枠 ===== */
+    /* ===== セラーID貼り付けのグレー楕円に対応するスロット ===== */
     .drop-slot {
       position: absolute;
-      height: 3.2%;
+      height: 3.8%;          /* グレー楕円に近い縦幅 */
       border-radius: 999px;
       z-index: 1;
       pointer-events: none;
       background: transparent;
+      /* 位置確認したいときだけコメントアウトを外す
+      outline: 1px dashed magenta;
+      */
     }
 
+    /* ★ グレー楕円とだいたい一致する位置・幅 */
     .slot-left {
-      top: 57.4%;
-      left: 13.5%;
-      width: 24%;
+      top: 59.2%;
+      left: 14%;
+      width: 26%;
     }
 
     .slot-right {
-      top: 57.4%;
-      left: 61.5%;
-      width: 24%;
+      top: 59.2%;
+      left: 60%;
+      width: 26%;
     }
 
     .drop-slot.slot-hover {
@@ -98,6 +104,7 @@
       background: rgba(255, 0, 255, 0.12);
     }
 
+    /* ===== はめ込んだあとの残像 ===== */
     .slot-ghost {
       position: absolute;
       inset: 0;
@@ -107,9 +114,9 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 9px;
-      letter-spacing: 0.06em;
-      padding: 0 3px;
+      font-size: 10px;
+      letter-spacing: 0.05em;
+      padding: 0 4px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -122,12 +129,12 @@
       opacity: 1;
     }
 
-    /* ===== 下の画像（黄色背景上） ===== */
+    /* ===== 下の説明用GIF（黄色エリアに表示） ===== */
     .bottom-image {
       width: 100%;
       max-width: 420px;
       display: block;
-      margin: 0 auto 80px;
+      margin: 40px auto 80px;
       border-radius: 0;
       box-shadow: none;
     }
@@ -135,30 +142,39 @@
 </head>
 
 <body>
-  <!-- 背景GIF（枠なしで自然に配置） -->
+  <!-- 上部：STAGE1 GIF＋ドラッグエリア -->
   <div class="frame">
     <img src="MES-AI-A (8).gif" alt="STAGE1 セラーIDからASINを一括抽出" class="stage1" />
+
+    <!-- ドラッグするセラーID（元の位置） -->
     <div class="seller-pill pill-a" data-id="A1">A1EXAMP1E2345</div>
     <div class="seller-pill pill-b" data-id="B2">B2EXAMP1E3456</div>
 
-    <div class="drop-slot slot-left" data-slot="left"><div class="slot-ghost"></div></div>
-    <div class="drop-slot slot-right" data-slot="right"><div class="slot-ghost"></div></div>
+    <!-- 「セラーID貼り付け」の2つのグレー楕円に対応するスロット -->
+    <div class="drop-slot slot-left" data-slot="left">
+      <div class="slot-ghost"></div>
+    </div>
+    <div class="drop-slot slot-right" data-slot="right">
+      <div class="slot-ghost"></div>
+    </div>
   </div>
 
-  <!-- 下部黄色エリアに自然に続く画像 -->
-  <img src="セラーIDをコピーしてここに貼り付け！ (4).gif" alt="下部イメージ" class="bottom-image" />
+  <!-- 下部：黄色背景に続くガイドGIF -->
+  <img src="セラーIDをコピーしてここに貼り付け！ (4).gif"
+       alt="下部イメージ" class="bottom-image" />
 
   <script>
     const frame  = document.querySelector('.frame');
     const pills  = document.querySelectorAll('.seller-pill');
     const slots  = document.querySelectorAll('.drop-slot');
 
+    // ピルの初期位置・幅を保存
     const pillState = {};
     pills.forEach(pill => {
       const style = getComputedStyle(pill);
       pillState[pill.dataset.id] = {
-        top: style.top,
-        left: style.left,
+        top:   style.top,
+        left:  style.left,
         width: style.width
       };
     });
@@ -166,7 +182,9 @@
     let activePill = null;
     let offsetX = 0, offsetY = 0;
 
-    function clearHover() { slots.forEach(s => s.classList.remove('slot-hover')); }
+    function clearHover() {
+      slots.forEach(s => s.classList.remove('slot-hover'));
+    }
 
     function onPointerDown(e) {
       const pill = e.currentTarget;
@@ -182,6 +200,7 @@
 
     function onPointerMove(e) {
       if (!activePill) return;
+
       const frameRect = frame.getBoundingClientRect();
       let x = e.clientX - frameRect.left - offsetX;
       let y = e.clientY - frameRect.top  - offsetY;
@@ -189,13 +208,16 @@
       const maxY = frameRect.height - activePill.offsetHeight;
       x = Math.max(0, Math.min(maxX, x));
       y = Math.max(0, Math.min(maxY, y));
+
       activePill.style.left = x + 'px';
       activePill.style.top  = y + 'px';
       activePill.style.transform = 'none';
+
       clearHover();
-      const pillRect = activePill.getBoundingClientRect();
+      const pillRect    = activePill.getBoundingClientRect();
       const pillCenterX = pillRect.left + pillRect.width  / 2;
       const pillCenterY = pillRect.top  + pillRect.height / 2;
+
       slots.forEach(slot => {
         const r = slot.getBoundingClientRect();
         if (pillCenterX > r.left && pillCenterX < r.right &&
@@ -207,50 +229,70 @@
 
     function onPointerUp(e) {
       if (!activePill) return;
+
       activePill.releasePointerCapture(e.pointerId);
-      const pillRect = activePill.getBoundingClientRect();
+      const pillRect    = activePill.getBoundingClientRect();
       const pillCenterX = pillRect.left + pillRect.width  / 2;
       const pillCenterY = pillRect.top  + pillRect.height / 2;
-      const frameRect = frame.getBoundingClientRect();
+      const frameRect   = frame.getBoundingClientRect();
       let snapped = false;
+
       slots.forEach(slot => {
         const r = slot.getBoundingClientRect();
+
         if (pillCenterX > r.left && pillCenterX < r.right &&
             pillCenterY > r.top  && pillCenterY < r.bottom) {
+
           const centerX = r.left + r.width / 2 - frameRect.left;
           const centerY = r.top  + r.height / 2 - frameRect.top;
-          activePill.style.transition = 'left 0.2s ease, top 0.2s ease, width 0.2s ease, opacity 0.2s ease';
+
+          activePill.style.transition =
+            'left 0.2s ease, top 0.2s ease, width 0.2s ease, opacity 0.2s ease';
+
           activePill.style.width = r.width + 'px';
           activePill.style.left  = centerX - r.width / 2 + 'px';
           activePill.style.top   = centerY - activePill.offsetHeight / 2 + 'px';
+          activePill.style.transform = 'none';
           activePill.style.opacity = '0';
+
           const ghost = slot.querySelector('.slot-ghost');
           ghost.textContent = activePill.textContent;
           slot.classList.add('slot-filled');
-          setTimeout(() => { activePill.style.display = 'none'; activePill.dataset.locked = "1"; }, 200);
+
+          setTimeout(() => {
+            activePill.style.display = 'none';
+            activePill.dataset.locked = "1";
+          }, 200);
+
           slot.classList.remove('slot-hover');
           snapped = true;
-        } else { slot.classList.remove('slot-hover'); }
+        } else {
+          slot.classList.remove('slot-hover');
+        }
       });
+
+      // どこにもはまらなかった → 元の位置へ戻す
       if (!snapped) {
-        const id = activePill.dataset.id;
+        const id    = activePill.dataset.id;
         const state = pillState[id];
-        activePill.style.transition = 'left 0.2s ease, top 0.2s ease, width 0.2s ease, opacity 0.2s ease';
-        activePill.style.top = state.top;
-        activePill.style.left = state.left;
-        activePill.style.width = state.width;
-        activePill.style.opacity = '1';
+        activePill.style.transition =
+          'left 0.2s ease, top 0.2s ease, width 0.2s ease, opacity 0.2s ease';
+        activePill.style.top       = state.top;
+        activePill.style.left      = state.left;
+        activePill.style.width     = state.width;
+        activePill.style.opacity   = '1';
         activePill.style.transform = 'translateX(-50%)';
       }
+
       activePill = null;
       clearHover();
     }
 
     pills.forEach(pill => {
-      pill.addEventListener('pointerdown', onPointerDown);
-      pill.addEventListener('pointermove', onPointerMove);
-      pill.addEventListener('pointerup', onPointerUp);
-      pill.addEventListener('pointercancel', onPointerUp);
+      pill.addEventListener('pointerdown',  onPointerDown);
+      pill.addEventListener('pointermove',  onPointerMove);
+      pill.addEventListener('pointerup',    onPointerUp);
+      pill.addEventListener('pointercancel',onPointerUp);
     });
   </script>
 </body>
