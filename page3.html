@@ -23,32 +23,32 @@
       align-items: center;
     }
 
-    .page {
+    /* STAGE1用の「キャンバス」 */
+    .frame {
       position: relative;
       width: 100vw;
-      height: 100vh;
+      max-width: 420px;
+      aspect-ratio: 9 / 16;   /* STAGE1画像と同じ縦横比 */
       overflow: hidden;
     }
 
-    /* 背景（STAGE1） */
+    /* 背景 STAGE1 画像 */
     .stage1 {
       position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 100vw;
-      height: 100vh;
-      object-fit: contain;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;      /* frameいっぱいにフィット */
       z-index: 0;
     }
 
-    /* 共通ベース */
+    /* 共通ベース：楕円 */
     .pill {
       position: absolute;
       z-index: 2;
     }
 
-    /* 上段：セラーID貼り付け用（右端ラベルと高さ合わせ） */
+    /* 上段：セラーID貼り付け用（右端のラベルと同じ高さ感） */
     .pill-top {
       width: 24%;
       max-width: 130px;
@@ -59,7 +59,7 @@
       height: auto;
     }
 
-    /* 下段：ASINリスト用 */
+    /* 下段：ASINリスト用（少し長め） */
     .pill-list {
       width: 32%;
       max-width: 180px;
@@ -70,42 +70,48 @@
       height: auto;
     }
 
-    /* ── 上部：セラーID貼り付け（位置調整版） ── */
-    /* 見出しの白帯の中で3つが水平にそろうように */
+    /* ───────────────
+       上部：セラーID貼り付け 2つ
+       （白い帯の中に3つ横並びになるよう調整）
+    ─────────────── */
     .seller-left {
-      top: 50%;   /* 少しだけ上に寄せて白帯のセンターあたり */
-      left: 29%;  /* 白帯の左〜中央寄り */
+      top: 57%;   /* 貼り付けカードの白帯中心あたり */
+      left: 27%;  /* 左側 */
     }
     .seller-right {
-      top: 50%;
-      left: 49%;  /* 右端ラベルとのバランスがとれる位置 */
+      top: 57%;
+      left: 50%;  /* 真ん中付近（右端ラベルとのバランス） */
     }
 
-    /* ── 下部：ASIN抽出欄 2列×10段 ── */
+    /* ───────────────
+       下部：セラーASIN抽出 2列×10段
+       frame（STAGE1画像）の中での相対位置
+    ─────────────── */
     .asin-left-base  { left: 30%; }
     .asin-right-base { left: 60%; }
 
-    .row1  { top: 61%; }
-    .row2  { top: 64.5%; }
-    .row3  { top: 68%; }
-    .row4  { top: 71.5%; }
-    .row5  { top: 75%; }
-    .row6  { top: 78.5%; }
-    .row7  { top: 82%; }
-    .row8  { top: 85.5%; }
-    .row9  { top: 89%; }
-    .row10 { top: 92.5%; }
+    /* 上から順に等間隔（だいたい参考画像どおり） */
+    .row1  { top: 67%; }
+    .row2  { top: 70%; }
+    .row3  { top: 73%; }
+    .row4  { top: 76%; }
+    .row5  { top: 79%; }
+    .row6  { top: 82%; }
+    .row7  { top: 85%; }
+    .row8  { top: 88%; }
+    .row9  { top: 91%; }
+    .row10 { top: 94%; }
   </style>
 </head>
 
 <body>
-  <div class="page">
-    <!-- 背景 -->
+  <div class="frame">
+    <!-- STAGE1 全体画像 -->
     <img src="MES-AI-A (8).gif"
          alt="STAGE1 セラーIDからASINを一括抽出"
          class="stage1" />
 
-    <!-- 上段：セラーID貼り付け 2つ -->
+    <!-- ── 上段：セラーID貼り付け 2つ ── -->
     <div class="pill pill-top seller-left">
       <img src="MES-AI-A (1).png" alt="セラーID入力欄 左" />
     </div>
@@ -113,7 +119,7 @@
       <img src="MES-AI-A (1).png" alt="セラーID入力欄 右" />
     </div>
 
-    <!-- 下段：ASIN 左列×10 -->
+    <!-- ── 下段：ASIN 左列×10 ── -->
     <div class="pill pill-list asin-left-base row1"><img src="MES-AI-A (1).png" alt="ASIN 1 左" /></div>
     <div class="pill pill-list asin-left-base row2"><img src="MES-AI-A (1).png" alt="ASIN 2 左" /></div>
     <div class="pill pill-list asin-left-base row3"><img src="MES-AI-A (1).png" alt="ASIN 3 左" /></div>
@@ -125,7 +131,7 @@
     <div class="pill pill-list asin-left-base row9"><img src="MES-AI-A (1).png" alt="ASIN 9 左" /></div>
     <div class="pill pill-list asin-left-base row10"><img src="MES-AI-A (1).png" alt="ASIN 10 左" /></div>
 
-    <!-- 下段：ASIN 右列×10 -->
+    <!-- ── 下段：ASIN 右列×10 ── -->
     <div class="pill pill-list asin-right-base row1"><img src="MES-AI-A (1).png" alt="ASIN 1 右" /></div>
     <div class="pill pill-list asin-right-base row2"><img src="MES-AI-A (1).png" alt="ASIN 2 右" /></div>
     <div class="pill pill-list asin-right-base row3"><img src="MES-AI-A (1).png" alt="ASIN 3 右" /></div>
