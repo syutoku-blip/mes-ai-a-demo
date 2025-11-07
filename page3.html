@@ -30,7 +30,7 @@
       overflow: hidden;
     }
 
-    /* 背景 */
+    /* 背景（STAGE1） */
     .stage1 {
       position: absolute;
       top: 50%;
@@ -42,20 +42,17 @@
       z-index: 0;
     }
 
-    /* ───────────────
-       各パーツの共通設定
-    ─────────────── */
+    /* 共通ベース */
     .pill {
       position: absolute;
       z-index: 2;
     }
 
-    /* 上段：セラーID貼り付け用 */
+    /* 上段：セラーID貼り付け用（右端ラベルと高さ合わせ） */
     .pill-top {
-      width: 24%;          /* A××××BOO と同じくらいの高さ */
+      width: 24%;
       max-width: 130px;
     }
-
     .pill-top img {
       display: block;
       width: 100%;
@@ -67,28 +64,24 @@
       width: 32%;
       max-width: 180px;
     }
-
     .pill-list img {
       display: block;
       width: 100%;
       height: auto;
     }
 
-    /* ───────────────
-       上部：セラーID貼り付け
-    ─────────────── */
+    /* ── 上部：セラーID貼り付け（位置調整版） ── */
+    /* 見出しの白帯の中で3つが水平にそろうように */
     .seller-left {
-      top: 51.5%;    /* 見出しの下あたり */
-      left: 27%;     /* 左寄り */
+      top: 50%;   /* 少しだけ上に寄せて白帯のセンターあたり */
+      left: 29%;  /* 白帯の左〜中央寄り */
     }
     .seller-right {
-      top: 51.5%;
-      left: 51%;     /* 中央寄りで右端とバランス */
+      top: 50%;
+      left: 49%;  /* 右端ラベルとのバランスがとれる位置 */
     }
 
-    /* ───────────────
-       下部：ASIN抽出欄 2列×10段
-    ─────────────── */
+    /* ── 下部：ASIN抽出欄 2列×10段 ── */
     .asin-left-base  { left: 30%; }
     .asin-right-base { left: 60%; }
 
@@ -102,7 +95,6 @@
     .row8  { top: 85.5%; }
     .row9  { top: 89%; }
     .row10 { top: 92.5%; }
-
   </style>
 </head>
 
@@ -113,7 +105,7 @@
          alt="STAGE1 セラーIDからASINを一括抽出"
          class="stage1" />
 
-    <!-- ── 上部 セラーID貼り付け 2つ ── -->
+    <!-- 上段：セラーID貼り付け 2つ -->
     <div class="pill pill-top seller-left">
       <img src="MES-AI-A (1).png" alt="セラーID入力欄 左" />
     </div>
@@ -121,7 +113,7 @@
       <img src="MES-AI-A (1).png" alt="セラーID入力欄 右" />
     </div>
 
-    <!-- ── 下部 ASIN抽出 左列×10 ── -->
+    <!-- 下段：ASIN 左列×10 -->
     <div class="pill pill-list asin-left-base row1"><img src="MES-AI-A (1).png" alt="ASIN 1 左" /></div>
     <div class="pill pill-list asin-left-base row2"><img src="MES-AI-A (1).png" alt="ASIN 2 左" /></div>
     <div class="pill pill-list asin-left-base row3"><img src="MES-AI-A (1).png" alt="ASIN 3 左" /></div>
@@ -133,7 +125,7 @@
     <div class="pill pill-list asin-left-base row9"><img src="MES-AI-A (1).png" alt="ASIN 9 左" /></div>
     <div class="pill pill-list asin-left-base row10"><img src="MES-AI-A (1).png" alt="ASIN 10 左" /></div>
 
-    <!-- ── 下部 ASIN抽出 右列×10 ── -->
+    <!-- 下段：ASIN 右列×10 -->
     <div class="pill pill-list asin-right-base row1"><img src="MES-AI-A (1).png" alt="ASIN 1 右" /></div>
     <div class="pill pill-list asin-right-base row2"><img src="MES-AI-A (1).png" alt="ASIN 2 右" /></div>
     <div class="pill pill-list asin-right-base row3"><img src="MES-AI-A (1).png" alt="ASIN 3 右" /></div>
