@@ -14,96 +14,99 @@
       margin: 0;
       padding: 0;
       background-color: #93dee0;
+      height: 100vh;
+      overflow: hidden;
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+
+    /* 画面全体を1枚キャンバスとして使う */
+    .wrapper {
+      width: 100%;
+      height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 100vh;
-      overflow: hidden;
-      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
     }
 
     .container {
       position: relative;
       width: 100%;
-      max-width: 420px;
-      text-align: center;
+      max-width: 430px;      /* スマホ〜タブレットでの見え方を安定させる */
+      height: 100%;
     }
 
-    /* 背景アニメーション */
+    /* 背景GIFを全面に敷く */
     .bg {
       width: 100%;
-      height: auto;
+      height: 100%;
       display: block;
-      border-radius: 8px;
+      object-fit: cover;     /* キャンバスにフィット */
     }
 
-    /* タイトルGIF */
+    /* タイトル：中央より少し上 */
     .title {
-      width: 75%;
       position: absolute;
-      top: 28%;
+      top: 32%;              /* ここで縦位置を調整（参考スクショに近づけ済み） */
       left: 50%;
       transform: translateX(-50%);
+      width: 80%;
+      max-width: 320px;
+      pointer-events: none;
       display: block;
-      pointer-events: none; /* タイトルはクリック無効 */
     }
 
-    /* STARTボタン画像 */
+    /* STARTボタンの見た目：タイトルの少し下 */
     .start-img {
-      width: 65%;
-      display: block;
-      margin: 0 auto;
       position: absolute;
-      bottom: 18%;
+      top: 57%;              /* STARTの縦位置（スクショに近づけるためここを変更） */
       left: 50%;
       transform: translateX(-50%);
-      pointer-events: none; /* 見た目だけ担当 */
+      width: 55%;
+      max-width: 260px;
+      pointer-events: none;  /* 見た目だけにしてクリックは透明ボタンに任せる */
+      display: block;
     }
 
-    /* 見た目は出さないクリック用の透明ボタン */
+    /* STARTの当たり判定（透明ボタン） */
     .start-hit {
       position: absolute;
-      bottom: 18%;
+      top: 57%;
       left: 50%;
-      transform: translateX(-50%);
-      width: 65%;
-      height: 60px; /* STARTボタンを覆う高さ。必要なら微調整 */
+      transform: translate(-50%, -50%);
+      width: 55%;
+      max-width: 260px;
+      height: 60px;          /* ボタン縦サイズ。大きすぎ/小さすぎならここを微調整 */
       cursor: pointer;
       background: transparent;
       border: none;
-      padding: 0;
     }
 
     .start-hit:focus {
       outline: none;
     }
-
-    @media (min-width: 768px) {
-      .container {
-        max-width: 500px;
-      }
-    }
   </style>
 </head>
 
 <body>
-  <div class="container">
-    <!-- 背景GIF（グニャグニャしたやつ） -->
-    <img src="MES-AI-A (2).gif" alt="背景" class="bg" />
+  <div class="wrapper">
+    <div class="container">
+      <!-- 背景アニメーション -->
+      <img src="MES-AI-A (2).gif" alt="背景" class="bg" />
 
-    <!-- タイトルGIF -->
-    <img src="MES-AI-A (1).gif" alt="MES-AI-A DEMO" class="title" />
+      <!-- MES-AI-A DEMO タイトル -->
+      <img src="MES-AI-A (1).gif" alt="MES-AI-A DEMO" class="title" />
 
-    <!-- STARTボタンの見た目 -->
-    <img src="MES-AI-A.png" alt="START" class="start-img" />
+      <!-- STARTボタン（見た目） -->
+      <img src="MES-AI-A.png" alt="START" class="start-img" />
 
-    <!-- STARTボタンの当たり判定（透明） -->
-    <button class="start-hit" id="startButton" aria-label="デモを開始する"></button>
+      <!-- STARTボタン（透明のクリック領域） -->
+      <button class="start-hit" id="startButton" aria-label="デモを開始する"></button>
+    </div>
   </div>
 
   <script>
+    // START押下で2ページ目へ遷移
     document.getElementById("startButton").addEventListener("click", function () {
-      // 2ページ目へ遷移
       window.location.href = "page2.html";
     });
   </script>
