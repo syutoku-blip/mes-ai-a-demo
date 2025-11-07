@@ -6,21 +6,25 @@
   <title>MES-AI-A デモ - Page 3</title>
 
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
       padding: 0;
       width: 100vw;
       height: 100vh;
-      overflow: hidden;
-      background-color: #93dee0;
+      overflow-y: auto;
+      /* 上はブルー → 下で #f8e088 に変わるグラデーション */
+      background: linear-gradient(
+        to bottom,
+        #93dee0 0%,
+        #93dee0 60%,
+        #f8e088 100%
+      );
+      font-family: "花風テクノ", system-ui, -apple-system, "Segoe UI", sans-serif;
       display: flex;
       justify-content: center;
-      align-items: center;
-      font-family: "花風テクノ", system-ui, -apple-system, "Segoe UI", sans-serif;
+      align-items: flex-start;
     }
 
     .frame {
@@ -29,6 +33,7 @@
       max-width: 420px;
       aspect-ratio: 9 / 16;
       overflow: hidden;
+      margin-top: 20px;
     }
 
     .stage1 {
@@ -40,7 +45,7 @@
       z-index: 0;
     }
 
-    /* ドラッグする紫ボタン本体 */
+    /* ===== ドラッグする紫ボタン ===== */
     .seller-pill {
       position: absolute;
       left: 50%;
@@ -62,48 +67,45 @@
       transition: left 0.2s ease, top 0.2s ease, width 0.2s ease, opacity 0.2s ease;
       white-space: nowrap;
     }
+    .seller-pill:active { cursor: grabbing; }
 
-    .seller-pill:active {
-      cursor: grabbing;
-    }
+    /* ★ 初期位置：2つ目を少し上にして枠内に入れる */
+    .pill-a { top: 39%; }
+    .pill-b { top: 44%; }
 
-    /* 初期位置を少し下げる */
-    .pill-a { top: 41%; }
-    .pill-b { top: 47%; }
-
-    /* グレー枠とだいたい同じ位置＆サイズのスロット */
+    /* ===== グレー枠に対応するスロット ===== */
     .drop-slot {
       position: absolute;
-      height: 4.2%;          /* 縦幅を細く（グレー長丸っぽく） */
+      height: 3.8%;          /* 縦幅を少し細く（グレーに近づける） */
       border-radius: 999px;
       z-index: 1;
       pointer-events: none;
       background: transparent;
-      /* 位置調整時だけオンにすると分かりやすい
+      /* 調整したいときだけガイドを表示
       outline: 1px dashed magenta;
       */
     }
 
-    /* 左右のスロット位置 ― 「もっと左＋ちょい上」調整版 */
+    /* ★ 位置＆幅を再調整：少し左寄せ＆グレーに寄せる */
     .slot-left {
-      top: 58.5%;  /* ちょい上 */
-      left: 11%;   /* ちょい左 */
-      width: 25%;  /* 幅も少しだけ詰める */
+      top: 59.2%;   /* ほんの少しだけ下げ気味に */
+      left: 14%;    /* 左に寄せる */
+      width: 26%;   /* 幅をグレーに近づける */
     }
 
     .slot-right {
-      top: 58.5%;
-      left: 58%;   /* 右も少し左寄せに */
-      width: 25%;
+      top: 59.2%;
+      left: 60%;    /* 右も内側へ */
+      width: 26%;
     }
 
-    /* スロット上に乗っているときのガイド */
+    /* スロットの上にいる時のハイライト */
     .drop-slot.slot-hover {
       box-shadow: 0 0 0 2px rgba(255, 0, 255, 0.6);
       background: rgba(255, 0, 255, 0.12);
     }
 
-    /* はめ込んだあとの残像 */
+    /* ===== はめ込んだあとの残像（グレー→紫に置き換わる部分） ===== */
     .slot-ghost {
       position: absolute;
       inset: 0;
@@ -113,9 +115,9 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 11px;       /* 少し小さくして文字切れ防止 */
-      letter-spacing: 0.06em;
-      padding: 0 6px;        /* 左右に少し余白 */
+      font-size: 10px;       /* 小さめにして文字切れ防止 */
+      letter-spacing: 0.05em;
+      padding: 0 4px;        /* パディングも少しだけに */
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -127,19 +129,29 @@
     .drop-slot.slot-filled .slot-ghost {
       opacity: 1;
     }
+
+    /* ===== 下に追加する画像（黄色側のエリア） ===== */
+    .bottom-image {
+      width: 100%;
+      max-width: 420px;
+      display: block;
+      margin: 40px auto 80px auto;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
   </style>
 </head>
 
 <body>
   <div class="frame">
-    <!-- 背景 -->
+    <!-- 背景GIF -->
     <img src="MES-AI-A (8).gif" alt="STAGE1 セラーIDからASINを一括抽出" class="stage1" />
 
-    <!-- ドラッグする紫のセラーIDボタン -->
+    <!-- ドラッグするセラーID -->
     <div class="seller-pill pill-a" data-id="A1">A1EXAMP1E2345</div>
     <div class="seller-pill pill-b" data-id="B2">B2EXAMP1E3456</div>
 
-    <!-- グレー長丸の位置に対応するスロット -->
+    <!-- グレー枠に対応するスロット -->
     <div class="drop-slot slot-left" data-slot="left">
       <div class="slot-ghost"></div>
     </div>
@@ -148,12 +160,15 @@
     </div>
   </div>
 
+  <!-- 下に表示したい画像（ファイル名は差し替えてOK） -->
+  <img src="YOUR-IMAGE.png" alt="下部イメージ" class="bottom-image" />
+
   <script>
     const frame  = document.querySelector('.frame');
     const pills  = document.querySelectorAll('.seller-pill');
     const slots  = document.querySelectorAll('.drop-slot');
 
-    // ピルごとの初期位置・幅を保存
+    // ピルの初期位置・幅を保存
     const pillState = {};
     pills.forEach(pill => {
       const style = getComputedStyle(pill);
@@ -165,8 +180,7 @@
     });
 
     let activePill = null;
-    let offsetX = 0;
-    let offsetY = 0;
+    let offsetX = 0, offsetY = 0;
 
     function clearHover() {
       slots.forEach(s => s.classList.remove('slot-hover'));
@@ -174,8 +188,7 @@
 
     function onPointerDown(e) {
       const pill = e.currentTarget;
-      if (pill.dataset.locked === "1") return; // もうはめたやつは動かさない
-
+      if (pill.dataset.locked === "1") return;
       activePill = pill;
       const rect = pill.getBoundingClientRect();
       offsetX = e.clientX - rect.left;
@@ -191,7 +204,6 @@
       const frameRect = frame.getBoundingClientRect();
       let x = e.clientX - frameRect.left - offsetX;
       let y = e.clientY - frameRect.top  - offsetY;
-
       const maxX = frameRect.width  - activePill.offsetWidth;
       const maxY = frameRect.height - activePill.offsetHeight;
       x = Math.max(0, Math.min(maxX, x));
@@ -201,7 +213,6 @@
       activePill.style.top  = y + 'px';
       activePill.style.transform = 'none';
 
-      // スロットの上にいるかどうか
       clearHover();
       const pillRect    = activePill.getBoundingClientRect();
       const pillCenterX = pillRect.left + pillRect.width  / 2;
@@ -209,12 +220,8 @@
 
       slots.forEach(slot => {
         const r = slot.getBoundingClientRect();
-        if (
-          pillCenterX > r.left  &&
-          pillCenterX < r.right &&
-          pillCenterY > r.top   &&
-          pillCenterY < r.bottom
-        ) {
+        if (pillCenterX > r.left && pillCenterX < r.right &&
+            pillCenterY > r.top  && pillCenterY < r.bottom) {
           slot.classList.add('slot-hover');
         }
       });
@@ -224,43 +231,36 @@
       if (!activePill) return;
 
       activePill.releasePointerCapture(e.pointerId);
-
       const pillRect    = activePill.getBoundingClientRect();
       const pillCenterX = pillRect.left + pillRect.width  / 2;
       const pillCenterY = pillRect.top  + pillRect.height / 2;
       const frameRect   = frame.getBoundingClientRect();
-
       let snapped = false;
 
       slots.forEach(slot => {
         const r = slot.getBoundingClientRect();
 
-        if (
-          pillCenterX > r.left  &&
-          pillCenterX < r.right &&
-          pillCenterY > r.top   &&
-          pillCenterY < r.bottom
-        ) {
-          // スロットの中心座標
-          const centerX = r.left + r.width  / 2 - frameRect.left;
+        if (pillCenterX > r.left && pillCenterX < r.right &&
+            pillCenterY > r.top  && pillCenterY < r.bottom) {
+
+          const centerX = r.left + r.width / 2 - frameRect.left;
           const centerY = r.top  + r.height / 2 - frameRect.top;
 
           activePill.style.transition =
             'left 0.2s ease, top 0.2s ease, width 0.2s ease, opacity 0.2s ease';
 
-          // 幅をスロットに合わせて縮め、中心に合わせる
+          // スロット幅に合わせて縮めて中央に吸い込む
           activePill.style.width = r.width + 'px';
           activePill.style.left  = centerX - r.width / 2 + 'px';
           activePill.style.top   = centerY - activePill.offsetHeight / 2 + 'px';
           activePill.style.transform = 'none';
           activePill.style.opacity = '0';
 
-          // 残像用のゴーストにテキストをセット
+          // ゴーストに文字を表示（グレーが紫に置き換わったように見える）
           const ghost = slot.querySelector('.slot-ghost');
           ghost.textContent = activePill.textContent;
           slot.classList.add('slot-filled');
 
-          // 吸い込み完了後に本体を消してロック
           setTimeout(() => {
             activePill.style.display = 'none';
             activePill.dataset.locked = "1";
@@ -273,11 +273,10 @@
         }
       });
 
-      // どのスロットにも乗ってない → 元の位置に戻す
+      // どこにもはまらなかった → 元の位置へ戻す
       if (!snapped) {
         const id    = activePill.dataset.id;
         const state = pillState[id];
-
         activePill.style.transition =
           'left 0.2s ease, top 0.2s ease, width 0.2s ease, opacity 0.2s ease';
         activePill.style.top       = state.top;
