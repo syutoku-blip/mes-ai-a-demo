@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>MES-AI-A デモ</title>
+  <title>MES-AI-A デモ - Page 1</title>
 
   <style>
     * {
@@ -18,8 +18,8 @@
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      font-family: "Press Start 2P", monospace;
       overflow: hidden;
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
     }
 
     .container {
@@ -29,7 +29,7 @@
       text-align: center;
     }
 
-    /* 背景GIF */
+    /* 背景アニメーション */
     .bg {
       width: 100%;
       height: auto;
@@ -45,21 +45,37 @@
       left: 50%;
       transform: translateX(-50%);
       display: block;
+      pointer-events: none; /* タイトルはクリック無効 */
     }
 
-    /* STARTボタン（クリック可能） */
-    .start-btn {
+    /* STARTボタン画像 */
+    .start-img {
       width: 65%;
+      display: block;
+      margin: 0 auto;
       position: absolute;
       bottom: 18%;
       left: 50%;
       transform: translateX(-50%);
-      cursor: pointer;
-      transition: transform 0.1s ease;
+      pointer-events: none; /* 見た目だけ担当 */
     }
 
-    .start-btn:hover {
-      transform: translateX(-50%) scale(1.05);
+    /* 見た目は出さないクリック用の透明ボタン */
+    .start-hit {
+      position: absolute;
+      bottom: 18%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 65%;
+      height: 60px; /* STARTボタンを覆う高さ。必要なら微調整 */
+      cursor: pointer;
+      background: transparent;
+      border: none;
+      padding: 0;
+    }
+
+    .start-hit:focus {
+      outline: none;
     }
 
     @media (min-width: 768px) {
@@ -72,24 +88,23 @@
 
 <body>
   <div class="container">
-    <!-- 背景アニメーション -->
+    <!-- 背景GIF（グニャグニャしたやつ） -->
     <img src="MES-AI-A (2).gif" alt="背景" class="bg" />
 
-    <!-- タイトル -->
-    <img src="MES-AI-A (1).gif" alt="タイトル" class="title" />
+    <!-- タイトルGIF -->
+    <img src="MES-AI-A (1).gif" alt="MES-AI-A DEMO" class="title" />
 
-    <!-- STARTボタン -->
-    <a href="#" id="start-link">
-      <img src="MES-AI-A.png" alt="STARTボタン" class="start-btn" />
-    </a>
+    <!-- STARTボタンの見た目 -->
+    <img src="MES-AI-A.png" alt="START" class="start-img" />
+
+    <!-- STARTボタンの当たり判定（透明） -->
+    <button class="start-hit" id="startButton" aria-label="デモを開始する"></button>
   </div>
 
   <script>
-    // STARTボタンクリック時のアクション（ここに遷移先を指定）
-    document.getElementById("start-link").addEventListener("click", function (e) {
-      e.preventDefault();
-      // 例: ページ遷移
-      window.location.href = "https://syutoku-blip.github.io/mes-ai-a-demo/stage1.html";
+    document.getElementById("startButton").addEventListener("click", function () {
+      // 2ページ目へ遷移
+      window.location.href = "page2.html";
     });
   </script>
 </body>
