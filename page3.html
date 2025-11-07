@@ -22,7 +22,6 @@
         #f8e088 100%
       );
       font-family: "花風テクノ", system-ui, -apple-system, "Segoe UI", sans-serif;
-      /* flex解除：縦に並べる */
     }
 
     .frame {
@@ -74,7 +73,7 @@
     /* ===== グレー枠に対応するスロット ===== */
     .drop-slot {
       position: absolute;
-      height: 3.8%;          /* 縦幅を少し細く（グレーに近づける） */
+      height: 3.8%;          
       border-radius: 999px;
       z-index: 1;
       pointer-events: none;
@@ -156,7 +155,7 @@
   </div>
 
   <!-- 下にスクロールで出る部分 -->
-  <img src="YOUR-IMAGE.png" alt="下部イメージ" class="bottom-image" />
+  <img src="セラーIDをコピーしてここに貼り付け！ (4).gif" alt="下部イメージ" class="bottom-image" />
 
   <script>
     const frame  = document.querySelector('.frame');
@@ -244,14 +243,12 @@
           activePill.style.transition =
             'left 0.2s ease, top 0.2s ease, width 0.2s ease, opacity 0.2s ease';
 
-          // スロット幅に合わせて縮めて中央に吸い込む
           activePill.style.width = r.width + 'px';
           activePill.style.left  = centerX - r.width / 2 + 'px';
           activePill.style.top   = centerY - activePill.offsetHeight / 2 + 'px';
           activePill.style.transform = 'none';
           activePill.style.opacity = '0';
 
-          // ゴーストに文字を表示
           const ghost = slot.querySelector('.slot-ghost');
           ghost.textContent = activePill.textContent;
           slot.classList.add('slot-filled');
@@ -268,7 +265,6 @@
         }
       });
 
-      // はまらなかった → 元の位置へ戻す
       if (!snapped) {
         const id    = activePill.dataset.id;
         const state = pillState[id];
