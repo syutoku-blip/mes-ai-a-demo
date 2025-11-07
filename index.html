@@ -50,8 +50,8 @@
     /* STARTボタン画像（下） */
     .start-img {
       position: absolute;
-      left: 53%;             /* ← 中央から少し右へ（デフォ50%→53%） */
-      top: 55%;              /* ← 少し上に（デフォ58%→55%） */
+      left: 55%;              /* ← 右に少し移動（前回53%→55%） */
+      top: 53%;               /* ← 少し上（前回55%→53%） */
       transform: translateX(-50%);
       width: 55%;
       max-width: 260px;
@@ -59,17 +59,17 @@
       pointer-events: none;
     }
 
-    /* 透明クリックエリア */
+    /* 透明クリックエリア（画像とぴったり合わせ） */
     .start-hit {
       position: absolute;
-      left: 53%;             /* ← GIFに合わせて右寄せ */
-      top: 55%;              /* ← GIFに合わせて上に */
-      transform: translate(-50%, -50%);
+      left: 55%;              /* GIFと同じ位置に */
+      top: 53%;               /* GIFと同じ位置に */
+      transform: translate(-50%, -45%); /* ← 少し下げてぴったり */
       width: 55%;
       max-width: 260px;
-      height: 12%;           /* START画像全体を覆う高さ */
+      height: 12%;            /* START画像全体をカバー */
       z-index: 2;
-      background: rgba(255, 0, 0, 0); /* デバッグ時は 0.1 にして見てもOK */
+      background: transparent;
       border: none;
       cursor: pointer;
     }
