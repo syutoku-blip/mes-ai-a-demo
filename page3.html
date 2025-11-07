@@ -17,131 +17,39 @@
       height: 100vh;
       overflow: hidden;
       background-color: #93dee0; /* いつものブルー */
-      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
       display: flex;
       justify-content: center;
       align-items: center;
     }
 
-    /* STAGE1用の「キャンバス」 */
-    .frame {
+    .page {
       position: relative;
       width: 100vw;
-      max-width: 420px;
-      aspect-ratio: 9 / 16;   /* STAGE1画像と同じ縦横比 */
+      height: 100vh;
       overflow: hidden;
     }
 
-    /* 背景 STAGE1 画像 */
+    /* MES-AI-A (8).gif を画面いっぱいに表示 */
     .stage1 {
       position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;      /* frameいっぱいにフィット */
-      z-index: 0;
-    }
-
-    /* 共通ベース：楕円 */
-    .pill {
-      position: absolute;
-      z-index: 2;
-    }
-
-    /* 上段：セラーID貼り付け用（右端のラベルと同じ高さ感） */
-    .pill-top {
-      width: 24%;
-      max-width: 130px;
-    }
-    .pill-top img {
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 100vw;
+      height: 100vh;
+      object-fit: contain;  /* 比率を保ちながら最大表示 */
       display: block;
-      width: 100%;
-      height: auto;
     }
-
-    /* 下段：ASINリスト用（少し長め） */
-    .pill-list {
-      width: 32%;
-      max-width: 180px;
-    }
-    .pill-list img {
-      display: block;
-      width: 100%;
-      height: auto;
-    }
-
-    /* ───────────────
-       上部：セラーID貼り付け 2つ
-       （白い帯の中に3つ横並びになるよう調整）
-    ─────────────── */
-    .seller-left {
-      top: 57%;   /* 貼り付けカードの白帯中心あたり */
-      left: 27%;  /* 左側 */
-    }
-    .seller-right {
-      top: 57%;
-      left: 50%;  /* 真ん中付近（右端ラベルとのバランス） */
-    }
-
-    /* ───────────────
-       下部：セラーASIN抽出 2列×10段
-       frame（STAGE1画像）の中での相対位置
-    ─────────────── */
-    .asin-left-base  { left: 30%; }
-    .asin-right-base { left: 60%; }
-
-    /* 上から順に等間隔（だいたい参考画像どおり） */
-    .row1  { top: 67%; }
-    .row2  { top: 70%; }
-    .row3  { top: 73%; }
-    .row4  { top: 76%; }
-    .row5  { top: 79%; }
-    .row6  { top: 82%; }
-    .row7  { top: 85%; }
-    .row8  { top: 88%; }
-    .row9  { top: 91%; }
-    .row10 { top: 94%; }
   </style>
 </head>
 
 <body>
-  <div class="frame">
-    <!-- STAGE1 全体画像 -->
-    <img src="MES-AI-A (8).gif"
-         alt="STAGE1 セラーIDからASINを一括抽出"
-         class="stage1" />
-
-    <!-- ── 上段：セラーID貼り付け 2つ ── -->
-    <div class="pill pill-top seller-left">
-      <img src="MES-AI-A (1).png" alt="セラーID入力欄 左" />
-    </div>
-    <div class="pill pill-top seller-right">
-      <img src="MES-AI-A (1).png" alt="セラーID入力欄 右" />
-    </div>
-
-    <!-- ── 下段：ASIN 左列×10 ── -->
-    <div class="pill pill-list asin-left-base row1"><img src="MES-AI-A (1).png" alt="ASIN 1 左" /></div>
-    <div class="pill pill-list asin-left-base row2"><img src="MES-AI-A (1).png" alt="ASIN 2 左" /></div>
-    <div class="pill pill-list asin-left-base row3"><img src="MES-AI-A (1).png" alt="ASIN 3 左" /></div>
-    <div class="pill pill-list asin-left-base row4"><img src="MES-AI-A (1).png" alt="ASIN 4 左" /></div>
-    <div class="pill pill-list asin-left-base row5"><img src="MES-AI-A (1).png" alt="ASIN 5 左" /></div>
-    <div class="pill pill-list asin-left-base row6"><img src="MES-AI-A (1).png" alt="ASIN 6 左" /></div>
-    <div class="pill pill-list asin-left-base row7"><img src="MES-AI-A (1).png" alt="ASIN 7 左" /></div>
-    <div class="pill pill-list asin-left-base row8"><img src="MES-AI-A (1).png" alt="ASIN 8 左" /></div>
-    <div class="pill pill-list asin-left-base row9"><img src="MES-AI-A (1).png" alt="ASIN 9 左" /></div>
-    <div class="pill pill-list asin-left-base row10"><img src="MES-AI-A (1).png" alt="ASIN 10 左" /></div>
-
-    <!-- ── 下段：ASIN 右列×10 ── -->
-    <div class="pill pill-list asin-right-base row1"><img src="MES-AI-A (1).png" alt="ASIN 1 右" /></div>
-    <div class="pill pill-list asin-right-base row2"><img src="MES-AI-A (1).png" alt="ASIN 2 右" /></div>
-    <div class="pill pill-list asin-right-base row3"><img src="MES-AI-A (1).png" alt="ASIN 3 右" /></div>
-    <div class="pill pill-list asin-right-base row4"><img src="MES-AI-A (1).png" alt="ASIN 4 右" /></div>
-    <div class="pill pill-list asin-right-base row5"><img src="MES-AI-A (1).png" alt="ASIN 5 右" /></div>
-    <div class="pill pill-list asin-right-base row6"><img src="MES-AI-A (1).png" alt="ASIN 6 右" /></div>
-    <div class="pill pill-list asin-right-base row7"><img src="MES-AI-A (1).png" alt="ASIN 7 右" /></div>
-    <div class="pill pill-list asin-right-base row8"><img src="MES-AI-A (1).png" alt="ASIN 8 右" /></div>
-    <div class="pill pill-list asin-right-base row9"><img src="MES-AI-A (1).png" alt="ASIN 9 右" /></div>
-    <div class="pill pill-list asin-right-base row10"><img src="MES-AI-A (1).png" alt="ASIN 10 右" /></div>
+  <div class="page">
+    <img
+      src="MES-AI-A (8).gif"
+      alt="STAGE1 セラーIDからASINを一括抽出"
+      class="stage1"
+    />
   </div>
 </body>
 </html>
