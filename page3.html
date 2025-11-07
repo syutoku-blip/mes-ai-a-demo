@@ -16,13 +16,14 @@
       width: 100vw;
       height: 100vh;
       overflow: hidden;
-      background-color: #93dee0;
+      background-color: #93dee0; /* いつものブルー */
       display: flex;
       justify-content: center;
       align-items: center;
-      font-family: "花風テクノ", sans-serif; /* 花風テクノ（日本語フォント） */
+      font-family: "花風テクノ", system-ui, -apple-system, "Segoe UI", sans-serif;
     }
 
+    /* 背景＋オーバーレイ用フレーム（9:16） */
     .frame {
       position: relative;
       width: 100vw;
@@ -31,7 +32,7 @@
       overflow: hidden;
     }
 
-    /* 背景GIF */
+    /* 背景 GIF（STAGE1） */
     .stage1 {
       position: absolute;
       inset: 0;
@@ -41,42 +42,50 @@
       z-index: 0;
     }
 
-    /* セラーIDボタン（ドラッグ可） */
+    /* セラーIDボタン（ドラッグ可能） */
     .seller-pill {
       position: absolute;
       left: 50%;
       transform: translateX(-50%);
-      background-color: #16144d; /* 指定カラー */
-      color: #fff;
+      background-color: #16144d;   /* 指定カラー */
+      color: #ffffff;
       padding: 6px 22px;
+      min-width: 70%;
       border-radius: 999px;
       font-weight: 600;
       font-size: 14px;
       text-align: center;
       letter-spacing: 0.08em;
       cursor: grab;
-      z-index: 2;
       user-select: none;
+      z-index: 2;
       box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.25);
+      touch-action: none; /* モバイルドラッグ用 */
     }
 
     .seller-pill:active {
       cursor: grabbing;
     }
 
-    /* 配置調整（セラーIDボックス内に収まるように） */
+    /* ★ 配置：セラーIDカードの中に来るように下げる ★ */
     .pill-a {
-      top: 32.2%;
+      top: 46%;   /* A1 行：カード上部より少し下 */
     }
+
     .pill-b {
-      top: 38.4%;
+      top: 52%;   /* B2 行：その少し下 */
     }
   </style>
 </head>
 
 <body>
   <div class="frame">
-    <img src="MES-AI-A (8).gif" alt="STAGE1" class="stage1" />
+    <!-- 背景 -->
+    <img
+      src="MES-AI-A (8).gif"
+      alt="STAGE1 セラーIDからASINを一括抽出"
+      class="stage1"
+    />
 
     <!-- セラーIDボタン -->
     <div class="seller-pill pill-a">A1EXAMP1E2345</div>
@@ -84,16 +93,17 @@
   </div>
 
   <script>
-    // ドラッグできるようにする
+    // シンプルなドラッグ処理
     const frame = document.querySelector('.frame');
     const pills = document.querySelectorAll('.seller-pill');
+
     let activePill = null;
     let offsetX = 0;
     let offsetY = 0;
 
     pills.forEach(pill => {
       pill.addEventListener('pointerdown', e => {
-        activePill = e.currentTarget;
+        activePill = pill;
         const rect = pill.getBoundingClientRect();
         offsetX = e.clientX - rect.left;
         offsetY = e.clientY - rect.top;
@@ -104,10 +114,10 @@
       pill.addEventListener('pointermove', e => {
         if (!activePill) return;
         const frameRect = frame.getBoundingClientRect();
-        let x = e.clientX - frameRect.left - offsetX;
-        let y = e.clientY - frameRect.top - offsetY;
+        const x = e.clientX - frameRect.left - offsetX;
+        const y = e.clientY - frameRect.top - offsetY;
         activePill.style.left = `${x}px`;
-        activePill.style.top = `${y}px`;
+        activePill.style.top  = `${y}px`;
         activePill.style.transform = 'none';
       });
 
@@ -116,7 +126,14 @@
         activePill.releasePointerCapture(e.pointerId);
         activePill = null;
       });
+
+      pill.addEventListener('pointercancel', e => {
+        if (!activePill) return;
+        activePill.releasePointerCapture(e.pointerId);
+        activePill = null;
+      });
     });
   </script>
 </body>
 </html>
+
