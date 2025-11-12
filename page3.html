@@ -93,16 +93,14 @@
     .drop-slot.slot-preview .slot-ghost { opacity: 0.6; }
     .drop-slot.slot-filled  .slot-ghost { opacity: 1; }
 
-    /* ===== ASIN カラム ===== */
+    /* ===== ASIN カラム（さらに下へ） ===== */
     .asin-column {
       position: absolute;
       width: 23%;
       z-index: 2;
 
-      /* ▼全体をもっと下へ */
-      top: 74%;      /* 64% → 74% */
-      height: 25%;   /* 全体の縦領域を少し狭くしてバランス調整 */
-
+      top: 74%;      /* 下に移動 */
+      height: 25%;   /* 全体高さを少し狭め */
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -158,30 +156,147 @@
 
 <body>
   <div class="frame">
-    <img src="MES-AI-A (8).gif" alt="STAGE1 セラーIDからASINを一括抽出" class="stage1" />
+    <img src="MES-AI-A (8).gif" class="stage1" />
 
-    <div class="seller-pill pill-a" data-id="A1">A1EXAMP1E2345</div>
-    <div class="seller-pill pill-b" data-id="B2">B2EXAMP1E3456</div>
+    <!-- ドラッグするセラーID -->
+    <div class="seller-pill pill-a" data-id="A1" data-locked="0">A1EXAMP1E2345</div>
+    <div class="seller-pill pill-b" data-id="B2" data-locked="0">B2EXAMP1E3456</div>
 
+    <!-- スロット -->
     <div class="drop-slot slot-left" data-slot="left"><div class="slot-ghost"></div></div>
     <div class="drop-slot slot-right" data-slot="right"><div class="slot-ghost"></div></div>
 
-    <!-- ASIN 表示（左） -->
+    <!-- ASIN 表示 -->
     <div class="asin-column asin-column-left" data-slot-column="left">
-      <div class="asin-pill"></div><div class="asin-pill"></div><div class="asin-pill"></div><div class="asin-pill"></div><div class="asin-pill"></div>
-      <div class="asin-pill"></div><div class="asin-pill"></div><div class="asin-pill"></div><div class="asin-pill"></div><div class="asin-pill"></div>
+      ${[...Array(10)].map(()=>'<div class="asin-pill"></div>').join('')}
     </div>
-
-    <!-- ASIN 表示（右） -->
     <div class="asin-column asin-column-right" data-slot-column="right">
-      <div class="asin-pill"></div><div class="asin-pill"></div><div class="asin-pill"></div><div class="asin-pill"></div><div class="asin-pill"></div>
-      <div class="asin-pill"></div><div class="asin-pill"></div><div class="asin-pill"></div><div class="asin-pill"></div><div class="asin-pill"></div>
+      ${[...Array(10)].map(()=>'<div class="asin-pill"></div>').join('')}
     </div>
   </div>
 
-  <img src="セラーIDをコピーしてここに貼り付け！ (4).gif" alt="ガイド" class="guide-image" />
+  <img src="セラーIDをコピーしてここに貼り付け！ (4).gif" class="guide-image" />
   <div class="stage2-frame">
-    <img src="MES-AI-A (9).gif" alt="STAGE2 取得したASINをリサーチ" class="stage2-image" />
+    <img src="MES-AI-A (9).gif" class="stage2-image" />
   </div>
+
+  <script>
+    const frame = document.querySelector('.frame');
+    const pills = document.querySelectorAll('.seller-pill');
+    const slots = document.querySelectorAll('.drop-slot');
+
+    const pillState = {};
+    pills.forEach(p => {
+      const s = getComputedStyle(p);
+      pillState[p.dataset.id] = { top: s.top, left: s.left, width: s.width };
+    });
+
+    let active = null, offsetX = 0, offsetY = 0, preview = null;
+
+    function clearPreview() {
+      slots.forEach(s => {
+        if (!s.classList.contains('slot-filled')) {
+          s.classList.remove('slot-preview');
+          s.querySelector('.slot-ghost').textContent = '';
+        }
+      });
+      preview = null;
+      if (active) active.style.opacity = '1';
+    }
+
+    function onDown(e) {
+      const pill = e.currentTarget;
+      if (pill.dataset.locked === "1") return;
+      active = pill;
+      const r = pill.getBoundingClientRect();
+      offsetX = e.clientX - r.left;
+      offsetY = e.clientY - r.top;
+      pill.setPointerCapture(e.pointerId);
+      pill.style.transition = 'none';
+      clearPreview();
+    }
+
+    function onMove(e) {
+      if (!active) return;
+      const frameRect = frame.getBoundingClientRect();
+      let x = e.clientX - frameRect.left - offsetX;
+      let y = e.clientY - frameRect.top - offsetY;
+      active.style.left = `${Math.max(0, Math.min(x, frameRect.width - active.offsetWidth))}px`;
+      active.style.top  = `${Math.max(0, Math.min(y, frameRect.height - active.offsetHeight))}px`;
+      active.style.transform = 'none';
+
+      const cX = e.clientX, cY = e.clientY;
+      let found = null;
+      slots.forEach(s => {
+        const r = s.getBoundingClientRect();
+        if (cX > r.left && cX < r.right && cY > r.top && cY < r.bottom) found = s;
+      });
+
+      if (found && !found.classList.contains('slot-filled')) {
+        if (preview !== found) {
+          clearPreview();
+          preview = found;
+          found.classList.add('slot-preview');
+          found.querySelector('.slot-ghost').textContent = active.textContent;
+          active.style.opacity = '0';
+        }
+      } else clearPreview();
+    }
+
+    function onUp(e) {
+      if (!active) return;
+      active.releasePointerCapture(e.pointerId);
+      const cX = e.clientX, cY = e.clientY;
+      let placed = false;
+
+      slots.forEach(s => {
+        const r = s.getBoundingClientRect();
+        if (cX > r.left && cX < r.right && cY > r.top && cY < r.bottom) {
+          s.classList.add('slot-filled');
+          s.querySelector('.slot-ghost').textContent = active.textContent;
+          active.style.display = 'none';
+          active.dataset.locked = "1";
+          placed = true;
+        }
+      });
+
+      if (!placed) {
+        const s = pillState[active.dataset.id];
+        active.style.transition = 'all 0.2s ease';
+        active.style.top = s.top;
+        active.style.left = s.left;
+        active.style.width = s.width;
+        active.style.opacity = '1';
+        active.style.display = 'block';
+        active.dataset.locked = "0";
+      }
+
+      clearPreview();
+      active = null;
+    }
+
+    pills.forEach(p => {
+      p.addEventListener('pointerdown', onDown);
+      p.addEventListener('pointermove', onMove);
+      p.addEventListener('pointerup', onUp);
+      p.addEventListener('pointercancel', onUp);
+    });
+
+    // スロットクリックで解除
+    slots.forEach(s => {
+      s.addEventListener('click', () => {
+        const id = Object.keys(pillState).find(k => s.querySelector('.slot-ghost').textContent.includes(k));
+        if (!id) return;
+        const pill = document.querySelector(`[data-id="${id}"]`);
+        if (!pill) return;
+        pill.style.display = 'block';
+        pill.dataset.locked = "0";
+        const ps = pillState[id];
+        pill.style.top = ps.top; pill.style.left = ps.left;
+        s.classList.remove('slot-filled','slot-preview');
+        s.querySelector('.slot-ghost').textContent = '';
+      });
+    });
+  </script>
 </body>
 </html>
