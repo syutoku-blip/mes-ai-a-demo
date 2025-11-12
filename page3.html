@@ -102,15 +102,15 @@
       z-index: 2;
     }
 
-    /* ★さらに下へ（背景のグレー楕円に近づける） */
-    .asin-column-left  { left: 10.5%; top: 68%; }
-    .asin-column-right { left: 39.5%; top: 68%; }
+    /* ★さらに下へ配置（グレー楕円に近づけ） */
+    .asin-column-left  { left: 10.5%; top: 72%; }   /* 68% → 72% */
+    .asin-column-right { left: 39.5%; top: 72%; }   /* 68% → 72% */
 
     .asin-pill {
       width: 100%;
-      height: 2.0%;
+      height: 1.8%;          /* 少し低く */
       border-radius: 999px;
-      margin-bottom: 2.4%;
+      margin-bottom: 3.4%;   /* 間隔広げ */
       background: transparent;
       display: flex;
       align-items: center;
@@ -123,6 +123,7 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
+
     .asin-pill.filled {
       background-color: #ac5e7e;
       color: #fff;
@@ -197,7 +198,7 @@
     <img src="MES-AI-A (9).gif" alt="STAGE2 取得したASINをリサーチ" class="stage2-image" />
   </div>
 
-  <!-- ★ASINデータを外部ファイルから読み込み（asinDataSheet が定義されている） -->
+  <!-- ★ASINデータを外部ファイルから読み込み -->
   <script src="asin-data.js"></script>
 
   <script>
@@ -310,7 +311,7 @@
           const ghost = foundSlot.querySelector('.slot-ghost');
           ghost.textContent = activePill.textContent;
           foundSlot.classList.add('slot-preview');
-          activePill.style.opacity = '0';  // ← ピルを消して残像だけ
+          activePill.style.opacity = '0';
         }
       } else {
         clearPreview();
@@ -371,7 +372,7 @@
       p.addEventListener('pointercancel',onPointerUp);
     });
 
-    // スロットクリックで初期位置に戻す（ドラッグでは戻さない）
+    // スロットクリックで初期位置に戻す
     slots.forEach(slot => {
       slot.addEventListener('click', () => {
         const id = slot.dataset.filledId;
