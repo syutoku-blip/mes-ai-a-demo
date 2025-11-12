@@ -18,6 +18,7 @@
       font-family: "花風テクノ", system-ui, -apple-system, "Segoe UI", sans-serif;
     }
 
+    /* ===== STAGE1 ===== */
     .frame {
       position: relative;
       width: 100vw;
@@ -57,7 +58,7 @@
     }
     .seller-pill:active { cursor: grabbing; }
 
-    .pill-a { top: 42%; transform: translateX(-50%); }
+    .pill-a { top: 42%;  transform: translateX(-50%); }
     .pill-b { top: 45.5%; transform: translateX(-52%); }
 
     /* ===== スロット（貼り付け位置） ===== */
@@ -89,18 +90,19 @@
       opacity: 0;
       transition: opacity 0.2s ease;
     }
-
     .drop-slot.slot-preview .slot-ghost { opacity: 0.6; }
     .drop-slot.slot-filled  .slot-ghost { opacity: 1; }
 
-    /* ===== ASIN カラム（さらに下へ） ===== */
+    /* ===== ASIN カラム ===== */
     .asin-column {
       position: absolute;
       width: 23%;
       z-index: 2;
 
-      top: 74%;      /* 下に移動 */
-      height: 25%;   /* 全体高さを少し狭め */
+      /* ↓ピンクセル全体をもっと下へ */
+      top: 70%;       /* ←元は64% */
+      height: 24%;    /* ←元は27% */
+
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -156,29 +158,52 @@
 
 <body>
   <div class="frame">
-    <img src="MES-AI-A (8).gif" class="stage1" />
+    <img src="MES-AI-A (8).gif" alt="STAGE1 セラーIDからASINを一括抽出" class="stage1" />
 
     <!-- ドラッグするセラーID -->
-    <div class="seller-pill pill-a" data-id="A1" data-locked="0">A1EXAMP1E2345</div>
-    <div class="seller-pill pill-b" data-id="B2" data-locked="0">B2EXAMP1E3456</div>
+    <div class="seller-pill pill-a" data-id="A1">A1EXAMP1E2345</div>
+    <div class="seller-pill pill-b" data-id="B2">B2EXAMP1E3456</div>
 
     <!-- スロット -->
     <div class="drop-slot slot-left" data-slot="left"><div class="slot-ghost"></div></div>
     <div class="drop-slot slot-right" data-slot="right"><div class="slot-ghost"></div></div>
 
-    <!-- ASIN 表示 -->
+    <!-- ASIN 表示（左） -->
     <div class="asin-column asin-column-left" data-slot-column="left">
-      ${[...Array(10)].map(()=>'<div class="asin-pill"></div>').join('')}
+      <div class="asin-pill" data-index="0"></div>
+      <div class="asin-pill" data-index="1"></div>
+      <div class="asin-pill" data-index="2"></div>
+      <div class="asin-pill" data-index="3"></div>
+      <div class="asin-pill" data-index="4"></div>
+      <div class="asin-pill" data-index="5"></div>
+      <div class="asin-pill" data-index="6"></div>
+      <div class="asin-pill" data-index="7"></div>
+      <div class="asin-pill" data-index="8"></div>
+      <div class="asin-pill" data-index="9"></div>
     </div>
+
+    <!-- ASIN 表示（右） -->
     <div class="asin-column asin-column-right" data-slot-column="right">
-      ${[...Array(10)].map(()=>'<div class="asin-pill"></div>').join('')}
+      <div class="asin-pill" data-index="0"></div>
+      <div class="asin-pill" data-index="1"></div>
+      <div class="asin-pill" data-index="2"></div>
+      <div class="asin-pill" data-index="3"></div>
+      <div class="asin-pill" data-index="4"></div>
+      <div class="asin-pill" data-index="5"></div>
+      <div class="asin-pill" data-index="6"></div>
+      <div class="asin-pill" data-index="7"></div>
+      <div class="asin-pill" data-index="8"></div>
+      <div class="asin-pill" data-index="9"></div>
     </div>
   </div>
 
-  <img src="セラーIDをコピーしてここに貼り付け！ (4).gif" class="guide-image" />
+  <img src="セラーIDをコピーしてここに貼り付け！ (4).gif" alt="ガイド" class="guide-image" />
   <div class="stage2-frame">
-    <img src="MES-AI-A (9).gif" class="stage2-image" />
+    <img src="MES-AI-A (9).gif" alt="STAGE2 取得したASINをリサーチ" class="stage2-image" />
   </div>
+
+  <!-- ★ASINデータを外部ファイルから読み込み -->
+  <script src="asin-data.js"></script>
 
   <script>
     const frame = document.querySelector('.frame');
@@ -186,115 +211,191 @@
     const slots = document.querySelectorAll('.drop-slot');
 
     const pillState = {};
-    pills.forEach(p => {
-      const s = getComputedStyle(p);
-      pillState[p.dataset.id] = { top: s.top, left: s.left, width: s.width };
+    pills.forEach(pill => {
+      const style = getComputedStyle(pill);
+      pillState[pill.dataset.id] = {
+        top: style.top,
+        left: style.left,
+        width: style.width
+      };
     });
 
-    let active = null, offsetX = 0, offsetY = 0, preview = null;
+    function renderAsinsForSlot(slot, sellerId) {
+      const slotName = slot.dataset.slot;
+      const column = frame.querySelector(`.asin-column[data-slot-column="${slotName}"]`);
+      if (!column) return;
+      const rows = column.querySelectorAll('.asin-pill');
+      const list = asinDataSheet[sellerId] || [];
 
-    function clearPreview() {
-      slots.forEach(s => {
-        if (!s.classList.contains('slot-filled')) {
-          s.classList.remove('slot-preview');
-          s.querySelector('.slot-ghost').textContent = '';
+      rows.forEach((row, i) => {
+        const asin = list[i]?.asin;
+        if (asin) {
+          row.textContent = asin;
+          row.classList.add('filled');
+        } else {
+          row.textContent = '';
+          row.classList.remove('filled');
         }
       });
-      preview = null;
-      if (active) active.style.opacity = '1';
     }
 
-    function onDown(e) {
+    function clearAsins(slot) {
+      const slotName = slot.dataset.slot;
+      const column = frame.querySelector(`.asin-column[data-slot-column="${slotName}"]`);
+      if (!column) return;
+      const rows = column.querySelectorAll('.asin-pill');
+      rows.forEach(row => {
+        row.textContent = '';
+        row.classList.remove('filled');
+      });
+    }
+
+    let activePill = null;
+    let offsetX = 0, offsetY = 0;
+    let currentPreviewSlot = null;
+
+    function clearPreview() {
+      slots.forEach(slot => {
+        if (!slot.classList.contains('slot-filled')) {
+          slot.classList.remove('slot-preview');
+          const ghost = slot.querySelector('.slot-ghost');
+          ghost.textContent = '';
+        }
+      });
+      currentPreviewSlot = null;
+      if (activePill) activePill.style.opacity = '1';
+    }
+
+    function onPointerDown(e) {
       const pill = e.currentTarget;
       if (pill.dataset.locked === "1") return;
-      active = pill;
-      const r = pill.getBoundingClientRect();
-      offsetX = e.clientX - r.left;
-      offsetY = e.clientY - r.top;
+
+      activePill = pill;
+      const rect = pill.getBoundingClientRect();
+      offsetX = e.clientX - rect.left;
+      offsetY = e.clientY - rect.top;
       pill.setPointerCapture(e.pointerId);
       pill.style.transition = 'none';
       clearPreview();
     }
 
-    function onMove(e) {
-      if (!active) return;
+    function onPointerMove(e) {
+      if (!activePill) return;
+
       const frameRect = frame.getBoundingClientRect();
       let x = e.clientX - frameRect.left - offsetX;
-      let y = e.clientY - frameRect.top - offsetY;
-      active.style.left = `${Math.max(0, Math.min(x, frameRect.width - active.offsetWidth))}px`;
-      active.style.top  = `${Math.max(0, Math.min(y, frameRect.height - active.offsetHeight))}px`;
-      active.style.transform = 'none';
+      let y = e.clientY - frameRect.top  - offsetY;
+      x = Math.max(0, Math.min(frameRect.width  - activePill.offsetWidth,  x));
+      y = Math.max(0, Math.min(frameRect.height - activePill.offsetHeight, y));
 
-      const cX = e.clientX, cY = e.clientY;
-      let found = null;
-      slots.forEach(s => {
-        const r = s.getBoundingClientRect();
-        if (cX > r.left && cX < r.right && cY > r.top && cY < r.bottom) found = s;
+      activePill.style.left = x + 'px';
+      activePill.style.top  = y + 'px';
+      activePill.style.transform = 'none';
+
+      const pillRect = activePill.getBoundingClientRect();
+      const pillCenterX = pillRect.left + pillRect.width / 2;
+      const pillCenterY = pillRect.top + pillRect.height / 2;
+
+      let foundSlot = null;
+      slots.forEach(slot => {
+        const r = slot.getBoundingClientRect();
+        if (pillCenterX > r.left && pillCenterX < r.right &&
+            pillCenterY > r.top  && pillCenterY < r.bottom) {
+          foundSlot = slot;
+        }
       });
 
-      if (found && !found.classList.contains('slot-filled')) {
-        if (preview !== found) {
+      if (foundSlot && !foundSlot.classList.contains('slot-filled')) {
+        if (currentPreviewSlot !== foundSlot) {
           clearPreview();
-          preview = found;
-          found.classList.add('slot-preview');
-          found.querySelector('.slot-ghost').textContent = active.textContent;
-          active.style.opacity = '0';
+          currentPreviewSlot = foundSlot;
+          const ghost = foundSlot.querySelector('.slot-ghost');
+          ghost.textContent = activePill.textContent;
+          foundSlot.classList.add('slot-preview');
+          activePill.style.opacity = '0';
         }
-      } else clearPreview();
+      } else {
+        clearPreview();
+      }
     }
 
-    function onUp(e) {
-      if (!active) return;
-      active.releasePointerCapture(e.pointerId);
-      const cX = e.clientX, cY = e.clientY;
-      let placed = false;
+    function onPointerUp(e) {
+      if (!activePill) return;
+      activePill.releasePointerCapture(e.pointerId);
 
-      slots.forEach(s => {
-        const r = s.getBoundingClientRect();
-        if (cX > r.left && cX < r.right && cY > r.top && cY < r.bottom) {
-          s.classList.add('slot-filled');
-          s.querySelector('.slot-ghost').textContent = active.textContent;
-          active.style.display = 'none';
-          active.dataset.locked = "1";
-          placed = true;
+      const pillRect = activePill.getBoundingClientRect();
+      const pillCenterX = pillRect.left + pillRect.width / 2;
+      const pillCenterY = pillRect.top + pillRect.height / 2;
+      let snapped = false;
+
+      slots.forEach(slot => {
+        const r = slot.getBoundingClientRect();
+        if (pillCenterX > r.left && pillCenterX < r.right &&
+            pillCenterY > r.top  && pillCenterY < r.bottom) {
+
+          const sellerId = activePill.textContent.trim();
+          const ghost = slot.querySelector('.slot-ghost');
+          ghost.textContent = sellerId;
+          slot.classList.add('slot-filled');
+          slot.classList.remove('slot-preview');
+          slot.dataset.filledId = activePill.dataset.id;
+
+          activePill.style.opacity = '0';
+          activePill.style.display = 'none';
+          activePill.dataset.locked = "1";
+
+          renderAsinsForSlot(slot, sellerId);
+          snapped = true;
         }
       });
 
-      if (!placed) {
-        const s = pillState[active.dataset.id];
-        active.style.transition = 'all 0.2s ease';
-        active.style.top = s.top;
-        active.style.left = s.left;
-        active.style.width = s.width;
-        active.style.opacity = '1';
-        active.style.display = 'block';
-        active.dataset.locked = "0";
+      if (!snapped) {
+        const id = activePill.dataset.id;
+        const s = pillState[id];
+        activePill.style.transition =
+          'left 0.2s ease, top 0.2s ease, width 0.2s ease, opacity 0.2s ease';
+        activePill.style.top = s.top;
+        activePill.style.left = s.left;
+        activePill.style.width = s.width;
+        activePill.style.opacity = '1';
+        activePill.style.transform =
+          id === 'B2' ? 'translateX(-52%)' : 'translateX(-50%)';
       }
 
       clearPreview();
-      active = null;
+      activePill = null;
     }
 
     pills.forEach(p => {
-      p.addEventListener('pointerdown', onDown);
-      p.addEventListener('pointermove', onMove);
-      p.addEventListener('pointerup', onUp);
-      p.addEventListener('pointercancel', onUp);
+      p.addEventListener('pointerdown', onPointerDown);
+      p.addEventListener('pointermove', onPointerMove);
+      p.addEventListener('pointerup', onPointerUp);
+      p.addEventListener('pointercancel', onPointerUp);
     });
 
-    // スロットクリックで解除
-    slots.forEach(s => {
-      s.addEventListener('click', () => {
-        const id = Object.keys(pillState).find(k => s.querySelector('.slot-ghost').textContent.includes(k));
+    slots.forEach(slot => {
+      slot.addEventListener('click', () => {
+        const id = slot.dataset.filledId;
         if (!id) return;
-        const pill = document.querySelector(`[data-id="${id}"]`);
+        const pill = document.querySelector(`.seller-pill[data-id="${id}"]`);
         if (!pill) return;
+
+        const s = pillState[id];
         pill.style.display = 'block';
+        pill.style.opacity = '1';
         pill.dataset.locked = "0";
-        const ps = pillState[id];
-        pill.style.top = ps.top; pill.style.left = ps.left;
-        s.classList.remove('slot-filled','slot-preview');
-        s.querySelector('.slot-ghost').textContent = '';
+        pill.style.top = s.top;
+        pill.style.left = s.left;
+        pill.style.width = s.width;
+        pill.style.transform =
+          id === 'B2' ? 'translateX(-52%)' : 'translateX(-50%)';
+
+        slot.classList.remove('slot-filled', 'slot-preview');
+        slot.dataset.filledId = '';
+        const ghost = slot.querySelector('.slot-ghost');
+        ghost.textContent = '';
+
+        clearAsins(slot);
       });
     });
   </script>
