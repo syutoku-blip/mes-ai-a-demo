@@ -99,13 +99,13 @@
       width: 23%;
       z-index: 2;
 
-      /* ↓ピンクセル全体をもっと下へ */
-      top: 70%;       /* ←元は64% */
-      height: 24%;    /* ←元は27% */
-
+      /* ★ ピンクセル全体を下げる＆間隔広げる */
+      top: 70%;       /* 全体の開始位置 */
+      height: 28%;    /* 全体の縦幅 */
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      justify-content: flex-start;
+      gap: 8px;       /* ← 縦の間隔（ここで調整。6〜12px推奨） */
     }
 
     .asin-column-left  { left: 10.5%; }
@@ -114,7 +114,7 @@
     .asin-pill {
       width: 100%;
       border-radius: 999px;
-      padding: 2px 0;
+      padding: 3px 0; /* ピルの太さ */
       background: transparent;
       display: flex;
       align-items: center;
