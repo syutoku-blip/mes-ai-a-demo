@@ -93,23 +93,27 @@
     .drop-slot.slot-preview .slot-ghost { opacity: 0.6; }
     .drop-slot.slot-filled  .slot-ghost { opacity: 1; }
 
-    /* ===== ASIN カラム ===== */
+    /* ==========================================================
+       ★★★ ASIN カラム位置（ピンクの部分）を少し変更 ★★★
+       ========================================================== */
     .asin-column {
       position: absolute;
       width: 23%;
       z-index: 2;
 
-      /* ★ 全体を少し上に（68%）調整 */
-      top: 68%;
+      /* ★ 少し下へ（68% → 70%） */
+      top: 70%;
       height: 28%;
+
       display: flex;
       flex-direction: column;
       justify-content: flex-start;
-      gap: 8px; /* 縦の間隔 */
+      gap: 8px;
     }
 
-    .asin-column-left  { left: 10.5%; }
-    .asin-column-right { left: 39.5%; }
+    /* ★ 両方のカラムを少し左へ寄せる */
+    .asin-column-left  { left: 9%; }    /* 10.5% → 9% */
+    .asin-column-right { left: 38%; }   /* 39.5% → 38% */
 
     .asin-pill {
       width: 100%;
