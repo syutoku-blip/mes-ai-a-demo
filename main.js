@@ -495,13 +495,29 @@ function buildInfoGrid(gridEl, ctx, data) {
     const item = document.createElement("div");
     item.className = "info-item";
 
+    // ★表示を「左：項目 / 右：値」に戻す（JS側で行レイアウトを強制）
+    item.style.display = "flex";
+    item.style.alignItems = "center";
+    item.style.justifyContent = "space-between";
+    item.style.gap = "12px";
+
     const k = document.createElement("div");
     k.className = "k";
     k.textContent = f.label;
 
+    // 左側は固定幅気味にして、右を伸ばす
+    k.style.flex = "0 0 42%";
+    k.style.whiteSpace = "nowrap";
+    k.style.overflow = "hidden";
+    k.style.textOverflow = "ellipsis";
+
     const v = document.createElement("div");
     v.className = "v";
     v.textContent = resolveInfoValue(f, ctx, data);
+
+    v.style.flex = "1 1 auto";
+    v.style.textAlign = "right";
+    v.style.wordBreak = "break-word";
 
     item.appendChild(k);
     item.appendChild(v);
@@ -515,33 +531,7 @@ function buildInfoGridSplit(gridA, gridB, ctx, data) {
   const tokens = zoneState.info.slice();
   const mid = Math.ceil(tokens.length / 2);
 
-  gridA.innerHTML = "";
-  gridB = (gridEl, list) => {
-    list.forEach((token) => {
-      const { type, id } = parseToken(token);
-      if (type !== "I") return;
-
-      const f = INFO_BY_ID[id];
-      if (!f) return;
-
-      const item = document.createElement("div");
-      item.className = "info-item";
-
-      const k = document.createElement("div");
-      k.className = "k";
-      k.textContent = f.label;
-
-      const v = document.createElement("div");
-      v.className = "v";
-      v.textContent = resolveInfoValue(f, ctx, data);
-
-      item.appendChild(k);
-      item.appendChild(v);
-      gridEl.appendChild(item);
-    });
-  };
-
-  // 商品情報①（上半分）
+  // 商品情報①（上半分）/②（下半分）
   gridA.innerHTML = "";
   gridB.innerHTML = "";
   const listA = tokens.slice(0, mid);
@@ -559,13 +549,28 @@ function buildInfoGridSplit(gridA, gridB, ctx, data) {
       const item = document.createElement("div");
       item.className = "info-item";
 
+      // ★表示を「左：項目 / 右：値」に戻す（JS側で行レイアウトを強制）
+      item.style.display = "flex";
+      item.style.alignItems = "center";
+      item.style.justifyContent = "space-between";
+      item.style.gap = "12px";
+
       const k = document.createElement("div");
       k.className = "k";
       k.textContent = f.label;
 
+      k.style.flex = "0 0 42%";
+      k.style.whiteSpace = "nowrap";
+      k.style.overflow = "hidden";
+      k.style.textOverflow = "ellipsis";
+
       const v = document.createElement("div");
       v.className = "v";
       v.textContent = resolveInfoValue(f, ctx, data);
+
+      v.style.flex = "1 1 auto";
+      v.style.textAlign = "right";
+      v.style.wordBreak = "break-word";
 
       item.appendChild(k);
       item.appendChild(v);
@@ -614,14 +619,31 @@ function buildCenterList(listEl, ctx, data) {
     const row = document.createElement("div");
     row.className = "center-row";
 
+    // ★主要項目を「左：項目 / 右：値」で見やすく戻す
+    row.style.display = "flex";
+    row.style.alignItems = "center";
+    row.style.justifyContent = "space-between";
+    row.style.gap = "12px";
+    row.style.padding = "8px 0";
+    row.style.borderBottom = "1px solid rgba(0,0,0,0.06)";
+
     const k = document.createElement("div");
     k.className = "k";
     k.textContent = m.label;
+
+    k.style.flex = "0 0 55%";
+    k.style.whiteSpace = "nowrap";
+    k.style.overflow = "hidden";
+    k.style.textOverflow = "ellipsis";
 
     const v = document.createElement("div");
     v.className = "v";
     const raw = data[m.sourceKey];
     v.textContent = raw == null || raw === "" ? "－" : String(raw);
+
+    v.style.flex = "1 1 auto";
+    v.style.textAlign = "right";
+    v.style.wordBreak = "break-word";
 
     row.appendChild(k);
     row.appendChild(v);
@@ -642,14 +664,31 @@ function buildCenterCards(container, ctx, data) {
     const card = document.createElement("div");
     card.className = "center-card";
 
+    // ★主要項目（layout4）も「左：項目 / 右：値」へ戻す
+    card.style.display = "flex";
+    card.style.alignItems = "center";
+    card.style.justifyContent = "space-between";
+    card.style.gap = "12px";
+    card.style.padding = "8px 0";
+    card.style.borderBottom = "1px solid rgba(0,0,0,0.06)";
+
     const k = document.createElement("div");
     k.className = "k";
     k.textContent = m.label;
+
+    k.style.flex = "0 0 55%";
+    k.style.whiteSpace = "nowrap";
+    k.style.overflow = "hidden";
+    k.style.textOverflow = "ellipsis";
 
     const v = document.createElement("div");
     v.className = "v";
     const raw = data[m.sourceKey];
     v.textContent = raw == null || raw === "" ? "－" : String(raw);
+
+    v.style.flex = "1 1 auto";
+    v.style.textAlign = "right";
+    v.style.wordBreak = "break-word";
 
     card.appendChild(k);
     card.appendChild(v);
