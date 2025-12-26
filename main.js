@@ -328,7 +328,33 @@ function makePill(token) {
 
 /* =========================
    DnD（共通5枠）重複不可
+   ★修正：枠内の並び替え（挿入位置）に対応
 ========================= */
+
+// ★ドロップ位置から「どのpillの前に入れるか」を決める
+function getDropBeforeToken(zoneEl, clientX, clientY) {
+  // マウス直下の要素から、pillを探す
+  const el = document.elementFromPoint(clientX, clientY);
+  if (!el) return null;
+
+  const pill = el.closest?.(".metric-pill");
+  if (!pill || !zoneEl.contains(pill)) return null;
+
+  // pillの左右/上下どちら側に落ちたかで、前/後ろを決める
+  const rect = pill.getBoundingClientRect();
+  const isRow = rect.width >= rect.height; // だいたい横長pill想定
+  const before =
+    isRow
+      ? clientX < rect.left + rect.width / 2
+      : clientY < rect.top + rect.height / 2;
+
+  if (before) return pill.dataset.token;
+
+  // 後ろに落ちた場合は「次のpillの前」扱いにする（=そのpillの直後）
+  const next = pill.nextElementSibling?.classList?.contains("metric-pill") ? pill.nextElementSibling : null;
+  return next ? next.dataset.token : null;
+}
+
 function attachZoneDnD(zoneEl, { zoneKey }) {
   if (!zoneEl) return;
 
@@ -347,13 +373,23 @@ function attachZoneDnD(zoneEl, { zoneKey }) {
     const fromKey = findZoneOf(token);
     if (!fromKey) return;
 
-    if (fromKey === zoneKey) return;
-
-    // remove from old
+    // まず元の場所から外す
     zoneState[fromKey] = zoneState[fromKey].filter((t) => t !== token);
 
-    // add to new (end)
-    zoneState[zoneKey].push(token);
+    // ★この枠内の「挿入位置」を取得（pillの前に入れる）
+    const beforeToken = getDropBeforeToken(zoneEl, e.clientX, e.clientY);
+
+    if (beforeToken) {
+      const idx = zoneState[zoneKey].indexOf(beforeToken);
+      if (idx >= 0) {
+        zoneState[zoneKey].splice(idx, 0, token);
+      } else {
+        zoneState[zoneKey].push(token);
+      }
+    } else {
+      // pillが見つからない/末尾に落ちた → 末尾
+      zoneState[zoneKey].push(token);
+    }
 
     renderTopZones();
     rerenderAllCards();
@@ -526,7 +562,6 @@ function resolveInfoValueById(id, ctx) {
   const { jpAsin, usAsin, size, weight, data } = ctx;
 
   const computed = {
-    // ★ asin-data.js のキーに合わせて取得
     商品名: data["品名"] || data["商品名"] || data["商品タイトル"] || "－",
     各種ASIN: `日本: ${jpAsin} / US: ${usAsin}`,
     サイズ: size,
@@ -548,7 +583,6 @@ function resolveInfoValueById(id, ctx) {
 function buildInfoGrid(container, ctx, data, tokens) {
   if (!container) return;
 
-  // 既存のスクロール位置が残って「下の方だけ見える」現象を防ぐ
   container.scrollTop = 0;
   container.scrollLeft = 0;
 
@@ -560,10 +594,7 @@ function buildInfoGrid(container, ctx, data, tokens) {
     return;
   }
 
-  // styles.css の .info-grid を活かす（2列：左=項目名 / 右=値）
   container.style.display = "grid";
-
-  // 横スクロールは不要（Keepa風に見えるのは縦スクロールのみ）
   container.style.overflowX = "hidden";
 
   list.forEach((tok) => {
@@ -573,7 +604,6 @@ function buildInfoGrid(container, ctx, data, tokens) {
     k.className = "k";
     k.textContent = v.label;
 
-    // 項目名は控えめ（画像のイメージ）
     k.style.fontSize = "12px";
     k.style.fontWeight = "700";
     k.style.opacity = "0.60";
@@ -581,7 +611,6 @@ function buildInfoGrid(container, ctx, data, tokens) {
     const val = document.createElement("div");
     val.className = "v";
 
-    // 値を目立たせる
     val.style.fontSize = "13px";
     val.style.fontWeight = "800";
     val.style.opacity = "0.95";
@@ -599,7 +628,6 @@ function buildInfoGrid(container, ctx, data, tokens) {
     container.appendChild(val);
   });
 
-  // 生成直後に必ず先頭を表示
   container.scrollTop = 0;
   container.scrollLeft = 0;
 }
@@ -665,7 +693,6 @@ function buildCenterCards(container, ctx, data) {
     const raw = data[m.sourceKey];
     v.textContent = raw == null || raw === "" ? "－" : String(raw);
 
-    // ★主要項目：項目名は控えめ／値を目立たせる
     k.style.fontSize = "11px";
     k.style.opacity = "0.55";
     v.style.fontSize = "16px";
@@ -723,7 +750,6 @@ function rerenderAllCards() {
   cardState.forEach((v) => {
     const asin = v.el.dataset.asin;
 
-    // ★ asin-data.js のキーから取得
     const jpAsin = v.data["日本ASIN"] || "－";
     const usAsin = v.data["アメリカASIN"] || asin || "－";
 
