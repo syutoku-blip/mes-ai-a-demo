@@ -735,86 +735,82 @@ function rerenderAllCards() {
    チャート
 ========================= */
 function renderChart(canvas) {
-  const DAYS = 180;
+  const labels = Array.from({ length: 180 }, (_, i) => `${180 - i}日`);
 
-  // --- x: 日付（直近180日）
-  const today = new Date();
-  const labels = Array.from({ length: DAYS }, (_, i) => {
-    const d = new Date(today);
-    d.setDate(today.getDate() - (DAYS - 1 - i));
-    const m = d.getMonth() + 1;
-    const dd = d.getDate();
-    return `${m}/${dd}`;
-  });
-
-  const rand = () => Math.random();
+  // Keepaっぽい相関を意識したダミーデータ（180日）
+  // ・ランキングが上がる（数値が小さくなる）ほどセラー数が増え、価格は下がる
+  // ・ランキングが下がる（数値が大きくなる）とセラー数が減り、価格は元に戻る
   const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 
-  // --- Keepaっぽい挙動に寄せる（ダミーだけど現実寄り）
-  // 価格：段階的に変化（オレンジ）
-  // ランキング：需要に応じて上下（緑）※右軸はreverse
-  // セラー数：段階的に増減（紫）
-  let basePrice = 28 + rand() * 10; // $28〜$38
-  let price = basePrice * (0.92 + rand() * 0.10);
-  let sellers = Math.max(1, Math.round(3 + rand() * 6)); // 3〜9中心
-  let demand = 1.0 + rand() * 0.7; // 需要スコア
-  let baseRank = 60000 + (rand() - 0.5) * 20000; // ざっくりの中心
-
-  // 価格は2〜8日ごとに「段階」更新
-  let nextPriceChangeIn = 2 + Math.floor(rand() * 7);
-
   const rank = [];
-  const sellerSeries = [];
-  const priceSeries = [];
+  const sellers = [];
+  const price = [];
 
-  for (let i = 0; i < DAYS; i++) {
-    // 需要：ゆっくり変動＋平均回帰
-    const mean = 1.15;
-    demand += (mean - demand) * 0.06 + (rand() - 0.5) * 0.10;
-    demand = clamp(demand, 0.65, 2.2);
+  let r = 58000 + (Math.random() - 0.5) * 12000; // 初期ランキング
+  let s = Math.max(1, Math.round(3 + Math.random() * 4)); // 初期セラー数
+  const basePrice = 30 + (Math.random() - 0.5) * 6; // だいたい $27〜$33 あたり
+  let p = basePrice;
 
-    // ランキング：需要が高いほど良い（数値が小さい）
-    let r = baseRank / demand + (rand() - 0.5) * 4500;
+  // 価格は段階的に更新（Keepa風）
+  let nextPriceChangeIn = 1 + Math.floor(Math.random() * 4); // 1〜4日ごと
 
-    // たまにスパイク（急落/急騰っぽさ）
-    if (rand() < 0.02) r *= 1.8 + rand() * 0.6; // 悪化
-    if (rand() < 0.02) r *= 0.55 + rand() * 0.2; // 改善
-    r = Math.round(clamp(r, 500, 250000));
+  for (let i = 0; i < labels.length; i++) {
+    const prevR = r;
 
-    // セラー数：ランキングが良い/価格が高いと増えやすい、悪いと減りやすい（段階的）
-    const rankScore = clamp((60000 - r) / 60000, -1, 1); // +なら良い
-    const priceScore = clamp((price - basePrice) / basePrice, -0.5, 0.5);
+    // ランキング：ランダムウォーク＋平均回帰（大きく逸脱しすぎない）
+    const meanR = 60000;
+    r += (meanR - r) * 0.06 + (Math.random() - 0.5) * 3500;
 
-    const entryProb = clamp(0.06 + rankScore * 0.08 + priceScore * 0.05, 0.01, 0.20);
-    const exitProb = clamp(0.04 - rankScore * 0.05 - priceScore * 0.03, 0.01, 0.20);
-
-    let drift = 0;
-    if (rand() < entryProb) drift += 1;
-    if (rand() < entryProb * 0.25) drift += 1;
-    if (rand() < exitProb) drift -= 1;
-
-    sellers = Math.round(clamp(sellers + drift, 1, 18));
-
-    // 価格：ランキングが良いと上がりやすいが、セラー増で下がりやすい（段階更新）
-    nextPriceChangeIn -= 1;
-    if (nextPriceChangeIn <= 0) {
-      nextPriceChangeIn = 2 + Math.floor(rand() * 7); // 2〜8日
-
-      const compPressure = Math.max(0, sellers - 4) * 0.012; // セラー増=値下げ圧
-      const demandLift = clamp(rankScore, -0.4, 0.7) * 0.10; // 需要=値上げ圧
-      const noise = (rand() - 0.5) * 0.03;
-
-      const target = basePrice * (1 + demandLift - compPressure + noise);
-      price += (target - price) * 0.55;
-
-      // Keepaっぽく 0.05刻み
-      price = Math.round(price / 0.05) * 0.05;
-      price = clamp(price, basePrice * 0.65, basePrice * 1.35);
+    // ときどき短いトレンド（上がる/下がる）を作る
+    if (Math.random() < 0.04) {
+      r += (Math.random() < 0.5 ? -1 : 1) * (2500 + Math.random() * 3500);
     }
 
-    rank.push(r);
-    sellerSeries.push(sellers);
-    priceSeries.push(Number(price.toFixed(2)));
+    r = clamp(r, 3000, 180000);
+
+    // ランキングが「上がった（改善＝数値が下がった）」かどうか
+    const improved = r < prevR;
+    const diff = Math.abs(r - prevR);
+
+    // セラー数：改善で増えやすい／悪化で減りやすい（段階的）
+    let ds = 0;
+    const incProb = clamp(0.08 + diff / 30000, 0.05, 0.35);
+    const decProb = clamp(0.06 + diff / 40000, 0.04, 0.30);
+
+    if (improved) {
+      if (Math.random() < incProb) ds += 1;
+      if (Math.random() < incProb * 0.25) ds += 1;
+    } else {
+      if (Math.random() < decProb) ds -= 1;
+    }
+
+    s = Math.round(clamp(s + ds, 1, 18));
+
+    // 価格：セラー数が増えるほど下がり、減ると基準値へ戻る（段階更新）
+    nextPriceChangeIn -= 1;
+    if (nextPriceChangeIn <= 0) {
+      nextPriceChangeIn = 2 + Math.floor(Math.random() * 6); // 2〜7日ごと
+
+      const sellerPressure = (s - 3) * 0.55; // セラー増→値下げ圧
+      const rankSignal = clamp((meanR - r) / 50000, -0.6, 0.6) * 0.9; // 良いランクほど少し値下げ寄り
+      const noise = (Math.random() - 0.5) * 0.6;
+
+      // セラー圧で下がり、セラーが減ると basePrice に戻る
+      const target = basePrice - sellerPressure - rankSignal + noise;
+
+      // 急変しないように追従
+      p += (target - p) * 0.6;
+
+      // Keepaっぽく刻み（$0.05）
+      p = Math.round(p / 0.05) * 0.05;
+
+      // 上下限（現実寄り）
+      p = clamp(p, basePrice * 0.65, basePrice * 1.25);
+    }
+
+    rank.push(Math.round(r));
+    sellers.push(s);
+    price.push(Number(p.toFixed(2)));
   }
 
   const chart = new Chart(canvas, {
@@ -822,35 +818,9 @@ function renderChart(canvas) {
     data: {
       labels,
       datasets: [
-        {
-          label: "価格(USD)",
-          data: priceSeries,
-          yAxisID: "y2",
-          tension: 0,
-          stepped: true,
-          borderColor: "#f97316",
-          pointRadius: 0,
-          borderWidth: 2
-        },
-        {
-          label: "ランキング",
-          data: rank,
-          yAxisID: "y",
-          tension: 0,
-          borderColor: "#22c55e",
-          pointRadius: 0,
-          borderWidth: 2
-        },
-        {
-          label: "セラー数",
-          data: sellerSeries,
-          yAxisID: "y1",
-          tension: 0,
-          stepped: true,
-          borderColor: "#8b5cf6",
-          pointRadius: 0,
-          borderWidth: 2
-        }
+        { label: "ランキング", data: rank, yAxisID: "y", tension: 0.25 },
+        { label: "セラー数", data: sellers, yAxisID: "y1", tension: 0.25 },
+        { label: "価格(USD)", data: price, yAxisID: "y2", tension: 0.25 }
       ]
     },
     options: {
@@ -859,26 +829,9 @@ function renderChart(canvas) {
       interaction: { mode: "index", intersect: false },
       plugins: { legend: { display: true } },
       scales: {
-        x: {
-          ticks: {
-            autoSkip: false,
-            maxRotation: 0,
-            minRotation: 0,
-            callback: (value, index) => (index % 10 === 0 ? labels[index] : "")
-          },
-          grid: { display: false }
-        },
-        // ランキング（右軸・逆目盛）
-        y: { position: "right", reverse: true },
-        // セラー数（右軸・オフセット）
-        y1: {
-          position: "right",
-          offset: true,
-          grid: { drawOnChartArea: false },
-          suggestedMin: 0
-        },
-        // 価格（左軸）
-        y2: { position: "left", grid: { drawOnChartArea: true } }
+        y: { position: "left" },
+        y1: { position: "right", grid: { drawOnChartArea: false } },
+        y2: { position: "right", grid: { drawOnChartArea: false } }
       }
     }
   });
