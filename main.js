@@ -198,6 +198,317 @@ const clearSortBtn = $("#clearSortBtn");
 let sortRules = [];
 
 /* =========================
+   メモ / 重要視条件（追加）
+========================= */
+const MEMO_STORAGE_KEY = "mesMemoByAsin_v1";
+const IMPORTANT_STORAGE_KEY = "mesImportantRules_v1";
+
+function loadMemoMap() {
+  try {
+    return JSON.parse(localStorage.getItem(MEMO_STORAGE_KEY) || "{}") || {};
+  } catch {
+    return {};
+  }
+}
+function saveMemoMap(map) {
+  try {
+    localStorage.setItem(MEMO_STORAGE_KEY, JSON.stringify(map || {}));
+  } catch {}
+}
+function getMemo(asin) {
+  const m = loadMemoMap();
+  return String(m?.[asin] ?? "");
+}
+function setMemo(asin, text) {
+  const m = loadMemoMap();
+  m[asin] = String(text ?? "");
+  saveMemoMap(m);
+}
+
+function loadImportantRules() {
+  try {
+    const v = JSON.parse(localStorage.getItem(IMPORTANT_STORAGE_KEY) || "[]");
+    return Array.isArray(v) ? v : [];
+  } catch {
+    return [];
+  }
+}
+function saveImportantRules(rules) {
+  try {
+    localStorage.setItem(IMPORTANT_STORAGE_KEY, JSON.stringify(rules || []));
+  } catch {}
+}
+
+let importantRules = loadImportantRules();
+
+/** rule:
+ * { id, token, op, value, enabled }
+ * token is "M:<metricId>" (poolに存在する項目のみ選択可)
+ */
+
+function isMetricToken(token) {
+  const { type } = parseToken(token);
+  return type === "M";
+}
+
+function getSelectableImportantTokens() {
+  // 「プールに存在する」= 現在 pool に置かれている項目のみ
+  return (zoneState.pool || []).filter((t) => isMetricToken(t));
+}
+
+function evalRuleOnData(rule, data) {
+  if (!rule?.enabled) return false;
+  if (!rule.token) return false;
+  const { type, id } = parseToken(rule.token);
+  if (type !== "M") return false;
+  const m = METRIC_BY_ID[id];
+  if (!m) return false;
+
+  const left = num(data?.[m.sourceKey]);
+  const right = num(rule.value);
+
+  switch (rule.op) {
+    case ">":
+      return left > right;
+    case ">=":
+      return left >= right;
+    case "<":
+      return left < right;
+    case "<=":
+      return left <= right;
+    case "=":
+    case "==":
+      return left === right;
+    default:
+      return false;
+  }
+}
+
+function clearImportantMarks(cardEl) {
+  if (!cardEl) return;
+  cardEl.querySelectorAll(".important-hit").forEach((el) => el.classList.remove("important-hit"));
+  cardEl.querySelectorAll(".important-flame").forEach((el) => el.remove());
+}
+
+function applyImportantToCard(cardEl, asin, data) {
+  if (!cardEl) return;
+  clearImportantMarks(cardEl);
+
+  if (!importantRules || importantRules.length === 0) return;
+
+  const hits = new Set();
+  for (const r of importantRules) {
+    if (!r?.enabled) continue;
+    if (evalRuleOnData(r, data)) {
+      const { type, id } = parseToken(r.token);
+      if (type === "M") hits.add(id);
+    }
+  }
+
+  if (!hits.size) return;
+
+  hits.forEach((metricId) => {
+    const els = cardEl.querySelectorAll(`[data-metric-id="${CSS.escape(metricId)}"]`);
+    els.forEach((el) => {
+      el.classList.add("important-hit");
+      if (!el.querySelector(".important-flame")) {
+        const flame = document.createElement("span");
+        flame.className = "important-flame";
+        flame.textContent = "🔥";
+        el.appendChild(flame);
+      }
+    });
+  });
+}
+
+function applyImportantAllCards() {
+  cardState.forEach((v) => {
+    applyImportantToCard(v.el, v.el.dataset.asin, v.data);
+  });
+}
+
+function initImportantUI() {
+  // headerStatusを「ステータス + ボタン」にする（updateHeaderStatus が壊さないように）
+  if (!headerStatus) return;
+
+  // 既に作成済みなら何もしない
+  if (headerStatus.querySelector(".js-importantBtn")) return;
+
+  headerStatus.innerHTML = `
+    <span id="headerStatusText" class="header-status-text"></span>
+    <button type="button" class="header-btn js-importantBtn">重要視条件</button>
+  `;
+
+  headerStatus.querySelector(".js-importantBtn")?.addEventListener("click", () => {
+    openImportantPanel();
+  });
+
+  // 初回表示更新
+  updateHeaderStatus();
+}
+
+/* --- 重要視条件パネル（DOMはJSで注入） --- */
+let importantPanelEl = null;
+
+function openImportantPanel() {
+  if (!importantPanelEl) {
+    importantPanelEl = document.createElement("div");
+    importantPanelEl.className = "important-panel";
+    importantPanelEl.innerHTML = `
+      <div class="important-panel__backdrop js-impClose"></div>
+      <div class="important-panel__card card">
+        <div class="important-panel__head">
+          <div class="t">重要視条件</div>
+          <button type="button" class="x js-impClose">×</button>
+        </div>
+
+        <div class="important-panel__desc">
+          「プールに存在する」指標から条件を作れます。条件に合致したASINは、該当指標の枠に🔥が付き、軽く光ります。
+        </div>
+
+        <div class="important-panel__body">
+          <div class="important-list js-impList"></div>
+
+          <div class="important-actions">
+            <button type="button" class="btn js-impAdd">条件を追加</button>
+            <button type="button" class="btn ghost js-impApply">適用</button>
+          </div>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(importantPanelEl);
+
+    importantPanelEl.querySelectorAll(".js-impClose").forEach((b) => b.addEventListener("click", closeImportantPanel));
+    importantPanelEl.querySelector(".js-impAdd")?.addEventListener("click", () => {
+      const selectable = getSelectableImportantTokens();
+      if (!selectable.length) {
+        return alert("現在プールに「指標」がありません。上部の5枠から指標を戻して、プールに指標を置いてください。");
+      }
+      const firstToken = selectable[0];
+      importantRules.push({
+        id: String(Date.now()) + "_" + Math.random().toString(16).slice(2),
+        token: firstToken,
+        op: ">=",
+        value: "",
+        enabled: true
+      });
+      renderImportantRules();
+    });
+
+    importantPanelEl.querySelector(".js-impApply")?.addEventListener("click", () => {
+      saveImportantRules(importantRules);
+      applyImportantAllCards();
+      closeImportantPanel();
+    });
+  }
+
+  renderImportantRules();
+  importantPanelEl.classList.add("open");
+}
+
+function closeImportantPanel() {
+  importantPanelEl?.classList.remove("open");
+}
+
+function renderImportantRules() {
+  if (!importantPanelEl) return;
+  const listEl = importantPanelEl.querySelector(".js-impList");
+  if (!listEl) return;
+
+  const selectable = getSelectableImportantTokens();
+
+  listEl.innerHTML = "";
+
+  if (!importantRules.length) {
+    const empty = document.createElement("div");
+    empty.className = "important-empty";
+    empty.textContent = "条件がまだありません。";
+    listEl.appendChild(empty);
+    return;
+  }
+
+  importantRules.forEach((r, idx) => {
+    const row = document.createElement("div");
+    row.className = "important-row";
+
+    const chk = document.createElement("input");
+    chk.type = "checkbox";
+    chk.checked = !!r.enabled;
+    chk.className = "important-chk";
+    chk.addEventListener("change", () => {
+      r.enabled = chk.checked;
+    });
+
+    const sel = document.createElement("select");
+    sel.className = "important-sel";
+
+    // selectable（poolに存在する指標）からのみ選べる
+    selectable.forEach((tok) => {
+      const { id } = parseToken(tok);
+      const opt = document.createElement("option");
+      opt.value = tok;
+      opt.textContent = METRIC_BY_ID[id]?.label || labelOf(tok);
+      if (r.token === opt.value) opt.selected = true;
+      sel.appendChild(opt);
+    });
+
+    // 現在のr.tokenがpoolに無い場合でも、壊れないように先頭に差し込む
+    if (r.token && !selectable.includes(r.token)) {
+      const opt = document.createElement("option");
+      opt.value = r.token;
+      opt.textContent = labelOf(r.token) + "（※プール外）";
+      opt.selected = true;
+      sel.insertBefore(opt, sel.firstChild);
+    }
+
+    sel.addEventListener("change", () => {
+      r.token = sel.value;
+    });
+
+    const op = document.createElement("select");
+    op.className = "important-op";
+    op.innerHTML = `
+      <option value=">">＞</option>
+      <option value=">=">≧</option>
+      <option value="<">＜</option>
+      <option value="<=">≦</option>
+      <option value="=">＝</option>
+    `;
+    op.value = r.op || ">=";
+    op.addEventListener("change", () => {
+      r.op = op.value;
+    });
+
+    const val = document.createElement("input");
+    val.type = "number";
+    val.step = "0.01";
+    val.placeholder = "値";
+    val.className = "important-val";
+    val.value = r.value ?? "";
+    val.addEventListener("input", () => {
+      r.value = val.value;
+    });
+
+    const del = document.createElement("button");
+    del.type = "button";
+    del.className = "important-del";
+    del.textContent = "×";
+    del.addEventListener("click", () => {
+      importantRules.splice(idx, 1);
+      renderImportantRules();
+    });
+
+    row.appendChild(chk);
+    row.appendChild(sel);
+    row.appendChild(op);
+    row.appendChild(val);
+    row.appendChild(del);
+
+    listEl.appendChild(row);
+  });
+}
+
+/* =========================
    init
 ========================= */
 init();
@@ -207,6 +518,7 @@ function init() {
   initCatalog();
   initSortUI();
   initActions();
+  initImportantUI();
   updateCartSummary();
   updateHeaderStatus();
   renderTopZones();
@@ -289,7 +601,15 @@ function addOrFocusCard(asin) {
 
 function updateHeaderStatus() {
   const count = cardState.size;
-  if (headerStatus) headerStatus.textContent = count ? `表示中: ${count} ASIN` : "";
+  if (!headerStatus) return;
+
+  const textEl = headerStatus.querySelector("#headerStatusText");
+  const text = count ? `表示中: ${count} ASIN` : "";
+  if (textEl) {
+    textEl.textContent = text;
+  } else {
+    headerStatus.textContent = text;
+  }
 }
 
 /* =========================
@@ -655,6 +975,7 @@ function buildCenterList(listEl, ctx, data) {
 
     const row = document.createElement("div");
     row.className = "center-row";
+    row.dataset.metricId = id;
 
     const k = document.createElement("div");
     k.className = "k";
@@ -683,6 +1004,7 @@ function buildCenterCards(container, ctx, data) {
 
     const card = document.createElement("div");
     card.className = "center-card";
+    card.dataset.metricId = id;
 
     const k = document.createElement("div");
     k.className = "k";
@@ -720,9 +1042,11 @@ function buildDetailTable(tableEl, ctx, data) {
 
     const th = document.createElement("th");
     th.textContent = m.label;
+    th.dataset.metricId = id;
     theadRow.appendChild(th);
 
     const td = document.createElement("td");
+    td.dataset.metricId = id;
     const raw = data[m.sourceKey];
     const v = raw == null || raw === "" ? "－" : String(raw);
 
@@ -777,6 +1101,9 @@ function rerenderAllCards() {
       buildCenterList(v.el.querySelector(".js-center"), ctx, v.data);
     }
     buildDetailTable(v.el.querySelector(".js-detailTable"), ctx, v.data);
+
+    // 重要視条件（🔥）
+    applyImportantToCard(v.el, asin, v.data);
   });
 }
 
@@ -926,7 +1253,10 @@ function createProductCard(asin, data) {
   if (isThirdLayout) {
     card.innerHTML = `
       <div class="card-top">
-        <div class="title">ASIN: ${asin}</div>
+        <div class="card-top-left">
+          <div class="title">ASIN: ${asin}</div>
+          <input class="memo-input js-memoInput" type="text" placeholder="メモ" />
+        </div>
         <button class="remove" type="button">この行を削除</button>
       </div>
 
@@ -1001,7 +1331,10 @@ function createProductCard(asin, data) {
   } else if (isFourthLayout) {
     card.innerHTML = `
       <div class="card-top">
-        <div class="title">ASIN: ${asin}</div>
+        <div class="card-top-left">
+          <div class="title">ASIN: ${asin}</div>
+          <input class="memo-input js-memoInput" type="text" placeholder="メモ" />
+        </div>
         <button class="remove" type="button">この行を削除</button>
       </div>
 
@@ -1080,7 +1413,10 @@ function createProductCard(asin, data) {
     card.innerHTML = isAltLayout
       ? `
       <div class="card-top">
-        <div class="title">ASIN: ${asin}</div>
+        <div class="card-top-left">
+          <div class="title">ASIN: ${asin}</div>
+          <input class="memo-input js-memoInput" type="text" placeholder="メモ" />
+        </div>
         <button class="remove" type="button">この行を削除</button>
       </div>
 
@@ -1153,7 +1489,10 @@ function createProductCard(asin, data) {
     `
       : `
       <div class="card-top">
-        <div class="title">ASIN: ${asin}</div>
+        <div class="card-top-left">
+          <div class="title">ASIN: ${asin}</div>
+          <input class="memo-input js-memoInput" type="text" placeholder="メモ" />
+        </div>
         <button class="remove" type="button">この行を削除</button>
       </div>
 
@@ -1256,6 +1595,19 @@ function createProductCard(asin, data) {
     if (c) costInput.value = c;
   }
 
+  // メモ（ASINごとに保存）
+  const memoInput = card.querySelector(".js-memoInput");
+  if (memoInput) {
+    memoInput.value = getMemo(asin);
+    let memoT = null;
+    const save = () => setMemo(asin, memoInput.value);
+    memoInput.addEventListener("input", () => {
+      if (memoT) clearTimeout(memoT);
+      memoT = setTimeout(save, 250);
+    });
+    memoInput.addEventListener("blur", save);
+  }
+
   card.querySelector(".js-addCart").addEventListener("click", () => {
     const qty = Math.max(1, Number(card.querySelector(".js-qty").value || 1));
     const sellUSD = num(sellInput.value);
@@ -1291,6 +1643,9 @@ function createProductCard(asin, data) {
     buildCenterList(card.querySelector(".js-center"), ctx, data);
   }
   buildDetailTable(card.querySelector(".js-detailTable"), ctx, data);
+
+  // 重要視条件（🔥）
+  applyImportantToCard(card, asin, data);
 
   // chart
   const canvas = card.querySelector(".js-chart");
