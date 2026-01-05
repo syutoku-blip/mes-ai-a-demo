@@ -243,28 +243,36 @@ let importantRules = loadImportantRules();
 
 /** rule:
  * { id, token, op, value, enabled }
- * token is "M:<metricId>" (poolに存在する項目のみ選択可)
+ * token is "M:<metricId>" or "I:<infoId>" (「プールに存在する」項目のみ選択)
  */
 
-function isMetricToken(token) {
-  const { type } = parseToken(token);
-  return type === "M";
+/* ★「プールに存在する」= pool の中身（M/Iどちらも） */
+function getSelectableImportantTokens() {
+  return (zoneState.pool || []).slice();
 }
 
-function getSelectableImportantTokens() {
-  // 「プールに存在する」= 現在 pool に置かれている項目のみ
-  return (zoneState.pool || []).filter((t) => isMetricToken(t));
+/* ★M/Iどちらでも数値比較できるように値を取り出す */
+function getComparableValueFromToken(token, data) {
+  const { type, id } = parseToken(token);
+  if (type === "M") {
+    const m = METRIC_BY_ID[id];
+    if (!m) return 0;
+    return num(data?.[m.sourceKey]);
+  }
+  if (type === "I") {
+    const f = INFO_BY_ID[id];
+    if (!f) return 0;
+    const key = f.sourceKey || id;
+    return num(data?.[key]);
+  }
+  return 0;
 }
 
 function evalRuleOnData(rule, data) {
   if (!rule?.enabled) return false;
   if (!rule.token) return false;
-  const { type, id } = parseToken(rule.token);
-  if (type !== "M") return false;
-  const m = METRIC_BY_ID[id];
-  if (!m) return false;
 
-  const left = num(data?.[m.sourceKey]);
+  const left = getComparableValueFromToken(rule.token, data);
   const right = num(rule.value);
 
   switch (rule.op) {
@@ -296,19 +304,35 @@ function applyImportantToCard(cardEl, asin, data) {
 
   if (!importantRules || importantRules.length === 0) return;
 
-  const hits = new Set();
+  const hitMetrics = new Set();
+  const hitInfos = new Set();
+
   for (const r of importantRules) {
     if (!r?.enabled) continue;
-    if (evalRuleOnData(r, data)) {
-      const { type, id } = parseToken(r.token);
-      if (type === "M") hits.add(id);
-    }
+    if (!evalRuleOnData(r, data)) continue;
+
+    const { type, id } = parseToken(r.token);
+    if (type === "M") hitMetrics.add(id);
+    if (type === "I") hitInfos.add(id);
   }
 
-  if (!hits.size) return;
-
-  hits.forEach((metricId) => {
+  // M: center/table 側に🔥
+  hitMetrics.forEach((metricId) => {
     const els = cardEl.querySelectorAll(`[data-metric-id="${CSS.escape(metricId)}"]`);
+    els.forEach((el) => {
+      el.classList.add("important-hit");
+      if (!el.querySelector(".important-flame")) {
+        const flame = document.createElement("span");
+        flame.className = "important-flame";
+        flame.textContent = "🔥";
+        el.appendChild(flame);
+      }
+    });
+  });
+
+  // I: info-grid の value 側に🔥（★buildInfoGridで data-info-id を付与）
+  hitInfos.forEach((infoId) => {
+    const els = cardEl.querySelectorAll(`[data-info-id="${CSS.escape(infoId)}"]`);
     els.forEach((el) => {
       el.classList.add("important-hit");
       if (!el.querySelector(".important-flame")) {
@@ -327,24 +351,26 @@ function applyImportantAllCards() {
   });
 }
 
+/* ★配置カスタマイズの下にボタンを出す（metrics bar 内に設置） */
 function initImportantUI() {
-  // headerStatusを「ステータス + ボタン」にする（updateHeaderStatus が壊さないように）
-  if (!headerStatus) return;
+  // すでにあるなら何もしない
+  if (document.querySelector(".js-importantBtn")) return;
 
-  // 既に作成済みなら何もしない
-  if (headerStatus.querySelector(".js-importantBtn")) return;
+  // metrics bar のボタン列（配置カスタマイズ周り）
+  const targetBtns = document.querySelector(".metrics-top .btns");
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "js-importantBtn";
+  btn.textContent = "重要視条件";
+  btn.addEventListener("click", () => openImportantPanel());
 
-  headerStatus.innerHTML = `
-    <span id="headerStatusText" class="header-status-text"></span>
-    <button type="button" class="header-btn js-importantBtn">重要視条件</button>
-  `;
-
-  headerStatus.querySelector(".js-importantBtn")?.addEventListener("click", () => {
-    openImportantPanel();
-  });
-
-  // 初回表示更新
-  updateHeaderStatus();
+  if (targetBtns) {
+    // ここに入れる = 配置カスタマイズの操作群と同じエリア（下段扱い）
+    targetBtns.appendChild(btn);
+  } else if (headerStatus) {
+    // fallback（もしDOM構造が違う場合でも出るように）
+    headerStatus.appendChild(btn);
+  }
 }
 
 /* --- 重要視条件パネル（DOMはJSで注入） --- */
@@ -363,7 +389,7 @@ function openImportantPanel() {
         </div>
 
         <div class="important-panel__desc">
-          「プールに存在する」指標から条件を作れます。条件に合致したASINは、該当指標の枠に🔥が付き、軽く光ります。
+          「プールに存在する項目」から条件を作れます。条件に合致したASINは、該当枠に🔥が付き、軽く光ります。
         </div>
 
         <div class="important-panel__body">
@@ -379,10 +405,11 @@ function openImportantPanel() {
     document.body.appendChild(importantPanelEl);
 
     importantPanelEl.querySelectorAll(".js-impClose").forEach((b) => b.addEventListener("click", closeImportantPanel));
+
     importantPanelEl.querySelector(".js-impAdd")?.addEventListener("click", () => {
       const selectable = getSelectableImportantTokens();
       if (!selectable.length) {
-        return alert("現在プールに「指標」がありません。上部の5枠から指標を戻して、プールに指標を置いてください。");
+        return alert("現在プールに項目がありません。上部の枠から項目をプールへ戻してください。");
       }
       const firstToken = selectable[0];
       importantRules.push({
@@ -442,17 +469,16 @@ function renderImportantRules() {
     const sel = document.createElement("select");
     sel.className = "important-sel";
 
-    // selectable（poolに存在する指標）からのみ選べる
+    // ★プールに存在する項目（M/Iどちらも）
     selectable.forEach((tok) => {
-      const { id } = parseToken(tok);
       const opt = document.createElement("option");
       opt.value = tok;
-      opt.textContent = METRIC_BY_ID[id]?.label || labelOf(tok);
+      opt.textContent = labelOf(tok);
       if (r.token === opt.value) opt.selected = true;
       sel.appendChild(opt);
     });
 
-    // 現在のr.tokenがpoolに無い場合でも、壊れないように先頭に差し込む
+    // もし保存済み token が今の pool に無い場合でも壊れないように表示
     if (r.token && !selectable.includes(r.token)) {
       const opt = document.createElement("option");
       opt.value = r.token;
@@ -518,7 +544,7 @@ function init() {
   initCatalog();
   initSortUI();
   initActions();
-  initImportantUI();
+  initImportantUI(); // ★ここで配置カスタマイズ配下にボタン追加
   updateCartSummary();
   updateHeaderStatus();
   renderTopZones();
@@ -602,14 +628,7 @@ function addOrFocusCard(asin) {
 function updateHeaderStatus() {
   const count = cardState.size;
   if (!headerStatus) return;
-
-  const textEl = headerStatus.querySelector("#headerStatusText");
-  const text = count ? `表示中: ${count} ASIN` : "";
-  if (textEl) {
-    textEl.textContent = text;
-  } else {
-    headerStatus.textContent = text;
-  }
+  headerStatus.textContent = count ? `表示中: ${count} ASIN` : "";
 }
 
 /* =========================
@@ -651,26 +670,19 @@ function makePill(token) {
    ★修正：枠内の並び替え（挿入位置）に対応
 ========================= */
 
-// ★ドロップ位置から「どのpillの前に入れるか」を決める
 function getDropBeforeToken(zoneEl, clientX, clientY) {
-  // マウス直下の要素から、pillを探す
   const el = document.elementFromPoint(clientX, clientY);
   if (!el) return null;
 
   const pill = el.closest?.(".metric-pill");
   if (!pill || !zoneEl.contains(pill)) return null;
 
-  // pillの左右/上下どちら側に落ちたかで、前/後ろを決める
   const rect = pill.getBoundingClientRect();
-  const isRow = rect.width >= rect.height; // だいたい横長pill想定
-  const before =
-    isRow
-      ? clientX < rect.left + rect.width / 2
-      : clientY < rect.top + rect.height / 2;
+  const isRow = rect.width >= rect.height;
+  const before = isRow ? clientX < rect.left + rect.width / 2 : clientY < rect.top + rect.height / 2;
 
   if (before) return pill.dataset.token;
 
-  // 後ろに落ちた場合は「次のpillの前」扱いにする（=そのpillの直後）
   const next = pill.nextElementSibling?.classList?.contains("metric-pill") ? pill.nextElementSibling : null;
   return next ? next.dataset.token : null;
 }
@@ -693,21 +705,15 @@ function attachZoneDnD(zoneEl, { zoneKey }) {
     const fromKey = findZoneOf(token);
     if (!fromKey) return;
 
-    // まず元の場所から外す
     zoneState[fromKey] = zoneState[fromKey].filter((t) => t !== token);
 
-    // ★この枠内の「挿入位置」を取得（pillの前に入れる）
     const beforeToken = getDropBeforeToken(zoneEl, e.clientX, e.clientY);
 
     if (beforeToken) {
       const idx = zoneState[zoneKey].indexOf(beforeToken);
-      if (idx >= 0) {
-        zoneState[zoneKey].splice(idx, 0, token);
-      } else {
-        zoneState[zoneKey].push(token);
-      }
+      if (idx >= 0) zoneState[zoneKey].splice(idx, 0, token);
+      else zoneState[zoneKey].push(token);
     } else {
-      // pillが見つからない/末尾に落ちた → 末尾
       zoneState[zoneKey].push(token);
     }
 
@@ -918,6 +924,7 @@ function buildInfoGrid(container, ctx, data, tokens) {
   container.style.overflowX = "hidden";
 
   list.forEach((tok) => {
+    const { type, id } = parseToken(tok);
     const v = resolveTokenValue(tok, ctx, data);
 
     const k = document.createElement("div");
@@ -930,6 +937,11 @@ function buildInfoGrid(container, ctx, data, tokens) {
 
     const val = document.createElement("div");
     val.className = "v";
+
+    // ★重要視条件の🔥を付けるため、Iの場合は data-info-id を持たせる
+    if (type === "I") {
+      val.dataset.infoId = id; // => data-info-id
+    }
 
     val.style.fontSize = "13px";
     val.style.fontWeight = "800";
@@ -975,7 +987,7 @@ function buildCenterList(listEl, ctx, data) {
 
     const row = document.createElement("div");
     row.className = "center-row";
-    row.dataset.metricId = id;
+    row.dataset.metricId = id; // => data-metric-id
 
     const k = document.createElement("div");
     k.className = "k";
@@ -1004,7 +1016,7 @@ function buildCenterCards(container, ctx, data) {
 
     const card = document.createElement("div");
     card.className = "center-card";
-    card.dataset.metricId = id;
+    card.dataset.metricId = id; // => data-metric-id
 
     const k = document.createElement("div");
     k.className = "k";
@@ -1042,11 +1054,11 @@ function buildDetailTable(tableEl, ctx, data) {
 
     const th = document.createElement("th");
     th.textContent = m.label;
-    th.dataset.metricId = id;
+    th.dataset.metricId = id; // => data-metric-id
     theadRow.appendChild(th);
 
     const td = document.createElement("td");
-    td.dataset.metricId = id;
+    td.dataset.metricId = id; // => data-metric-id
     const raw = data[m.sourceKey];
     const v = raw == null || raw === "" ? "－" : String(raw);
 
@@ -1102,7 +1114,7 @@ function rerenderAllCards() {
     }
     buildDetailTable(v.el.querySelector(".js-detailTable"), ctx, v.data);
 
-    // 重要視条件（🔥）
+    // ★重要視条件（🔥）を毎回反映
     applyImportantToCard(v.el, asin, v.data);
   });
 }
@@ -1644,7 +1656,7 @@ function createProductCard(asin, data) {
   }
   buildDetailTable(card.querySelector(".js-detailTable"), ctx, data);
 
-  // 重要視条件（🔥）
+  // ★重要視条件（🔥）初回も適用
   applyImportantToCard(card, asin, data);
 
   // chart
