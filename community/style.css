@@ -220,7 +220,7 @@ button{ font-family:inherit; cursor:pointer; }
   content:"";
   position:absolute;
   left:0; right:0; bottom:0;
-  height:56px;
+  height:34px;
   background:linear-gradient(to bottom, rgba(248,244,234,0) 0%, var(--el-cream) 100%);
   pointer-events:none;
 }
