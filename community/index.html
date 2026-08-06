@@ -13,17 +13,15 @@
 
 <header class="el-header">
   <div class="el-header-inner">
-    <button class="el-burger" id="sidebarToggle" aria-label="メニュー">
-      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
-    </button>
     <a href="index.html" class="el-logo">Export Lab<span class="dot">.</span></a>
     <div class="el-header-actions">
       <div class="el-search">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
         検索
       </div>
-      <a href="board.html" class="el-btn el-btn--ghost el-btn--sm">投稿する</a>
-      <div class="el-avatar">り</div>
+      <button class="el-burger" id="sidebarToggle" aria-label="メニュー">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
     </div>
   </div>
 </header>
@@ -35,10 +33,65 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/><path d="M9 22V12h6v10"/></svg>
         ホーム
       </a>
-      <a href="board.html">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-        フォーラム
-      </a>
+      <details class="el-side-forum">
+        <summary>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          フォーラム
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
+        </summary>
+        <div class="el-side-sub">
+          <a href="board.html">新着</a>
+          <a href="board.html">人気</a>
+          <a href="board.html">SHiFT member only</a>
+          <a href="board.html">未解決</a>
+
+          <div class="el-side-sub-label">カテゴリで探す</div>
+
+          <details>
+            <summary>FDA<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></summary>
+            <div class="el-side-sub2">
+              <a href="board.html">施設登録・更新</a>
+              <a href="board.html">ラベル</a>
+              <a href="board.html">米国代理人</a>
+              <a href="board.html">事前申告</a>
+              <a href="board.html">警告書（Warning Letter）</a>
+            </div>
+          </details>
+          <details>
+            <summary>通関<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></summary>
+            <div class="el-side-sub2">
+              <a href="board.html">CPSC</a>
+              <a href="board.html">インボイス・HSコード</a>
+            </div>
+          </details>
+          <details>
+            <summary>関税<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></summary>
+            <div class="el-side-sub2">
+              <a href="board.html">Section 201</a>
+              <a href="board.html">対中追加関税（301条）</a>
+            </div>
+          </details>
+          <details>
+            <summary>Amazon<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></summary>
+            <div class="el-side-sub2">
+              <a href="board.html">アカウント作成</a>
+              <a href="board.html">アカウント停止</a>
+              <a href="board.html">出品制限</a>
+              <a href="board.html">FBA納品</a>
+            </div>
+          </details>
+          <details>
+            <summary>物流<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></summary>
+            <div class="el-side-sub2">
+              <a href="board.html">海上輸送</a>
+              <a href="board.html">航空輸送</a>
+              <a href="board.html">倉庫選定</a>
+            </div>
+          </details>
+
+          <a href="board.html" style="margin-top:4px;">雑談・自己紹介</a>
+        </div>
+      </details>
       <a href="groups.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
         グループ
@@ -49,16 +102,6 @@
       </a>
     </nav>
 
-    <div class="el-sidebar-divider"></div>
-    <h5>カテゴリ</h5>
-    <nav>
-      <a href="board.html"><span class="dot" style="background:var(--el-coral);"></span>公式のお知らせ<span class="count">6</span></a>
-      <a href="board.html"><span class="dot" style="background:var(--el-teal);"></span>FDA対応<span class="count">48</span></a>
-      <a href="board.html"><span class="dot" style="background:var(--el-mustard);"></span>Amazon出品<span class="count">112</span></a>
-      <a href="board.html"><span class="dot" style="background:var(--el-sky);"></span>物流・輸送<span class="count">37</span></a>
-      <a href="board.html"><span class="dot" style="background:var(--el-sage);"></span>マーケット動向<span class="count">21</span></a>
-      <a href="board.html"><span class="dot" style="background:var(--el-navy-soft);"></span>雑談・自己紹介<span class="count">64</span></a>
-    </nav>
   </aside>
 
   <div class="el-content">
@@ -277,28 +320,6 @@
           </div>
           <div style="text-align:center;margin:18px 0 44px;">
             <a href="groups.html" class="el-btn el-btn--ghost el-btn--sm">もっと見る</a>
-          </div>
-
-          <div class="el-feed-head" style="--feed-color:var(--el-sky);">
-            <span class="feed-ic" style="background:#E8F1F6;">
-              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="17" cy="7" r="4" opacity=".4"/></svg>
-            </span>
-            <h3>コミュニティ</h3>
-          </div>
-          <div class="el-board">
-          <div class="el-hub-row"><div class="el-hub-row-main"><a href="topic.html" class="el-hub-row-title">初めまして、雑貨を輸出しています</a><div class="el-hub-row-meta"><span class="badge badge--cat">雑談・自己紹介</span><span>石井雑貨店</span></div></div><div class="el-hub-row-stats"><div><strong>0</strong>返信</div></div></div>
-          <div class="el-hub-row"><div class="el-hub-row-main"><a href="topic.html" class="el-hub-row-title">はじめまして、化粧品OEMを輸出している者です</a><div class="el-hub-row-meta"><span class="badge badge--cat">雑談・自己紹介</span><span>中村コスメ</span></div></div><div class="el-hub-row-stats"><div><strong>4</strong>返信</div></div></div>
-          <div class="el-hub-row"><div class="el-hub-row-main"><a href="topic.html" class="el-hub-row-title">おすすめの輸出関連ニュースレター、ありますか</a><div class="el-hub-row-meta"><span class="badge badge--cat">雑談・自己紹介</span><span>小林商店</span></div></div><div class="el-hub-row-stats"><div><strong>6</strong>返信</div></div></div>
-          <div class="el-hub-row"><div class="el-hub-row-main"><a href="topic.html" class="el-hub-row-title">展示会で名刺交換した方、この場でもつながれたら</a><div class="el-hub-row-meta"><span class="badge badge--cat">雑談・自己紹介</span><span>高橋物産</span></div></div><div class="el-hub-row-stats"><div><strong>3</strong>返信</div></div></div>
-          <div class="el-hub-row"><div class="el-hub-row-main"><a href="topic.html" class="el-hub-row-title">在宅で輸出業を始めて2年、雑談歓迎です</a><div class="el-hub-row-meta"><span class="badge badge--cat">雑談・自己紹介</span><span>田中フーズ</span></div></div><div class="el-hub-row-stats"><div><strong>9</strong>返信</div></div></div>
-          <div class="el-hub-row"><div class="el-hub-row-main"><a href="topic.html" class="el-hub-row-title">今年のAmazon繁忙期、みなさんどう準備してますか</a><div class="el-hub-row-meta"><span class="badge badge--cat">雑談・自己紹介</span><span>佐藤ストア</span></div></div><div class="el-hub-row-stats"><div><strong>12</strong>返信</div></div></div>
-          <div class="el-hub-row"><div class="el-hub-row-main"><a href="topic.html" class="el-hub-row-title">同業者オフ会、福岡でやってみたいです</a><div class="el-hub-row-meta"><span class="badge badge--cat">雑談・自己紹介</span><span>山口貿易士</span></div></div><div class="el-hub-row-stats"><div><strong>15</strong>返信</div></div></div>
-          <div class="el-hub-row"><div class="el-hub-row-main"><a href="topic.html" class="el-hub-row-title">この掲示板の使い方に慣れてきました、便利ですね</a><div class="el-hub-row-meta"><span class="badge badge--cat">雑談・自己紹介</span><span>鈴木ラボ</span></div></div><div class="el-hub-row-stats"><div><strong>2</strong>返信</div></div></div>
-          <div class="el-hub-row"><div class="el-hub-row-main"><a href="topic.html" class="el-hub-row-title">輸出以外の副業もされてる方、いますか</a><div class="el-hub-row-meta"><span class="badge badge--cat">雑談・自己紹介</span><span>中村コスメ</span></div></div><div class="el-hub-row-stats"><div><strong>7</strong>返信</div></div></div>
-          <div class="el-hub-row"><div class="el-hub-row-main"><a href="topic.html" class="el-hub-row-title">来月から本格的に始動します、よろしくお願いします</a><div class="el-hub-row-meta"><span class="badge badge--cat">雑談・自己紹介</span><span>石井雑貨店</span></div></div><div class="el-hub-row-stats"><div><strong>5</strong>返信</div></div></div>
-          </div>
-          <div style="text-align:center;margin:18px 0 0;">
-            <a href="board.html" class="el-btn el-btn--ghost el-btn--sm">もっと見る</a>
           </div>
         </div>
       </section>
