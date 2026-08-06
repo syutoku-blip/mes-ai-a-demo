@@ -59,7 +59,7 @@ button{ font-family:inherit; cursor:pointer; }
   background-size:22px 22px;
 }
 
-/* ---------- Header / global nav ---------- */
+/* ---------- Header (slim top bar, no center nav — nav lives in the sidebar) ---------- */
 .el-header{
   position:sticky; top:var(--gh-h, 34px); z-index:40;
   background:rgba(248,244,234,.92);
@@ -67,26 +67,18 @@ button{ font-family:inherit; cursor:pointer; }
   border-bottom:1px solid var(--el-line);
 }
 .el-header-inner{
-  display:flex; align-items:center; gap:28px;
-  height:66px;
+  display:flex; align-items:center; gap:16px;
+  height:58px;
+  padding:0 24px;
 }
 .el-logo{
   display:flex; align-items:baseline; gap:8px;
   font-family:var(--font-word);
-  font-size:21px; font-weight:600; letter-spacing:.01em;
+  font-size:19px; font-weight:600; letter-spacing:.01em;
   color:var(--el-navy); flex-shrink:0;
 }
 .el-logo .dot{ color:var(--el-mustard); }
-.el-nav{ display:flex; gap:4px; flex:1; }
-.el-nav a{
-  padding:8px 14px; border-radius:999px;
-  font-size:13.5px; font-weight:500; color:var(--el-navy-soft);
-  transition:background .15s,color .15s;
-  white-space:nowrap;
-}
-.el-nav a:hover{ background:var(--el-cream-deep); color:var(--el-navy); }
-.el-nav a.is-active{ background:var(--el-navy); color:var(--el-cream); }
-.el-header-actions{ display:flex; align-items:center; gap:10px; flex-shrink:0; }
+.el-header-actions{ display:flex; align-items:center; gap:10px; flex-shrink:0; margin-left:auto; }
 .el-search{
   display:flex; align-items:center; gap:6px;
   background:var(--el-paper); border:1px solid var(--el-line);
@@ -100,7 +92,53 @@ button{ font-family:inherit; cursor:pointer; }
   color:#fff; display:flex; align-items:center; justify-content:center;
   font-size:12px; font-weight:700; flex-shrink:0;
 }
-.el-burger{ display:none; }
+.el-burger{
+  display:flex; align-items:center; justify-content:center;
+  width:34px; height:34px; border-radius:8px; border:1px solid var(--el-line);
+  background:var(--el-paper); flex-shrink:0;
+}
+
+/* ---------- App shell: persistent left sidebar + content column ---------- */
+.el-app{ display:flex; align-items:flex-start; }
+.el-sidebar{
+  width:232px; flex-shrink:0;
+  border-right:1px solid var(--el-line);
+  min-height:calc(100vh - var(--gh-h, 34px) - 58px);
+  position:sticky; top:calc(var(--gh-h, 34px) + 58px);
+  padding:20px 14px 40px;
+  overflow-y:auto;
+}
+.el-sidebar h5{
+  font-size:10.5px; letter-spacing:.1em; color:var(--el-ink-faint);
+  text-transform:uppercase; margin:22px 10px 8px;
+}
+.el-sidebar h5:first-child{ margin-top:4px; }
+.el-sidebar nav a{
+  display:flex; align-items:center; gap:10px;
+  padding:9px 10px; border-radius:8px; margin-bottom:2px;
+  font-size:13.5px; font-weight:500; color:var(--el-navy-soft);
+  transition:background .15s, color .15s;
+}
+.el-sidebar nav a svg{ width:16px; height:16px; flex-shrink:0; color:var(--el-ink-faint); }
+.el-sidebar nav a:hover{ background:var(--el-cream-deep); color:var(--el-navy); }
+.el-sidebar nav a.is-active{ background:var(--el-teal-tint); color:var(--el-teal-deep); font-weight:700; }
+.el-sidebar nav a.is-active svg{ color:var(--el-teal-deep); }
+.el-sidebar nav a .dot{ width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.el-sidebar nav a .count{ margin-left:auto; font-size:11px; color:var(--el-ink-faint); }
+.el-sidebar-divider{ height:1px; background:var(--el-line-soft); margin:16px 10px; }
+.el-content{ flex:1; min-width:0; }
+
+@media (max-width:900px){
+  .el-sidebar{
+    display:none;
+    position:fixed; left:0; right:0;
+    top:calc(var(--gh-h, 34px) + 58px);
+    bottom:0; width:auto; z-index:60;
+    background:var(--el-cream); min-height:0;
+  }
+  .el-sidebar.is-open{ display:block; }
+  .el-app{ display:block; }
+}
 
 .el-btn{
   display:inline-flex; align-items:center; gap:8px;
@@ -148,6 +186,62 @@ button{ font-family:inherit; cursor:pointer; }
 }
 .el-hero-caption p{ color:var(--el-navy-soft); max-width:560px; margin:0 auto 22px; }
 .el-hero-cta{ display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+
+/* ---------- Top-page 5-panel widget (お知らせ／NEW／HOT／SHiFT限定／コミュニティ) ---------- */
+.el-hub{
+  background:var(--el-paper); border:1px solid var(--el-line-soft);
+  border-radius:var(--el-radius-l); overflow:hidden;
+}
+.el-hub-tabs{
+  display:flex; gap:2px; padding:10px 14px; border-bottom:1px solid var(--el-line-soft);
+  overflow-x:auto;
+}
+.el-hub-tabs button{
+  display:flex; align-items:center; gap:6px;
+  background:none; border:none; padding:9px 16px; border-radius:999px;
+  font-size:12.5px; font-weight:700; color:var(--el-ink-faint); white-space:nowrap;
+  transition:background .15s, color .15s;
+}
+.el-hub-tabs button:hover{ background:var(--el-cream-deep); color:var(--el-navy); }
+.el-hub-tabs button.is-active{ background:var(--el-navy); color:var(--el-cream); }
+.el-hub-tabs button .tab-ic{ width:14px; height:14px; flex-shrink:0; }
+.el-hub-panel{ display:none; }
+.el-hub-panel.is-active{ display:block; }
+.el-hub-note{
+  display:flex; align-items:center; gap:8px;
+  font-size:11.5px; color:var(--el-ink-faint);
+  padding:12px 22px 0;
+}
+.el-hub-note svg{ width:13px; height:13px; flex-shrink:0; }
+
+/* SHiFT member-only excerpt: first ~15 chars readable, remainder blurred */
+.el-blur-preview{ display:inline; }
+.el-blur-tail{
+  filter:blur(4.5px);
+  -webkit-filter:blur(4.5px);
+  user-select:none;
+  -webkit-user-select:none;
+}
+.badge--member{ background:#EEE7F6; color:#6B4FA0; }
+
+.el-hub-row{
+  display:flex; align-items:center; justify-content:space-between; gap:16px;
+  padding:13px 22px; border-bottom:1px solid var(--el-line-soft);
+}
+.el-hub-row:last-child{ border-bottom:none; }
+.el-hub-row:hover{ background:var(--el-teal-tint); }
+.el-hub-row-main{ min-width:0; }
+.el-hub-row-title{
+  font-size:13.5px; font-weight:600; color:var(--el-navy);
+  display:flex; align-items:center; gap:6px;
+}
+.el-hub-row-title svg{ width:12px; height:12px; color:var(--el-ink-faint); flex-shrink:0; }
+.el-hub-row-title:hover{ text-decoration:underline; text-underline-offset:3px; }
+.el-hub-row-meta{ font-size:11px; color:var(--el-ink-faint); margin-top:4px; display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+.el-hub-row-excerpt{ font-size:12px; color:var(--el-ink-faint); margin-top:5px; }
+.el-hub-row-stats{ display:flex; gap:14px; flex-shrink:0; font-size:10.5px; color:var(--el-ink-faint); text-align:center; }
+.el-hub-row-stats strong{ display:block; font-size:13px; color:var(--el-navy); font-weight:700; }
+@media (max-width:640px){ .el-hub-row-stats{ display:none; } }
 
 /* ---------- Section scaffolding ---------- */
 .el-section{ padding:64px 0; }
@@ -265,25 +359,6 @@ button{ font-family:inherit; cursor:pointer; }
   .el-col:nth-child(3), .el-activity{ display:none; }
 }
 
-/* ---------- Sidebar layout (board / groups pages) ---------- */
-.el-layout{ display:grid; grid-template-columns:220px 1fr; gap:28px; align-items:flex-start; }
-@media (max-width:860px){ .el-layout{ grid-template-columns:1fr; } }
-.el-side{ position:sticky; top:86px; }
-.el-side h5{
-  font-size:11px; letter-spacing:.1em; color:var(--el-ink-faint);
-  text-transform:uppercase; margin:22px 0 10px;
-}
-.el-side h5:first-child{ margin-top:0; }
-.el-side a{
-  display:flex; align-items:center; justify-content:space-between;
-  padding:8px 10px; border-radius:8px; font-size:13px; color:var(--el-navy-soft);
-}
-.el-side a:hover{ background:var(--el-cream-deep); color:var(--el-navy); }
-.el-side a.is-active{ background:var(--el-navy); color:var(--el-cream); }
-.el-side a .count{ font-size:11px; color:var(--el-ink-faint); }
-.el-side a.is-active .count{ color:var(--el-cream); opacity:.7; }
-.el-side .dot{ width:8px; height:8px; border-radius:50%; margin-right:8px; flex-shrink:0; }
-
 /* ---------- Topic detail / thread ---------- */
 .el-thread-head{ padding:38px 0 22px; border-bottom:1px solid var(--el-line); }
 .el-thread-head .badge{ margin-bottom:12px; }
@@ -395,13 +470,8 @@ button{ font-family:inherit; cursor:pointer; }
   font-size:11.5px; color:var(--el-ink-faint); display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;
 }
 
-/* ---------- Mobile nav ---------- */
+/* ---------- Mobile header ---------- */
 @media (max-width:900px){
-  .el-nav{ display:none; }
-  .el-burger{
-    display:flex; align-items:center; justify-content:center;
-    width:38px; height:38px; border-radius:8px; border:1px solid var(--el-line); background:var(--el-paper);
-  }
   .el-search{ display:none; }
 }
 
