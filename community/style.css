@@ -52,13 +52,6 @@ button{ font-family:inherit; cursor:pointer; }
 .wrap{ max-width:1180px; margin:0 auto; padding:0 32px; }
 @media (max-width:720px){ .wrap{ padding:0 18px; } }
 
-/* subtle route-map texture used behind hero / section breaks */
-.el-routes{
-  background-image:
-    radial-gradient(var(--el-line) 1px, transparent 1px);
-  background-size:22px 22px;
-}
-
 /* ---------- Header (no bar — just the logo + search/menu row, blends into the page) ---------- */
 .el-header{
   padding-bottom:18px;
@@ -341,11 +334,13 @@ button{ font-family:inherit; cursor:pointer; }
 .el-announce-row-main .title{ font-size:14px; font-weight:700; color:var(--el-navy); }
 .el-announce-row:hover .title{ text-decoration:underline; text-underline-offset:3px; }
 .el-announce-row-main .meta{ display:flex; align-items:center; gap:8px; font-size:11.5px; color:var(--el-ink-faint); }
-.el-announce-row .replies{
-  flex-shrink:0; font-size:11px; color:var(--el-ink-faint); text-align:center;
+.el-announce-arrow{
+  flex-shrink:0; width:26px; height:26px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  color:var(--el-coral); background:#F7E4DC;
+  transition:transform .15s;
 }
-.el-announce-row .replies strong{ display:block; font-size:14px; color:var(--el-navy); font-weight:700; }
-@media (max-width:560px){ .el-announce-row .replies{ display:none; } }
+.el-announce-row:hover .el-announce-arrow{ transform:translateX(3px); }
 
 /* ---------- Top-page feed sections (お知らせ／NEW／HOT／SHiFT限定／コミュニティ — always-visible, not tabs) ---------- */
 .el-feed-head{
@@ -536,6 +531,36 @@ button{ font-family:inherit; cursor:pointer; }
 }
 
 /* ---------- Topic detail / thread ---------- */
+/* ---------- Official notice article (announcement detail — no replies, distinct from a forum thread) ---------- */
+.el-notice{
+  background:linear-gradient(180deg, #FBF1EA 0%, var(--el-paper) 240px);
+  border:1.5px solid #F0D9C8;
+  border-radius:var(--el-radius-l);
+  padding:32px;
+  box-shadow:0 2px 4px rgba(216,120,90,.05), 0 10px 24px rgba(216,120,90,.06);
+}
+.el-notice-head{ display:flex; gap:16px; margin-bottom:22px; }
+.el-notice-icon{
+  width:44px; height:44px; border-radius:12px; flex-shrink:0;
+  background:var(--el-coral); color:#fff;
+  display:flex; align-items:center; justify-content:center;
+}
+.el-notice-head h1{
+  font-family:var(--font-display); font-size:clamp(19px,3vw,24px);
+  font-weight:600; margin:8px 0 8px; line-height:1.4;
+}
+.el-notice-meta{ font-size:12px; color:var(--el-ink-faint); }
+.el-notice-body{ font-size:14px; color:var(--el-navy-soft); line-height:1.9; }
+.el-notice-body p{ margin:0 0 14px; }
+.el-notice-fact{
+  background:var(--el-paper); border:1px solid var(--el-line-soft);
+  border-radius:var(--el-radius-m); padding:16px 20px; margin:18px 0;
+}
+.el-notice-fact div{ display:flex; gap:14px; font-size:13px; color:var(--el-navy); padding:6px 0; }
+.el-notice-fact div + div{ border-top:1px solid var(--el-line-soft); }
+.el-notice-fact span{ flex-shrink:0; width:44px; font-size:11.5px; font-weight:700; color:var(--el-ink-faint); }
+.el-notice-foot{ display:flex; gap:10px; margin-top:24px; padding-top:20px; border-top:1px solid #F0D9C8; flex-wrap:wrap; }
+
 .el-thread-head{ padding:38px 0 22px; border-bottom:1px solid var(--el-line); }
 .el-thread-head .badge{ margin-bottom:12px; }
 .el-thread-head h1{
