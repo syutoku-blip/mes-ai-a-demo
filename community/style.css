@@ -96,7 +96,7 @@ button{ font-family:inherit; cursor:pointer; }
 }
 
 /* ---------- App shell: persistent left sidebar + content column ---------- */
-.el-app{ display:flex; align-items:flex-start; }
+.el-app{ display:flex; align-items:stretch; }
 .el-sidebar-wrap{
   position:relative; flex-shrink:0;
   transition:width .2s ease;
@@ -381,10 +381,21 @@ button{ font-family:inherit; cursor:pointer; }
   -webkit-user-select:none;
 }
 .badge--member{ background:#EEE7F6; color:#6B4FA0; }
-.badge--open{ background:var(--el-teal-tint); color:var(--el-teal-deep); }
+.badge--open{ background:var(--el-line-soft); color:var(--el-navy-soft); }
 .badge--restricted{ background:#E8F1F6; color:#3E7EA3; }
 .badge--solved{ background:#E7F0E0; color:#4F7A38; }
-.badge--unsolved{ background:var(--el-mustard-tint); color:var(--el-mustard-deep); }
+.badge--unsolved{ background:#FBEAE3; color:#B0603A; }
+
+/* Icon glyphs so each badge TYPE is recognizable by shape, not just color */
+.badge{ display:inline-flex; align-items:center; gap:3px; }
+.badge--announce::before{ content:"★"; font-size:9px; }
+.badge--pin::before{ content:"■"; font-size:8px; }
+.badge--open::before{ content:"○"; font-size:10px; }
+.badge--restricted::before{ content:"◐"; font-size:10px; }
+.badge--member::before{ content:"●"; font-size:9px; }
+.badge--cat::before{ content:"#"; font-weight:800; }
+.badge--solved::before{ content:"✓"; font-weight:800; }
+.badge--unsolved::before{ content:"?"; font-weight:800; }
 
 /* Unified forum topic row — title / date / views / replies / visibility / category / solved status */
 .el-t-row{
@@ -392,7 +403,7 @@ button{ font-family:inherit; cursor:pointer; }
   padding:14px 22px; border-bottom:1px solid var(--el-line-soft);
 }
 .el-t-row:last-child{ border-bottom:none; }
-.el-t-row:hover{ background:var(--el-teal-tint); }
+.el-t-row:hover{ background:var(--el-cream-deep); }
 .el-t-row-main{ min-width:0; }
 .el-t-row-badges{ display:flex; gap:6px; margin-bottom:5px; flex-wrap:wrap; align-items:center; }
 .el-t-row-title{
@@ -403,8 +414,9 @@ button{ font-family:inherit; cursor:pointer; }
 .el-t-row:hover .el-t-row-title{ text-decoration:underline; text-underline-offset:3px; }
 .el-t-row-meta{ font-size:11px; color:var(--el-ink-faint); margin-top:4px; }
 .el-t-row-excerpt{ font-size:12px; color:var(--el-ink-faint); margin-top:5px; }
-.el-t-row-stats{ display:flex; gap:16px; flex-shrink:0; font-size:10.5px; color:var(--el-ink-faint); text-align:center; }
-.el-t-row-stats strong{ display:block; font-size:13px; color:var(--el-navy); font-weight:700; }
+.el-t-row-stats{ display:flex; gap:18px; flex-shrink:0; font-size:10px; color:var(--el-ink-faint); text-align:center; }
+.el-t-row-stats div{ display:flex; flex-direction:column; align-items:center; gap:2px; }
+.el-t-row-stats strong{ font-size:13px; color:var(--el-navy); font-weight:700; }
 @media (max-width:640px){ .el-t-row-stats{ display:none; } }
 /* legacy alias kept so existing markup elsewhere still renders correctly */
 .el-hub-row{
@@ -412,7 +424,7 @@ button{ font-family:inherit; cursor:pointer; }
   padding:13px 22px; border-bottom:1px solid var(--el-line-soft);
 }
 .el-hub-row:last-child{ border-bottom:none; }
-.el-hub-row:hover{ background:var(--el-teal-tint); }
+.el-hub-row:hover{ background:var(--el-cream-deep); }
 .el-hub-row-main{ min-width:0; }
 .el-hub-row-title{
   font-size:13.5px; font-weight:600; color:var(--el-navy);
