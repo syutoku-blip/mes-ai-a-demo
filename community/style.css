@@ -97,8 +97,12 @@ button{ font-family:inherit; cursor:pointer; }
 
 /* ---------- App shell: persistent left sidebar + content column ---------- */
 .el-app{ display:flex; align-items:flex-start; }
+.el-sidebar-wrap{
+  position:relative; flex-shrink:0;
+  transition:width .2s ease;
+}
 .el-sidebar{
-  width:232px; flex-shrink:0;
+  width:232px;
   background:var(--el-navy);
   min-height:calc(100vh - var(--gh-h, 34px));
   position:sticky; top:var(--gh-h, 34px);
@@ -108,6 +112,17 @@ button{ font-family:inherit; cursor:pointer; }
   white-space:nowrap;
   box-shadow:2px 0 12px rgba(22,35,63,.10);
 }
+.el-side-collapse{
+  position:absolute; top:18px; right:-13px;
+  width:26px; height:26px; border-radius:50%; flex-shrink:0;
+  background:var(--el-navy); border:2px solid var(--el-cream);
+  color:#C3CBE0; display:flex; align-items:center; justify-content:center;
+  cursor:pointer; z-index:5;
+  transition:background .15s, color .15s;
+}
+.el-side-collapse:hover{ background:var(--el-teal); color:#fff; }
+.el-side-collapse svg{ width:13px; height:13px; flex-shrink:0; transition:transform .2s; }
+.el-app.is-toggled .el-side-collapse svg{ transform:rotate(180deg); }
 .el-sidebar h5{
   font-size:10.5px; letter-spacing:.1em; color:#7E8CAC;
   text-transform:uppercase; margin:22px 10px 8px;
