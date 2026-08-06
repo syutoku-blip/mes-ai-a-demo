@@ -381,7 +381,32 @@ button{ font-family:inherit; cursor:pointer; }
   -webkit-user-select:none;
 }
 .badge--member{ background:#EEE7F6; color:#6B4FA0; }
+.badge--open{ background:var(--el-teal-tint); color:var(--el-teal-deep); }
+.badge--restricted{ background:#E8F1F6; color:#3E7EA3; }
+.badge--solved{ background:#E7F0E0; color:#4F7A38; }
+.badge--unsolved{ background:var(--el-mustard-tint); color:var(--el-mustard-deep); }
 
+/* Unified forum topic row — title / date / views / replies / visibility / category / solved status */
+.el-t-row{
+  display:flex; align-items:center; justify-content:space-between; gap:18px;
+  padding:14px 22px; border-bottom:1px solid var(--el-line-soft);
+}
+.el-t-row:last-child{ border-bottom:none; }
+.el-t-row:hover{ background:var(--el-teal-tint); }
+.el-t-row-main{ min-width:0; }
+.el-t-row-badges{ display:flex; gap:6px; margin-bottom:5px; flex-wrap:wrap; align-items:center; }
+.el-t-row-title{
+  font-size:13.5px; font-weight:600; color:var(--el-navy);
+  display:block;
+}
+.el-t-row-title svg{ width:12px; height:12px; color:var(--el-ink-faint); flex-shrink:0; }
+.el-t-row:hover .el-t-row-title{ text-decoration:underline; text-underline-offset:3px; }
+.el-t-row-meta{ font-size:11px; color:var(--el-ink-faint); margin-top:4px; }
+.el-t-row-excerpt{ font-size:12px; color:var(--el-ink-faint); margin-top:5px; }
+.el-t-row-stats{ display:flex; gap:16px; flex-shrink:0; font-size:10.5px; color:var(--el-ink-faint); text-align:center; }
+.el-t-row-stats strong{ display:block; font-size:13px; color:var(--el-navy); font-weight:700; }
+@media (max-width:640px){ .el-t-row-stats{ display:none; } }
+/* legacy alias kept so existing markup elsewhere still renders correctly */
 .el-hub-row{
   display:flex; align-items:center; justify-content:space-between; gap:16px;
   padding:13px 22px; border-bottom:1px solid var(--el-line-soft);
