@@ -106,7 +106,9 @@ button{ font-family:inherit; cursor:pointer; }
   min-height:calc(100vh - var(--gh-h, 34px) - 58px);
   position:sticky; top:calc(var(--gh-h, 34px) + 58px);
   padding:20px 14px 40px;
-  overflow-y:auto;
+  overflow-y:auto; overflow-x:hidden;
+  transition:width .2s ease, padding .2s ease;
+  white-space:nowrap;
 }
 .el-sidebar h5{
   font-size:10.5px; letter-spacing:.1em; color:var(--el-ink-faint);
@@ -128,6 +130,13 @@ button{ font-family:inherit; cursor:pointer; }
 .el-sidebar-divider{ height:1px; background:var(--el-line-soft); margin:16px 10px; }
 .el-content{ flex:1; min-width:0; }
 
+/* Desktop: the header burger collapses the sidebar down to nothing */
+@media (min-width:901px){
+  .el-app.is-toggled .el-sidebar{
+    width:0; padding-left:0; padding-right:0; border-right:none;
+  }
+}
+
 @media (max-width:900px){
   .el-sidebar{
     display:none;
@@ -136,7 +145,7 @@ button{ font-family:inherit; cursor:pointer; }
     bottom:0; width:auto; z-index:60;
     background:var(--el-cream); min-height:0;
   }
-  .el-sidebar.is-open{ display:block; }
+  .el-app.is-toggled .el-sidebar{ display:block; }
   .el-app{ display:block; }
 }
 
@@ -162,15 +171,14 @@ button{ font-family:inherit; cursor:pointer; }
   background-size:cover;
   background-position:center;
   background-color:var(--el-cream);
-  border-bottom:1px solid var(--el-line);
   padding:56px 24px 40px;
 }
 .el-hero::after{
   content:"";
   position:absolute;
   left:0; right:0; bottom:0;
-  height:120px;
-  background:linear-gradient(to bottom, rgba(248,244,234,0) 0%, var(--el-cream) 88%);
+  height:56px;
+  background:linear-gradient(to bottom, rgba(248,244,234,0) 0%, var(--el-cream) 100%);
   pointer-events:none;
 }
 .el-hero-content{
@@ -198,11 +206,12 @@ button{ font-family:inherit; cursor:pointer; }
 .el-hero-divider i{ width:7px; height:7px; border-radius:50%; background:var(--el-mustard); display:block; }
 .el-hero-content .sub{ color:var(--el-navy-soft); font-size:14.5px; line-height:1.8; margin:0 0 18px; }
 .el-hero-tagline{
-  font-family:"Yomogi","Klee One",var(--font-body);
-  font-size:clamp(20px,3vw,26px); color:var(--el-navy);
-  display:inline-block; position:relative; margin-bottom:32px;
+  font-family:"Zen Kurenaido","Yomogi",var(--font-body);
+  font-size:clamp(23px,3.4vw,30px); color:var(--el-navy);
+  letter-spacing:.03em;
+  display:inline-block; position:relative; margin-bottom:34px;
 }
-.el-hero-tagline svg{ position:absolute; left:0; bottom:-9px; width:100%; height:12px; }
+.el-hero-tagline svg{ position:absolute; left:0; bottom:-10px; width:100%; height:14px; }
 
 .el-hero-icons{
   display:flex; align-items:center; justify-content:center;
@@ -227,19 +236,22 @@ button{ font-family:inherit; cursor:pointer; }
 
 .el-hero-cta-bar{
   display:flex; align-items:center; gap:16px;
-  max-width:460px; margin:0 auto;
-  background:var(--el-paper); border-radius:999px;
-  padding:10px 12px 10px 12px;
+  max-width:380px; margin:0 auto;
+  background:var(--el-paper); border-radius:22px;
+  border:1.5px solid var(--el-mustard);
+  padding:20px 22px;
   box-shadow:var(--el-shadow-lift);
+  transition:transform .18s, box-shadow .18s;
 }
+.el-hero-cta-bar:hover{ transform:translateY(-2px); box-shadow:0 10px 20px rgba(22,35,63,.10), 0 24px 48px rgba(22,35,63,.14); }
 .el-hero-cta-bar .pencil{
-  width:44px; height:44px; border-radius:50%; flex-shrink:0;
+  width:46px; height:46px; border-radius:50%; flex-shrink:0;
   background:var(--el-teal); color:#fff;
   display:flex; align-items:center; justify-content:center;
 }
 .el-hero-cta-bar .text{ flex:1; text-align:left; min-width:0; }
-.el-hero-cta-bar .text strong{ display:block; font-size:13.5px; color:var(--el-navy); }
-.el-hero-cta-bar .text span{ display:block; font-size:11.5px; color:var(--el-ink-faint); margin-top:1px; }
+.el-hero-cta-bar .text strong{ display:block; font-size:14.5px; font-weight:700; color:var(--el-navy); line-height:1.4; }
+.el-hero-cta-bar .text span{ display:block; font-size:12px; color:var(--el-ink-faint); margin-top:3px; }
 .el-hero-cta-bar .arrow{
   width:40px; height:40px; border-radius:50%; flex-shrink:0; border:none;
   background:var(--el-mustard); color:var(--el-navy);
