@@ -470,11 +470,11 @@
             </span>
             <h3>SHiFT会員限定</h3>
           </div>
-          <div class="el-board">
           <div class="el-hub-note">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-            SHiFT塾会員のみ閲覧できます。内容の一部はプレビューのみ表示しています。
+            SHiFT会員のみ閲覧できます。<button type="button" class="el-note-link" id="shiftAboutBtn">SHiFT会員とは</button>
           </div>
+          <div class="el-board">
           <div class="el-hub-row">
             <div class="el-hub-row-main">
               <a href="groups.html" class="el-hub-row-title">
@@ -676,11 +676,67 @@
   </div>
 </div>
 
+<div class="el-modal" id="shiftAboutModal" aria-hidden="true">
+  <div class="el-modal-backdrop" data-modal-close></div>
+  <div class="el-modal-panel" role="dialog" aria-modal="true" aria-labelledby="shiftAboutTitle">
+    <button type="button" class="el-modal-close" data-modal-close aria-label="閉じる">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <h2 id="shiftAboutTitle">SHiFT会員とは</h2>
+    <p class="el-modal-lead">WorldShift株式会社の各種サービスをご利用中のお客様のことです。WorldShiftでは、米国輸出をトータルで支えるサービスを以下の通りご用意しています。</p>
+
+    <div class="el-modal-services">
+      <a href="#" class="el-modal-service">
+        <span class="ic" style="background:var(--el-teal-tint);color:var(--el-teal-deep);">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2M3 8v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8M3 8h18"/></svg>
+        </span>
+        <span class="txt">
+          <strong>SLCサービス</strong>
+          <span>米国Amazon FBA納品代行</span>
+        </span>
+        <svg class="go" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
+      </a>
+      <a href="#" class="el-modal-service">
+        <span class="ic" style="background:var(--el-mustard-tint);color:var(--el-mustard-deep);">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+        </span>
+        <span class="txt">
+          <strong>FDA Compliance Partner</strong>
+          <span>FDA規制対応</span>
+        </span>
+        <svg class="go" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
+      </a>
+      <a href="#" class="el-modal-service">
+        <span class="ic" style="background:#E8F1F6;color:#3E7EA3;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        </span>
+        <span class="txt">
+          <strong>ProFinder</strong>
+          <span>米国Amazonリサーチツール</span>
+        </span>
+        <svg class="go" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
+      </a>
+    </div>
+  </div>
+</div>
+
 <script src="../shared/global-header.js" defer></script>
 <script>
   document.getElementById('sidebarToggle').addEventListener('click', function () {
     document.getElementById('appShell').classList.toggle('is-toggled');
   });
+
+  // SHiFT会員とは モーダル
+  (function () {
+    var modal = document.getElementById('shiftAboutModal');
+    var openBtn = document.getElementById('shiftAboutBtn');
+    if (!modal || !openBtn) return;
+    function open () { modal.classList.add('is-open'); modal.setAttribute('aria-hidden', 'false'); }
+    function close () { modal.classList.remove('is-open'); modal.setAttribute('aria-hidden', 'true'); }
+    openBtn.addEventListener('click', open);
+    modal.querySelectorAll('[data-modal-close]').forEach(function (el) { el.addEventListener('click', close); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+  })();
 </script>
 </body>
 </html>

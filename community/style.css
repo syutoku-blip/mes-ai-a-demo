@@ -363,9 +363,15 @@ button{ font-family:inherit; cursor:pointer; }
 .el-hub-note{
   display:flex; align-items:center; gap:8px;
   font-size:11.5px; color:var(--el-ink-faint);
-  padding:12px 22px 0;
+  padding:0 4px 12px;
 }
 .el-hub-note svg{ width:13px; height:13px; flex-shrink:0; }
+.el-note-link{
+  background:none; border:none; padding:0; margin:0;
+  font-size:11.5px; font-weight:700; color:var(--el-teal-deep);
+  text-decoration:underline; text-underline-offset:2px; cursor:pointer;
+}
+.el-note-link:hover{ color:var(--el-navy); }
 
 /* SHiFT member-only excerpt: first ~15 chars readable, remainder blurred */
 .el-blur-preview{ display:inline; }
@@ -682,3 +688,51 @@ button{ font-family:inherit; cursor:pointer; }
 }
 .el-fade-up{ animation:elFadeUp .6s ease both; }
 @keyframes elFadeUp{ from{ opacity:0; transform:translateY(14px); } to{ opacity:1; transform:translateY(0); } }
+
+/* ---------- SHiFT会員とは modal ---------- */
+.el-modal{
+  position:fixed; inset:0; z-index:200;
+  display:none; align-items:center; justify-content:center;
+  padding:24px;
+}
+.el-modal.is-open{ display:flex; }
+.el-modal-backdrop{
+  position:absolute; inset:0;
+  background:rgba(22,35,63,.45);
+  backdrop-filter:blur(2px);
+}
+.el-modal-panel{
+  position:relative; z-index:1;
+  background:var(--el-paper); border-radius:var(--el-radius-l);
+  max-width:440px; width:100%;
+  padding:32px 28px 28px;
+  box-shadow:0 20px 60px rgba(22,35,63,.25);
+}
+.el-modal-close{
+  position:absolute; top:16px; right:16px;
+  width:30px; height:30px; border-radius:50%; border:none;
+  background:var(--el-cream-deep); color:var(--el-navy-soft);
+  display:flex; align-items:center; justify-content:center; cursor:pointer;
+}
+.el-modal-close:hover{ background:var(--el-line-soft); color:var(--el-navy); }
+.el-modal-panel h2{
+  font-family:var(--font-display); font-size:19px; font-weight:600;
+  margin:0 0 12px; color:var(--el-navy);
+}
+.el-modal-lead{ font-size:13px; color:var(--el-navy-soft); line-height:1.8; margin:0 0 20px; }
+.el-modal-services{ display:flex; flex-direction:column; gap:8px; }
+.el-modal-service{
+  display:flex; align-items:center; gap:12px;
+  padding:12px 14px; border-radius:var(--el-radius-m);
+  border:1px solid var(--el-line-soft);
+  transition:border-color .15s, box-shadow .15s;
+}
+.el-modal-service:hover{ border-color:transparent; box-shadow:var(--el-shadow); }
+.el-modal-service .ic{
+  width:36px; height:36px; border-radius:10px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+}
+.el-modal-service .txt{ flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+.el-modal-service .txt strong{ font-size:13.5px; color:var(--el-navy); }
+.el-modal-service .txt span{ font-size:11.5px; color:var(--el-ink-faint); }
+.el-modal-service .go{ flex-shrink:0; color:var(--el-ink-faint); }
