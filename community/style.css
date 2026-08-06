@@ -123,6 +123,14 @@ button{ font-family:inherit; cursor:pointer; }
   border-bottom:1px solid var(--el-line);
 }
 .el-hero img{ width:100%; height:auto; }
+.el-hero::after{
+  content:"";
+  position:absolute;
+  left:0; right:0; bottom:0;
+  height:140px;
+  background:linear-gradient(to bottom, rgba(248,244,234,0) 0%, var(--el-cream) 85%);
+  pointer-events:none;
+}
 .el-hero-caption{
   text-align:center; padding:34px 24px 44px;
 }
