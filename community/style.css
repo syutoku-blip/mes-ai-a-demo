@@ -297,6 +297,36 @@ button{ font-family:inherit; cursor:pointer; }
 }
 .el-hero-cta-bar .arrow:hover{ background:var(--el-mustard-deep); color:#fff; }
 
+/* ---------- Official お知らせ box (top page) — visually distinct from the forum feed cards ---------- */
+.el-announce-box{
+  background:linear-gradient(180deg, #FBF1EA 0%, var(--el-paper) 220px);
+  border:1.5px solid #F0D9C8;
+  border-radius:var(--el-radius-l);
+  overflow:hidden;
+  box-shadow:0 2px 4px rgba(216,120,90,.05), 0 10px 24px rgba(216,120,90,.06);
+}
+.el-announce-row{
+  display:flex; align-items:center; gap:14px;
+  padding:15px 22px;
+  border-bottom:1px solid #F3E2D5;
+  transition:background .15s;
+}
+.el-announce-row:last-child{ border-bottom:none; }
+.el-announce-row:hover{ background:#FBF0E9; }
+.el-announce-row .ic{
+  width:32px; height:32px; border-radius:10px; flex-shrink:0;
+  color:#fff; display:flex; align-items:center; justify-content:center;
+}
+.el-announce-row-main{ flex:1; min-width:0; display:flex; flex-direction:column; gap:4px; }
+.el-announce-row-main .title{ font-size:14px; font-weight:700; color:var(--el-navy); }
+.el-announce-row:hover .title{ text-decoration:underline; text-underline-offset:3px; }
+.el-announce-row-main .meta{ display:flex; align-items:center; gap:8px; font-size:11.5px; color:var(--el-ink-faint); }
+.el-announce-row .replies{
+  flex-shrink:0; font-size:11px; color:var(--el-ink-faint); text-align:center;
+}
+.el-announce-row .replies strong{ display:block; font-size:14px; color:var(--el-navy); font-weight:700; }
+@media (max-width:560px){ .el-announce-row .replies{ display:none; } }
+
 /* ---------- Top-page feed sections (お知らせ／NEW／HOT／SHiFT限定／コミュニティ — always-visible, not tabs) ---------- */
 .el-feed-head{
   display:flex; align-items:center; gap:12px;
