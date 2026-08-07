@@ -187,14 +187,14 @@ button{ font-family:inherit; cursor:pointer; }
 
 .el-side-sub .el-side-cat{ margin:8px 0 2px; }
 .el-side-sub .el-side-cat > summary{
-  font-size:9.5px; letter-spacing:.08em; color:#7E8CAC;
-  text-transform:uppercase; padding:7px 10px;
+  font-size:12.5px; color:#AEB8D2; font-weight:500;
+  padding:7px 10px;
   display:flex; align-items:center; gap:6px;
   cursor:pointer; list-style:none; border-radius:7px;
 }
 .el-side-sub .el-side-cat > summary::-webkit-details-marker{ display:none; }
 .el-side-sub .el-side-cat > summary:hover{ background:rgba(255,255,255,.08); color:#fff; }
-.el-side-sub .el-side-cat > summary svg{ width:10px; height:10px; margin-left:auto; flex-shrink:0; transition:transform .15s; }
+.el-side-sub .el-side-cat > summary svg{ width:11px; height:11px; margin-left:auto; flex-shrink:0; transition:transform .15s; }
 .el-side-sub .el-side-cat[open] > summary svg{ transform:rotate(90deg); }
 .el-side-cat-body{ padding-top:2px; }
 
@@ -490,6 +490,46 @@ button{ font-family:inherit; cursor:pointer; }
 .el-cat-card h4{ font-size:14.5px; margin:0 0 4px; }
 .el-cat-card p{ font-size:12.5px; color:var(--el-ink-faint); margin:0 0 8px; }
 .el-cat-meta{ font-size:11.5px; color:var(--el-ink-faint); display:flex; gap:10px; }
+
+/* ---------- Section-top catchphrase (フォーラム／コミュニティ／マーケット) ---------- */
+.el-catch{ text-align:center; padding:0 0 30px; }
+.el-catch p{
+  font-family:var(--font-display); font-weight:500; font-style:normal;
+  font-size:16px; color:var(--el-navy-soft); line-height:1.85; margin:0;
+}
+
+/* ---------- Pinned official box (usage rules etc.) ---------- */
+.el-pinned-box{
+  display:flex; gap:16px; align-items:flex-start;
+  background:linear-gradient(180deg, #EAF3F1 0%, var(--el-paper) 220px);
+  border:1.5px solid #CFE3DE;
+  border-radius:var(--el-radius-l);
+  padding:24px 26px;
+  box-shadow:0 2px 4px rgba(47,143,130,.05), 0 10px 24px rgba(47,143,130,.06);
+}
+.el-pinned-box .ic{
+  width:38px; height:38px; border-radius:11px; flex-shrink:0;
+  background:var(--el-teal); color:#fff;
+  display:flex; align-items:center; justify-content:center;
+}
+.el-pinned-box h2{ font-family:var(--font-display); font-size:16px; font-weight:600; margin:8px 0 8px; color:var(--el-navy); }
+.el-pinned-box p{ font-size:13px; color:var(--el-navy-soft); line-height:1.8; margin:0 0 10px; }
+.el-pinned-box ul{ margin:0; padding-left:18px; font-size:12.5px; color:var(--el-navy-soft); line-height:1.9; }
+.el-pinned-box li{ margin-bottom:2px; }
+
+/* ---------- Hashtag cloud ---------- */
+.el-tag-cloud{ display:flex; flex-wrap:wrap; gap:10px; }
+.el-tag-cloud a{
+  display:inline-flex; align-items:center; gap:6px;
+  padding:9px 16px; border-radius:999px; border:1px solid var(--el-line-soft);
+  background:var(--el-paper); font-weight:600; color:var(--el-navy-soft);
+  transition:border-color .15s, color .15s;
+}
+.el-tag-cloud a:hover{ border-color:var(--el-teal); color:var(--el-teal-deep); }
+.el-tag-cloud a .count{ font-size:10.5px; color:var(--el-ink-faint); font-weight:500; }
+.el-tag-cloud a.lg{ font-size:14.5px; }
+.el-tag-cloud a.md{ font-size:13px; }
+.el-tag-cloud a.sm{ font-size:11.5px; }
 
 /* ---------- Topic list (Discourse-style, route-line signature) ---------- */
 .el-board{
