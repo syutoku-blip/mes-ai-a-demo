@@ -1,6 +1,8 @@
 /* ==========================================================================
    Global dev-site switcher — shared across every site in this repo.
    Keep this bar minimal: it only exists to jump between sites.
+   Collapsible: state persists via localStorage, --gh-h updates so every
+   page's sticky offsets (header/sidebar/etc.) adjust automatically.
    ========================================================================== */
 :root{ --gh-h: 34px; }
 
@@ -13,6 +15,11 @@
   border-bottom:1px solid rgba(255,255,255,.08);
   font-family:-apple-system,BlinkMacSystemFont,"Noto Sans JP",sans-serif;
   font-size:11px;
+  overflow:hidden;
+  transition:height .18s ease, padding .18s ease, border-color .18s ease;
+}
+.gh-bar.is-collapsed{
+  height:0; padding-top:0; padding-bottom:0; border-bottom-color:transparent;
 }
 .gh-bar .gh-label{
   color:#5C6784; font-size:9.5px; letter-spacing:.09em;
@@ -29,6 +36,28 @@
 .gh-bar a.is-active{ background:#2F8F82; color:#fff; }
 .gh-bar .gh-spacer{ flex:1; }
 .gh-bar .gh-status{ color:#5C6784; font-size:9.5px; letter-spacing:.04em; flex-shrink:0; }
+
+.gh-toggle{
+  display:flex; align-items:center; justify-content:center;
+  width:20px; height:20px; border-radius:5px; flex-shrink:0; margin-left:6px;
+  background:none; border:none; color:#5C6784; cursor:pointer;
+}
+.gh-toggle:hover{ background:rgba(255,255,255,.08); color:#fff; }
+.gh-toggle svg{ width:12px; height:12px; }
+
+.gh-reopen{
+  position:fixed; top:0; left:50%; transform:translateX(-50%);
+  z-index:9999;
+  display:none; align-items:center; gap:5px;
+  background:#101A2E; color:#8890A6;
+  border:none; border-radius:0 0 8px 8px;
+  padding:3px 12px 5px;
+  font-size:9.5px; letter-spacing:.05em;
+  cursor:pointer;
+}
+.gh-reopen.is-visible{ display:flex; }
+.gh-reopen:hover{ color:#fff; }
+.gh-reopen svg{ width:11px; height:11px; }
 
 @media (max-width:480px){
   .gh-bar .gh-status{ display:none; }
