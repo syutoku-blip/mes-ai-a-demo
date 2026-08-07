@@ -166,10 +166,19 @@
         <div class="el-thread-main">
 
         <div class="el-thread-head">
-          <div style="font-size:12.5px;color:var(--el-ink-faint);margin-bottom:14px;">
-            <a href="board.html" style="color:var(--el-ink-faint);">フォーラム</a> ／ FDA対応
+          <nav class="el-breadcrumb" aria-label="breadcrumb">
+            <a href="index.html">ホーム</a>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
+            <a href="board.html">フォーラム</a>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
+            <span>FDA対応</span>
+          </nav>
+          <div class="el-t-row-badges" style="margin-bottom:12px;">
+            <span class="badge badge--pin">固定</span>
+            <span class="badge badge--open">公開</span>
+            <span class="badge badge--cat">FDA対応</span>
+            <span class="badge badge--solved">解決</span>
           </div>
-          <span class="badge badge--pin">固定</span>
           <h1>FDA施設登録、2年更新のタイミングと注意点</h1>
           <div class="el-thread-meta">
             <div class="el-avatars"><div class="el-avatar">山</div><div class="el-avatar">田</div><div class="el-avatar">佐</div><div class="el-avatar">木</div></div>
@@ -184,12 +193,17 @@
             <div class="el-post-head">
               <span class="name">山口 貿易士</span>
               <span class="role">スレ主</span>
-              <span class="time">2026年6月18日</span>
             </div>
+            <div class="el-post-dates">投稿日：2026年6月18日 ・ 最終編集：2026年6月19日</div>
             <div class="el-post-body">
               <p>いつもお世話になっています。FDA施設登録の更新について、直近で更新漏れによる出荷停止を経験したので共有します。</p>
               <p>登録は2年に一度、偶数年の10月1日〜12月31日の間に更新が必要です。この期間を過ぎると登録が失効し、通関時に差し止めを受けるケースがありました。</p>
               <p>社内でカレンダーリマインドを二重に設定するようにしてから、失念はなくなりました。同じように更新のタイミングで困った方、他に注意点があれば教えてください。</p>
+            </div>
+            <div class="el-post-tags">
+              <a href="board.html">#FDA施設登録</a>
+              <a href="board.html">#更新期限</a>
+              <a href="board.html">#通関</a>
             </div>
             <div class="el-post-actions">
               <button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14Z"/></svg> 12</button>
@@ -324,9 +338,27 @@
 
         <aside class="el-scrubber" id="scrubber">
           <div class="el-scrubber-track">
-            <button data-jump="c1" data-month="2026-06">2026年6月</button>
-            <button data-jump="c3" data-month="2026-07">2026年7月</button>
-            <button data-jump="c5" data-month="2026-08">2026年8月</button>
+            <div class="el-scrubber-group">
+              <button class="el-scrubber-month" data-jump="c1" data-month="2026-06">2026年6月</button>
+              <div class="el-scrubber-dots">
+                <button data-jump="c1" title="6月20日 田中フーズ"></button>
+                <button data-jump="c2" title="6月25日 鈴木ラボ"></button>
+              </div>
+            </div>
+            <div class="el-scrubber-group">
+              <button class="el-scrubber-month" data-jump="c3" data-month="2026-07">2026年7月</button>
+              <div class="el-scrubber-dots">
+                <button data-jump="c3" title="7月2日 高橋物産"></button>
+                <button data-jump="c4" title="7月28日 佐藤ストア"></button>
+              </div>
+            </div>
+            <div class="el-scrubber-group">
+              <button class="el-scrubber-month" data-jump="c5" data-month="2026-08">2026年8月</button>
+              <div class="el-scrubber-dots">
+                <button data-jump="c5" title="8月3日 小林商店"></button>
+                <button data-jump="c6" title="昨日 中村コスメ"></button>
+              </div>
+            </div>
           </div>
           <div class="el-scrubber-count"><strong id="scrubCurrent">1</strong> / 6</div>
         </aside>
