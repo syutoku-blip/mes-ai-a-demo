@@ -27,7 +27,7 @@
 <div class="el-app" id="appShell">
   <div class="el-sidebar-wrap">
     <button class="el-side-collapse" id="sidebarToggle" aria-label="メニューを閉じる">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m15 6-6 6 6 6"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
     </button>
     <aside class="el-sidebar" id="sidebar">
     <nav>
@@ -47,7 +47,12 @@
           <a href="board.html">SHiFT member only</a>
           <a href="board.html">未解決</a>
 
-          <div class="el-side-sub-label">カテゴリで探す</div>
+          <details class="el-side-cat">
+            <summary>
+              カテゴリで探す
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
+            </summary>
+            <div class="el-side-cat-body">
 
           <details>
             <summary>FDA<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></summary>
@@ -92,6 +97,8 @@
           </details>
 
           <a href="board.html" style="margin-top:4px;">雑談・自己紹介</a>
+            </div>
+          </details>
         </div>
       </details>
       <a href="groups.html">
@@ -544,9 +551,6 @@
               <div class="el-hub-row-excerpt"><span class="el-blur-preview">月商ベースで見た広告費の適正比</span><span class="el-blur-tail">率、うちは売上の12%前後に落ち着いています。</span></div>
             </div>
             <div class="el-hub-row-stats"><div><strong>260</strong>閲覧</div></div>
-          </div>
-          <div style="padding:16px 22px;">
-            <a href="groups.html" class="el-btn el-btn--ghost el-btn--sm">SHiFT塾について見る</a>
           </div>
           </div>
           <div style="text-align:center;margin:18px 0 44px;">

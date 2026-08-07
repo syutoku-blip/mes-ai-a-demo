@@ -52,8 +52,9 @@ button{ font-family:inherit; cursor:pointer; }
 .wrap{ max-width:1180px; margin:0 auto; padding:0 32px; }
 @media (max-width:720px){ .wrap{ padding:0 18px; } }
 
-/* ---------- Header (no bar — just the logo + search/menu row, blends into the page) ---------- */
+/* ---------- Header (subtle tone shift from the page background) ---------- */
 .el-header{
+  background:var(--el-cream-deep);
   padding-bottom:18px;
 }
 .el-header-inner{
@@ -181,6 +182,19 @@ button{ font-family:inherit; cursor:pointer; }
   font-size:11.5px; color:#8D97B5;
 }
 .el-side-sub2 a:hover{ background:rgba(255,255,255,.08); color:#fff; }
+
+.el-side-sub .el-side-cat{ margin:8px 0 2px; }
+.el-side-sub .el-side-cat > summary{
+  font-size:9.5px; letter-spacing:.08em; color:#7E8CAC;
+  text-transform:uppercase; padding:7px 10px;
+  display:flex; align-items:center; gap:6px;
+  cursor:pointer; list-style:none; border-radius:7px;
+}
+.el-side-sub .el-side-cat > summary::-webkit-details-marker{ display:none; }
+.el-side-sub .el-side-cat > summary:hover{ background:rgba(255,255,255,.08); color:#fff; }
+.el-side-sub .el-side-cat > summary svg{ width:10px; height:10px; margin-left:auto; flex-shrink:0; transition:transform .15s; }
+.el-side-sub .el-side-cat[open] > summary svg{ transform:rotate(90deg); }
+.el-side-cat-body{ padding-top:2px; }
 
 /* Desktop: the header burger collapses the sidebar down to nothing */
 @media (min-width:901px){
