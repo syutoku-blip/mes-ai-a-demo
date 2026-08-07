@@ -150,6 +150,8 @@ button{ font-family:inherit; cursor:pointer; }
 .el-side-forum > summary.is-active{ background:var(--el-teal); color:#fff; font-weight:700; }
 .el-side-forum > summary.is-active svg:first-child{ color:#fff; }
 .el-side-forum > summary svg:first-child{ width:16px; height:16px; flex-shrink:0; color:#7E8CAC; }
+.el-side-label-link{ color:inherit; text-decoration:none; }
+.el-side-label-link:hover{ text-decoration:underline; text-underline-offset:2px; }
 .el-side-forum > summary svg.chev{ width:12px; height:12px; margin-left:auto; flex-shrink:0; color:#7E8CAC; transition:transform .15s; }
 .el-side-forum[open] > summary svg.chev{ transform:rotate(90deg); }
 
@@ -276,6 +278,14 @@ button{ font-family:inherit; cursor:pointer; }
 .el-hero-divider span:last-child{ background:var(--el-sky); }
 .el-hero-divider i{ width:7px; height:7px; border-radius:50%; background:var(--el-mustard); display:block; }
 .el-hero-content .sub{ color:var(--el-navy-soft); font-size:14.5px; line-height:1.8; margin:0 0 32px; }
+.el-hero-sub-hand{ display:inline-block; margin:0 0 32px; }
+.el-hero-sub-hand p{
+  font-family:"Yomogi","Klee One",var(--font-body);
+  font-weight:400;
+  color:var(--el-navy-soft); font-size:17px; line-height:1.85;
+  margin:0;
+}
+.el-hero-sub-underline{ width:100%; height:12px; display:block; margin-top:2px; }
 
 .el-hero-icons{
   display:flex; align-items:center; justify-content:center;
