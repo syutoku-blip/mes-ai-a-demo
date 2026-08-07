@@ -37,9 +37,9 @@
       </a>
 
       <details class="el-side-forum">
-        <summary>
+        <summary data-href="board.html">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-          <a href="board.html" class="el-side-label-link"><span class="lbl">フォーラム</span></a>
+          <span class="lbl">フォーラム</span>
           <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
         </summary>
         <div class="el-side-sub">
@@ -119,9 +119,9 @@
       </details>
 
       <details class="el-side-forum">
-        <summary>
+        <summary data-href="groups.html">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          <a href="groups.html" class="el-side-label-link"><span class="lbl">コミュニティ</span></a>
+          <span class="lbl">コミュニティ</span>
           <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
         </summary>
         <div class="el-side-sub">
@@ -143,9 +143,9 @@
       </a>
 
       <details class="el-side-forum">
-        <summary>
+        <summary data-href="market.html">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/></svg>
-          <a href="market.html" class="el-side-label-link"><span class="lbl">マーケット</span></a>
+          <span class="lbl">マーケット</span>
           <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
         </summary>
         <div class="el-side-sub">
@@ -165,9 +165,9 @@
 
   <div class="el-content">
     <main class="el-section" style="padding-top:36px;">
-      <div class="wrap" style="max-width:760px;">
+      <div class="wrap" style="max-width:880px;">
 
-        <div style="display:flex;align-items:center;gap:20px;margin-bottom:32px;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:20px;margin-bottom:28px;flex-wrap:wrap;">
           <div class="el-avatar" style="width:72px;height:72px;font-size:26px;">り</div>
           <div>
             <h1 style="font-family:var(--font-display);font-size:22px;margin:0 0 4px;">りかさん</h1>
@@ -193,7 +193,169 @@
           </div>
         </div>
 
-        <div class="el-section-head" style="margin-bottom:16px;">
+        <div class="el-panel-grid">
+
+          <div class="el-panel">
+            <div class="el-panel-head">
+              <span class="ic" style="background:#FBE4E4;color:#D8577A;">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z"/></svg>
+              </span>
+              <div>
+                <h3>いいね</h3>
+                <div class="sub">合計 42件</div>
+              </div>
+            </div>
+            <div class="el-panel-rows">
+              <a href="board.html" class="el-panel-row">いいねしたトピック<span class="val">18件</span><svg class="go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></a>
+              <a href="board.html" class="el-panel-row">いいねしたコメント<span class="val">15件</span><svg class="go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></a>
+              <a href="board.html" class="el-panel-row">もらったいいね<span class="val">9件</span><svg class="go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></a>
+            </div>
+          </div>
+
+          <div class="el-panel">
+            <div class="el-panel-head">
+              <span class="ic" style="background:var(--el-mustard-tint);color:var(--el-mustard-deep);">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 0 1-10 0V4Z"/><path d="M5 4H3v2a4 4 0 0 0 4 4M19 4h2v2a4 4 0 0 1-4 4"/></svg>
+              </span>
+              <div>
+                <h3>ベストアンサー</h3>
+                <div class="sub">選ばれた回数と、選んだ回数</div>
+              </div>
+            </div>
+            <div class="el-panel-rows">
+              <a href="board.html" class="el-panel-row">ベストアンサーに選ばれた投稿<span class="val">3件</span><svg class="go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></a>
+              <a href="board.html" class="el-panel-row">ベストアンサーを選んだ投稿<span class="val">7件</span><svg class="go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></a>
+            </div>
+          </div>
+
+          <div class="el-panel">
+            <div class="el-panel-head">
+              <span class="ic" style="background:var(--el-teal-tint);color:var(--el-teal-deep);">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+              </span>
+              <div>
+                <h3>投稿</h3>
+                <div class="sub">自分のトピックとコメント</div>
+              </div>
+            </div>
+            <div class="el-panel-rows">
+              <a href="board.html" class="el-panel-row">自分のトピック<span class="val">6件<span class="tiny">解決4・未解決2</span></span><svg class="go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></a>
+              <a href="board.html" class="el-panel-row">コメントしたトピック<span class="val">12件</span><svg class="go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></a>
+            </div>
+          </div>
+
+          <div class="el-panel">
+            <div class="el-panel-head">
+              <span class="ic" style="background:#E8F1F6;color:#3E7EA3;">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/></svg>
+              </span>
+              <div>
+                <h3>マーケット</h3>
+                <div class="sub">購入・出品のまとめ</div>
+              </div>
+            </div>
+            <div class="el-panel-rows">
+              <a href="market-list.html" class="el-panel-row">お気に入りのコンテンツ<span class="val">5件</span><svg class="go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></a>
+              <a href="market-checkout.html" class="el-panel-row">購入したコンテンツ（購入履歴）<span class="val">3件</span><svg class="go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></a>
+              <a href="market-apply.html" class="el-panel-row">出品中のコンテンツ<span class="val">2件</span><svg class="go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></a>
+              <a href="market-apply.html" class="el-panel-row">売上履歴<span class="val">¥8,400</span><svg class="go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></a>
+            </div>
+          </div>
+
+          <div class="el-panel">
+            <div class="el-panel-head">
+              <span class="ic" style="background:var(--el-sky);color:#fff;">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              </span>
+              <div>
+                <h3>フォロワー</h3>
+                <div class="sub">つながっているメンバー</div>
+              </div>
+            </div>
+            <div class="el-follow-row">
+              <div class="el-avatars"><div class="el-avatar">山</div><div class="el-avatar">田</div><div class="el-avatar">佐</div><div class="el-avatar">鈴</div></div>
+            </div>
+            <div class="el-follow-stats">
+              <div><strong>24</strong><span>フォロワー</span></div>
+              <div><strong>18</strong><span>フォロー中</span></div>
+            </div>
+          </div>
+
+          <div class="el-panel">
+            <div class="el-panel-head">
+              <span class="ic" style="background:#EEE7F6;color:#6B4FA0;">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M9 14 6.5 22l5.5-3 5.5 3L15 14"/></svg>
+              </span>
+              <div>
+                <h3>保有バッジ</h3>
+                <div class="sub">これまでの実績</div>
+              </div>
+            </div>
+            <div class="el-badge-grid">
+              <div class="el-badge-item">
+                <span class="ic" style="background:var(--el-teal);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></span>
+                <span>初投稿</span>
+              </div>
+              <div class="el-badge-item">
+                <span class="ic" style="background:var(--el-mustard);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 0 1-10 0V4Z"/></svg></span>
+                <span>ベストアンサー</span>
+              </div>
+              <div class="el-badge-item">
+                <span class="ic" style="background:var(--el-coral);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v6.5L18 12l-6 3.5V22l-2-2-2 2v-6.5L2 12l6-3.5V2l2 2 2-2Z"/></svg></span>
+                <span>皆勤賞</span>
+              </div>
+              <div class="el-badge-item">
+                <span class="ic" style="background:#6B4FA0;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+                <span>SHiFT会員</span>
+              </div>
+              <div class="el-badge-item">
+                <span class="ic" style="background:#3E7EA3;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></span>
+                <span>コミュニティ発起人</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="el-panel el-panel-full">
+            <div class="el-panel-head">
+              <span class="ic" style="background:var(--el-navy);color:#fff;">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              </span>
+              <div>
+                <h3>DM</h3>
+                <div class="sub">未読 2件</div>
+              </div>
+            </div>
+            <div class="el-dm-list">
+              <a href="#" class="el-dm-row">
+                <div class="el-avatar">山</div>
+                <div class="el-dm-row-main">
+                  <div class="name">山口 貿易士 <span class="el-dm-unread"></span></div>
+                  <div class="snippet">先日の施設登録の件、追加で確認したいことがあり…</div>
+                </div>
+                <span class="time">10分前</span>
+              </a>
+              <a href="#" class="el-dm-row">
+                <div class="el-avatar">佐</div>
+                <div class="el-dm-row-main">
+                  <div class="name">佐藤ストア <span class="el-dm-unread"></span></div>
+                  <div class="snippet">ラベルのテンプレート、共有ありがとうございました！</div>
+                </div>
+                <span class="time">昨日</span>
+              </a>
+              <a href="#" class="el-dm-row">
+                <div class="el-avatar">鈴</div>
+                <div class="el-dm-row-main">
+                  <div class="name">鈴木ラボ</div>
+                  <div class="snippet">チェックシートの件、来週お時間いただけますか。</div>
+                </div>
+                <span class="time">2026年7月30日</span>
+              </a>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="el-section-head" style="margin:36px 0 16px;">
           <div>
             <h2 style="font-size:18px;">自分の投稿</h2>
           </div>
@@ -257,9 +419,13 @@
     document.getElementById('appShell').classList.toggle('is-toggled');
   });
 
-  // フォーラム／コミュニティのラベルをクリックしたときは開閉させず、そのままページ遷移させる
-  document.querySelectorAll('.el-side-label-link').forEach(function (el) {
-    el.addEventListener('click', function (e) { e.stopPropagation(); });
+  // フォーラム／コミュニティ／マーケットの見出し：矢印以外をクリックしたらページ遷移、矢印は開閉のみ
+  document.querySelectorAll('.el-side-forum > summary[data-href]').forEach(function (summary) {
+    summary.addEventListener('click', function (e) {
+      if (e.target.closest('svg.chev')) return;
+      e.preventDefault();
+      window.location.href = summary.dataset.href;
+    });
   });
 </script>
 </body>

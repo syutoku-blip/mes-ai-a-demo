@@ -22,6 +22,10 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
         検索
       </div>
+      <button type="button" class="el-header-cart" id="headerCartBtn" aria-label="カート">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        <span class="count" id="headerCartCount">0</span>
+      </button>
       <a href="mypage.html" class="el-avatar" aria-label="マイページ">り</a>
     </div>
   </div>
@@ -37,9 +41,9 @@
       </a>
 
       <details class="el-side-forum">
-        <summary>
+        <summary data-href="board.html">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-          <a href="board.html" class="el-side-label-link"><span class="lbl">フォーラム</span></a>
+          <span class="lbl">フォーラム</span>
           <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
         </summary>
         <div class="el-side-sub">
@@ -119,9 +123,9 @@
       </details>
 
       <details class="el-side-forum">
-        <summary>
+        <summary data-href="groups.html">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          <a href="groups.html" class="el-side-label-link"><span class="lbl">コミュニティ</span></a>
+          <span class="lbl">コミュニティ</span>
           <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
         </summary>
         <div class="el-side-sub">
@@ -143,9 +147,9 @@
       </a>
 
       <details class="el-side-forum" open>
-        <summary class="is-active">
+        <summary class="is-active" data-href="market.html">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/></svg>
-          <a href="market.html" class="el-side-label-link"><span class="lbl">マーケット</span></a>
+          <span class="lbl">マーケット</span>
           <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
         </summary>
         <div class="el-side-sub">
@@ -175,7 +179,7 @@
         <div class="el-section-head" style="margin-bottom:0;">
           <div>
             <h2>コンテンツ一覧</h2>
-            <div class="el-market-count">全9件</div>
+            <div class="el-market-count">全11件</div>
           </div>
         </div>
 
@@ -193,7 +197,6 @@
               <button>テンプレート</button>
             </div>
             <div class="el-market-controls">
-              <label class="el-market-check"><input type="checkbox">NEWのみ表示</label>
               <div class="el-market-select">
                 並び替え：
                 <select>
@@ -218,7 +221,7 @@
         </div>
 
         <div class="el-market-grid">
-          <div class="el-market-card">
+          <div class="el-market-card" data-product="official-fda-guide">
             <div class="el-market-thumb" style="background:var(--el-teal-tint);color:var(--el-teal-deep);;">
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
             </div>
@@ -227,10 +230,10 @@
               <h3>FDA施設登録 完全ガイド（PDF）</h3>
               <p>登録の流れ・更新期限・よくある差し戻し事例までを1冊にまとめました。</p>
               <div class="el-market-rating"><span class="stars">★★★★★</span><span class="count">(32)</span></div>
-              <div class="el-market-foot"><strong>¥3,000</strong><div class="el-market-btns"><button class="el-cart-btn" aria-label="カートに追加"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button><a href="#" class="el-btn el-btn--primary el-btn--sm">購入する</a></div></div>
+              <div class="el-market-foot"><strong>¥3,000</strong><div class="el-market-btns"><button type="button" class="el-cart-btn" aria-label="カートに追加" data-cart><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button><button type="button" class="el-btn el-btn--primary el-btn--sm" data-buy>今すぐ購入</button></div></div>
             </div>
           </div>
-          <div class="el-market-card">
+          <div class="el-market-card" data-product="official-slc-seminar">
             <div class="el-market-thumb" style="background:var(--el-mustard-tint);color:var(--el-mustard-deep);;">
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="m9 10 3 2-3 2z"/></svg>
             </div>
@@ -239,10 +242,10 @@
               <h3>SLC活用セミナー録画（2026年7月開催分）</h3>
               <p>FBA納品費用の内訳の見方を、実データを交えて解説した回のアーカイブです。</p>
               <div class="el-market-rating"><span class="stars">★★★★☆</span><span class="count">(18)</span></div>
-              <div class="el-market-foot"><strong>¥2,000</strong><div class="el-market-btns"><button class="el-cart-btn" aria-label="カートに追加"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button><a href="#" class="el-btn el-btn--primary el-btn--sm">購入する</a></div></div>
+              <div class="el-market-foot"><strong>¥2,000</strong><div class="el-market-btns"><button type="button" class="el-cart-btn" aria-label="カートに追加" data-cart><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button><button type="button" class="el-btn el-btn--primary el-btn--sm" data-buy>今すぐ購入</button></div></div>
             </div>
           </div>
-          <div class="el-market-card">
+          <div class="el-market-card" data-product="official-profinder">
             <div class="el-market-thumb" style="background:#E8F1F6;color:#3E7EA3;;">
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
             </div>
@@ -251,10 +254,10 @@
               <h3>ProFinder リサーチ実践講座（動画）</h3>
               <p>ASINリサーチから仕入れ判断までの流れを、画面共有しながら解説します。</p>
               <div class="el-market-rating"><span class="stars">★★★★★</span><span class="count">(41)</span></div>
-              <div class="el-market-foot"><strong>¥8,000</strong><div class="el-market-btns"><button class="el-cart-btn" aria-label="カートに追加"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button><a href="#" class="el-btn el-btn--primary el-btn--sm">購入する</a></div></div>
+              <div class="el-market-foot"><strong>¥8,000</strong><div class="el-market-btns"><button type="button" class="el-cart-btn" aria-label="カートに追加" data-cart><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button><button type="button" class="el-btn el-btn--primary el-btn--sm" data-buy>今すぐ購入</button></div></div>
             </div>
           </div>
-          <div class="el-market-card">
+          <div class="el-market-card" data-product="official-startup-template">
             <div class="el-market-thumb" style="background:var(--el-sage);color:#fff;;">
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.6.6 1 1.4 1 2.5h6c0-1.1.4-1.9 1-2.5A6 6 0 0 0 12 3Z"/></svg>
             </div>
@@ -263,10 +266,10 @@
               <h3>米国輸出 スタートアップテンプレート集</h3>
               <p>初回輸出に必要な書類・チェックリストをひとまとめにしたスターターキット。</p>
               <div class="el-market-rating"><span class="stars">★★★★☆</span><span class="count">(26)</span></div>
-              <div class="el-market-foot"><strong>¥5,000</strong><div class="el-market-btns"><button class="el-cart-btn" aria-label="カートに追加"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button><a href="#" class="el-btn el-btn--primary el-btn--sm">購入する</a></div></div>
+              <div class="el-market-foot"><strong>¥5,000</strong><div class="el-market-btns"><button type="button" class="el-cart-btn" aria-label="カートに追加" data-cart><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button><button type="button" class="el-btn el-btn--primary el-btn--sm" data-buy>今すぐ購入</button></div></div>
             </div>
           </div>
-          <div class="el-market-card">
+          <div class="el-market-card" data-product="official-customs-checklist">
             <div class="el-market-thumb" style="background:var(--el-sky);color:#fff;;">
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M3 9h6"/></svg>
             </div>
@@ -275,10 +278,10 @@
               <h3>通関書類チェックリスト</h3>
               <p>差し戻しの多い記載ミスを、実例ベースでチェックできる一覧表です。</p>
               <div class="el-market-rating"><span class="stars">★★★★★</span><span class="count">(15)</span></div>
-              <div class="el-market-foot"><strong>¥1,500</strong><div class="el-market-btns"><button class="el-cart-btn" aria-label="カートに追加"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button><a href="#" class="el-btn el-btn--primary el-btn--sm">購入する</a></div></div>
+              <div class="el-market-foot"><strong>¥1,500</strong><div class="el-market-btns"><button type="button" class="el-cart-btn" aria-label="カートに追加" data-cart><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button><button type="button" class="el-btn el-btn--primary el-btn--sm" data-buy>今すぐ購入</button></div></div>
             </div>
           </div>
-          <div class="el-market-card">
+          <div class="el-market-card" data-product="official-fba-trouble">
             <div class="el-market-thumb" style="background:var(--el-coral);color:#fff;;">
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 8V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2M3 8v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8M3 8h18"/></svg>
             </div>
@@ -287,10 +290,10 @@
               <h3>FBA納品トラブル対応事例集</h3>
               <p>ラベル不備・数量差異など、よくあるトラブルと解決までの流れをまとめました。</p>
               <div class="el-market-rating"><span class="stars">★★★★☆</span><span class="count">(22)</span></div>
-              <div class="el-market-foot"><strong>¥4,000</strong><div class="el-market-btns"><button class="el-cart-btn" aria-label="カートに追加"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button><a href="#" class="el-btn el-btn--primary el-btn--sm">購入する</a></div></div>
+              <div class="el-market-foot"><strong>¥4,000</strong><div class="el-market-btns"><button type="button" class="el-cart-btn" aria-label="カートに追加" data-cart><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button><button type="button" class="el-btn el-btn--primary el-btn--sm" data-buy>今すぐ購入</button></div></div>
             </div>
           </div>
-          <div class="el-market-card">
+          <div class="el-market-card" data-product="member-takahashi-research">
             <div class="el-market-thumb" style="background:var(--el-cream-deep);color:var(--el-navy-soft);;">
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 9h18"/></svg>
             </div>
@@ -299,10 +302,10 @@
               <h3>せどり便乗リサーチ 実践テンプレート</h3>
               <p>粗利率を自動計算できるスプレッドシート。実際に使っている数式をそのまま公開。</p>
               <div class="el-market-rating"><span class="stars">★★★★★</span><span class="count">(9)</span></div>
-              <div class="el-market-foot"><strong>¥2,500</strong><div class="el-market-btns"><button class="el-cart-btn" aria-label="カートに追加"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button><a href="#" class="el-btn el-btn--primary el-btn--sm">購入する</a></div></div>
+              <div class="el-market-foot"><strong>¥2,500</strong><div class="el-market-btns"><button type="button" class="el-cart-btn" aria-label="カートに追加" data-cart><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button><button type="button" class="el-btn el-btn--primary el-btn--sm" data-buy>今すぐ購入</button></div></div>
             </div>
           </div>
-          <div class="el-market-card">
+          <div class="el-market-card" data-product="member-yamaguchi-fda-reminder">
             <div class="el-market-thumb" style="background:var(--el-cream-deep);color:var(--el-navy-soft);;">
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
             </div>
@@ -311,10 +314,10 @@
               <h3>FDA更新リマインドスプレッドシート</h3>
               <p>登録番号ごとに更新期限を自動アラートしてくれる、Googleスプレッドシート形式のツール。</p>
               <div class="el-market-rating"><span class="stars">★★★★☆</span><span class="count">(6)</span></div>
-              <div class="el-market-foot"><strong>¥1,200</strong><div class="el-market-btns"><button class="el-cart-btn" aria-label="カートに追加"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button><a href="#" class="el-btn el-btn--primary el-btn--sm">購入する</a></div></div>
+              <div class="el-market-foot"><strong>¥1,200</strong><div class="el-market-btns"><button type="button" class="el-cart-btn" aria-label="カートに追加" data-cart><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button><button type="button" class="el-btn el-btn--primary el-btn--sm" data-buy>今すぐ購入</button></div></div>
             </div>
           </div>
-          <div class="el-market-card">
+          <div class="el-market-card" data-product="member-suzuki-cosmetics-checklist">
             <div class="el-market-thumb" style="background:var(--el-cream-deep);color:var(--el-navy-soft);;">
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
             </div>
@@ -323,7 +326,31 @@
               <h3>化粧品ラベル作成チェックシート</h3>
               <p>成分表示・警告文の必須項目を、規制別に一覧化したチェックシートです。</p>
               <div class="el-market-rating"><span class="stars">★★★★★</span><span class="count">(11)</span></div>
-              <div class="el-market-foot"><strong>¥1,800</strong><div class="el-market-btns"><button class="el-cart-btn" aria-label="カートに追加"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button><a href="#" class="el-btn el-btn--primary el-btn--sm">購入する</a></div></div>
+              <div class="el-market-foot"><strong>¥1,800</strong><div class="el-market-btns"><button type="button" class="el-cart-btn" aria-label="カートに追加" data-cart><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button><button type="button" class="el-btn el-btn--primary el-btn--sm" data-buy>今すぐ購入</button></div></div>
+            </div>
+          </div>
+          <div class="el-market-card" data-product="official-amazon-allsupport">
+            <div class="el-market-thumb" style="background:var(--el-teal);color:#fff;">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z"/></svg>
+            </div>
+            <div class="el-market-body">
+              <span class="badge badge--announce">公式</span>
+              <h3>米Amazon輸出オールサポート</h3>
+              <p>アカウント開設から出品、運用改善まで、まとめて相談できるサポートコンテンツです。</p>
+              <div class="el-market-rating"><span class="stars">★★★★★</span><span class="count">(19)</span></div>
+              <div class="el-market-foot"><strong>¥12,000</strong><div class="el-market-btns"><button type="button" class="el-cart-btn" aria-label="カートに追加" data-cart><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button><button type="button" class="el-btn el-btn--primary el-btn--sm" data-buy>今すぐ購入</button></div></div>
+            </div>
+          </div>
+          <div class="el-market-card" data-product="official-amazon-turnover">
+            <div class="el-market-thumb" style="background:var(--el-mustard);color:#fff;">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M23 6l-9.5 9.5-5-5L1 18"/><path d="M17 6h6v6"/></svg>
+            </div>
+            <div class="el-market-body">
+              <span class="badge badge--announce">公式</span>
+              <h3>米Amazon輸出：商品の販売回転数UP</h3>
+              <p>価格設定・広告運用・レビュー獲得の考え方を整理し、回転数を上げるための施策をまとめました。</p>
+              <div class="el-market-rating"><span class="stars">★★★★☆</span><span class="count">(14)</span></div>
+              <div class="el-market-foot"><strong>¥6,000</strong><div class="el-market-btns"><button type="button" class="el-cart-btn" aria-label="カートに追加" data-cart><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button><button type="button" class="el-btn el-btn--primary el-btn--sm" data-buy>今すぐ購入</button></div></div>
             </div>
           </div>
         </div>
@@ -374,6 +401,138 @@
   document.querySelectorAll('.el-side-label-link').forEach(function (el) {
     el.addEventListener('click', function (e) { e.stopPropagation(); });
   });
+</script>
+
+<div class="el-modal el-product-modal" id="productModal" aria-hidden="true">
+  <div class="el-modal-backdrop" data-modal-close></div>
+  <div class="el-modal-panel" role="dialog" aria-modal="true" aria-labelledby="pmTitle">
+    <button type="button" class="el-modal-close" data-modal-close aria-label="閉じる">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <span class="badge badge--announce" id="pmBadge" style="display:none;">公式</span>
+    <h2 id="pmTitle">&nbsp;</h2>
+    <div class="el-product-modal-meta" id="pmMeta">出品者：・</div>
+    <div class="el-product-modal-price" id="pmPrice">¥0</div>
+    <div class="el-product-modal-section">
+      <h4>こんな方におすすめ</h4>
+      <p id="pmRecommend"></p>
+    </div>
+    <div class="el-product-modal-section">
+      <h4>詳細</h4>
+      <p id="pmDetail"></p>
+    </div>
+    <div class="el-product-modal-foot">
+      <button type="button" class="el-cart-btn" id="pmCartBtn" aria-label="カートに追加" style="width:44px;height:44px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+      </button>
+      <button type="button" class="el-btn el-btn--primary" id="pmBuyBtn">今すぐ購入</button>
+    </div>
+  </div>
+</div>
+
+<div class="el-toast" id="cartToast">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>
+  <span id="toastMsg">カートに追加しました</span>
+</div>
+
+<script>
+  var PRODUCTS = {"official-fda-guide": {"title": "FDA施設登録 完全ガイド（PDF）", "seller": "WorldShift公式", "price": "¥3,000", "badge": "公式", "recommend": "はじめてFDA施設登録を行う方、更新のたびに手続きに不安を感じる方におすすめです。", "detail": "FDA施設登録の申請から2年ごとの更新までの流れを、実際の差し戻し事例を交えて解説したPDFガイドです。登録番号の管理方法や、よくある記載ミスの回避方法もまとめています。"}, "official-slc-seminar": {"title": "SLC活用セミナー録画（2026年7月開催分）", "seller": "WorldShift公式", "price": "¥2,000", "badge": "公式", "recommend": "FBA納品費用がなぜこの金額になっているのか、内訳を正しく把握したい方におすすめです。", "detail": "2026年7月に開催したセミナーのアーカイブ動画です。実際のSLC画面を見ながら、納品費用の内訳や削減余地の見つけ方を解説しています。視聴期限はありません。"}, "official-profinder": {"title": "ProFinder リサーチ実践講座（動画）", "seller": "WorldShift公式", "price": "¥8,000", "badge": "公式", "recommend": "ASINリサーチのやり方が我流になっている方、仕入れ判断の精度を上げたい方におすすめです。", "detail": "ProFinderを使ったASINリサーチから、仕入れ判断までの一連の流れを画面共有しながら解説する実践講座です。実際の判断基準も公開しています。"}, "official-startup-template": {"title": "米国輸出 スタートアップテンプレート集", "seller": "WorldShift公式", "price": "¥5,000", "badge": "公式", "recommend": "これから輸出を始める方、最低限そろえるべき書類が分からない方におすすめです。", "detail": "初回輸出に必要な書類・チェックリストをひとまとめにしたスターターキットです。Word・Excel形式で、そのまま自社用に編集してお使いいただけます。"}, "official-customs-checklist": {"title": "通関書類チェックリスト", "seller": "WorldShift公式", "price": "¥1,500", "badge": "公式", "recommend": "通関書類の差し戻しが多く、原因を特定できていない方におすすめです。", "detail": "差し戻しの多い記載ミスを、実例ベースで一覧化したチェックリストです。提出前にこのリストで確認するだけで、差し戻し率を大きく下げられます。"}, "official-fba-trouble": {"title": "FBA納品トラブル対応事例集", "seller": "WorldShift公式", "price": "¥4,000", "badge": "公式", "recommend": "FBA納品でのトラブル対応に毎回時間がかかっている方におすすめです。", "detail": "ラベル不備・数量差異など、よくあるFBA納品トラブルと、解決までの実際の流れをまとめた事例集です。Amazonサポートとのやり取りテンプレートも収録しています。"}, "official-amazon-allsupport": {"title": "米Amazon輸出オールサポート", "seller": "WorldShift公式", "price": "¥12,000", "badge": "公式", "recommend": "アカウント開設から出品、運用まで、まとめて相談できる窓口が欲しい方におすすめです。", "detail": "米国Amazonへの輸出に関わる、アカウント開設・出品設定・運用改善までをトータルでサポートするコンテンツです。つまずきやすいポイントを工程ごとに整理しています。"}, "official-amazon-turnover": {"title": "米Amazon輸出：商品の販売回転数UP", "seller": "WorldShift公式", "price": "¥6,000", "badge": "公式", "recommend": "出品はしているものの、思うように売れ行きが伸びていない方におすすめです。", "detail": "販売回転数を上げるための価格設定・広告運用・レビュー獲得の考え方を整理したコンテンツです。すぐに試せる具体的な改善アクションを中心にまとめています。"}, "member-takahashi-research": {"title": "せどり便乗リサーチ 実践テンプレート", "seller": "高橋物産", "price": "¥2,500", "badge": null, "recommend": "便乗リサーチの粗利計算を、毎回手計算でやっている方におすすめです。", "detail": "粗利率を自動計算できるスプレッドシートです。実際に出品者本人が使っている数式をそのまま公開しています。ASINと仕入れ値を入力するだけで判断できます。"}, "member-yamaguchi-fda-reminder": {"title": "FDA更新リマインドスプレッドシート", "seller": "山口貿易士", "price": "¥1,200", "badge": null, "recommend": "複数の登録番号を管理していて、更新漏れが心配な方におすすめです。", "detail": "登録番号ごとに更新期限を自動アラートしてくれる、Googleスプレッドシート形式のツールです。設定は数分で完了します。"}, "member-suzuki-cosmetics-checklist": {"title": "化粧品ラベル作成チェックシート", "seller": "鈴木ラボ", "price": "¥1,800", "badge": null, "recommend": "化粧品のラベル表示に不安がある方、規制ごとの必須項目を把握したい方におすすめです。", "detail": "成分表示・警告文の必須項目を、規制別に一覧化したチェックシートです。作成したラベル案をこのシートと照らし合わせるだけで確認できます。"}};
+
+  var cart = [];
+  try { cart = JSON.parse(localStorage.getItem('el-cart') || '[]'); } catch (e) { cart = []; }
+
+  function saveCart() {
+    try { localStorage.setItem('el-cart', JSON.stringify(cart)); } catch (e) {}
+    updateCartBadge();
+  }
+  function updateCartBadge() {
+    var el = document.getElementById('headerCartCount');
+    if (!el) return;
+    el.textContent = cart.length;
+    el.classList.toggle('is-visible', cart.length > 0);
+  }
+  function addToCart(id) {
+    cart.push(id);
+    saveCart();
+    showToast('カートに追加しました');
+  }
+  function showToast(msg) {
+    var toast = document.getElementById('cartToast');
+    if (!toast) return;
+    document.getElementById('toastMsg').textContent = msg;
+    toast.classList.add('is-visible');
+    clearTimeout(window._elToastTimer);
+    window._elToastTimer = setTimeout(function () { toast.classList.remove('is-visible'); }, 2200);
+  }
+  function goToCheckout(id) {
+    window.location.href = 'market-checkout.html?item=' + encodeURIComponent(id);
+  }
+
+  // 商品詳細モーダル
+  (function () {
+    var modal = document.getElementById('productModal');
+    if (!modal) return;
+    function openModal(id) {
+      var p = PRODUCTS[id];
+      if (!p) return;
+      document.getElementById('pmTitle').textContent = p.title;
+      document.getElementById('pmMeta').textContent = '出品者：' + p.seller;
+      document.getElementById('pmPrice').textContent = p.price;
+      document.getElementById('pmRecommend').textContent = p.recommend;
+      document.getElementById('pmDetail').textContent = p.detail;
+      var badgeEl = document.getElementById('pmBadge');
+      if (p.badge) { badgeEl.style.display = ''; badgeEl.textContent = p.badge; } else { badgeEl.style.display = 'none'; }
+      document.getElementById('pmCartBtn').dataset.id = id;
+      document.getElementById('pmBuyBtn').dataset.id = id;
+      modal.classList.add('is-open');
+      modal.setAttribute('aria-hidden', 'false');
+    }
+    function closeModal() {
+      modal.classList.remove('is-open');
+      modal.setAttribute('aria-hidden', 'true');
+    }
+    document.querySelectorAll('.el-market-card[data-product]').forEach(function (card) {
+      card.addEventListener('click', function (e) {
+        if (e.target.closest('[data-cart]') || e.target.closest('[data-buy]')) return;
+        openModal(card.dataset.product);
+      });
+    });
+    modal.querySelectorAll('[data-modal-close]').forEach(function (el) { el.addEventListener('click', closeModal); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeModal(); });
+
+    document.getElementById('pmCartBtn').addEventListener('click', function () {
+      addToCart(this.dataset.id);
+    });
+    document.getElementById('pmBuyBtn').addEventListener('click', function () {
+      goToCheckout(this.dataset.id);
+    });
+  })();
+
+  // カート追加／今すぐ購入ボタン（カード上のボタン）
+  document.querySelectorAll('[data-cart]').forEach(function (btn) {
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var card = btn.closest('[data-product]');
+      if (card) addToCart(card.dataset.product);
+    });
+  });
+  document.querySelectorAll('[data-buy]').forEach(function (btn) {
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var card = btn.closest('[data-product]');
+      if (card) goToCheckout(card.dataset.product);
+    });
+  });
+
+  // ヘッダーのカートアイコン：チェックアウトへ
+  var headerCartBtn = document.getElementById('headerCartBtn');
+  if (headerCartBtn) {
+    headerCartBtn.addEventListener('click', function () {
+      window.location.href = 'market-checkout.html';
+    });
+  }
+
+  updateCartBadge();
 </script>
 </body>
 </html>

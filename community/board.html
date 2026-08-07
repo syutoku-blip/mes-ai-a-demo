@@ -37,9 +37,9 @@
       </a>
 
       <details class="el-side-forum" open>
-        <summary class="is-active">
+        <summary class="is-active" data-href="board.html">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-          <a href="board.html" class="el-side-label-link"><span class="lbl">フォーラム</span></a>
+          <span class="lbl">フォーラム</span>
           <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
         </summary>
         <div class="el-side-sub">
@@ -119,9 +119,9 @@
       </details>
 
       <details class="el-side-forum">
-        <summary>
+        <summary data-href="groups.html">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          <a href="groups.html" class="el-side-label-link"><span class="lbl">コミュニティ</span></a>
+          <span class="lbl">コミュニティ</span>
           <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
         </summary>
         <div class="el-side-sub">
@@ -143,9 +143,9 @@
       </a>
 
       <details class="el-side-forum">
-        <summary>
+        <summary data-href="market.html">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/></svg>
-          <a href="market.html" class="el-side-label-link"><span class="lbl">マーケット</span></a>
+          <span class="lbl">マーケット</span>
           <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
         </summary>
         <div class="el-side-sub">
@@ -617,16 +617,16 @@
           </div>
         </div>
         <div class="el-tag-cloud">
-          <a href="board.html" class="lg">#FBA<span class="count">86</span></a>
-          <a href="board.html" class="md">#施設登録<span class="count">54</span></a>
-          <a href="board.html" class="sm">#ラベル表示<span class="count">31</span></a>
-          <a href="board.html" class="md">#関税<span class="count">47</span></a>
-          <a href="board.html" class="sm">#通関書類<span class="count">28</span></a>
-          <a href="board.html" class="lg">#リサーチ<span class="count">72</span></a>
-          <a href="board.html" class="sm">#米国代理人<span class="count">19</span></a>
-          <a href="board.html" class="md">#価格改定<span class="count">33</span></a>
-          <a href="board.html" class="sm">#返金対応<span class="count">22</span></a>
-          <a href="board.html" class="sm">#倉庫選定<span class="count">14</span></a>
+          <a href="board.html">#FBA<span class="count">86</span></a>
+          <a href="board.html">#施設登録<span class="count">54</span></a>
+          <a href="board.html">#ラベル表示<span class="count">31</span></a>
+          <a href="board.html">#関税<span class="count">47</span></a>
+          <a href="board.html">#通関書類<span class="count">28</span></a>
+          <a href="board.html">#リサーチ<span class="count">72</span></a>
+          <a href="board.html">#米国代理人<span class="count">19</span></a>
+          <a href="board.html">#価格改定<span class="count">33</span></a>
+          <a href="board.html">#返金対応<span class="count">22</span></a>
+          <a href="board.html">#倉庫選定<span class="count">14</span></a>
         </div>
 
       </div>
@@ -671,9 +671,13 @@
     document.getElementById('appShell').classList.toggle('is-toggled');
   });
 
-  // フォーラム／コミュニティのラベルをクリックしたときは開閉させず、そのままページ遷移させる
-  document.querySelectorAll('.el-side-label-link').forEach(function (el) {
-    el.addEventListener('click', function (e) { e.stopPropagation(); });
+  // フォーラム／コミュニティ／マーケットの見出し：矢印以外をクリックしたらページ遷移、矢印は開閉のみ
+  document.querySelectorAll('.el-side-forum > summary[data-href]').forEach(function (summary) {
+    summary.addEventListener('click', function (e) {
+      if (e.target.closest('svg.chev')) return;
+      e.preventDefault();
+      window.location.href = summary.dataset.href;
+    });
   });
 </script>
 </body>

@@ -37,9 +37,9 @@
       </a>
 
       <details class="el-side-forum" open>
-        <summary class="is-active">
+        <summary class="is-active" data-href="board.html">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-          <a href="board.html" class="el-side-label-link"><span class="lbl">フォーラム</span></a>
+          <span class="lbl">フォーラム</span>
           <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
         </summary>
         <div class="el-side-sub">
@@ -119,9 +119,9 @@
       </details>
 
       <details class="el-side-forum">
-        <summary>
+        <summary data-href="groups.html">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          <a href="groups.html" class="el-side-label-link"><span class="lbl">コミュニティ</span></a>
+          <span class="lbl">コミュニティ</span>
           <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
         </summary>
         <div class="el-side-sub">
@@ -143,9 +143,9 @@
       </a>
 
       <details class="el-side-forum">
-        <summary>
+        <summary data-href="market.html">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/></svg>
-          <a href="market.html" class="el-side-label-link"><span class="lbl">マーケット</span></a>
+          <span class="lbl">マーケット</span>
           <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
         </summary>
         <div class="el-side-sub">
@@ -391,9 +391,13 @@
     document.getElementById('appShell').classList.toggle('is-toggled');
   });
 
-  // フォーラム／コミュニティのラベルをクリックしたときは開閉させず、そのままページ遷移させる
-  document.querySelectorAll('.el-side-label-link').forEach(function (el) {
-    el.addEventListener('click', function (e) { e.stopPropagation(); });
+  // フォーラム／コミュニティ／マーケットの見出し：矢印以外をクリックしたらページ遷移、矢印は開閉のみ
+  document.querySelectorAll('.el-side-forum > summary[data-href]').forEach(function (summary) {
+    summary.addEventListener('click', function (e) {
+      if (e.target.closest('svg.chev')) return;
+      e.preventDefault();
+      window.location.href = summary.dataset.href;
+    });
   });
 
   // コメントの日付タイムライン（スライド式）
