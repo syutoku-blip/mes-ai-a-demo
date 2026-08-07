@@ -186,7 +186,6 @@
           </div>
         </div>
 
-        <span class="el-op-label">本文</span>
         <article class="el-post el-post--op">
           <div class="el-avatar">山</div>
           <div>
@@ -339,21 +338,21 @@
         <aside class="el-scrubber" id="scrubber">
           <div class="el-scrubber-track">
             <div class="el-scrubber-group">
-              <button class="el-scrubber-month" data-jump="c1" data-month="2026-06">2026年6月</button>
+              <span class="el-scrubber-month" data-month="2026-06">2026年6月</span>
               <div class="el-scrubber-dots">
                 <button data-jump="c1" title="6月20日 田中フーズ"></button>
                 <button data-jump="c2" title="6月25日 鈴木ラボ"></button>
               </div>
             </div>
             <div class="el-scrubber-group">
-              <button class="el-scrubber-month" data-jump="c3" data-month="2026-07">2026年7月</button>
+              <span class="el-scrubber-month" data-month="2026-07">2026年7月</span>
               <div class="el-scrubber-dots">
                 <button data-jump="c3" title="7月2日 高橋物産"></button>
                 <button data-jump="c4" title="7月28日 佐藤ストア"></button>
               </div>
             </div>
             <div class="el-scrubber-group">
-              <button class="el-scrubber-month" data-jump="c5" data-month="2026-08">2026年8月</button>
+              <span class="el-scrubber-month" data-month="2026-08">2026年8月</span>
               <div class="el-scrubber-dots">
                 <button data-jump="c5" title="8月3日 小林商店"></button>
                 <button data-jump="c6" title="昨日 中村コスメ"></button>
@@ -410,15 +409,16 @@
     el.addEventListener('click', function (e) { e.stopPropagation(); });
   });
 
-  // コメントの横スクロールバー（スクラバー）
+  // コメントの日付タイムライン（スクラバー）
   (function () {
     var scrubber = document.getElementById('scrubber');
     if (!scrubber) return;
-    var buttons = Array.prototype.slice.call(scrubber.querySelectorAll('[data-jump]'));
+    var jumpButtons = Array.prototype.slice.call(scrubber.querySelectorAll('[data-jump]'));
+    var monthLabels = Array.prototype.slice.call(scrubber.querySelectorAll('.el-scrubber-month'));
     var comments = Array.prototype.slice.call(document.querySelectorAll('#commentsList .el-post'));
     var currentEl = document.getElementById('scrubCurrent');
 
-    buttons.forEach(function (btn) {
+    jumpButtons.forEach(function (btn) {
       btn.addEventListener('click', function () {
         var target = document.getElementById(btn.dataset.jump);
         if (target) target.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -432,8 +432,8 @@
           var idx = comments.indexOf(entry.target);
           if (idx > -1 && currentEl) currentEl.textContent = idx + 1;
           var month = entry.target.dataset.month;
-          buttons.forEach(function (b) {
-            b.classList.toggle('is-active', b.dataset.month === month);
+          monthLabels.forEach(function (m) {
+            m.classList.toggle('is-active', m.dataset.month === month);
           });
         });
       }, { rootMargin: '-45% 0px -45% 0px' });
