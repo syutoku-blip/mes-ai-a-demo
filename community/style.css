@@ -606,6 +606,72 @@ button{ font-family:inherit; cursor:pointer; }
 }
 .el-market-sort strong{ color:var(--el-navy); font-weight:700; }
 
+/* ---------- Full listing toolbar (market-list.html / market-official.html) ---------- */
+.el-market-toolbar-list{
+  display:flex; flex-direction:column; gap:14px;
+  padding-bottom:20px; margin-bottom:28px; border-bottom:1px solid var(--el-line);
+}
+.el-market-search{
+  display:flex; align-items:center; gap:8px;
+  background:var(--el-paper); border:1px solid var(--el-line);
+  border-radius:999px; padding:10px 16px;
+  max-width:420px;
+}
+.el-market-search svg{ width:15px; height:15px; color:var(--el-ink-faint); flex-shrink:0; }
+.el-market-search input{
+  border:none; outline:none; background:none; flex:1;
+  font-family:inherit; font-size:13px; color:var(--el-navy);
+}
+.el-market-search input::placeholder{ color:var(--el-ink-faint); }
+.el-market-toolbar-row{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:16px; flex-wrap:wrap;
+}
+.el-market-controls{ display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
+.el-market-check{
+  display:flex; align-items:center; gap:6px;
+  font-size:12.5px; font-weight:600; color:var(--el-navy-soft); cursor:pointer;
+}
+.el-market-check input{ accent-color:var(--el-teal); width:14px; height:14px; }
+.el-market-select{
+  display:flex; align-items:center; gap:6px;
+  font-size:12.5px; color:var(--el-ink-faint);
+}
+.el-market-select select{
+  border:1px solid var(--el-line); border-radius:999px;
+  padding:7px 12px; font-family:inherit; font-size:12.5px; color:var(--el-navy);
+  background:var(--el-paper); cursor:pointer;
+}
+.el-market-count{ font-size:12px; color:var(--el-ink-faint); }
+
+/* ---------- Seller application form (market-apply.html) ---------- */
+.el-apply-form{
+  background:var(--el-paper); border:1px solid var(--el-line-soft);
+  border-radius:var(--el-radius-l); padding:32px;
+}
+.el-apply-field{ margin-bottom:20px; }
+.el-apply-field label{
+  display:block; font-size:12.5px; font-weight:700; color:var(--el-navy); margin-bottom:6px;
+}
+.el-apply-field label .req{ color:var(--el-coral); margin-left:2px; }
+.el-apply-field .hint{ font-size:11.5px; color:var(--el-ink-faint); margin-top:5px; }
+.el-apply-field input[type="text"],
+.el-apply-field input[type="email"],
+.el-apply-field select,
+.el-apply-field textarea{
+  width:100%; border:1px solid var(--el-line); border-radius:var(--el-radius-s);
+  padding:11px 14px; font-family:inherit; font-size:13.5px; color:var(--el-navy);
+  background:var(--el-cream); box-sizing:border-box;
+}
+.el-apply-field textarea{ min-height:110px; resize:vertical; }
+.el-apply-field input:focus,
+.el-apply-field select:focus,
+.el-apply-field textarea:focus{ outline:2px solid var(--el-teal); outline-offset:1px; border-color:transparent; }
+.el-apply-row{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+@media (max-width:560px){ .el-apply-row{ grid-template-columns:1fr; } }
+.el-apply-foot{ display:flex; align-items:center; justify-content:space-between; margin-top:28px; flex-wrap:wrap; gap:12px; }
+.el-apply-foot p{ font-size:11.5px; color:var(--el-ink-faint); margin:0; max-width:360px; }
+
 .el-market-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
 @media (max-width:900px){ .el-market-grid{ grid-template-columns:repeat(2,1fr); } }
 @media (max-width:600px){ .el-market-grid{ grid-template-columns:1fr; } }

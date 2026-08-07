@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FDA施設登録に関するオンライン相談会を開催します｜Export Lab</title>
+<title>出品申請｜Export Lab</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&family=Noto+Sans+JP:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&family=Zen+Kurenaido&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&family=Noto+Sans+JP:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&family=Zen+Kurenaido&family=Yomogi&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="../shared/global-header.css">
 </head>
@@ -136,7 +136,7 @@
         </div>
       </details>
 
-      <a href="announcements.html" class="is-active">
+      <a href="announcements.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
         <span class="lbl">公式お知らせ</span>
       </a>
@@ -146,8 +146,8 @@
         <span class="lbl">イベント</span>
       </a>
 
-      <details class="el-side-forum">
-        <summary>
+      <details class="el-side-forum" open>
+        <summary class="is-active">
           <a href="market.html" class="el-side-label-link">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/></svg>
             <span class="lbl">マーケット</span>
@@ -157,7 +157,7 @@
         <div class="el-side-sub">
           <a href="market-list.html">コンテンツ一覧</a>
           <a href="market-official.html">ワールドシフト提供</a>
-          <a href="market-apply.html">出品申請</a>
+          <a href="market-apply.html" class="is-active">出品申請</a>
         </div>
       </details>
 
@@ -171,67 +171,70 @@
 
   <div class="el-content">
     <main class="el-section" style="padding-top:36px;">
-      <div class="wrap" style="max-width:720px;">
+      <div class="wrap" style="max-width:680px;">
 
-        <div style="font-size:12.5px;color:var(--el-ink-faint);margin-bottom:20px;">
-          <a href="announcements.html" style="color:var(--el-ink-faint);">公式お知らせ</a>
+        <div class="el-catch">
+          <span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></span>
+          <p>あなたのノウハウも、誰かの近道になるかもしれません。</p>
         </div>
 
-        <article class="el-notice">
-          <div class="el-notice-head">
-            <span class="el-notice-icon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
-            </span>
-            <div>
-              <span class="badge badge--announce">公式</span>
-              <h1>FDA施設登録に関するオンライン相談会を開催します</h1>
-              <div class="el-notice-meta">Export Lab運営チーム・2026年8月5日</div>
+        <div class="el-section-head" style="margin-bottom:16px;">
+          <div>
+            <h2>出品申請</h2>
+            <div class="sub">運営による簡単な審査の後、マーケットに掲載されます（通常3〜5営業日）</div>
+          </div>
+        </div>
+
+        <form class="el-apply-form">
+          <div class="el-apply-row">
+            <div class="el-apply-field">
+              <label>お名前・屋号<span class="req">必須</span></label>
+              <input type="text" placeholder="例：高橋物産">
+            </div>
+            <div class="el-apply-field">
+              <label>メールアドレス<span class="req">必須</span></label>
+              <input type="email" placeholder="example@mail.com">
             </div>
           </div>
 
-          <div class="el-notice-body">
-            <p>いつもExport Labをご利用いただきありがとうございます。</p>
-            <p>「FDA対応 実務者の会」グループのメンバーを対象に、FDA施設登録の更新手続きに関するオンライン相談会を開催いたします。更新期限の考え方や、よくある差し戻し事例への対処法について、運営チームより直接ご案内します。</p>
-            <p>個別の状況に応じたご質問にもその場でお答えしますので、施設登録の更新を控えている方はぜひご参加ください。</p>
-            <div class="el-notice-fact">
-              <div><span>日時</span>2026年8月20日（木）19:00〜20:00</div>
-              <div><span>対象</span>FDA対応 実務者の会 グループメンバー</div>
-              <div><span>形式</span>オンライン（Zoom）</div>
+          <div class="el-apply-field">
+            <label>コンテンツのタイトル<span class="req">必須</span></label>
+            <input type="text" placeholder="例：せどり便乗リサーチ 実践テンプレート">
+          </div>
+
+          <div class="el-apply-row">
+            <div class="el-apply-field">
+              <label>カテゴリ<span class="req">必須</span></label>
+              <select>
+                <option>FDA</option>
+                <option>Amazon</option>
+                <option>通関・物流</option>
+                <option>テンプレート</option>
+                <option>その他</option>
+              </select>
             </div>
-            <p>参加をご希望の方は、グループページの参加申請からお申し込みください。</p>
+            <div class="el-apply-field">
+              <label>想定価格（税込）<span class="req">必須</span></label>
+              <input type="text" placeholder="例：2,500円">
+            </div>
           </div>
 
-          <div class="el-notice-foot">
-            <a href="groups.html" class="el-btn el-btn--primary el-btn--sm">グループページへ</a>
-            <a href="announcements.html" class="el-btn el-btn--ghost el-btn--sm">お知らせ一覧へ戻る</a>
+          <div class="el-apply-field">
+            <label>コンテンツの概要<span class="req">必須</span></label>
+            <textarea placeholder="どんな内容か、誰の役に立つかを教えてください"></textarea>
+            <div class="hint">審査の参考にしますので、できるだけ具体的にご記入ください。</div>
           </div>
-        </article>
 
-        <div class="el-section-head" style="margin-top:48px;margin-bottom:14px;">
-          <div><h2 style="font-size:16px;">他のお知らせ</h2></div>
-        </div>
-        <div class="el-announce-box">
-          <a href="announcement-detail.html" class="el-announce-row">
-            <span class="ic" style="background:var(--el-coral);">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
-            </span>
-            <span class="el-announce-row-main">
-              <span class="title">Export Lab、正式オープンしました</span>
-              <span class="meta"><span class="badge badge--announce">公式</span>運営チーム・3時間前</span>
-            </span>
-            <span class="el-announce-arrow"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></span>
-          </a>
-          <a href="announcement-detail.html" class="el-announce-row">
-            <span class="ic" style="background:var(--el-sage);">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
-            </span>
-            <span class="el-announce-row-main">
-              <span class="title">8月上旬、システムメンテナンスのお知らせ</span>
-              <span class="meta"><span class="badge badge--cat">メンテナンス</span>運営チーム・2026年8月1日</span>
-            </span>
-            <span class="el-announce-arrow"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></span>
-          </a>
-        </div>
+          <div class="el-apply-field">
+            <label>参考ファイル・URL（任意）</label>
+            <input type="text" placeholder="サンプルやポートフォリオへのリンクなど">
+          </div>
+
+          <div class="el-apply-foot">
+            <p>送信いただいた内容は、審査以外の目的では利用しません。審査結果はメールでご連絡します。</p>
+            <button type="button" class="el-btn el-btn--primary">申請を送信する</button>
+          </div>
+        </form>
 
       </div>
     </main>
@@ -275,7 +278,7 @@
     document.getElementById('appShell').classList.toggle('is-toggled');
   });
 
-  // フォーラム／コミュニティのラベルをクリックしたときは開閉させず、そのままページ遷移させる
+  // フォーラム／コミュニティ／マーケットのラベルをクリックしたときは開閉させず、そのままページ遷移させる
   document.querySelectorAll('.el-side-label-link').forEach(function (el) {
     el.addEventListener('click', function (e) { e.stopPropagation(); });
   });
