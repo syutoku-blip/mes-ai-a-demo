@@ -26,6 +26,7 @@
   --el-radius-s:      8px;
   --el-radius-m:      14px;
   --el-radius-l:      22px;
+  --header-h: 58px;
   --font-display: "Zen Old Mincho", "Source Serif 4", serif;
   --font-word:    "Source Serif 4", "Zen Old Mincho", serif;
   --font-body:    "Noto Sans JP", "Inter", sans-serif;
@@ -52,31 +53,32 @@ button{ font-family:inherit; cursor:pointer; }
 .wrap{ max-width:1180px; margin:0 auto; padding:0 32px; }
 @media (max-width:720px){ .wrap{ padding:0 18px; } }
 
-/* ---------- Header (subtle tone shift from the page background) ---------- */
+/* ---------- Header (teal — matches the サイドバー「ホーム」highlight; sticky, compact) ---------- */
 .el-header{
-  background:#E3F0E6;
-  padding-bottom:18px;
+  position:sticky; top:var(--gh-h, 34px); z-index:45;
+  background:var(--el-teal);
+  box-shadow:0 2px 8px rgba(22,35,63,.10);
 }
 .el-header-inner{
   display:flex; align-items:center; gap:16px;
-  height:auto;
-  padding:22px 24px 0;
+  height:var(--header-h);
+  padding:0 24px;
 }
 .el-logo{
   display:flex; align-items:baseline; gap:8px;
   font-family:var(--font-word);
-  font-size:19px; font-weight:600; letter-spacing:.01em;
-  color:var(--el-navy); flex-shrink:0;
+  font-size:18px; font-weight:600; letter-spacing:.01em;
+  color:#fff; flex-shrink:0;
 }
 .el-logo .dot{ color:var(--el-mustard); }
 .el-menu-toggle{
   display:flex; align-items:center; justify-content:center;
   width:32px; height:32px; border-radius:8px; border:none;
-  background:none; color:var(--el-navy); flex-shrink:0;
+  background:none; color:#fff; flex-shrink:0;
   transition:background .15s;
 }
 .el-menu-toggle svg{ width:19px; height:19px; }
-.el-menu-toggle:hover{ background:rgba(22,35,63,.06); }
+.el-menu-toggle:hover{ background:rgba(255,255,255,.16); }
 .el-header-actions{ display:flex; align-items:center; gap:10px; flex-shrink:0; margin-left:auto; }
 .el-search{
   display:flex; align-items:center; gap:6px;
@@ -106,8 +108,8 @@ button{ font-family:inherit; cursor:pointer; }
 .el-sidebar{
   width:232px;
   background:var(--el-navy);
-  min-height:calc(100vh - var(--gh-h, 34px));
-  position:sticky; top:var(--gh-h, 34px);
+  min-height:calc(100vh - var(--gh-h, 34px) - var(--header-h));
+  position:sticky; top:calc(var(--gh-h, 34px) + var(--header-h));
   padding:20px 14px 40px;
   overflow-y:auto; overflow-x:hidden;
   transition:width .2s ease, padding .2s ease;
@@ -219,7 +221,7 @@ button{ font-family:inherit; cursor:pointer; }
   .el-sidebar{
     display:none;
     position:fixed; left:0; right:0;
-    top:var(--gh-h, 34px);
+    top:calc(var(--gh-h, 34px) + var(--header-h));
     bottom:0; width:auto; z-index:60;
     background:var(--el-navy); min-height:0;
   }
@@ -766,7 +768,7 @@ button{ font-family:inherit; cursor:pointer; }
 /* Side scrubber — jump between comment dates on long threads */
 .el-scrubber{
   width:100px; flex-shrink:0;
-  position:sticky; top:calc(var(--gh-h, 34px) + 40px);
+  position:sticky; top:calc(var(--gh-h, 34px) + var(--header-h) + 40px);
   display:none;
   padding-top:120px;
 }
@@ -776,7 +778,7 @@ button{ font-family:inherit; cursor:pointer; }
   padding-left:14px; padding-right:4px;
   border-left:2px solid var(--el-line);
   display:flex; flex-direction:column; gap:28px;
-  max-height:calc(100vh - var(--gh-h, 34px) - 260px);
+  max-height:calc(100vh - var(--gh-h, 34px) - var(--header-h) - 260px);
   overflow-y:auto;
   scrollbar-width:thin;
   gap:22px;
