@@ -13,6 +13,9 @@
 
 <header class="el-header">
   <div class="el-header-inner">
+    <button class="el-menu-toggle" id="sidebarToggle" aria-label="メニュー">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
     <a href="index.html" class="el-logo">Export Lab<span class="dot">.</span></a>
     <div class="el-header-actions">
       <div class="el-search">
@@ -26,127 +29,133 @@
 
 <div class="el-app" id="appShell">
   <div class="el-sidebar-wrap">
-    <button class="el-side-collapse" id="sidebarToggle" aria-label="メニューを閉じる">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
-    </button>
     <aside class="el-sidebar" id="sidebar">
     <nav>
-          <a href="index.html">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/><path d="M9 22V12h6v10"/></svg>
-            ホーム
-          </a>
-    
-          <details class="el-side-forum" open>
-            <summary class="is-active">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-              <a href="board.html" class="el-side-label-link">フォーラム</a>
-              <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
-            </summary>
-            <div class="el-side-sub">
-              <a href="board.html">新着</a>
-              <a href="board.html">人気</a>
-              <a href="board.html">SHiFT member only</a>
-              <a href="board.html">未解決</a>
-    
-              <details class="el-side-cat">
-                <summary>
-                  カテゴリで探す
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
-                </summary>
-                <div class="el-side-cat-body">
-    
-              <details>
-                <summary>FDA<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></summary>
-                <div class="el-side-sub2">
-                  <a href="board.html">施設登録・更新</a>
-                  <a href="board.html">ラベル</a>
-                  <a href="board.html">米国代理人</a>
-                  <a href="board.html">事前申告</a>
-                  <a href="board.html">警告書（Warning Letter）</a>
-                </div>
-              </details>
-              <details>
-                <summary>通関<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></summary>
-                <div class="el-side-sub2">
-                  <a href="board.html">CPSC</a>
-                  <a href="board.html">インボイス・HSコード</a>
-                </div>
-              </details>
-              <details>
-                <summary>関税<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></summary>
-                <div class="el-side-sub2">
-                  <a href="board.html">Section 201</a>
-                  <a href="board.html">対中追加関税（301条）</a>
-                </div>
-              </details>
-              <details>
-                <summary>Amazon<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></summary>
-                <div class="el-side-sub2">
-                  <a href="board.html">アカウント作成</a>
-                  <a href="board.html">アカウント停止</a>
-                  <a href="board.html">出品制限</a>
-                  <a href="board.html">FBA納品</a>
-                </div>
-              </details>
-              <details>
-                <summary>物流<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></summary>
-                <div class="el-side-sub2">
-                  <a href="board.html">海上輸送</a>
-                  <a href="board.html">航空輸送</a>
-                  <a href="board.html">倉庫選定</a>
-                </div>
-              </details>
-    
-              <a href="board.html" style="margin-top:4px;">雑談・自己紹介</a>
-                </div>
-              </details>
-    
-              <details class="el-side-cat">
-                <summary>
-                  ハッシュタグで探す
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
-                </summary>
-                <div class="el-side-cat-body">
-                  <a href="board.html">#FBA</a>
-                  <a href="board.html">#施設登録</a>
-                  <a href="board.html">#ラベル表示</a>
-                  <a href="board.html">#関税</a>
-                  <a href="board.html">#通関書類</a>
-                  <a href="board.html">#リサーチ</a>
-                </div>
-              </details>
-            </div>
-          </details>
-    
-          <details class="el-side-forum">
-            <summary>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-              <a href="groups.html" class="el-side-label-link">コミュニティ</a>
-              <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
-            </summary>
-            <div class="el-side-sub">
-              <a href="groups.html">新着</a>
-              <a href="groups.html">人気</a>
-              <a href="groups.html">参加中のコミュニティ</a>
-              <a href="groups.html">申請中のコミュニティ</a>
-            </div>
-          </details>
-    
-          <a href="announcements.html">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
-            公式お知らせ
-          </a>
+      <a href="index.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/><path d="M9 22V12h6v10"/></svg>
+        <span class="lbl">ホーム</span>
+      </a>
 
-          <a href="market.html">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/></svg>
-            マーケット
+      <details class="el-side-forum" open>
+        <summary class="is-active">
+          <a href="board.html" class="el-side-label-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <span class="lbl">フォーラム</span>
           </a>
-    
-          <a href="mypage.html">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
-            マイページ
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
+        </summary>
+        <div class="el-side-sub">
+          <a href="board.html">新着</a>
+          <a href="board.html">人気</a>
+          <a href="board.html">SHiFT member only</a>
+          <a href="board.html">未解決</a>
+
+          <details class="el-side-cat">
+            <summary>
+              カテゴリで探す
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
+            </summary>
+            <div class="el-side-cat-body">
+
+          <details>
+            <summary>FDA<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></summary>
+            <div class="el-side-sub2">
+              <a href="board.html">施設登録・更新</a>
+              <a href="board.html">ラベル</a>
+              <a href="board.html">米国代理人</a>
+              <a href="board.html">事前申告</a>
+              <a href="board.html">警告書（Warning Letter）</a>
+            </div>
+          </details>
+          <details>
+            <summary>通関<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></summary>
+            <div class="el-side-sub2">
+              <a href="board.html">CPSC</a>
+              <a href="board.html">インボイス・HSコード</a>
+            </div>
+          </details>
+          <details>
+            <summary>関税<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></summary>
+            <div class="el-side-sub2">
+              <a href="board.html">Section 201</a>
+              <a href="board.html">対中追加関税（301条）</a>
+            </div>
+          </details>
+          <details>
+            <summary>Amazon<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></summary>
+            <div class="el-side-sub2">
+              <a href="board.html">アカウント作成</a>
+              <a href="board.html">アカウント停止</a>
+              <a href="board.html">出品制限</a>
+              <a href="board.html">FBA納品</a>
+            </div>
+          </details>
+          <details>
+            <summary>物流<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></summary>
+            <div class="el-side-sub2">
+              <a href="board.html">海上輸送</a>
+              <a href="board.html">航空輸送</a>
+              <a href="board.html">倉庫選定</a>
+            </div>
+          </details>
+
+          <a href="board.html" style="margin-top:4px;">雑談・自己紹介</a>
+            </div>
+          </details>
+
+          <details class="el-side-cat">
+            <summary>
+              ハッシュタグで探す
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
+            </summary>
+            <div class="el-side-cat-body">
+              <a href="board.html">#FBA</a>
+              <a href="board.html">#施設登録</a>
+              <a href="board.html">#ラベル表示</a>
+              <a href="board.html">#関税</a>
+              <a href="board.html">#通関書類</a>
+              <a href="board.html">#リサーチ</a>
+            </div>
+          </details>
+        </div>
+      </details>
+
+      <details class="el-side-forum">
+        <summary>
+          <a href="groups.html" class="el-side-label-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <span class="lbl">コミュニティ</span>
           </a>
-        </nav>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
+        </summary>
+        <div class="el-side-sub">
+          <a href="groups.html">新着</a>
+          <a href="groups.html">人気</a>
+          <a href="groups.html">参加中のコミュニティ</a>
+          <a href="groups.html">申請中のコミュニティ</a>
+        </div>
+      </details>
+
+      <a href="announcements.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
+        <span class="lbl">公式お知らせ</span>
+      </a>
+
+      <a href="events.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        <span class="lbl">イベント</span>
+      </a>
+
+      <a href="market.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/></svg>
+        <span class="lbl">マーケット</span>
+      </a>
+
+      <a href="mypage.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+        <span class="lbl">マイページ</span>
+      </a>
+    </nav>
 
   </aside>
   </div>
@@ -635,6 +644,7 @@
               <a href="board.html">フォーラム</a>
               <a href="groups.html">コミュニティ</a>
               <a href="announcements.html">公式お知らせ</a>
+              <a href="events.html">イベント</a>
               <a href="market.html">マーケット</a>
             </div>
             <div>
