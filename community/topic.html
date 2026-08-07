@@ -38,10 +38,8 @@
 
       <details class="el-side-forum" open>
         <summary class="is-active">
-          <a href="board.html" class="el-side-label-link">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-            <span class="lbl">フォーラム</span>
-          </a>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <a href="board.html" class="el-side-label-link"><span class="lbl">フォーラム</span></a>
           <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
         </summary>
         <div class="el-side-sub">
@@ -122,10 +120,8 @@
 
       <details class="el-side-forum">
         <summary>
-          <a href="groups.html" class="el-side-label-link">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-            <span class="lbl">コミュニティ</span>
-          </a>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <a href="groups.html" class="el-side-label-link"><span class="lbl">コミュニティ</span></a>
           <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
         </summary>
         <div class="el-side-sub">
@@ -148,10 +144,8 @@
 
       <details class="el-side-forum">
         <summary>
-          <a href="market.html" class="el-side-label-link">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/></svg>
-            <span class="lbl">マーケット</span>
-          </a>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/></svg>
+          <a href="market.html" class="el-side-label-link"><span class="lbl">マーケット</span></a>
           <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
         </summary>
         <div class="el-side-sub">
@@ -346,30 +340,13 @@
         </div>
 
         <aside class="el-scrubber" id="scrubber">
-          <div class="el-scrubber-track">
-            <div class="el-scrubber-group">
-              <span class="el-scrubber-month" data-month="2026-06">2026年6月</span>
-              <div class="el-scrubber-dots">
-                <button data-jump="c1" title="6月20日 田中フーズ"></button>
-                <button data-jump="c2" title="6月25日 鈴木ラボ"></button>
-              </div>
-            </div>
-            <div class="el-scrubber-group">
-              <span class="el-scrubber-month" data-month="2026-07">2026年7月</span>
-              <div class="el-scrubber-dots">
-                <button data-jump="c3" title="7月2日 高橋物産"></button>
-                <button data-jump="c4" title="7月28日 佐藤ストア"></button>
-              </div>
-            </div>
-            <div class="el-scrubber-group">
-              <span class="el-scrubber-month" data-month="2026-08">2026年8月</span>
-              <div class="el-scrubber-dots">
-                <button data-jump="c5" title="8月3日 小林商店"></button>
-                <button data-jump="c6" title="昨日 中村コスメ"></button>
-              </div>
+          <div class="el-scrubber-date-top" id="scrubberDateTop">8月6日</div>
+          <div class="el-scrubber-rail" id="scrubberRail">
+            <div class="el-scrubber-thumb" id="scrubberThumb">
+              <strong id="scrubCurrent">1</strong><span class="sep">/</span><span id="scrubTotal">6</span>
+              <span class="dt" id="scrubberThumbDate">6月20日</span>
             </div>
           </div>
-          <div class="el-scrubber-count"><strong id="scrubCurrent">1</strong> / 6</div>
         </aside>
 
       </div>
@@ -419,32 +396,54 @@
     el.addEventListener('click', function (e) { e.stopPropagation(); });
   });
 
-  // コメントの日付タイムライン（スクラバー）
+  // コメントの日付タイムライン（スライド式）
   (function () {
     var scrubber = document.getElementById('scrubber');
     if (!scrubber) return;
-    var jumpButtons = Array.prototype.slice.call(scrubber.querySelectorAll('[data-jump]'));
-    var monthLabels = Array.prototype.slice.call(scrubber.querySelectorAll('.el-scrubber-month'));
     var comments = Array.prototype.slice.call(document.querySelectorAll('#commentsList .el-post'));
+    var commentsHead = document.querySelector('.el-comments-head');
     var currentEl = document.getElementById('scrubCurrent');
+    var totalEl = document.getElementById('scrubTotal');
+    var dateTopEl = document.getElementById('scrubberDateTop');
+    var dateThumbEl = document.getElementById('scrubberThumbDate');
+    var rail = document.getElementById('scrubberRail');
+    var thumb = document.getElementById('scrubberThumb');
 
-    jumpButtons.forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        var target = document.getElementById(btn.dataset.jump);
-        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      });
-    });
+    if (totalEl) totalEl.textContent = comments.length;
+
+    function dateOf(comment) {
+      var t = comment.querySelector('.time');
+      return t ? t.textContent : '';
+    }
+
+    // コメント欄に到達するまでは非表示にする
+    if ('IntersectionObserver' in window && commentsHead) {
+      var visObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          var reached = entry.boundingClientRect.top < window.innerHeight * 0.6;
+          scrubber.classList.toggle('is-visible', reached);
+        });
+      }, { threshold: 0 });
+      visObserver.observe(commentsHead);
+    } else {
+      scrubber.classList.add('is-visible');
+    }
 
     if ('IntersectionObserver' in window && comments.length) {
       var observer = new IntersectionObserver(function (entries) {
         entries.forEach(function (entry) {
           if (!entry.isIntersecting) return;
           var idx = comments.indexOf(entry.target);
-          if (idx > -1 && currentEl) currentEl.textContent = idx + 1;
-          var month = entry.target.dataset.month;
-          monthLabels.forEach(function (m) {
-            m.classList.toggle('is-active', m.dataset.month === month);
-          });
+          if (idx === -1) return;
+          if (currentEl) currentEl.textContent = idx + 1;
+          var d = dateOf(entry.target);
+          if (dateTopEl) dateTopEl.textContent = d;
+          if (dateThumbEl) dateThumbEl.textContent = d;
+          if (rail && thumb) {
+            var pct = comments.length > 1 ? idx / (comments.length - 1) : 0;
+            var railH = rail.offsetHeight - thumb.offsetHeight;
+            thumb.style.top = Math.max(0, pct * railH) + 'px';
+          }
         });
       }, { rootMargin: '-45% 0px -45% 0px' });
       comments.forEach(function (c) { observer.observe(c); });
