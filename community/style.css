@@ -8,6 +8,7 @@
   --el-cream-deep:    #F0EAD9;
   --el-paper:         #FFFFFF;
   --el-navy:          #16233F;
+  --el-navy-panel:    #22355C;
   --el-navy-soft:     #40506E;
   --el-ink-faint:     #8892A6;
   --el-teal:          #2F8F82;
@@ -56,7 +57,7 @@ button{ font-family:inherit; cursor:pointer; }
 /* ---------- Header (navy — matches the sidebar itself; sticky, compact) ---------- */
 .el-header{
   position:sticky; top:var(--gh-h, 34px); z-index:45;
-  background:var(--el-navy);
+  background:var(--el-navy-panel);
   box-shadow:0 2px 8px rgba(22,35,63,.10);
 }
 .el-header-inner{
@@ -107,7 +108,7 @@ button{ font-family:inherit; cursor:pointer; }
 }
 .el-sidebar{
   width:232px;
-  background:var(--el-navy);
+  background:var(--el-navy-panel);
   min-height:calc(100vh - var(--gh-h, 34px) - var(--header-h));
   position:sticky; top:calc(var(--gh-h, 34px) + var(--header-h));
   padding:20px 14px 40px;
@@ -147,8 +148,10 @@ button{ font-family:inherit; cursor:pointer; }
 .el-side-forum > summary::-webkit-details-marker{ display:none; }
 .el-side-forum > summary:hover{ background:rgba(255,255,255,.08); color:#fff; }
 .el-side-forum > summary.is-active{ background:var(--el-teal); color:#fff; font-weight:700; }
-.el-side-forum > summary.is-active svg:first-child{ color:#fff; }
+.el-side-forum > summary.is-active .el-side-label-link svg{ color:#fff; }
 .el-side-forum > summary svg:first-child{ width:16px; height:16px; flex-shrink:0; color:#7E8CAC; }
+.el-side-label-link svg{ width:16px; height:16px; flex-shrink:0; color:#7E8CAC; }
+.el-side-forum > summary.is-active .el-side-label-link{ color:#fff; }
 .el-side-label-link{ color:inherit; text-decoration:none; display:flex; align-items:center; gap:10px; flex:1; min-width:0; }
 .el-side-label-link:hover{ text-decoration:underline; text-underline-offset:2px; }
 .el-side-forum > summary svg.chev{ width:12px; height:12px; margin-left:auto; flex-shrink:0; color:#7E8CAC; transition:transform .15s; }
@@ -223,7 +226,7 @@ button{ font-family:inherit; cursor:pointer; }
     position:fixed; left:0; right:0;
     top:calc(var(--gh-h, 34px) + var(--header-h));
     bottom:0; width:auto; z-index:60;
-    background:var(--el-navy); min-height:0;
+    background:var(--el-navy-panel); min-height:0;
   }
   .el-app.is-toggled .el-sidebar{ display:block; width:232px; padding:20px 14px 40px; }
   .el-app.is-toggled .el-sidebar .lbl,
@@ -508,60 +511,56 @@ button{ font-family:inherit; cursor:pointer; }
 /* ---------- Section-top catchphrase (フォーラム／コミュニティ／マーケット) ---------- */
 .el-catch{
   position:relative; overflow:hidden;
-  text-align:center; padding:44px 24px;
+  text-align:center; padding:22px 24px;
   margin-bottom:32px;
-  background:linear-gradient(135deg, var(--el-teal-tint) 0%, var(--el-cream) 75%);
+  background-image:linear-gradient(100deg, rgba(248,244,234,.94) 0%, rgba(248,244,234,.7) 55%, rgba(248,244,234,.5) 100%), url("hero-bg.png");
+  background-size:cover; background-position:center 35%;
   border-radius:var(--el-radius-l);
   border:1px solid var(--el-line-soft);
-}
-.el-catch::before{
-  content:""; position:absolute; top:-40px; right:-40px;
-  width:140px; height:140px; border-radius:50%;
-  background:var(--el-mustard-tint); opacity:.6;
-}
-.el-catch::after{
-  content:""; position:absolute; bottom:-50px; left:-30px;
-  width:120px; height:120px; border-radius:50%;
-  background:#E8F1F6; opacity:.6;
+  box-shadow:0 2px 4px rgba(22,35,63,.04), 0 10px 24px rgba(22,35,63,.06);
 }
 .el-catch .ic{
   position:relative; z-index:1;
   display:inline-flex; align-items:center; justify-content:center;
-  width:40px; height:40px; border-radius:12px; margin-bottom:14px;
+  width:34px; height:34px; border-radius:10px; margin-bottom:8px;
   background:var(--el-teal); color:#fff;
 }
 .el-catch p{
   position:relative; z-index:1;
   font-family:var(--font-display); font-weight:600; font-style:normal;
-  font-size:19px; color:var(--el-navy); line-height:1.85; margin:0;
+  font-size:17px; color:var(--el-navy); line-height:1.7; margin:0;
 }
 
-/* ---------- Pinned official box — hub for multiple pinned topics ---------- */
+/* ---------- Pinned official box — bulletin-board style, distinct from other cards ---------- */
 .el-pinned-box{
-  background:linear-gradient(180deg, #EAF3F1 0%, var(--el-paper) 180px);
-  border:1.5px solid #CFE3DE;
-  border-radius:var(--el-radius-l);
-  padding:24px 26px 10px;
-  box-shadow:0 2px 4px rgba(47,143,130,.05), 0 10px 24px rgba(47,143,130,.06);
+  position:relative;
+  background:
+    repeating-linear-gradient(135deg, rgba(234,170,60,.06) 0 10px, transparent 10px 20px),
+    var(--el-paper);
+  border:1.5px dashed #E3C68A;
+  border-left:5px solid var(--el-mustard);
+  border-radius:var(--el-radius-m);
+  padding:22px 24px 8px;
 }
-.el-pinned-head{ display:flex; gap:16px; align-items:flex-start; margin-bottom:16px; }
+.el-pinned-head{ display:flex; gap:14px; align-items:flex-start; margin-bottom:14px; }
 .el-pinned-box .ic{
-  width:38px; height:38px; border-radius:11px; flex-shrink:0;
-  background:var(--el-teal); color:#fff;
+  width:34px; height:34px; border-radius:50%; flex-shrink:0;
+  background:var(--el-mustard); color:#fff;
   display:flex; align-items:center; justify-content:center;
+  transform:rotate(-8deg);
+  box-shadow:0 2px 4px rgba(200,138,36,.35);
 }
-.el-pinned-head h2{ font-family:var(--font-display); font-size:16px; font-weight:600; margin:8px 0 6px; color:var(--el-navy); }
-.el-pinned-head p{ font-size:13px; color:var(--el-navy-soft); line-height:1.8; margin:0; }
-.el-pinned-list{ border-top:1px solid #CFE3DE; }
+.el-pinned-head h2{ font-family:var(--font-display); font-size:16px; font-weight:600; margin:6px 0 0; color:var(--el-navy); }
+.el-pinned-list{ border-top:1px dashed #E3C68A; }
 .el-pinned-item{
   display:flex; align-items:center; gap:10px;
-  padding:13px 2px; border-bottom:1px solid #DCEBE7;
+  padding:13px 2px; border-bottom:1px dashed #EAD9B4;
   font-size:13px; font-weight:600; color:var(--el-navy);
 }
 .el-pinned-item:last-child{ border-bottom:none; }
-.el-pinned-item .dot{ width:6px; height:6px; border-radius:50%; background:var(--el-teal); flex-shrink:0; }
+.el-pinned-item .dot{ width:6px; height:6px; border-radius:50%; background:var(--el-mustard-deep); flex-shrink:0; }
 .el-pinned-item .go{ margin-left:auto; color:var(--el-ink-faint); flex-shrink:0; transition:transform .15s; }
-.el-pinned-item:hover{ color:var(--el-teal-deep); }
+.el-pinned-item:hover{ color:var(--el-mustard-deep); }
 .el-pinned-item:hover .go{ transform:translateX(3px); color:var(--el-teal-deep); }
 
 /* ---------- Hashtag cloud ---------- */
