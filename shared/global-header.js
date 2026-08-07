@@ -16,7 +16,7 @@
   // サイトを追加する場合はここに1行足すだけでOK
   var sites = [
     { id: 'community', label: 'コミュニティ', href: root + '/community/index.html' },
-    { id: 'dev1',      label: '開発①',       href: root + '/dev1/index.html' },
+    { id: 'dev1',      label: 'worldSHiFT member central',       href: root + '/dev1/index.html' },
     { id: 'dev2',      label: '開発②',       href: root + '/dev2/index.html' }
   ];
 
