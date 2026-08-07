@@ -116,7 +116,8 @@
 
   <div class="el-content">
     <main class="el-section" style="padding-top:0;">
-      <div class="wrap" style="max-width:820px;">
+      <div class="el-thread-layout">
+        <div class="el-thread-main">
 
         <div class="el-thread-head">
           <div style="font-size:12.5px;color:var(--el-ink-faint);margin-bottom:14px;">
@@ -130,13 +131,14 @@
           </div>
         </div>
 
-        <article class="el-post">
+        <span class="el-op-label">本文</span>
+        <article class="el-post el-post--op">
           <div class="el-avatar">山</div>
           <div>
             <div class="el-post-head">
               <span class="name">山口 貿易士</span>
               <span class="role">スレ主</span>
-              <span class="time">3日前</span>
+              <span class="time">2026年6月18日</span>
             </div>
             <div class="el-post-body">
               <p>いつもお世話になっています。FDA施設登録の更新について、直近で更新漏れによる出荷停止を経験したので共有します。</p>
@@ -151,40 +153,117 @@
           </div>
         </article>
 
-        <article class="el-post">
-          <div class="el-avatar">田</div>
-          <div>
-            <div class="el-post-head">
-              <span class="name">田中フーズ</span>
-              <span class="time">2日前</span>
-            </div>
-            <div class="el-post-body">
-              <p>これ、うちも去年ヒヤッとしました。加えて、登録番号だけでなく緊急連絡先（U.S. Agent）の情報も期限内に見直しておくと安心です。担当者が退職していて連絡がつかず焦った経験があります。</p>
-            </div>
-            <div class="el-post-actions">
-              <button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14Z"/></svg> 5</button>
-              <button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H4l2.4-3.6A8.5 8.5 0 1 1 21 11.5Z"/></svg> 返信</button>
-            </div>
-          </div>
-        </article>
+        <div class="el-comments-head">
+          <h2>コメント</h2>
+          <span class="count">32件</span>
+        </div>
 
-        <article class="el-post">
-          <div class="el-avatar">佐</div>
-          <div>
-            <div class="el-post-head">
-              <span class="name">佐藤ストア</span>
-              <span class="role">運営メンバー</span>
-              <span class="time">昨日</span>
+        <div class="el-comments" id="commentsList">
+
+          <article class="el-post" id="c1" data-month="2026-06">
+            <div class="el-avatar">田</div>
+            <div>
+              <div class="el-post-head">
+                <span class="name">田中フーズ</span>
+                <span class="time">2026年6月20日</span>
+              </div>
+              <div class="el-post-body">
+                <p>これ、うちも去年ヒヤッとしました。加えて、登録番号だけでなく緊急連絡先（U.S. Agent）の情報も期限内に見直しておくと安心です。担当者が退職していて連絡がつかず焦った経験があります。</p>
+              </div>
+              <div class="el-post-actions">
+                <button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14Z"/></svg> 5</button>
+                <button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H4l2.4-3.6A8.5 8.5 0 1 1 21 11.5Z"/></svg> 返信</button>
+              </div>
             </div>
-            <div class="el-post-body">
-              <p>補足です。更新期間の詳細はFDAの公式ガイダンスにも記載がありますので、次回セミナーでも取り上げる予定です。開催が決まり次第、お知らせ欄で案内します。</p>
+          </article>
+
+          <article class="el-post" id="c2" data-month="2026-06">
+            <div class="el-avatar">鈴</div>
+            <div>
+              <div class="el-post-head">
+                <span class="name">鈴木ラボ</span>
+                <span class="time">2026年6月25日</span>
+              </div>
+              <div class="el-post-body">
+                <p>横から失礼します。更新申請はオンラインのFURLSシステムからで問題ないでしょうか。紙の書類が必要だった記憶が古く、混乱しています。</p>
+              </div>
+              <div class="el-post-actions">
+                <button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14Z"/></svg> 2</button>
+                <button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H4l2.4-3.6A8.5 8.5 0 1 1 21 11.5Z"/></svg> 返信</button>
+              </div>
             </div>
-            <div class="el-post-actions">
-              <button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14Z"/></svg> 8</button>
-              <button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H4l2.4-3.6A8.5 8.5 0 1 1 21 11.5Z"/></svg> 返信</button>
+          </article>
+
+          <article class="el-post" id="c3" data-month="2026-07">
+            <div class="el-avatar">高</div>
+            <div>
+              <div class="el-post-head">
+                <span class="name">高橋物産</span>
+                <span class="time">2026年7月2日</span>
+              </div>
+              <div class="el-post-body">
+                <p>FURLSで問題なく完結します。ログインID・パスワードを紛失しているケースが一番厄介なので、そちらだけ早めに確認しておくのがおすすめです。</p>
+              </div>
+              <div class="el-post-actions">
+                <button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14Z"/></svg> 6</button>
+                <button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H4l2.4-3.6A8.5 8.5 0 1 1 21 11.5Z"/></svg> 返信</button>
+              </div>
             </div>
-          </div>
-        </article>
+          </article>
+
+          <article class="el-post" id="c4" data-month="2026-07">
+            <div class="el-avatar">佐</div>
+            <div>
+              <div class="el-post-head">
+                <span class="name">佐藤ストア</span>
+                <span class="role">運営メンバー</span>
+                <span class="time">2026年7月28日</span>
+              </div>
+              <div class="el-post-body">
+                <p>補足です。更新期間の詳細はFDAの公式ガイダンスにも記載がありますので、次回セミナーでも取り上げる予定です。開催が決まり次第、お知らせ欄で案内します。</p>
+              </div>
+              <div class="el-post-actions">
+                <button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14Z"/></svg> 8</button>
+                <button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H4l2.4-3.6A8.5 8.5 0 1 1 21 11.5Z"/></svg> 返信</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="el-post" id="c5" data-month="2026-08">
+            <div class="el-avatar">小</div>
+            <div>
+              <div class="el-post-head">
+                <span class="name">小林商店</span>
+                <span class="time">2026年8月3日</span>
+              </div>
+              <div class="el-post-body">
+                <p>今年更新の対象なので助かりました。代理人（U.S. Agent）の見直し、うちも来週やります。</p>
+              </div>
+              <div class="el-post-actions">
+                <button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14Z"/></svg> 3</button>
+                <button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H4l2.4-3.6A8.5 8.5 0 1 1 21 11.5Z"/></svg> 返信</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="el-post" id="c6" data-month="2026-08">
+            <div class="el-avatar">中</div>
+            <div>
+              <div class="el-post-head">
+                <span class="name">中村コスメ</span>
+                <span class="time">昨日</span>
+              </div>
+              <div class="el-post-body">
+                <p>化粧品の登録も同じ流れで大丈夫でしょうか。食品と規制が違う気がして念のため確認させてください。</p>
+              </div>
+              <div class="el-post-actions">
+                <button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14Z"/></svg> 1</button>
+                <button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H4l2.4-3.6A8.5 8.5 0 1 1 21 11.5Z"/></svg> 返信</button>
+              </div>
+            </div>
+          </article>
+
+        </div>
 
         <div class="el-reply-box">
           <div style="font-size:13px;font-weight:700;margin-bottom:10px;">返信を投稿</div>
@@ -194,6 +273,17 @@
             <button class="el-btn el-btn--primary el-btn--sm">返信を送信</button>
           </div>
         </div>
+
+        </div>
+
+        <aside class="el-scrubber" id="scrubber">
+          <div class="el-scrubber-track">
+            <button data-jump="c1" data-month="2026-06">2026年6月</button>
+            <button data-jump="c3" data-month="2026-07">2026年7月</button>
+            <button data-jump="c5" data-month="2026-08">2026年8月</button>
+          </div>
+          <div class="el-scrubber-count"><strong id="scrubCurrent">1</strong> / 6</div>
+        </aside>
 
       </div>
     </main>
@@ -234,6 +324,37 @@
   document.getElementById('sidebarToggle').addEventListener('click', function () {
     document.getElementById('appShell').classList.toggle('is-toggled');
   });
+
+  // コメントの横スクロールバー（スクラバー）
+  (function () {
+    var scrubber = document.getElementById('scrubber');
+    if (!scrubber) return;
+    var buttons = Array.prototype.slice.call(scrubber.querySelectorAll('[data-jump]'));
+    var comments = Array.prototype.slice.call(document.querySelectorAll('#commentsList .el-post'));
+    var currentEl = document.getElementById('scrubCurrent');
+
+    buttons.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var target = document.getElementById(btn.dataset.jump);
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
+    });
+
+    if ('IntersectionObserver' in window && comments.length) {
+      var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          var idx = comments.indexOf(entry.target);
+          if (idx > -1 && currentEl) currentEl.textContent = idx + 1;
+          var month = entry.target.dataset.month;
+          buttons.forEach(function (b) {
+            b.classList.toggle('is-active', b.dataset.month === month);
+          });
+        });
+      }, { rootMargin: '-45% 0px -45% 0px' });
+      comments.forEach(function (c) { observer.observe(c); });
+    }
+  })();
 </script>
 </body>
 </html>
