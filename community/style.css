@@ -53,10 +53,10 @@ button{ font-family:inherit; cursor:pointer; }
 .wrap{ max-width:1180px; margin:0 auto; padding:0 32px; }
 @media (max-width:720px){ .wrap{ padding:0 18px; } }
 
-/* ---------- Header (teal — matches the サイドバー「ホーム」highlight; sticky, compact) ---------- */
+/* ---------- Header (navy — matches the sidebar itself; sticky, compact) ---------- */
 .el-header{
   position:sticky; top:var(--gh-h, 34px); z-index:45;
-  background:var(--el-teal);
+  background:var(--el-navy);
   box-shadow:0 2px 8px rgba(22,35,63,.10);
 }
 .el-header-inner{
