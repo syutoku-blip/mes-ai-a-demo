@@ -506,30 +506,63 @@ button{ font-family:inherit; cursor:pointer; }
 .el-cat-meta{ font-size:11.5px; color:var(--el-ink-faint); display:flex; gap:10px; }
 
 /* ---------- Section-top catchphrase (フォーラム／コミュニティ／マーケット) ---------- */
-.el-catch{ text-align:center; padding:0 0 30px; }
+.el-catch{
+  position:relative; overflow:hidden;
+  text-align:center; padding:44px 24px;
+  margin-bottom:32px;
+  background:linear-gradient(135deg, var(--el-teal-tint) 0%, var(--el-cream) 75%);
+  border-radius:var(--el-radius-l);
+  border:1px solid var(--el-line-soft);
+}
+.el-catch::before{
+  content:""; position:absolute; top:-40px; right:-40px;
+  width:140px; height:140px; border-radius:50%;
+  background:var(--el-mustard-tint); opacity:.6;
+}
+.el-catch::after{
+  content:""; position:absolute; bottom:-50px; left:-30px;
+  width:120px; height:120px; border-radius:50%;
+  background:#E8F1F6; opacity:.6;
+}
+.el-catch .ic{
+  position:relative; z-index:1;
+  display:inline-flex; align-items:center; justify-content:center;
+  width:40px; height:40px; border-radius:12px; margin-bottom:14px;
+  background:var(--el-teal); color:#fff;
+}
 .el-catch p{
-  font-family:var(--font-display); font-weight:500; font-style:normal;
-  font-size:16px; color:var(--el-navy-soft); line-height:1.85; margin:0;
+  position:relative; z-index:1;
+  font-family:var(--font-display); font-weight:600; font-style:normal;
+  font-size:19px; color:var(--el-navy); line-height:1.85; margin:0;
 }
 
-/* ---------- Pinned official box (usage rules etc.) ---------- */
+/* ---------- Pinned official box — hub for multiple pinned topics ---------- */
 .el-pinned-box{
-  display:flex; gap:16px; align-items:flex-start;
-  background:linear-gradient(180deg, #EAF3F1 0%, var(--el-paper) 220px);
+  background:linear-gradient(180deg, #EAF3F1 0%, var(--el-paper) 180px);
   border:1.5px solid #CFE3DE;
   border-radius:var(--el-radius-l);
-  padding:24px 26px;
+  padding:24px 26px 10px;
   box-shadow:0 2px 4px rgba(47,143,130,.05), 0 10px 24px rgba(47,143,130,.06);
 }
+.el-pinned-head{ display:flex; gap:16px; align-items:flex-start; margin-bottom:16px; }
 .el-pinned-box .ic{
   width:38px; height:38px; border-radius:11px; flex-shrink:0;
   background:var(--el-teal); color:#fff;
   display:flex; align-items:center; justify-content:center;
 }
-.el-pinned-box h2{ font-family:var(--font-display); font-size:16px; font-weight:600; margin:8px 0 8px; color:var(--el-navy); }
-.el-pinned-box p{ font-size:13px; color:var(--el-navy-soft); line-height:1.8; margin:0 0 10px; }
-.el-pinned-box ul{ margin:0; padding-left:18px; font-size:12.5px; color:var(--el-navy-soft); line-height:1.9; }
-.el-pinned-box li{ margin-bottom:2px; }
+.el-pinned-head h2{ font-family:var(--font-display); font-size:16px; font-weight:600; margin:8px 0 6px; color:var(--el-navy); }
+.el-pinned-head p{ font-size:13px; color:var(--el-navy-soft); line-height:1.8; margin:0; }
+.el-pinned-list{ border-top:1px solid #CFE3DE; }
+.el-pinned-item{
+  display:flex; align-items:center; gap:10px;
+  padding:13px 2px; border-bottom:1px solid #DCEBE7;
+  font-size:13px; font-weight:600; color:var(--el-navy);
+}
+.el-pinned-item:last-child{ border-bottom:none; }
+.el-pinned-item .dot{ width:6px; height:6px; border-radius:50%; background:var(--el-teal); flex-shrink:0; }
+.el-pinned-item .go{ margin-left:auto; color:var(--el-ink-faint); flex-shrink:0; transition:transform .15s; }
+.el-pinned-item:hover{ color:var(--el-teal-deep); }
+.el-pinned-item:hover .go{ transform:translateX(3px); color:var(--el-teal-deep); }
 
 /* ---------- Hashtag cloud ---------- */
 .el-tag-cloud{ display:flex; flex-wrap:wrap; gap:10px; }
@@ -894,6 +927,15 @@ button{ font-family:inherit; cursor:pointer; }
 .el-group-members .el-avatar{ width:24px; height:24px; font-size:9px; margin-left:-7px; border:2px solid var(--el-paper); }
 .el-group-members .el-avatar:first-child{ margin-left:0; }
 .el-group-members .more{ font-size:11px; color:var(--el-ink-faint); margin-left:8px; }
+
+/* Group card status — deliberately not a badge/pill, to stay visually distinct from forum chips */
+.el-group-status{
+  display:inline-flex; align-items:center; gap:5px;
+  font-size:11.5px; font-weight:700;
+}
+.el-group-status svg{ flex-shrink:0; }
+.el-group-status.is-joined{ color:var(--el-teal-deep); }
+.el-group-status.is-pending{ color:var(--el-mustard-deep); }
 
 /* ---------- Announcements ---------- */
 .el-announce-hero{ text-align:center; padding:20px 0 6px; }
