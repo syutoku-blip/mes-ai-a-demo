@@ -184,13 +184,13 @@
           <details class="el-filter-menu" id="tagMenu">
             <summary>ハッシュタグ <span class="el-filter-summary-value" id="tagSummary">すべて</span></summary>
             <div class="el-filter-popover">
-              <label><input type="checkbox" name="tag" value="fba"> #FBA</label>
-              <label><input type="checkbox" name="tag" value="facility-registration"> #施設登録・更新</label>
-              <label><input type="checkbox" name="tag" value="label"> #ラベル</label>
-              <label><input type="checkbox" name="tag" value="us-agent"> #米国代理人</label>
-              <label><input type="checkbox" name="tag" value="customs-docs"> #通関書類</label>
-              <label><input type="checkbox" name="tag" value="research"> #リサーチ</label>
-              <label><input type="checkbox" name="tag" value="warehouse"> #倉庫選定</label>
+              <label data-categories="amazon"><input type="checkbox" name="tag" value="fba"> #FBA</label>
+              <label data-categories="fda"><input type="checkbox" name="tag" value="facility-registration"> #施設登録・更新</label>
+              <label data-categories="fda"><input type="checkbox" name="tag" value="label"> #ラベル</label>
+              <label data-categories="fda"><input type="checkbox" name="tag" value="us-agent"> #米国代理人</label>
+              <label data-categories="customs"><input type="checkbox" name="tag" value="customs-docs"> #通関書類</label>
+              <label data-categories="amazon"><input type="checkbox" name="tag" value="research"> #リサーチ</label>
+              <label data-categories="logistics"><input type="checkbox" name="tag" value="warehouse"> #倉庫選定</label>
               <button type="button" class="el-filter-clear" data-clear="tag">すべて解除</button>
             </div>
           </details>
@@ -466,12 +466,40 @@
     }
     setChecks('category', categories);
     setChecks('tag', tags);
+    updateTagChoicesByCategory();
 
     function updateSummary(id, values, names){
       var el=document.getElementById(id); if(!el) return;
       if(!values.length) el.textContent='すべて';
       else if(values.length===1) el.textContent=names[values[0]] || values[0];
       else el.textContent=values.length+'件選択';
+    }
+
+    function updateTagChoicesByCategory(){
+      var allowed = {};
+      var hasCategory = categories.length > 0;
+
+      document.querySelectorAll('#tagMenu .el-filter-popover label[data-categories]').forEach(function(label){
+        var parents = (label.dataset.categories || '').split(/\s+/).filter(Boolean);
+        var visible = !hasCategory || parents.some(function(parent){
+          return categories.indexOf(parent) !== -1;
+        });
+
+        label.style.display = visible ? '' : 'none';
+
+        var cb = label.querySelector('input[name="tag"]');
+        if (!visible && cb && cb.checked) {
+          cb.checked = false;
+          tags = tags.filter(function(tag){ return tag !== cb.value; });
+        }
+
+        if (visible && cb) allowed[cb.value] = true;
+      });
+
+      // カテゴリ選択時は、そのカテゴリ配下に存在しないタグ条件を解除。
+      if (hasCategory) {
+        tags = tags.filter(function(tag){ return !!allowed[tag]; });
+      }
     }
 
     function syncUrl(){
@@ -535,13 +563,31 @@
     if(vf) vf.addEventListener('change',function(){filter=this.value; syncUrl(); renderList();});
     if(ss) ss.addEventListener('change',function(){sort=this.value; syncUrl(); renderList();});
     document.querySelectorAll('input[name="category"]').forEach(function(cb){
-      cb.addEventListener('change',function(){categories=Array.prototype.slice.call(document.querySelectorAll('input[name="category"]:checked')).map(function(x){return x.value;}); syncUrl(); renderList();});
+      cb.addEventListener('change',function(){
+        categories=Array.prototype.slice.call(document.querySelectorAll('input[name="category"]:checked')).map(function(x){return x.value;});
+        updateTagChoicesByCategory();
+        syncUrl();
+        renderList();
+      });
     });
     document.querySelectorAll('input[name="tag"]').forEach(function(cb){
       cb.addEventListener('change',function(){tags=Array.prototype.slice.call(document.querySelectorAll('input[name="tag"]:checked')).map(function(x){return x.value;}); syncUrl(); renderList();});
     });
     document.querySelectorAll('.el-filter-clear').forEach(function(btn){
-      btn.addEventListener('click',function(e){e.preventDefault(); var key=this.dataset.clear; if(key==='category'){categories=[];setChecks('category',[]);}else{tags=[];setChecks('tag',[]);} syncUrl(); renderList();});
+      btn.addEventListener('click',function(e){
+        e.preventDefault();
+        var key=this.dataset.clear;
+        if(key==='category'){
+          categories=[];
+          setChecks('category',[]);
+          updateTagChoicesByCategory();
+        }else{
+          tags=[];
+          setChecks('tag',[]);
+        }
+        syncUrl();
+        renderList();
+      });
     });
 
     renderList();
