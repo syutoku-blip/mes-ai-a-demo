@@ -244,7 +244,7 @@
               </div>
 
               <div class="el-tag-recommend-wrap">
-                <span class="el-tag-recommend-label">本文からおすすめ</span>
+                <span class="el-tag-recommend-label">おすすめ</span>
                 <div class="el-tag-picker el-tag-picker--recommend" id="recommendedTags"></div>
               </div>
 
@@ -842,18 +842,18 @@
 
     function getRecommendedTags(){
       var text = bodyPlainText();
-      if (!text.trim()) return TAG_CATALOG.slice(0, 4);
 
-      var scored = TAG_CATALOG.map(function(tag){
+      var scored = TAG_CATALOG.map(function(tag, index){
         var score = 0;
         tag.words.forEach(function(word){
           if (text.indexOf(word.toLowerCase()) !== -1) score += 1;
         });
-        return { tag:tag, score:score };
+        return { tag:tag, score:score, index:index };
       }).filter(function(x){
-        return x.score > 0 && selectedTags.indexOf(x.tag.value) === -1;
+        return selectedTags.indexOf(x.tag.value) === -1;
       }).sort(function(a,b){
-        return b.score - a.score;
+        if (b.score !== a.score) return b.score - a.score;
+        return a.index - b.index;
       });
 
       return scored.slice(0, 5).map(function(x){ return x.tag; });
