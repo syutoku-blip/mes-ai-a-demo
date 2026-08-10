@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>新規投稿｜Export Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&family=Noto+Sans+JP:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="../shared/global-header.css">
+</head>
+<body data-site="community" data-root="..">
+
+<header class="el-header">
+  <div class="el-header-inner">
+    <button class="el-menu-toggle" id="sidebarToggle" aria-label="メニュー">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+    <a href="index.html" class="el-logo">Export Lab<span class="dot">.</span></a>
+    <div class="el-header-actions">
+      <div class="el-search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        検索
+      </div>
+      <a href="mypage.html" class="el-header-bell" aria-label="通知">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="count">3</span>
+      </a>
+      <a href="mypage.html" class="el-avatar" aria-label="マイページ">り</a>
+    </div>
+  </div>
+</header>
+
+<div class="el-app" id="appShell">
+  <div class="el-sidebar-wrap">
+    <aside class="el-sidebar" id="sidebar">
+    <nav>
+      <a href="index.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/><path d="M9 22V12h6v10"/></svg>
+        <span class="lbl">ホーム</span>
+      </a>
+
+      <details class="el-side-forum" open>
+        <summary class="is-active" data-href="forum.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <span class="lbl">フォーラム</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
+        </summary>
+        <div class="el-side-sub">
+          <a href="forum-new.html" class="el-side-cta is-active">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+            新規投稿をする
+          </a>
+          <a href="board.html?sort=new">新着</a>
+          <a href="board.html?sort=hot">人気</a>
+          <a href="board.html?filter=shift&sort=hot">SHiFT member only</a>
+          <a href="board.html?filter=unsolved&sort=hot">未解決</a>
+
+          <details class="el-side-cat">
+            <summary>カテゴリで探す<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></summary>
+            <div class="el-side-cat-body">
+              <a href="board.html?category=fda&sort=hot">FDA対応</a>
+              <a href="board.html?category=customs&sort=hot">通関</a>
+              <a href="board.html?category=tariff&sort=hot">関税</a>
+              <a href="board.html?category=amazon&sort=hot">Amazon出品</a>
+              <a href="board.html?category=logistics&sort=hot">物流</a>
+              <a href="forum-categories.html" class="el-side-more">もっと見る <span>→</span></a>
+            </div>
+          </details>
+
+          <details class="el-side-cat">
+            <summary>ハッシュタグで探す<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></summary>
+            <div class="el-side-cat-body">
+              <a href="board.html?tag=fba&sort=hot">#FBA</a>
+              <a href="board.html?tag=facility-registration&sort=hot">#施設登録・更新</a>
+              <a href="board.html?tag=label&sort=hot">#ラベル</a>
+              <a href="board.html?tag=us-agent&sort=hot">#米国代理人</a>
+              <a href="board.html?tag=prior-notice&sort=hot">#事前申告</a>
+              <a href="forum-tags.html" class="el-side-more">もっと見る <span>→</span></a>
+            </div>
+          </details>
+        </div>
+      </details>
+
+      <details class="el-side-forum">
+        <summary data-href="groups.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <span class="lbl">コミュニティ</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
+        </summary>
+        <div class="el-side-sub">
+          <a href="groups.html" class="el-side-cta">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+            新規コミュニティを作成する
+          </a>
+          <a href="groups-list.html?sort=new">新着</a>
+          <a href="groups-list.html?sort=hot">人気</a>
+          <a href="groups-list.html?filter=joined&sort=hot">参加中のコミュニティ</a>
+          <a href="groups-list.html?filter=pending&sort=hot">申請中のコミュニティ</a>
+        </div>
+      </details>
+
+      <a href="announcements.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
+        <span class="lbl">公式お知らせ</span>
+      </a>
+
+      <a href="events.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        <span class="lbl">イベント</span>
+      </a>
+
+      <details class="el-side-forum">
+        <summary data-href="market.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/></svg>
+          <span class="lbl">マーケット</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
+        </summary>
+        <div class="el-side-sub">
+          <a href="market-list.html">コンテンツ一覧</a>
+          <a href="market-official.html">ワールドシフト提供</a>
+          <a href="market-apply.html">出品申請</a>
+        </div>
+      </details>
+
+      <a href="mypage.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+        <span class="lbl">マイページ</span>
+      </a>
+    </nav>
+  </aside>
+  </div>
+
+  <div class="el-content">
+    <main class="el-section el-compose-section" style="padding-top:0;">
+      <div class="wrap">
+        <nav class="el-breadcrumb el-page-breadcrumb" aria-label="パンくず">
+          <a href="index.html">ホーム</a>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
+          <a href="forum.html">フォーラムTOP</a>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
+          <span>新規投稿</span>
+        </nav>
+
+        <div class="el-compose-head">
+          <div>
+            <span class="el-compose-kicker">NEW TOPIC</span>
+            <h1>新しいトピックを投稿</h1>
+            <p>質問や経験、気づきを共有しましょう。あとから見つけやすいように、カテゴリとハッシュタグも設定できます。</p>
+          </div>
+          <a href="forum.html" class="el-compose-close" aria-label="投稿をやめる">×</a>
+        </div>
+
+        <form class="el-compose-form" id="newTopicForm">
+          <section class="el-compose-card">
+            <div class="el-form-block">
+              <div class="el-form-label-row">
+                <label for="topicTitle">タイトル <span class="required">必須</span></label>
+                <span class="el-char-count"><span id="titleCount">0</span>/80</span>
+              </div>
+              <input id="topicTitle" name="title" class="el-form-input el-form-input--title" maxlength="80"
+                     placeholder="例：米国倉庫でのラベル不備を防ぐチェック方法を教えてください" required>
+            </div>
+
+            <div class="el-form-block">
+              <div class="el-form-label-row">
+                <label>本文 <span class="required">必須</span></label>
+                <span class="el-form-hint">できるだけ具体的に書くと回答が集まりやすくなります</span>
+              </div>
+
+              <div class="el-rich-editor">
+                <div class="el-editor-toolbar" role="toolbar" aria-label="本文の書式">
+                  <button type="button" data-command="bold" title="太字"><strong>B</strong></button>
+                  <button type="button" data-command="italic" title="斜体"><em>I</em></button>
+                  <span class="sep"></span>
+                  <button type="button" data-command="insertUnorderedList" title="箇条書き">
+                    <svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+                  </button>
+                  <button type="button" data-command="insertOrderedList" title="番号付きリスト">
+                    <svg viewBox="0 0 24 24"><path d="M10 6h11M10 12h11M10 18h11M4 6h1V3M4 3h2M4 12h2l-2 3h2M4 18h2v3H4"/></svg>
+                  </button>
+                  <button type="button" data-command="formatBlock" data-value="blockquote" title="引用">
+                    <svg viewBox="0 0 24 24"><path d="M10 11H6a4 4 0 0 1 4-4V5a6 6 0 0 0-6 6v6h6v-6ZM20 11h-4a4 4 0 0 1 4-4V5a6 6 0 0 0-6 6v6h6v-6Z"/></svg>
+                  </button>
+                  <span class="sep"></span>
+                  <button type="button" id="addLinkBtn" title="リンク">
+                    <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                  </button>
+                  <button type="button" id="clearFormatBtn" title="書式を解除">
+                    <svg viewBox="0 0 24 24"><path d="m3 3 18 18M9 5h9M13 5l-3 10M6 19h8"/></svg>
+                  </button>
+                </div>
+                <div id="topicBody" class="el-editor-area" contenteditable="true"
+                     data-placeholder="相談したいこと、試したこと、困っている状況などを入力してください…"></div>
+                <textarea id="topicBodyValue" name="body" hidden required></textarea>
+              </div>
+            </div>
+
+            <div class="el-form-block">
+              <div class="el-form-label-row">
+                <label for="topicCategory">カテゴリ <span class="required">必須</span></label>
+                <span class="el-form-hint">最も近いものを1つ選択</span>
+              </div>
+              <select id="topicCategory" name="category" class="el-form-select" required>
+                <option value="">カテゴリを選択してください</option>
+                <option value="fda">FDA対応</option>
+                <option value="customs">通関</option>
+                <option value="tariff">関税</option>
+                <option value="amazon">Amazon出品</option>
+                <option value="logistics">物流</option>
+                <option value="chat">雑談・自己紹介</option>
+              </select>
+            </div>
+
+            <div class="el-form-block">
+              <div class="el-form-label-row">
+                <label>ハッシュタグ</label>
+                <span class="el-form-hint">複数選択可・最大5個</span>
+              </div>
+              <div class="el-tag-picker" id="tagPicker">
+                <label><input type="checkbox" name="tags" value="fba"><span>#FBA</span></label>
+                <label><input type="checkbox" name="tags" value="facility-registration"><span>#施設登録・更新</span></label>
+                <label><input type="checkbox" name="tags" value="label"><span>#ラベル</span></label>
+                <label><input type="checkbox" name="tags" value="us-agent"><span>#米国代理人</span></label>
+                <label><input type="checkbox" name="tags" value="prior-notice"><span>#事前申告</span></label>
+                <label><input type="checkbox" name="tags" value="customs-docs"><span>#通関書類</span></label>
+                <label><input type="checkbox" name="tags" value="research"><span>#リサーチ</span></label>
+                <label><input type="checkbox" name="tags" value="warehouse"><span>#倉庫選定</span></label>
+              </div>
+              <div class="el-custom-tag">
+                <span>#</span>
+                <input id="customTag" type="text" maxlength="24" placeholder="一覧にないタグを入力">
+                <button type="button" id="addCustomTag">追加</button>
+              </div>
+            </div>
+
+            <div class="el-form-block">
+              <div class="el-form-label-row">
+                <label>公開範囲 <span class="required">必須</span></label>
+              </div>
+              <div class="el-visibility-options">
+                <label class="el-visibility-option">
+                  <input type="radio" name="visibility" value="general" checked>
+                  <span class="radio-ui"></span>
+                  <span><strong>公開</strong><small>Export Labの参加者が閲覧できます</small></span>
+                </label>
+                <label class="el-visibility-option">
+                  <input type="radio" name="visibility" value="member">
+                  <span class="radio-ui"></span>
+                  <span><strong>メンバー限定</strong><small>ログインしているメンバーのみ閲覧できます</small></span>
+                </label>
+                <label class="el-visibility-option">
+                  <input type="radio" name="visibility" value="shift">
+                  <span class="radio-ui"></span>
+                  <span><strong>SHiFT member only</strong><small>SHiFT会員だけが閲覧できます</small></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="el-form-block">
+              <div class="el-form-label-row">
+                <label for="topicAttachment">添付ファイル <span class="optional">任意</span></label>
+                <span class="el-form-hint">画像・PDFなど、説明に必要な資料がある場合</span>
+              </div>
+              <label class="el-file-drop" for="topicAttachment">
+                <input id="topicAttachment" name="attachment" type="file" multiple accept="image/*,.pdf">
+                <svg viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5M5 20h14"/></svg>
+                <span><strong>ファイルを選択</strong> またはドラッグ＆ドロップ</span>
+              </label>
+              <div id="fileNames" class="el-file-names"></div>
+            </div>
+
+            <div class="el-form-block el-form-block--compact">
+              <label class="el-notify-check">
+                <input type="checkbox" name="notify" checked>
+                <span>この投稿に返信があったとき通知を受け取る</span>
+              </label>
+            </div>
+          </section>
+
+          <aside class="el-compose-side">
+            <div class="el-compose-help">
+              <h3>投稿前のチェック</h3>
+              <ul>
+                <li>タイトルだけで内容が想像できる</li>
+                <li>困っている状況や前提を書いた</li>
+                <li>個人情報・機密情報を含めていない</li>
+                <li>カテゴリとタグが内容に合っている</li>
+              </ul>
+              <a href="topic.html">投稿ルールを確認する →</a>
+            </div>
+          </aside>
+
+          <div class="el-compose-actions">
+            <button type="button" class="el-btn el-btn--ghost" id="saveDraftBtn">下書き保存</button>
+            <button type="button" class="el-btn el-btn--outline" id="previewBtn">プレビュー</button>
+            <button type="submit" class="el-btn el-btn--primary el-submit-topic">投稿する</button>
+          </div>
+        </form>
+      </div>
+
+      <dialog class="el-preview-dialog" id="previewDialog">
+        <div class="el-preview-dialog-inner">
+          <div class="el-preview-head">
+            <div>
+              <span>PREVIEW</span>
+              <h2 id="previewTitle">投稿プレビュー</h2>
+            </div>
+            <button type="button" id="previewClose" aria-label="閉じる">×</button>
+          </div>
+          <div class="el-preview-meta" id="previewMeta"></div>
+          <div class="el-preview-body" id="previewBody"></div>
+        </div>
+      </dialog>
+    </main>
+
+    <footer class="el-footer">
+      <div class="wrap">
+        <div class="el-footer-grid">
+          <div>
+            <a href="index.html" class="el-logo">Export Lab<span class="dot">.</span></a>
+            <p class="tag">人・モノ・情報がつながる、輸出の共創コミュニティ。運営：WorldShift株式会社</p>
+          </div>
+          <div class="el-footer-cols">
+            <div>
+              <h6>コミュニティ</h6>
+              <a href="board.html">フォーラム</a>
+              <a href="groups.html">コミュニティ</a>
+              <a href="announcements.html">公式お知らせ</a>
+              <a href="events.html">イベント</a>
+              <a href="market.html">マーケット</a>
+            </div>
+            <div>
+              <h6>サポート</h6>
+              <a href="#">ガイドライン</a>
+              <a href="#">よくある質問</a>
+              <a href="#">お問い合わせ</a>
+            </div>
+          </div>
+        </div>
+        <div class="el-footer-bottom">
+          <span>© 2026 WorldShift Inc.</span>
+          <span>Export Lab Community</span>
+        </div>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<script src="../shared/global-header.js" defer></script>
+<script>
+  (function () {
+    var appShell = document.getElementById('appShell');
+    var STORAGE_KEY = 'el-sidebar-collapsed';
+    try {
+      if (localStorage.getItem(STORAGE_KEY) === '1') appShell.classList.add('is-toggled');
+    } catch (e) {}
+    var toggle = document.getElementById('sidebarToggle');
+    if (toggle) toggle.addEventListener('click', function () {
+      appShell.classList.toggle('is-toggled');
+      try { localStorage.setItem(STORAGE_KEY, appShell.classList.contains('is-toggled') ? '1' : '0'); } catch (e) {}
+    });
+  })();
+
+  document.querySelectorAll('.el-side-forum > summary[data-href]').forEach(function (summary) {
+    summary.addEventListener('click', function (e) {
+      if (e.target.closest('svg.chev')) return;
+      e.preventDefault();
+      window.location.href = summary.dataset.href;
+    });
+  });
+
+  (function () {
+    var title = document.getElementById('topicTitle');
+    var titleCount = document.getElementById('titleCount');
+    var editor = document.getElementById('topicBody');
+    var bodyValue = document.getElementById('topicBodyValue');
+    var form = document.getElementById('newTopicForm');
+
+    title.addEventListener('input', function () {
+      titleCount.textContent = title.value.length;
+    });
+
+    document.querySelectorAll('.el-editor-toolbar [data-command]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        editor.focus();
+        var cmd = btn.dataset.command;
+        var value = btn.dataset.value || null;
+        document.execCommand(cmd, false, value);
+      });
+    });
+
+    document.getElementById('addLinkBtn').addEventListener('click', function () {
+      var url = prompt('リンク先URLを入力してください');
+      if (!url) return;
+      editor.focus();
+      document.execCommand('createLink', false, url);
+    });
+
+    document.getElementById('clearFormatBtn').addEventListener('click', function () {
+      editor.focus();
+      document.execCommand('removeFormat', false, null);
+    });
+
+    var tagPicker = document.getElementById('tagPicker');
+    tagPicker.addEventListener('change', function (e) {
+      if (!e.target.matches('input[type="checkbox"]')) return;
+      var checked = tagPicker.querySelectorAll('input[type="checkbox"]:checked');
+      if (checked.length > 5) {
+        e.target.checked = false;
+        alert('ハッシュタグは5個まで選択できます。');
+      }
+    });
+
+    document.getElementById('addCustomTag').addEventListener('click', function () {
+      var input = document.getElementById('customTag');
+      var value = input.value.trim().replace(/^#/, '');
+      if (!value) return;
+      if (tagPicker.querySelectorAll('input[type="checkbox"]:checked').length >= 5) {
+        alert('ハッシュタグは5個まで選択できます。');
+        return;
+      }
+      var label = document.createElement('label');
+      label.innerHTML = '<input type="checkbox" name="tags" checked value="' +
+        value.replace(/"/g, '&quot;') + '"><span>#' + value.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</span>';
+      tagPicker.appendChild(label);
+      input.value = '';
+    });
+
+    document.getElementById('topicAttachment').addEventListener('change', function () {
+      var names = Array.prototype.map.call(this.files, function (f) { return f.name; });
+      document.getElementById('fileNames').textContent = names.join(' / ');
+    });
+
+    function syncBody() {
+      bodyValue.value = editor.innerHTML.trim();
+      return editor.innerText.trim().length > 0;
+    }
+
+    document.getElementById('saveDraftBtn').addEventListener('click', function () {
+      syncBody();
+      var draft = {
+        title: title.value,
+        body: editor.innerHTML,
+        category: document.getElementById('topicCategory').value,
+        visibility: (form.querySelector('[name="visibility"]:checked') || {}).value || 'general'
+      };
+      try { localStorage.setItem('el-topic-draft', JSON.stringify(draft)); } catch (e) {}
+      this.textContent = '保存しました';
+      var btn = this;
+      setTimeout(function(){ btn.textContent = '下書き保存'; }, 1400);
+    });
+
+    var dialog = document.getElementById('previewDialog');
+    document.getElementById('previewBtn').addEventListener('click', function () {
+      if (!syncBody()) {
+        alert('本文を入力してください。');
+        return;
+      }
+      document.getElementById('previewTitle').textContent = title.value || '（タイトル未入力）';
+      var category = document.getElementById('topicCategory');
+      var tags = Array.prototype.map.call(tagPicker.querySelectorAll('input:checked'), function (i) { return '#' + i.value; });
+      document.getElementById('previewMeta').textContent =
+        (category.options[category.selectedIndex] ? category.options[category.selectedIndex].text : '') +
+        (tags.length ? ' ・ ' + tags.join(' ') : '');
+      document.getElementById('previewBody').innerHTML = editor.innerHTML;
+      dialog.showModal();
+    });
+    document.getElementById('previewClose').addEventListener('click', function(){ dialog.close(); });
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (!syncBody()) {
+        editor.focus();
+        editor.classList.add('is-error');
+        alert('本文を入力してください。');
+        return;
+      }
+      editor.classList.remove('is-error');
+      alert('投稿内容を受け付けました。（デモ画面）');
+    });
+
+    try {
+      var saved = JSON.parse(localStorage.getItem('el-topic-draft') || 'null');
+      if (saved) {
+        title.value = saved.title || '';
+        editor.innerHTML = saved.body || '';
+        document.getElementById('topicCategory').value = saved.category || '';
+        var vis = form.querySelector('[name="visibility"][value="' + (saved.visibility || 'general') + '"]');
+        if (vis) vis.checked = true;
+        titleCount.textContent = title.value.length;
+      }
+    } catch (e) {}
+  })();
+</script>
+</body>
+</html>
