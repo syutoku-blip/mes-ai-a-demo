@@ -342,22 +342,6 @@
 
       </div>
     </main>
-    <section class="el-section" style="padding-top:0;padding-bottom:24px;">
-      <div class="wrap">
-
-        <div class="el-ad-banner el-page-bottom-ad">
-          <span class="el-ad-tag">AD</span>
-          <span class="el-ad-icon" style="background:var(--el-teal);color:#fff;font-weight:800;">▣</span>
-          <div class="el-ad-body">
-            <strong>SLCサービス</strong>
-            <span>米Amazon FBA納品をもっとシンプルに</span>
-          </div>
-          <a href="#" class="el-btn el-btn--ghost el-btn--sm">詳しく見る</a>
-        </div>
-
-      </div>
-    </section>
-
 
     <footer class="el-footer">
       <div class="wrap">
@@ -393,36 +377,42 @@
 </div>
 
 <script src="../shared/global-header.js" defer>
-  // 絞り込みの複数選択メニュー：
-  // ・チェック操作中は開いたまま
-  // ・枠外をクリックしたら閉じる
-  // ・別の絞り込み項目を操作したら現在のメニューを閉じる
+
+
+  // 絞り込みメニューの開閉
+  // チェック中は開いたまま。枠外・別の操作項目を押すと閉じる。
   (function () {
     var menus = Array.prototype.slice.call(document.querySelectorAll('.el-filter-menu'));
     if (!menus.length) return;
 
-    function closeMenus(except) {
+    function closeAll(except) {
       menus.forEach(function (menu) {
         if (menu !== except) menu.removeAttribute('open');
       });
     }
 
+    // pointerdown を capture で見ることで、select/button/details の種類に関係なく確実に閉じる
+    document.addEventListener('pointerdown', function (e) {
+      var clickedMenu = e.target.closest('.el-filter-menu');
+
+      if (clickedMenu) {
+        // 同じメニュー内のチェック操作ではそのメニューは閉じない。
+        // 別メニューを操作した場合だけ他を閉じる。
+        closeAll(clickedMenu);
+        return;
+      }
+
+      // メニューの外側をクリックしたら全て閉じる
+      closeAll();
+    }, true);
+
+    // summary を開く際にも他のメニューを閉じる
     menus.forEach(function (menu) {
       var summary = menu.querySelector(':scope > summary');
       if (!summary) return;
-
       summary.addEventListener('click', function () {
-        if (!menu.hasAttribute('open')) closeMenus(menu);
+        if (!menu.open) closeAll(menu);
       });
-    });
-
-    document.addEventListener('click', function (e) {
-      if (!e.target.closest('.el-filter-menu')) closeMenus();
-    });
-
-    document.querySelectorAll('#boardControls select').forEach(function (select) {
-      select.addEventListener('mousedown', function () { closeMenus(); });
-      select.addEventListener('focus', function () { closeMenus(); });
     });
   })();
 
