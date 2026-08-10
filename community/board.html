@@ -141,36 +141,37 @@
     </div>
 
       <div class="wrap">
+        <nav class="el-breadcrumb el-page-breadcrumb" aria-label="パンくず"><a href="index.html">ホーム</a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg><a href="forum.html">フォーラム</a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg><span>すべての投稿</span></nav>
 
-        <div class="el-pinned-box">
-          <div class="el-pinned-head">
+
+        <details class="el-pinned-box">
+          <summary class="el-pinned-head">
             <span class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 17v5M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16h14v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z"/></svg></span>
             <h2>ご利用の前にご確認ください</h2>
-          </div>
+            <svg class="el-pinned-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
+          </summary>
           <div class="el-pinned-list">
             <a href="topic.html" class="el-pinned-item"><span class="dot"></span>投稿ルールについて<svg class="go" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></a>
             <a href="topic.html" class="el-pinned-item"><span class="dot"></span>カテゴリ・ハッシュタグの使い方<svg class="go" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></a>
             <a href="topic.html" class="el-pinned-item"><span class="dot"></span>SHiFT会員限定エリアについて<svg class="go" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></a>
             <a href="topic.html" class="el-pinned-item"><span class="dot"></span>「解決」の付け方<svg class="go" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></a>
           </div>
-        </div>
+        </details>
 
         <div class="el-section-head" style="margin-bottom:16px;">
           <div>
             <h2 id="boardHeading">すべてのトピック</h2>
-            <div class="sub" id="boardSub">投稿を絞り込んで探せます</div>
           </div>
         </div>
 
-        <div class="el-board">
-          <div class="el-list-tools-compact" id="boardControls">
-            <span class="el-list-tools-label">表示</span>
-            <label>公開範囲・状態<select id="visibilityFilter"><option value="">すべて</option><option value="shift">SHiFT member only</option><option value="unsolved">未解決</option></select></label>
-            <label>カテゴリ<select id="categoryFilter"><option value="">すべて</option><option value="fda">FDA対応</option><option value="customs">通関</option><option value="tariff">関税</option><option value="amazon">Amazon出品</option><option value="logistics">物流</option><option value="chat">雑談・自己紹介</option></select></label>
-            <label>並び順<select id="sortSelect"><option value="hot">人気順</option><option value="new">新しい順</option></select></label>
-            <span class="el-result-count el-result-count--plain" id="boardResultCount">0件</span>
-          </div>
+        <div class="el-list-tools-compact" id="boardControls">
+          <label>公開範囲・状態<select id="visibilityFilter"><option value="">すべて</option><option value="shift">SHiFT member only</option><option value="unsolved">未解決</option></select></label>
+          <label>カテゴリ<select id="categoryFilter"><option value="">すべて</option><option value="fda">FDA対応</option><option value="customs">通関</option><option value="tariff">関税</option><option value="amazon">Amazon出品</option><option value="logistics">物流</option><option value="chat">雑談・自己紹介</option></select></label>
+          <label>並び順<select id="sortSelect"><option value="hot">人気順</option><option value="new">新しい順</option></select></label>
+          <span class="el-result-count el-result-count--plain" id="boardResultCount">0件</span>
+        </div>
 
+        <div class="el-board">
           <div id="topicList">
           <a href="topic.html" class="el-t-row" data-category="fda" data-visibility="general" data-status="solved" data-views="980" data-recency="90" data-pinned="1" data-tags="facility-registration">
             <div class="el-t-row-main">

@@ -137,9 +137,10 @@
     <main class="el-section" style="padding-top:0;">
       <div class="el-catch"><span class="ic">◎</span><p>すべてのコミュニティから、参加したい場所を探せます。</p></div>
       <div class="wrap">
-        <div class="el-section-head"><div><h2 id="groupsHeading">コミュニティ一覧</h2><div class="sub" id="groupsSub">参加したいコミュニティを絞り込んで探せます</div></div></div>
+        <nav class="el-breadcrumb el-page-breadcrumb" aria-label="パンくず"><a href="index.html">ホーム</a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg><a href="groups.html">コミュニティ</a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg><span>すべてのコミュニティ</span></nav>
+
+        <div class="el-section-head"><div><h2 id="groupsHeading">コミュニティ一覧</h2></div></div>
         <div class="el-list-tools-compact">
-          <span class="el-list-tools-label">表示</span>
           <label>絞り込み<select id="groupFilter"><option value="">すべて</option><option value="joined">参加中</option><option value="pending">申請中</option></select></label>
           <label>並び順<select id="groupSort"><option value="hot">人気順</option><option value="new">新しい順</option></select></label>
           <span class="el-result-count el-result-count--plain" id="groupCount">0件</span>

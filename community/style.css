@@ -1426,3 +1426,61 @@ button{ font-family:inherit; cursor:pointer; }
   .el-list-tools-compact select{min-width:56%;}
   .el-result-count--plain{margin-left:0;}
 }
+
+
+/* ===== 2026-08-10: quieter filters / collapsible guide / page breadcrumbs ===== */
+.el-list-tools-compact{
+  padding:0 0 10px;
+  margin:0 0 10px;
+  border-bottom:0;
+  gap:8px 18px;
+}
+.el-list-tools-compact label{
+  color:var(--el-ink-faint);
+  font-size:11.5px;
+  font-weight:600;
+}
+.el-list-tools-compact select{
+  min-width:110px;
+  height:32px;
+  padding:0 25px 0 6px;
+  border:0;
+  border-bottom:1px solid var(--el-line);
+  border-radius:0;
+  background:transparent;
+  color:var(--el-navy-soft);
+  font-size:12.5px;
+}
+.el-list-tools-compact select:hover,
+.el-list-tools-compact select:focus{
+  border-bottom-color:var(--el-teal);
+}
+.el-page-breadcrumb{
+  margin:14px 0 18px;
+  font-size:12.5px;
+}
+.el-pinned-box > summary{
+  list-style:none;
+  cursor:pointer;
+  user-select:none;
+}
+.el-pinned-box > summary::-webkit-details-marker{ display:none; }
+.el-pinned-box .el-pinned-head{
+  margin-bottom:0;
+  padding-bottom:14px;
+}
+.el-pinned-box[open] .el-pinned-head{ margin-bottom:0; }
+.el-pinned-chev{
+  width:17px;
+  height:17px;
+  margin:8px 0 0 auto;
+  color:var(--el-ink-faint);
+  flex-shrink:0;
+  transition:transform .18s ease;
+}
+.el-pinned-box[open] .el-pinned-chev{ transform:rotate(90deg); }
+.el-pinned-box:not([open]){
+  padding-bottom:8px;
+}
+.el-pinned-box:not([open]) .el-pinned-head{ padding-bottom:14px; }
+.el-pinned-box[open] .el-pinned-list{ margin-top:0; }
