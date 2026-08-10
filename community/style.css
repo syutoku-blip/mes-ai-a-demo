@@ -2224,3 +2224,17 @@ button{ font-family:inherit; cursor:pointer; }
     max-width:none;
   }
 }
+
+
+/* ===== Rich editor interaction fix ===== */
+.el-editor-area code.el-inline-code{
+  display:inline;
+  padding:2px 6px;
+  border-radius:5px;
+  background:var(--el-navy);
+  color:#fff;
+  font-family:var(--font-mono);
+  font-size:.92em;
+  line-height:inherit;
+  white-space:pre-wrap;
+}

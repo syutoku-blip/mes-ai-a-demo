@@ -295,13 +295,6 @@
               </label>
               <div id="fileNames" class="el-file-names"></div>
             </div>
-
-            <div class="el-form-block el-form-block--compact">
-              <label class="el-notify-check">
-                <input type="checkbox" name="notify" checked>
-                <span>この投稿に返信があったとき通知を受け取る</span>
-              </label>
-            </div>
           </section>
 
           <aside class="el-compose-side">
@@ -464,17 +457,34 @@
     });
 
     var savedRange = null;
+
+    function selectionIsInsideEditor(sel) {
+      if (!sel || !sel.rangeCount) return false;
+      var node = sel.anchorNode;
+      return !!node && (node === editor || editor.contains(node.nodeType === 1 ? node : node.parentNode));
+    }
+
     function saveSelection() {
       var sel = window.getSelection();
-      if (sel && sel.rangeCount && editor.contains(sel.anchorNode)) savedRange = sel.getRangeAt(0).cloneRange();
+      if (selectionIsInsideEditor(sel)) {
+        savedRange = sel.getRangeAt(0).cloneRange();
+      }
     }
+
     function restoreSelection() {
-      if (!savedRange) { editor.focus(); return; }
-      var sel = window.getSelection();
-      sel.removeAllRanges();
-      sel.addRange(savedRange);
-      editor.focus();
+      editor.focus({preventScroll:true});
+      if (!savedRange) return false;
+
+      try {
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(savedRange.cloneRange());
+        return true;
+      } catch (e) {
+        return false;
+      }
     }
+
     function runCommand(cmd, value) {
       restoreSelection();
       document.execCommand('styleWithCSS', false, true);
@@ -482,32 +492,115 @@
       saveSelection();
     }
 
+    // 選択範囲はエディター内にある限り常に保持する。
+    document.addEventListener('selectionchange', function () {
+      var sel = window.getSelection();
+      if (selectionIsInsideEditor(sel)) saveSelection();
+    });
     editor.addEventListener('keyup', saveSelection);
     editor.addEventListener('mouseup', saveSelection);
     editor.addEventListener('focus', saveSelection);
+    editor.addEventListener('input', saveSelection);
+
+    // ボタンを押した瞬間に選択範囲が消えないようにする。
+    document.querySelectorAll('.el-editor-toolbar button').forEach(function (btn) {
+      btn.addEventListener('pointerdown', function (e) {
+        saveSelection();
+        e.preventDefault();
+      });
+    });
+
+    // select / color はネイティブUIを開く必要があるので preventDefault はせず、
+    // 開く直前の選択範囲だけ保存する。
+    document.querySelectorAll('.el-editor-toolbar select, .el-editor-toolbar input[type="color"]').forEach(function (control) {
+      control.addEventListener('pointerdown', saveSelection);
+    });
 
     document.querySelectorAll('.el-editor-toolbar [data-command]').forEach(function (btn) {
-      btn.addEventListener('mousedown', function (e) { e.preventDefault(); });
       btn.addEventListener('click', function () {
         runCommand(btn.dataset.command, btn.dataset.value || null);
       });
     });
 
-    // 引用・コードブロック：Enterで必ず通常入力へ戻す。
-    function exitBlockOnEnter(block, sel) {
-      var normal = document.createElement('div');
-      normal.innerHTML = '<br>';
-      block.parentNode.insertBefore(normal, block.nextSibling);
-
-      var range = document.createRange();
-      range.setStart(normal, 0);
-      range.collapse(true);
+    function placeCaretAfter(node) {
+      var sel = window.getSelection();
+      var r = document.createRange();
+      r.setStartAfter(node);
+      r.collapse(true);
       sel.removeAllRanges();
-      sel.addRange(range);
-      editor.focus();
+      sel.addRange(r);
       saveSelection();
     }
 
+    // 引用：選択中の段落へ1回で反映。Enterを押すと次行は通常入力。
+    document.getElementById('quoteBtn').addEventListener('click', function () {
+      restoreSelection();
+      var sel = window.getSelection();
+      if (!sel || !sel.rangeCount) return;
+
+      var anchor = sel.anchorNode;
+      var el = anchor && (anchor.nodeType === 1 ? anchor : anchor.parentElement);
+      var existing = el && el.closest('blockquote');
+
+      if (existing && editor.contains(existing)) {
+        document.execCommand('formatBlock', false, 'div');
+      } else {
+        document.execCommand('formatBlock', false, 'blockquote');
+      }
+      saveSelection();
+    });
+
+    // コード装飾：選択した文字をその場所のままインラインコードにする。
+    // 選択文字を別行へ移動させない。
+    document.getElementById('codeBtn').addEventListener('click', function () {
+      restoreSelection();
+      var sel = window.getSelection();
+      if (!sel || !sel.rangeCount) return;
+
+      var range = sel.getRangeAt(0);
+      var anchor = sel.anchorNode;
+      var el = anchor && (anchor.nodeType === 1 ? anchor : anchor.parentElement);
+      var existingCode = el && el.closest('code.el-inline-code');
+
+      if (existingCode && editor.contains(existingCode)) {
+        var frag = document.createDocumentFragment();
+        while (existingCode.firstChild) frag.appendChild(existingCode.firstChild);
+        existingCode.replaceWith(frag);
+        saveSelection();
+        return;
+      }
+
+      var code = document.createElement('code');
+      code.className = 'el-inline-code';
+
+      if (range.collapsed) {
+        code.textContent = 'code';
+        range.insertNode(code);
+        var inner = document.createRange();
+        inner.selectNodeContents(code);
+        sel.removeAllRanges();
+        sel.addRange(inner);
+      } else {
+        try {
+          range.surroundContents(code);
+          var inner = document.createRange();
+          inner.selectNodeContents(code);
+          sel.removeAllRanges();
+          sel.addRange(inner);
+        } catch (e) {
+          var fragment = range.extractContents();
+          code.appendChild(fragment);
+          range.insertNode(code);
+          var inner2 = document.createRange();
+          inner2.selectNodeContents(code);
+          sel.removeAllRanges();
+          sel.addRange(inner2);
+        }
+      }
+      saveSelection();
+    });
+
+    // 引用 / インラインコード内でEnterを押したら、その書式を引き継がず通常入力へ戻す。
     editor.addEventListener('keydown', function (e) {
       if (e.key !== 'Enter' || e.shiftKey) return;
 
@@ -519,31 +612,36 @@
       if (!el) return;
 
       var quote = el.closest('blockquote');
-      var code = el.closest('pre');
+      var inlineCode = el.closest('code.el-inline-code');
 
-      if (quote || code) {
+      if (quote && editor.contains(quote)) {
         e.preventDefault();
-        exitBlockOnEnter(quote || code, sel);
+        var normal = document.createElement('div');
+        normal.innerHTML = '<br>';
+        quote.parentNode.insertBefore(normal, quote.nextSibling);
+        placeCaretAfter(quote);
+        var r = document.createRange();
+        r.setStart(normal, 0);
+        r.collapse(true);
+        sel.removeAllRanges();
+        sel.addRange(r);
+        saveSelection();
+        return;
       }
-    });
 
-    // ソースコードブロック
-    document.getElementById('codeBtn').addEventListener('mousedown', function(e){ e.preventDefault(); });
-    document.getElementById('codeBtn').addEventListener('click', function () {
-      restoreSelection();
-      var sel = window.getSelection();
-      var text = sel && sel.rangeCount ? sel.toString() : '';
-      var pre = document.createElement('pre');
-      var code = document.createElement('code');
-      code.textContent = text || 'code';
-      pre.appendChild(code);
-      if (sel && sel.rangeCount) {
-        var r = sel.getRangeAt(0);
-        r.deleteContents(); r.insertNode(pre);
-        r.setStartAfter(pre); r.collapse(true);
-        sel.removeAllRanges(); sel.addRange(r);
+      if (inlineCode && editor.contains(inlineCode)) {
+        e.preventDefault();
+        var br = document.createElement('br');
+        inlineCode.parentNode.insertBefore(br, inlineCode.nextSibling);
+        var spacer = document.createTextNode('\u200B');
+        br.parentNode.insertBefore(spacer, br.nextSibling);
+        var r2 = document.createRange();
+        r2.setStart(spacer, 1);
+        r2.collapse(true);
+        sel.removeAllRanges();
+        sel.addRange(r2);
+        saveSelection();
       }
-      saveSelection();
     });
 
     // 文字サイズ。選択範囲へ確実にpx指定を反映する。
