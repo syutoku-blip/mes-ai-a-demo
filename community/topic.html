@@ -56,73 +56,34 @@
           <a href="board.html?filter=shift">SHiFT member only</a>
           <a href="board.html?filter=unsolved">未解決</a>
 
-          <details class="el-side-cat">
-            <summary>
-              カテゴリで探す
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
-            </summary>
-            <div class="el-side-cat-body">
+          <div class="el-side-sub-label">カテゴリで探す</div>
+          <a href="board.html?category=fda">FDA対応</a>
+          <a href="board.html?category=customs">通関</a>
+          <a href="board.html?category=tariff">関税</a>
+          <a href="board.html?category=amazon">Amazon出品</a>
+          <a href="board.html?category=logistics">物流</a>
+          <a href="board.html?category=chat">雑談・自己紹介</a>
 
-          <details>
-            <summary>FDA<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></summary>
-            <div class="el-side-sub2">
-              <a href="board.html">施設登録・更新</a>
-              <a href="board.html">ラベル</a>
-              <a href="board.html">米国代理人</a>
-              <a href="board.html">事前申告</a>
-              <a href="board.html">警告書（Warning Letter）</a>
-            </div>
-          </details>
-          <details>
-            <summary>通関<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></summary>
-            <div class="el-side-sub2">
-              <a href="board.html">CPSC</a>
-              <a href="board.html">インボイス・HSコード</a>
-            </div>
-          </details>
-          <details>
-            <summary>関税<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></summary>
-            <div class="el-side-sub2">
-              <a href="board.html">Section 201</a>
-              <a href="board.html">対中追加関税（301条）</a>
-            </div>
-          </details>
-          <details>
-            <summary>Amazon<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></summary>
-            <div class="el-side-sub2">
-              <a href="board.html">アカウント作成</a>
-              <a href="board.html">アカウント停止</a>
-              <a href="board.html">出品制限</a>
-              <a href="board.html">FBA納品</a>
-            </div>
-          </details>
-          <details>
-            <summary>物流<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></summary>
-            <div class="el-side-sub2">
-              <a href="board.html">海上輸送</a>
-              <a href="board.html">航空輸送</a>
-              <a href="board.html">倉庫選定</a>
-            </div>
-          </details>
-
-          <a href="board.html" style="margin-top:4px;">雑談・自己紹介</a>
-            </div>
-          </details>
-
-          <details class="el-side-cat">
-            <summary>
-              ハッシュタグで探す
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
-            </summary>
-            <div class="el-side-cat-body">
-              <a href="board.html">#FBA</a>
-              <a href="board.html">#施設登録</a>
-              <a href="board.html">#ラベル表示</a>
-              <a href="board.html">#関税</a>
-              <a href="board.html">#通関書類</a>
-              <a href="board.html">#リサーチ</a>
-            </div>
-          </details>
+          <div class="el-side-sub-label">ハッシュタグで探す</div>
+          <a href="board.html?tag=fba">#FBA</a>
+          <a href="board.html?tag=facility-registration">#施設登録・更新</a>
+          <a href="board.html?tag=label">#ラベル</a>
+          <a href="board.html?tag=us-agent">#米国代理人</a>
+          <a href="board.html?tag=prior-notice">#事前申告</a>
+          <a href="board.html?tag=warning-letter">#警告書</a>
+          <a href="board.html?tag=cpsc">#CPSC</a>
+          <a href="board.html?tag=invoice-hs">#インボイス・HSコード</a>
+          <a href="board.html?tag=section201">#Section201</a>
+          <a href="board.html?tag=section301">#対中追加関税</a>
+          <a href="board.html?tag=account-create">#アカウント作成</a>
+          <a href="board.html?tag=account-suspend">#アカウント停止</a>
+          <a href="board.html?tag=listing-restriction">#出品制限</a>
+          <a href="board.html?tag=ocean-freight">#海上輸送</a>
+          <a href="board.html?tag=air-freight">#航空輸送</a>
+          <a href="board.html?tag=warehouse">#倉庫選定</a>
+          <a href="board.html?tag=customs-docs">#通関書類</a>
+          <a href="board.html?tag=research">#リサーチ</a>
+          <a href="board.html?tag=tariff-general">#関税</a>
         </div>
       </details>
 
@@ -205,7 +166,8 @@
         <article class="el-post el-post--op" id="op">
           <div class="el-avatar">山</div>
           <div>
-            <div class="el-post-head">
+            <div class="el-reply-tag-slot"></div>
+              <div class="el-post-head">
               <span class="name">山口 貿易士</span>
               <span class="role">スレ主</span>
             </div>
@@ -235,9 +197,10 @@
 
         <div class="el-comments" id="commentsList">
 
-          <article class="el-post" id="c1" data-month="2026-06">
+          <article class="el-post" id="c1" data-month="2026-06" data-reply-to="op">
             <div class="el-avatar">田</div>
             <div>
+              <div class="el-reply-tag-slot"></div>
               <div class="el-post-head">
                 <span class="name">田中フーズ</span>
                 <span class="time">2026年6月20日</span>
@@ -252,9 +215,10 @@
             </div>
           </article>
 
-          <article class="el-post" id="c2" data-month="2026-06">
+          <article class="el-post" id="c2" data-month="2026-06" data-reply-to="op">
             <div class="el-avatar">鈴</div>
             <div>
+              <div class="el-reply-tag-slot"></div>
               <div class="el-post-head">
                 <span class="name">鈴木ラボ</span>
                 <span class="time">2026年6月25日</span>
@@ -269,9 +233,10 @@
             </div>
           </article>
 
-          <article class="el-post" id="c3" data-month="2026-07">
+          <article class="el-post" id="c3" data-month="2026-07" data-reply-to="c2">
             <div class="el-avatar">高</div>
             <div>
+              <div class="el-reply-tag-slot"></div>
               <div class="el-post-head">
                 <span class="name">高橋物産</span>
                 <span class="time">2026年7月2日</span>
@@ -286,9 +251,10 @@
             </div>
           </article>
 
-          <article class="el-post" id="c4" data-month="2026-07">
+          <article class="el-post" id="c4" data-month="2026-07" data-reply-to="op">
             <div class="el-avatar">佐</div>
             <div>
+              <div class="el-reply-tag-slot"></div>
               <div class="el-post-head">
                 <span class="name">佐藤ストア</span>
                 <span class="role">運営メンバー</span>
@@ -304,9 +270,10 @@
             </div>
           </article>
 
-          <article class="el-post" id="c5" data-month="2026-08">
+          <article class="el-post" id="c5" data-month="2026-08" data-reply-to="op">
             <div class="el-avatar">小</div>
             <div>
+              <div class="el-reply-tag-slot"></div>
               <div class="el-post-head">
                 <span class="name">小林商店</span>
                 <span class="time">2026年8月3日</span>
@@ -321,9 +288,10 @@
             </div>
           </article>
 
-          <article class="el-post" id="c6" data-month="2026-08">
+          <article class="el-post" id="c6" data-month="2026-08" data-reply-to="op">
             <div class="el-avatar">中</div>
             <div>
+              <div class="el-reply-tag-slot"></div>
               <div class="el-post-head">
                 <span class="name">中村コスメ</span>
                 <span class="time">昨日</span>
@@ -347,10 +315,10 @@
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg>
             </button>
           </div>
-          <div style="font-size:13px;font-weight:700;margin-bottom:10px;">返信を投稿</div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:10px;">返信を投稿</div>
           <textarea id="replyTextarea" placeholder="コメントを入力してください…"></textarea>
           <div class="el-reply-foot">
-            <span style="font-size:11.5px;color:var(--el-ink-faint);">Markdown記法に対応しています</span>
+            <span style="font-size:12.5px;color:var(--el-ink-faint);">Markdown記法に対応しています</span>
             <button class="el-btn el-btn--primary el-btn--sm">返信を送信</button>
           </div>
         </div>
@@ -524,6 +492,30 @@
     ctxClear.addEventListener('click', function () {
       ctx.classList.remove('is-visible');
       textarea.value = '';
+    });
+  })();
+
+  // 各コメントに「誰への返信か」を常時表示する矢印タグ
+  (function () {
+    document.querySelectorAll('.el-post[data-reply-to]').forEach(function (post) {
+      var slot = post.querySelector('.el-reply-tag-slot');
+      var targetId = post.dataset.replyTo;
+      var target = document.getElementById(targetId);
+      if (!slot || !target) return;
+      var targetName = target.querySelector('.name');
+      var name = targetName ? targetName.textContent.trim() : '';
+      var tag = document.createElement('a');
+      tag.href = '#' + targetId;
+      tag.className = 'el-reply-tag';
+      tag.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 5 5v6"/></svg>返信 <strong>' + name + '</strong>';
+      tag.addEventListener('click', function (e) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        target.classList.remove('is-highlighted');
+        void target.offsetWidth;
+        target.classList.add('is-highlighted');
+      });
+      slot.appendChild(tag);
     });
   })();
 </script>
