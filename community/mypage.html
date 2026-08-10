@@ -22,6 +22,10 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
         検索
       </div>
+      <a href="mypage.html" class="el-header-bell" aria-label="通知">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="count">3</span>
+      </a>
       <a href="mypage.html" class="el-avatar" aria-label="マイページ">り</a>
     </div>
   </div>
@@ -184,23 +188,6 @@
           <a href="#" class="el-btn el-btn--ghost el-btn--sm" style="margin-left:auto;">プロフィールを編集</a>
         </div>
 
-        <div class="el-board" style="margin-bottom:28px;">
-          <div style="display:grid;grid-template-columns:repeat(3,1fr);text-align:center;">
-            <div style="padding:20px;border-right:1px solid var(--el-line-soft);">
-              <div style="font-size:20px;font-weight:700;color:var(--el-navy);">6</div>
-              <div style="font-size:11.5px;color:var(--el-ink-faint);margin-top:2px;">投稿</div>
-            </div>
-            <div style="padding:20px;border-right:1px solid var(--el-line-soft);">
-              <div style="font-size:20px;font-weight:700;color:var(--el-navy);">14</div>
-              <div style="font-size:11.5px;color:var(--el-ink-faint);margin-top:2px;">返信</div>
-            </div>
-            <div style="padding:20px;">
-              <div style="font-size:20px;font-weight:700;color:var(--el-navy);">2</div>
-              <div style="font-size:11.5px;color:var(--el-ink-faint);margin-top:2px;">参加グループ</div>
-            </div>
-          </div>
-        </div>
-
         <div class="el-panel-grid">
 
           <div class="el-panel">
@@ -361,28 +348,23 @@
             </div>
           </div>
 
-        </div>
+          <div class="el-panel">
+            <div class="el-panel-head">
+              <span class="ic" style="background:#EDF3E6;color:#5C7A47;">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              </span>
+              <div>
+                <h3>コミュニティ</h3>
+                <div class="sub">参加・申請・作成の状況</div>
+              </div>
+            </div>
+            <div class="el-panel-rows">
+              <a href="groups.html" class="el-panel-row">参加中<span class="val">2件</span><svg class="go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></a>
+              <a href="groups.html" class="el-panel-row">申請中<span class="val">1件</span><svg class="go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></a>
+              <a href="groups.html" class="el-panel-row">自分が作成したコミュニティ<span class="val">0件</span><svg class="go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></a>
+            </div>
+          </div>
 
-        <div class="el-section-head" style="margin:36px 0 16px;">
-          <div>
-            <h2 style="font-size:18px;">自分の投稿</h2>
-          </div>
-        </div>
-        <div class="el-board">
-          <div class="el-hub-row">
-            <div class="el-hub-row-main">
-              <a href="topic.html" class="el-hub-row-title">FDA施設登録、2年更新のタイミングと注意点</a>
-              <div class="el-hub-row-meta"><span class="badge badge--cat">FDA対応</span><span>3日前</span></div>
-            </div>
-            <div class="el-hub-row-stats"><div><strong>32</strong>返信</div></div>
-          </div>
-          <div class="el-hub-row">
-            <div class="el-hub-row-main">
-              <a href="topic.html" class="el-hub-row-title">はじめまして、輸出のご相談をさせてください</a>
-              <div class="el-hub-row-meta"><span class="badge badge--cat">雑談・自己紹介</span><span>2026年7月16日</span></div>
-            </div>
-            <div class="el-hub-row-stats"><div><strong>4</strong>返信</div></div>
-          </div>
         </div>
 
       </div>
@@ -423,9 +405,17 @@
 
 <script src="../shared/global-header.js" defer></script>
 <script>
-  document.getElementById('sidebarToggle').addEventListener('click', function () {
-    document.getElementById('appShell').classList.toggle('is-toggled');
-  });
+  (function () {
+    var appShell = document.getElementById('appShell');
+    var STORAGE_KEY = 'el-sidebar-collapsed';
+    try {
+      if (localStorage.getItem(STORAGE_KEY) === '1') { appShell.classList.add('is-toggled'); }
+    } catch (e) {}
+    document.getElementById('sidebarToggle').addEventListener('click', function () {
+      appShell.classList.toggle('is-toggled');
+      try { localStorage.setItem(STORAGE_KEY, appShell.classList.contains('is-toggled') ? '1' : '0'); } catch (e) {}
+    });
+  })();
 
   // フォーラム／コミュニティ／マーケットの見出し：矢印以外をクリックしたらページ遷移、矢印は開閉のみ
   document.querySelectorAll('.el-side-forum > summary[data-href]').forEach(function (summary) {

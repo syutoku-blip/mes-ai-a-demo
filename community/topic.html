@@ -22,6 +22,10 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
         検索
       </div>
+      <a href="mypage.html" class="el-header-bell" aria-label="通知">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="count">3</span>
+      </a>
       <a href="mypage.html" class="el-avatar" aria-label="マイページ">り</a>
     </div>
   </div>
@@ -347,13 +351,53 @@
 
         </div>
 
-        <aside class="el-scrubber" id="scrubber">
-          <div class="el-scrubber-date-top" id="scrubberDateTop">8月6日</div>
-          <div class="el-scrubber-rail" id="scrubberRail">
-            <div class="el-scrubber-thumb" id="scrubberThumb">
-              <strong id="scrubCurrent">1</strong><span class="sep">/</span><span id="scrubTotal">6</span>
-              <span class="dt" id="scrubberThumbDate">6月20日</span>
-            </div>
+        <aside class="el-thread-side">
+          <div class="el-side-panel">
+            <h4>関連するトピック</h4>
+            <a href="topic.html" class="el-side-panel-row">
+              <span class="badge badge--cat">FDA対応</span>
+              <span class="title">サプリメントのラベル、栄養成分表示のフォーマット変更点</span>
+            </a>
+            <a href="topic.html" class="el-side-panel-row">
+              <span class="badge badge--cat">FDA対応</span>
+              <span class="title">米国代理人（U.S. Agent）の見直し、皆さんどうしてますか</span>
+            </a>
+            <a href="topic.html" class="el-side-panel-row">
+              <span class="badge badge--cat">通関</span>
+              <span class="title">通関書類のインボイス記載、よくある差し戻し理由まとめ</span>
+            </a>
+          </div>
+
+          <div class="el-side-panel">
+            <h4>おすすめのコミュニティ</h4>
+            <a href="groups.html" class="el-side-mini-card">
+              <span class="ic" style="background:var(--el-teal);">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z"/></svg>
+              </span>
+              <span class="txt"><strong>FDA対応 実務者の会</strong><span>メンバー限定・126人</span></span>
+            </a>
+            <a href="groups.html" class="el-side-mini-card">
+              <span class="ic" style="background:var(--el-sky);">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20Z"/></svg>
+              </span>
+              <span class="txt"><strong>初めての輸出 相談室</strong><span>誰でも参加可・203人</span></span>
+            </a>
+          </div>
+
+          <div class="el-side-panel">
+            <h4>おすすめのコンテンツ</h4>
+            <a href="market-list.html" class="el-side-mini-card">
+              <span class="ic" style="background:var(--el-teal-tint);color:var(--el-teal-deep);">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+              </span>
+              <span class="txt"><strong>FDA施設登録 完全ガイド（PDF）</strong><span>公式・¥3,000</span></span>
+            </a>
+            <a href="market-list.html" class="el-side-mini-card">
+              <span class="ic" style="background:var(--el-cream-deep);color:var(--el-navy-soft);">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
+              </span>
+              <span class="txt"><strong>FDA更新リマインドスプレッドシート</strong><span>山口貿易士・¥1,200</span></span>
+            </a>
           </div>
         </aside>
 
@@ -395,9 +439,17 @@
 
 <script src="../shared/global-header.js" defer></script>
 <script>
-  document.getElementById('sidebarToggle').addEventListener('click', function () {
-    document.getElementById('appShell').classList.toggle('is-toggled');
-  });
+  (function () {
+    var appShell = document.getElementById('appShell');
+    var STORAGE_KEY = 'el-sidebar-collapsed';
+    try {
+      if (localStorage.getItem(STORAGE_KEY) === '1') { appShell.classList.add('is-toggled'); }
+    } catch (e) {}
+    document.getElementById('sidebarToggle').addEventListener('click', function () {
+      appShell.classList.toggle('is-toggled');
+      try { localStorage.setItem(STORAGE_KEY, appShell.classList.contains('is-toggled') ? '1' : '0'); } catch (e) {}
+    });
+  })();
 
   // フォーラム／コミュニティ／マーケットの見出し：矢印以外をクリックしたらページ遷移、矢印は開閉のみ
   document.querySelectorAll('.el-side-forum > summary[data-href]').forEach(function (summary) {
@@ -407,60 +459,6 @@
       window.location.href = summary.dataset.href;
     });
   });
-
-  // コメントの日付タイムライン（スライド式）
-  (function () {
-    var scrubber = document.getElementById('scrubber');
-    if (!scrubber) return;
-    var comments = Array.prototype.slice.call(document.querySelectorAll('#commentsList .el-post'));
-    var commentsHead = document.querySelector('.el-comments-head');
-    var currentEl = document.getElementById('scrubCurrent');
-    var totalEl = document.getElementById('scrubTotal');
-    var dateTopEl = document.getElementById('scrubberDateTop');
-    var dateThumbEl = document.getElementById('scrubberThumbDate');
-    var rail = document.getElementById('scrubberRail');
-    var thumb = document.getElementById('scrubberThumb');
-
-    if (totalEl) totalEl.textContent = comments.length;
-
-    function dateOf(comment) {
-      var t = comment.querySelector('.time');
-      return t ? t.textContent : '';
-    }
-
-    // コメント欄に到達するまでは非表示にする
-    if ('IntersectionObserver' in window && commentsHead) {
-      var visObserver = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-          var reached = entry.boundingClientRect.top < window.innerHeight * 0.6;
-          scrubber.classList.toggle('is-visible', reached);
-        });
-      }, { threshold: 0 });
-      visObserver.observe(commentsHead);
-    } else {
-      scrubber.classList.add('is-visible');
-    }
-
-    if ('IntersectionObserver' in window && comments.length) {
-      var observer = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-          if (!entry.isIntersecting) return;
-          var idx = comments.indexOf(entry.target);
-          if (idx === -1) return;
-          if (currentEl) currentEl.textContent = idx + 1;
-          var d = dateOf(entry.target);
-          if (dateTopEl) dateTopEl.textContent = d;
-          if (dateThumbEl) dateThumbEl.textContent = d;
-          if (rail && thumb) {
-            var pct = comments.length > 1 ? idx / (comments.length - 1) : 0;
-            var railH = rail.offsetHeight - thumb.offsetHeight;
-            thumb.style.top = Math.max(0, pct * railH) + 'px';
-          }
-        });
-      }, { rootMargin: '-45% 0px -45% 0px' });
-      comments.forEach(function (c) { observer.observe(c); });
-    }
-  })();
 </script>
 </body>
 </html>

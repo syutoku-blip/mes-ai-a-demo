@@ -22,6 +22,10 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
         検索
       </div>
+      <a href="mypage.html" class="el-header-bell" aria-label="通知">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="count">3</span>
+      </a>
       <a href="mypage.html" class="el-avatar" aria-label="マイページ">り</a>
     </div>
   </div>
@@ -261,9 +265,17 @@
 
 <script src="../shared/global-header.js" defer></script>
 <script>
-  document.getElementById('sidebarToggle').addEventListener('click', function () {
-    document.getElementById('appShell').classList.toggle('is-toggled');
-  });
+  (function () {
+    var appShell = document.getElementById('appShell');
+    var STORAGE_KEY = 'el-sidebar-collapsed';
+    try {
+      if (localStorage.getItem(STORAGE_KEY) === '1') { appShell.classList.add('is-toggled'); }
+    } catch (e) {}
+    document.getElementById('sidebarToggle').addEventListener('click', function () {
+      appShell.classList.toggle('is-toggled');
+      try { localStorage.setItem(STORAGE_KEY, appShell.classList.contains('is-toggled') ? '1' : '0'); } catch (e) {}
+    });
+  })();
 
   // フォーラム／コミュニティ／マーケットの見出し：矢印以外をクリックしたらページ遷移、矢印は開閉のみ
   document.querySelectorAll('.el-side-forum > summary[data-href]').forEach(function (summary) {
