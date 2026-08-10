@@ -218,7 +218,7 @@
                 </div>
                 <div id="topicBody" class="el-editor-area" contenteditable="true"
                      data-placeholder="相談したいこと、試したこと、困っている状況などを入力してください…"></div>
-                <textarea id="topicBodyValue" name="body" hidden required></textarea>
+                <textarea id="topicBodyValue" name="body" hidden></textarea>
               </div>
             </div>
 
@@ -671,6 +671,7 @@
     document.getElementById('textColorPicker').addEventListener('input', function () { runCommand('foreColor', this.value); });
     document.getElementById('bgColorPicker').addEventListener('input', function () {
       restoreSelection();
+      document.execCommand('styleWithCSS', false, true);
       var ok = document.execCommand('hiliteColor', false, this.value);
       if (!ok) document.execCommand('backColor', false, this.value);
       saveSelection();
@@ -713,7 +714,22 @@
       var sel = window.getSelection();
       sel.removeAllRanges();
       sel.addRange(savedRange.cloneRange());
-      document.execCommand('createLink', false, url);
+
+      if (savedRange.collapsed) {
+        // 文字が選択されていない場合、execCommand('createLink')は何も挿入しないため、
+        // URLそのものをリンクテキストとして挿入する。
+        var a = document.createElement('a');
+        a.href = url;
+        a.textContent = url;
+        savedRange.insertNode(a);
+        var after = document.createRange();
+        after.setStartAfter(a);
+        after.collapse(true);
+        sel.removeAllRanges();
+        sel.addRange(after);
+      } else {
+        document.execCommand('createLink', false, url);
+      }
       saveSelection();
       linkPopover.hidden = true;
     });
