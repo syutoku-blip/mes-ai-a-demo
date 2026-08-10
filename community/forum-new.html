@@ -679,9 +679,12 @@
     // 選択文字の直下に出すリンク入力枠
     var linkPopover = document.getElementById('linkPopover');
     var linkUrlInput = document.getElementById('linkUrlInput');
-    document.getElementById('addLinkBtn').addEventListener('mousedown', function(e){ e.preventDefault(); });
-    document.getElementById('addLinkBtn').addEventListener('click', function () {
+    document.getElementById('addLinkBtn').addEventListener('mousedown', function(e){
+      // ツールバーを押す前の本文選択範囲を保持する。
       saveSelection();
+      e.preventDefault();
+    });
+    document.getElementById('addLinkBtn').addEventListener('click', function () {
       if (!savedRange || savedRange.collapsed) {
         linkPopover.hidden = false;
         linkPopover.classList.add('is-centered');
@@ -696,11 +699,22 @@
       linkUrlInput.value = '';
       linkUrlInput.focus();
     });
+    document.getElementById('applyLinkBtn').addEventListener('mousedown', function(e){
+      // URL入力欄へフォーカスした後も、元の本文選択範囲を上書きしない。
+      e.preventDefault();
+    });
     document.getElementById('applyLinkBtn').addEventListener('click', function () {
       var url = linkUrlInput.value.trim();
-      if (!url) return;
+      if (!url || !savedRange) return;
       if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
-      runCommand('createLink', url);
+
+      // createLink 実行前に、リンクを埋め込むために保存していた文字選択を明示的に復元。
+      editor.focus({preventScroll:true});
+      var sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(savedRange.cloneRange());
+      document.execCommand('createLink', false, url);
+      saveSelection();
       linkPopover.hidden = true;
     });
     document.getElementById('removeLinkBtn').addEventListener('click', function () {
