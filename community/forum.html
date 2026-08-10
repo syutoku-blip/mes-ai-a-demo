@@ -139,7 +139,7 @@
     </div>
 
       <div class="wrap">
-        <nav class="el-breadcrumb el-page-breadcrumb" aria-label="パンくず"><a href="index.html">ホーム</a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg><span>フォーラム</span></nav>
+        <nav class="el-breadcrumb el-page-breadcrumb" aria-label="パンくず"><a href="index.html">ホーム</a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg><span>フォーラムTOP</span></nav>
 
 
         <details class="el-pinned-box" open>
@@ -158,23 +158,13 @@
 
         <div class="el-section-head" style="margin-bottom:16px;">
           <div>
-            <h2 id="boardHeading">フォーラムをのぞく</h2>
-            <div class="sub" id="boardSub">新着・人気・カテゴリから、今の自分に近い話題を見つけられます</div>
+            <h2>人気の投稿</h2>
+            <div class="sub">よく読まれている話題</div>
           </div>
+          <a href="board.html?sort=hot" class="el-btn el-btn--ghost el-btn--sm">もっと見る</a>
         </div>
-
         <div class="el-board">
-          <div class="el-board-toolbar">
-            <div class="el-tabs" id="boardTabs">
-              <a href="board.html" data-sort="" data-filter="">すべて</a>
-              <a href="board.html?sort=new" data-sort="new" data-filter="">新着</a>
-              <a href="board.html?sort=hot" data-sort="hot" data-filter="">人気</a>
-              <a href="board.html?filter=shift" data-sort="" data-filter="shift">SHiFT会員限定</a>
-              <a href="board.html?filter=unsolved" data-sort="" data-filter="unsolved">未解決</a>
-            </div>
-          </div>
-
-          <div id="topicList">
+          <div>
           <a href="topic.html" class="el-t-row" data-category="fda" data-visibility="general" data-status="solved" data-views="980" data-recency="90" data-pinned="1" data-tags="facility-registration">
             <div class="el-t-row-main">
               <div class="el-t-row-badges"><span class="badge badge--pin">固定</span><span class="badge badge--open">公開</span><span class="badge badge--cat">FDA対応</span><span class="badge badge--solved">解決</span></div>
@@ -186,6 +176,51 @@
               <div><strong>32</strong><span>返信</span></div>
             </div>
           </a>
+          <a href="topic.html" class="el-t-row" data-category="amazon" data-visibility="member" data-status="solved" data-views="489" data-recency="92" data-pinned="0" data-tags="research">
+            <div class="el-t-row-main">
+              <div class="el-t-row-badges"><span class="badge badge--restricted">メンバー限定</span><span class="badge badge--cat">Amazon出品</span><span class="badge badge--solved">解決</span></div>
+              <span class="el-t-row-title">せどり便乗リサーチ、初月の粗利率どのくらいでしたか</span>
+              <div class="el-t-row-meta">高橋物産・5時間前</div>
+            </div>
+            <div class="el-t-row-stats">
+              <div><strong>489</strong><span>閲覧</span></div>
+              <div><strong>21</strong><span>返信</span></div>
+            </div>
+          </a>
+          <a href="topic.html" class="el-t-row" data-category="amazon" data-visibility="shift" data-status="solved" data-views="340" data-recency="88" data-pinned="0" data-tags="research">
+            <div class="el-t-row-main">
+              <div class="el-t-row-badges"><span class="badge badge--member">SHiFT限定</span><span class="badge badge--cat">Amazon出品</span><span class="badge badge--solved">解決</span></div>
+              <span class="el-t-row-title">せどり便乗リサーチ、実際の粗利率を公開します</span>
+              <div class="el-t-row-meta">高橋物産・昨日</div>
+            </div>
+            <div class="el-t-row-stats">
+              <div><strong>340</strong><span>閲覧</span></div>
+              <div><strong>5</strong><span>返信</span></div>
+            </div>
+          </a>
+          <a href="topic.html" class="el-t-row" data-category="customs" data-visibility="member" data-status="solved" data-views="298" data-recency="70" data-pinned="0" data-tags="customs-docs">
+            <div class="el-t-row-main">
+              <div class="el-t-row-badges"><span class="badge badge--restricted">メンバー限定</span><span class="badge badge--cat">通関</span><span class="badge badge--solved">解決</span></div>
+              <span class="el-t-row-title">通関書類のインボイス記載、よくある差し戻し理由まとめ</span>
+              <div class="el-t-row-meta">田中フーズ・2日前</div>
+            </div>
+            <div class="el-t-row-stats">
+              <div><strong>298</strong><span>閲覧</span></div>
+              <div><strong>15</strong><span>返信</span></div>
+            </div>
+          </a>
+          </div>
+        </div>
+
+        <div class="el-section-head" style="margin-top:52px;margin-bottom:16px;">
+          <div>
+            <h2>新着の投稿</h2>
+            <div class="sub">最近投稿された話題</div>
+          </div>
+          <a href="board.html?sort=new" class="el-btn el-btn--ghost el-btn--sm">もっと見る</a>
+        </div>
+        <div class="el-board">
+          <div>
           <a href="topic.html" class="el-t-row" data-category="amazon" data-visibility="general" data-status="unsolved" data-views="34" data-recency="100" data-pinned="0" data-tags="fba label">
             <div class="el-t-row-main">
               <div class="el-t-row-badges"><span class="badge badge--open">公開</span><span class="badge badge--cat">Amazon出品</span><span class="badge badge--unsolved">未解決</span></div>
@@ -230,50 +265,18 @@
               <div><strong>4</strong><span>返信</span></div>
             </div>
           </a>
-          <a href="topic.html" class="el-t-row" data-category="fda" data-visibility="shift" data-status="solved" data-views="210" data-recency="96" data-pinned="0" data-tags="facility-registration">
-            <div class="el-t-row-main">
-              <div class="el-t-row-badges"><span class="badge badge--member">SHiFT限定</span><span class="badge badge--cat">FDA対応</span><span class="badge badge--solved">解決</span></div>
-              <span class="el-t-row-title">FDA施設登録、実際にかかった費用を公開します</span>
-              <div class="el-t-row-meta">山口貿易士・2時間前</div>
-            </div>
-            <div class="el-t-row-stats">
-              <div><strong>210</strong><span>閲覧</span></div>
-              <div><strong>8</strong><span>返信</span></div>
-            </div>
-          </a>
-          <a href="topic.html" class="el-t-row" data-category="tariff" data-visibility="general" data-status="solved" data-views="142" data-recency="95" data-pinned="0" data-tags="pricing">
-            <div class="el-t-row-main">
-              <div class="el-t-row-badges"><span class="badge badge--open">公開</span><span class="badge badge--cat">マーケット動向</span><span class="badge badge--solved">解決</span></div>
-              <span class="el-t-row-title">米国の関税改定、価格転嫁のタイミングをどう決めた？</span>
-              <div class="el-t-row-meta">小林商店・3時間前</div>
-            </div>
-            <div class="el-t-row-stats">
-              <div><strong>142</strong><span>閲覧</span></div>
-              <div><strong>6</strong><span>返信</span></div>
-            </div>
-          </a>
-          <a href="topic.html" class="el-t-row" data-category="fda" data-visibility="general" data-status="unsolved" data-views="140" data-recency="93" data-pinned="0" data-tags="us-agent">
-            <div class="el-t-row-main">
-              <div class="el-t-row-badges"><span class="badge badge--open">公開</span><span class="badge badge--cat">FDA対応</span><span class="badge badge--unsolved">未解決</span></div>
-              <span class="el-t-row-title">米国代理人（U.S. Agent）の見直し、皆さんどうしてますか</span>
-              <div class="el-t-row-meta">田中フーズ・5時間前</div>
-            </div>
-            <div class="el-t-row-stats">
-              <div><strong>140</strong><span>閲覧</span></div>
-              <div><strong>6</strong><span>返信</span></div>
-            </div>
-          </a>
-          <a href="topic.html" class="el-t-row" data-category="amazon" data-visibility="member" data-status="solved" data-views="489" data-recency="92" data-pinned="0" data-tags="research">
-            <div class="el-t-row-main">
-              <div class="el-t-row-badges"><span class="badge badge--restricted">メンバー限定</span><span class="badge badge--cat">Amazon出品</span><span class="badge badge--solved">解決</span></div>
-              <span class="el-t-row-title">せどり便乗リサーチ、初月の粗利率どのくらいでしたか</span>
-              <div class="el-t-row-meta">高橋物産・5時間前</div>
-            </div>
-            <div class="el-t-row-stats">
-              <div><strong>489</strong><span>閲覧</span></div>
-              <div><strong>21</strong><span>返信</span></div>
-            </div>
-          </a>
+          </div>
+        </div>
+
+        <div class="el-section-head" style="margin-top:52px;margin-bottom:16px;">
+          <div>
+            <h2>SHiFT会員限定</h2>
+            <div class="sub">SHiFT会員だけが閲覧できる話題</div>
+          </div>
+          <a href="board.html?filter=shift&sort=hot" class="el-btn el-btn--ghost el-btn--sm">もっと見る</a>
+        </div>
+        <div class="el-board">
+          <div>
           <a href="topic.html" class="el-t-row" data-category="amazon" data-visibility="shift" data-status="solved" data-views="340" data-recency="88" data-pinned="0" data-tags="research">
             <div class="el-t-row-main">
               <div class="el-t-row-badges"><span class="badge badge--member">SHiFT限定</span><span class="badge badge--cat">Amazon出品</span><span class="badge badge--solved">解決</span></div>
@@ -285,26 +288,15 @@
               <div><strong>5</strong><span>返信</span></div>
             </div>
           </a>
-          <a href="topic.html" class="el-t-row" data-category="customs" data-visibility="member" data-status="solved" data-views="298" data-recency="70" data-pinned="0" data-tags="customs-docs">
+          <a href="topic.html" class="el-t-row" data-category="fda" data-visibility="shift" data-status="solved" data-views="210" data-recency="96" data-pinned="0" data-tags="facility-registration">
             <div class="el-t-row-main">
-              <div class="el-t-row-badges"><span class="badge badge--restricted">メンバー限定</span><span class="badge badge--cat">通関</span><span class="badge badge--solved">解決</span></div>
-              <span class="el-t-row-title">通関書類のインボイス記載、よくある差し戻し理由まとめ</span>
-              <div class="el-t-row-meta">田中フーズ・2日前</div>
+              <div class="el-t-row-badges"><span class="badge badge--member">SHiFT限定</span><span class="badge badge--cat">FDA対応</span><span class="badge badge--solved">解決</span></div>
+              <span class="el-t-row-title">FDA施設登録、実際にかかった費用を公開します</span>
+              <div class="el-t-row-meta">山口貿易士・2時間前</div>
             </div>
             <div class="el-t-row-stats">
-              <div><strong>298</strong><span>閲覧</span></div>
-              <div><strong>15</strong><span>返信</span></div>
-            </div>
-          </a>
-          <a href="topic.html" class="el-t-row" data-category="amazon" data-visibility="general" data-status="unsolved" data-views="155" data-recency="85" data-pinned="0" data-tags="refund">
-            <div class="el-t-row-main">
-              <div class="el-t-row-badges"><span class="badge badge--open">公開</span><span class="badge badge--cat">Amazon出品</span><span class="badge badge--unsolved">未解決</span></div>
-              <span class="el-t-row-title">現地倉庫のピッキングミス、返金対応どうしてますか</span>
-              <div class="el-t-row-meta">高橋物産・昨日</div>
-            </div>
-            <div class="el-t-row-stats">
-              <div><strong>155</strong><span>閲覧</span></div>
-              <div><strong>7</strong><span>返信</span></div>
+              <div><strong>210</strong><span>閲覧</span></div>
+              <div><strong>8</strong><span>返信</span></div>
             </div>
           </a>
           </div>
@@ -315,6 +307,7 @@
             <h2>カテゴリで探す</h2>
             <div class="sub">気になる分野から投稿を探せます</div>
           </div>
+          <a href="forum-categories.html" class="el-btn el-btn--ghost el-btn--sm">もっと見る</a>
         </div>
         <div class="el-categories">
           <a href="board.html?category=fda" class="el-cat-card">
@@ -384,6 +377,7 @@
             <h2>ハッシュタグで探す</h2>
             <div class="sub">よく使われているハッシュタグ</div>
           </div>
+          <a href="forum-tags.html" class="el-btn el-btn--ghost el-btn--sm">もっと見る</a>
         </div>
         <div class="el-tag-cloud">
           <a href="board.html?tag=fba">#FBA<span class="count">86</span></a>
@@ -472,65 +466,6 @@
       window.location.href = summary.dataset.href;
     });
   });
-
-  // トピック一覧のフィルター／並び替え（URLのクエリパラメータで状態を管理）
-  (function () {
-    var params = new URLSearchParams(window.location.search);
-    var sort = params.get('sort') || 'hot';
-    var filter = params.get('filter') || '';
-    var category = params.get('category') || '';
-    var tag = params.get('tag') || '';
-
-    var container = document.getElementById('topicList');
-    var heading = document.getElementById('boardHeading');
-    var sub = document.getElementById('boardSub');
-    if (!container) return;
-
-    var rows = Array.prototype.slice.call(container.querySelectorAll('.el-t-row'));
-
-    var visible = rows.filter(function (r) {
-      if (filter === 'shift' && r.dataset.visibility !== 'shift') return false;
-      if (filter === 'unsolved' && r.dataset.status !== 'unsolved') return false;
-      if (category && r.dataset.category !== category) return false;
-      if (tag && (' ' + r.dataset.tags + ' ').indexOf(' ' + tag + ' ') === -1) return false;
-      return true;
-    });
-
-    if (sort === 'hot') {
-      visible.sort(function (a, b) { return (+b.dataset.views) - (+a.dataset.views); });
-    } else {
-      visible.sort(function (a, b) {
-        var ap = +a.dataset.pinned, bp = +b.dataset.pinned;
-        if (ap !== bp) return bp - ap;
-        return (+b.dataset.recency) - (+a.dataset.recency);
-      });
-    }
-
-    rows.forEach(function (r) { r.style.display = 'none'; });
-    visible.forEach(function (r) { container.appendChild(r); r.style.display = ''; });
-
-    if (visible.length === 0) {
-      var empty = document.createElement('div');
-      empty.style.cssText = 'padding:44px 20px;text-align:center;color:var(--el-ink-faint);font-size:14px;';
-      empty.textContent = '該当するトピックが見つかりませんでした。';
-      container.appendChild(empty);
-    }
-
-    var label = 'すべてのトピック';
-    if (sort === 'hot') label = '人気';
-    else if (sort === 'new') label = '新着';
-    else if (filter === 'shift') label = 'SHiFT会員限定';
-    else if (filter === 'unsolved') label = '未解決';
-    else if (category) label = 'カテゴリ：' + category.toUpperCase();
-    else if (tag) label = '#' + tag;
-    if (heading) heading.textContent = label;
-    if (sub) sub.textContent = visible.length + '件のトピック';
-
-    document.querySelectorAll('#boardTabs a').forEach(function (a) {
-      var match = (a.dataset.sort || '') === sort && (a.dataset.filter || '') === filter && !category && !tag;
-      a.classList.toggle('is-active', match);
-    });
-  })();
 </script>
 </body>
 </html>
