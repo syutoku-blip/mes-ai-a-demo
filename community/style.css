@@ -1577,3 +1577,11 @@ button{ font-family:inherit; cursor:pointer; }
   .el-filter-summary-value{min-width:56%;}
   .el-filter-popover{position:static; width:100%; margin-top:4px; box-shadow:none;}
 }
+
+/* ===== 2026-08-10: guide/filter breathing room ===== */
+.el-pinned-box + .el-list-tools-compact{ margin-top:24px; }
+.el-list-tools-compact{ padding-top:4px; margin-bottom:22px; }
+@media (max-width:720px){
+  .el-pinned-box + .el-list-tools-compact{ margin-top:18px; }
+  .el-list-tools-compact{ margin-bottom:18px; }
+}
