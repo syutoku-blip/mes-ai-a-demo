@@ -193,9 +193,6 @@
                   <button type="button" id="quoteBtn" title="引用">
                     <svg viewBox="0 0 24 24"><path d="M10 11H6a4 4 0 0 1 4-4V5a6 6 0 0 0-6 6v6h6v-6ZM20 11h-4a4 4 0 0 1 4-4V5a6 6 0 0 0-6 6v6h6v-6Z"/></svg>
                   </button>
-                  <button type="button" id="codeBtn" title="ソースコード">
-                    <svg viewBox="0 0 24 24"><path d="m8 9-4 3 4 3M16 9l4 3-4 3M14 5l-4 14"/></svg>
-                  </button>
                   <button type="button" data-command="insertHorizontalRule" title="区切り線">
                     <svg viewBox="0 0 24 24"><path d="M4 12h16"/></svg>
                   </button>
@@ -486,9 +483,71 @@
     }
 
     function runCommand(cmd, value) {
-      restoreSelection();
+      insertMarkers();
       document.execCommand('styleWithCSS', false, true);
       document.execCommand(cmd, false, value == null ? null : value);
+      restoreFromMarkers();
+    }
+
+    // execCommandによるDOM変更（書式適用・引用化など）をまたぐと、
+    // クローンしておいたRangeが無効になり選択位置が先頭にリセットされることがある。
+    // そこで実体のあるマーカー要素を選択範囲の前後に挿入し、DOM変更後もそのマーカーを
+    // 目印に選択範囲を組み直すことで、カーソル位置を確実に保持する。
+    function clearMarkers() {
+      editor.querySelectorAll('[data-sel-marker]').forEach(function (m) { m.remove(); });
+    }
+
+    function insertMarkers() {
+      restoreSelection();
+      clearMarkers();
+      var sel = window.getSelection();
+      if (!sel || !sel.rangeCount || !selectionIsInsideEditor(sel)) return false;
+      var range = sel.getRangeAt(0);
+
+      var startMarker = document.createElement('span');
+      startMarker.setAttribute('data-sel-marker', 'start');
+      var endMarker = document.createElement('span');
+      endMarker.setAttribute('data-sel-marker', 'end');
+
+      if (range.collapsed) {
+        range.insertNode(startMarker);
+        return true;
+      }
+
+      var endRange = range.cloneRange();
+      endRange.collapse(false);
+      endRange.insertNode(endMarker);
+
+      var startRange = range.cloneRange();
+      startRange.collapse(true);
+      startRange.insertNode(startMarker);
+
+      return true;
+    }
+
+    function rangeFromMarkers() {
+      var start = editor.querySelector('[data-sel-marker="start"]');
+      var end = editor.querySelector('[data-sel-marker="end"]');
+      if (!start) return null;
+      var range = document.createRange();
+      if (end) {
+        range.setStartAfter(start);
+        range.setEndBefore(end);
+      } else {
+        range.setStartAfter(start);
+        range.collapse(true);
+      }
+      return { range: range, start: start, end: end };
+    }
+
+    function restoreFromMarkers() {
+      var found = rangeFromMarkers();
+      if (!found) { saveSelection(); return; }
+      var sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(found.range);
+      found.start.remove();
+      if (found.end) found.end.remove();
       saveSelection();
     }
 
@@ -533,13 +592,11 @@
     }
 
     // 引用：選択中の段落へ1回で反映。Enterを押すと次行は通常入力。
+    // マーカーで選択位置を保持することで、formatBlock適用後もカーソルが先頭へ飛ばない。
     document.getElementById('quoteBtn').addEventListener('click', function () {
-      restoreSelection();
-      var sel = window.getSelection();
-      if (!sel || !sel.rangeCount) return;
-
-      var anchor = sel.anchorNode;
-      var el = anchor && (anchor.nodeType === 1 ? anchor : anchor.parentElement);
+      insertMarkers();
+      var start = editor.querySelector('[data-sel-marker="start"]');
+      var el = start && start.parentElement;
       var existing = el && el.closest('blockquote');
 
       if (existing && editor.contains(existing)) {
@@ -547,60 +604,10 @@
       } else {
         document.execCommand('formatBlock', false, 'blockquote');
       }
-      saveSelection();
+      restoreFromMarkers();
     });
 
-    // コード装飾：選択した文字をその場所のままインラインコードにする。
-    // 選択文字を別行へ移動させない。
-    document.getElementById('codeBtn').addEventListener('click', function () {
-      restoreSelection();
-      var sel = window.getSelection();
-      if (!sel || !sel.rangeCount) return;
-
-      var range = sel.getRangeAt(0);
-      var anchor = sel.anchorNode;
-      var el = anchor && (anchor.nodeType === 1 ? anchor : anchor.parentElement);
-      var existingCode = el && el.closest('code.el-inline-code');
-
-      if (existingCode && editor.contains(existingCode)) {
-        var frag = document.createDocumentFragment();
-        while (existingCode.firstChild) frag.appendChild(existingCode.firstChild);
-        existingCode.replaceWith(frag);
-        saveSelection();
-        return;
-      }
-
-      var code = document.createElement('code');
-      code.className = 'el-inline-code';
-
-      if (range.collapsed) {
-        code.textContent = 'code';
-        range.insertNode(code);
-        var inner = document.createRange();
-        inner.selectNodeContents(code);
-        sel.removeAllRanges();
-        sel.addRange(inner);
-      } else {
-        try {
-          range.surroundContents(code);
-          var inner = document.createRange();
-          inner.selectNodeContents(code);
-          sel.removeAllRanges();
-          sel.addRange(inner);
-        } catch (e) {
-          var fragment = range.extractContents();
-          code.appendChild(fragment);
-          range.insertNode(code);
-          var inner2 = document.createRange();
-          inner2.selectNodeContents(code);
-          sel.removeAllRanges();
-          sel.addRange(inner2);
-        }
-      }
-      saveSelection();
-    });
-
-    // 引用 / インラインコード内でEnterを押したら、その書式を引き継がず通常入力へ戻す。
+    // 引用内でEnterを押したら、引用書式を引き継がず通常入力へ戻す。
     editor.addEventListener('keydown', function (e) {
       if (e.key !== 'Enter' || e.shiftKey) return;
 
@@ -612,36 +619,19 @@
       if (!el) return;
 
       var quote = el.closest('blockquote');
-      var inlineCode = el.closest('code.el-inline-code');
+      if (!quote || !editor.contains(quote)) return;
 
-      if (quote && editor.contains(quote)) {
-        e.preventDefault();
-        var normal = document.createElement('div');
-        normal.innerHTML = '<br>';
-        quote.parentNode.insertBefore(normal, quote.nextSibling);
-        placeCaretAfter(quote);
-        var r = document.createRange();
-        r.setStart(normal, 0);
-        r.collapse(true);
-        sel.removeAllRanges();
-        sel.addRange(r);
-        saveSelection();
-        return;
-      }
-
-      if (inlineCode && editor.contains(inlineCode)) {
-        e.preventDefault();
-        var br = document.createElement('br');
-        inlineCode.parentNode.insertBefore(br, inlineCode.nextSibling);
-        var spacer = document.createTextNode('\u200B');
-        br.parentNode.insertBefore(spacer, br.nextSibling);
-        var r2 = document.createRange();
-        r2.setStart(spacer, 1);
-        r2.collapse(true);
-        sel.removeAllRanges();
-        sel.addRange(r2);
-        saveSelection();
-      }
+      e.preventDefault();
+      var normal = document.createElement('div');
+      normal.innerHTML = '<br>';
+      quote.parentNode.insertBefore(normal, quote.nextSibling);
+      placeCaretAfter(quote);
+      var r = document.createRange();
+      r.setStart(normal, 0);
+      r.collapse(true);
+      sel.removeAllRanges();
+      sel.addRange(r);
+      saveSelection();
     });
 
     // 文字サイズ。選択範囲へ確実にpx指定を反映する。
@@ -670,14 +660,16 @@
     // 文字色・背景色
     document.getElementById('textColorPicker').addEventListener('input', function () { runCommand('foreColor', this.value); });
     document.getElementById('bgColorPicker').addEventListener('input', function () {
-      restoreSelection();
+      insertMarkers();
       document.execCommand('styleWithCSS', false, true);
       var ok = document.execCommand('hiliteColor', false, this.value);
       if (!ok) document.execCommand('backColor', false, this.value);
-      saveSelection();
+      restoreFromMarkers();
     });
 
     // 選択文字の直下に出すリンク入力枠
+    // ポップオーバーを開いている間、選択範囲をマーカーで固定しておくことで、
+    // URL入力中にフォーカスが移動しても埋め込み先の位置がずれない。
     var linkPopover = document.getElementById('linkPopover');
     var linkUrlInput = document.getElementById('linkUrlInput');
     document.getElementById('addLinkBtn').addEventListener('mousedown', function(e){
@@ -686,11 +678,16 @@
       e.preventDefault();
     });
     document.getElementById('addLinkBtn').addEventListener('click', function () {
-      if (!savedRange || savedRange.collapsed) {
+      insertMarkers();
+      var found = rangeFromMarkers();
+      if (!found) {
+        linkPopover.hidden = false;
+        linkPopover.classList.add('is-centered');
+      } else if (!found.end) {
         linkPopover.hidden = false;
         linkPopover.classList.add('is-centered');
       } else {
-        var rect = savedRange.getBoundingClientRect();
+        var rect = found.range.getBoundingClientRect();
         var editorRect = document.querySelector('.el-rich-editor').getBoundingClientRect();
         linkPopover.hidden = false;
         linkPopover.classList.remove('is-centered');
@@ -706,30 +703,43 @@
     });
     document.getElementById('applyLinkBtn').addEventListener('click', function () {
       var url = linkUrlInput.value.trim();
-      if (!url || !savedRange) return;
+      var start = editor.querySelector('[data-sel-marker="start"]');
+      if (!url || !start) { linkPopover.hidden = true; clearMarkers(); return; }
       if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
 
-      // createLink 実行前に、リンクを埋め込むために保存していた文字選択を明示的に復元。
       editor.focus({preventScroll:true});
+      var end = editor.querySelector('[data-sel-marker="end"]');
+      var a = document.createElement('a');
+      a.href = url;
+
+      if (!end) {
+        // 文字が選択されていない場合、execCommand('createLink')は何も挿入しないため、
+        // URLそのものをリンクテキストとしてマーカー位置に挿入する。
+        a.textContent = url;
+        start.parentNode.insertBefore(a, start);
+        start.remove();
+      } else {
+        // マーカーで挟まれた範囲（＝選択していた文字そのもの）をリンクとして包む。
+        var range = document.createRange();
+        range.setStartAfter(start);
+        range.setEndBefore(end);
+        try {
+          range.surroundContents(a);
+        } catch (err) {
+          var frag = range.extractContents();
+          a.appendChild(frag);
+          range.insertNode(a);
+        }
+        start.remove();
+        end.remove();
+      }
+
+      var after = document.createRange();
+      after.setStartAfter(a);
+      after.collapse(true);
       var sel = window.getSelection();
       sel.removeAllRanges();
-      sel.addRange(savedRange.cloneRange());
-
-      if (savedRange.collapsed) {
-        // 文字が選択されていない場合、execCommand('createLink')は何も挿入しないため、
-        // URLそのものをリンクテキストとして挿入する。
-        var a = document.createElement('a');
-        a.href = url;
-        a.textContent = url;
-        savedRange.insertNode(a);
-        var after = document.createRange();
-        after.setStartAfter(a);
-        after.collapse(true);
-        sel.removeAllRanges();
-        sel.addRange(after);
-      } else {
-        document.execCommand('createLink', false, url);
-      }
+      sel.addRange(after);
       saveSelection();
       linkPopover.hidden = true;
     });
@@ -737,7 +747,10 @@
       runCommand('unlink'); linkPopover.hidden = true;
     });
     document.addEventListener('mousedown', function(e){
-      if (!linkPopover.hidden && !e.target.closest('#linkPopover') && !e.target.closest('#addLinkBtn')) linkPopover.hidden = true;
+      if (!linkPopover.hidden && !e.target.closest('#linkPopover') && !e.target.closest('#addLinkBtn')) {
+        linkPopover.hidden = true;
+        clearMarkers();
+      }
     });
 
     // 本文内への画像挿入
