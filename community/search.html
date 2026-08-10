@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>マイページ｜Export Lab</title>
+<title>検索結果｜Export Lab</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&family=Noto+Sans+JP:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
@@ -207,7 +207,7 @@
         </div>
       </details>
 
-      <a href="mypage.html" class="is-active">
+      <a href="mypage.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
         <span class="lbl">マイページ</span>
       </a>
@@ -216,37 +216,19 @@
   </div>
   <div class="el-content">
     <main class="el-section" style="padding-top:0;">
-      <div class="wrap" style="max-width:920px;">
-        <nav class="el-breadcrumb el-page-breadcrumb" aria-label="パンくず"><a href="index.html">ホーム</a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg><span>マイページ</span></nav>
+      <div class="wrap" style="max-width:820px;">
+        <nav class="el-breadcrumb el-page-breadcrumb" aria-label="パンくず"><a href="index.html">ホーム</a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg><span>検索結果</span></nav>
 
-        <div id="guestPrompt" style="display:none;padding:44px 24px;text-align:center;background:var(--el-cream-deep);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);margin-top:16px;">
-          <h2 style="margin:0 0 10px;">ゲストとして閲覧中です</h2>
-          <p style="color:var(--el-ink-faint);font-size:14px;line-height:1.8;margin:0 0 20px;">マイページの内容を利用するには、会員登録（無料）が必要です。<br>登録すると、お気に入りの保存や投稿・返信などがご利用いただけます。</p>
-          <a href="#" class="el-btn el-btn--primary el-btn--sm">新規登録する</a>
-        </div>
-
-        <div id="memberContent">
         <div class="el-section-head" style="margin-top:8px;margin-bottom:8px;">
-          <div style="display:flex;align-items:center;gap:14px;">
-            <div class="el-avatar" style="width:56px;height:56px;font-size:20px;">り</div>
-            <div>
-              <h2 style="margin:0;">りか さん</h2>
-              <div class="sub">ワールドシフト株式会社</div>
-            </div>
+          <div>
+            <h2 id="searchHeading">検索結果</h2>
+            <div class="sub" id="searchSub"></div>
           </div>
         </div>
 
-        <div class="el-section-head" style="margin-top:44px;margin-bottom:16px;">
-          <div>
-            <h2>お気に入り</h2>
-            <div class="sub">マーケットで♡を押したコンテンツがここに表示されます</div>
-          </div>
-          <a href="market-list.html" class="el-btn el-btn--ghost el-btn--sm">マーケットへ</a>
-        </div>
-        <div id="favoritesList"></div>
-        <div id="favoritesEmpty" style="padding:32px;text-align:center;color:var(--el-ink-faint);font-size:14px;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);" hidden>
-          まだお気に入りに追加したコンテンツがありません。<br><a href="market-list.html" style="color:var(--el-teal-deep);font-weight:700;">マーケットを見る</a>
-        </div>
+        <div id="searchResults" style="margin-top:20px;"></div>
+        <div id="searchEmpty" style="padding:44px 20px;text-align:center;color:var(--el-ink-faint);font-size:14px;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);" hidden>
+          該当する結果が見つかりませんでした。<br>別のキーワードでお試しください。
         </div>
 
       </div>
@@ -299,7 +281,6 @@
     });
   })();
 
-  // フォーラム／コミュニティ／マーケットの見出し：矢印以外をクリックしたらページ遷移、矢印は開閉のみ
   document.querySelectorAll('.el-side-forum > summary[data-href]').forEach(function (summary) {
     summary.addEventListener('click', function (e) {
       if (e.target.closest('svg.chev')) return;
@@ -308,43 +289,102 @@
     });
   });
 
-  // お気に入り一覧の表示（マーケットページと同じlocalStorageキーを参照）
-  (function () {
-    var FAV_KEY = 'el-market-favorites';
-    var PRODUCTS = {
-      'official-amazon-allsupport': { title: '米Amazon輸出オールサポート', price: '¥12,000', url: 'market-list.html' },
-      'official-fda-guide': { title: 'FDA施設登録 完全ガイド（PDF）', price: '¥3,000', url: 'market-list.html' },
-      'official-slc-seminar': { title: 'SLC活用セミナー録画（2026年7月開催分）', price: '¥2,000', url: 'market-list.html' },
-      'official-profinder': { title: 'ProFinder リサーチ実践講座（動画）', price: '¥8,000', url: 'market-list.html' },
-      'official-startup-template': { title: '米国輸出 スタートアップテンプレート集', price: '¥5,000', url: 'market-list.html' },
-      'official-customs-checklist': { title: '通関書類チェックリスト', price: '¥1,500', url: 'market-list.html' },
-      'official-fba-trouble': { title: 'FBA納品トラブル対応事例集', price: '¥4,000', url: 'market-list.html' },
-      'official-amazon-turnover': { title: '米Amazon輸出：商品の販売回転数UP', price: '¥6,000', url: 'market-list.html' },
-      'member-takahashi-research': { title: 'せどり便乗リサーチ 実践テンプレート', price: '¥2,500', url: 'market-list.html' },
-      'member-yamaguchi-fda-reminder': { title: 'FDA更新リマインドスプレッドシート', price: '¥1,200', url: 'market-list.html' },
-      'member-suzuki-cosmetics-checklist': { title: '化粧品ラベル作成チェックシート', price: '¥1,800', url: 'market-list.html' }
-    };
+  // 検索対象インデックス：フォーラムのトピック、コミュニティ（概要のみ）、マーケットのコンテンツ、
+  // イベント、公式のお知らせ
+  var SEARCH_INDEX = [
+    { type: 'フォーラム', title: 'FDA施設登録、2年更新のタイミングと注意点', url: 'topic.html' },
+    { type: 'フォーラム', title: '米国倉庫でのラベル不備、差し戻しを防ぐチェック手順', url: 'board.html' },
+    { type: 'フォーラム', title: '初めまして、雑貨を輸出しています', url: 'board.html' },
+    { type: 'フォーラム', title: '海上輸送の遅延、リードタイムはどう見積もってますか', url: 'board.html' },
+    { type: 'フォーラム', title: 'サプリメントのラベル、栄養成分表示のフォーマット変更点', url: 'board.html' },
+    { type: 'フォーラム', title: 'FDA施設登録、実際にかかった費用を公開します', url: 'board.html' },
+    { type: 'フォーラム', title: '米国の関税改定、価格転嫁のタイミングをどう決めた？', url: 'board.html' },
+    { type: 'フォーラム', title: '米国代理人（U.S. Agent）の見直し、皆さんどうしてますか', url: 'board.html' },
+    { type: 'フォーラム', title: 'せどり便乗リサーチ、初月の粗利率どのくらいでしたか', url: 'board.html' },
+    { type: 'フォーラム', title: 'せどり便乗リサーチ、実際の粗利率を公開します', url: 'board.html' },
+    { type: 'フォーラム', title: '通関書類のインボイス記載、よくある差し戻し理由まとめ', url: 'board.html' },
+    { type: 'フォーラム', title: '現地倉庫のピッキングミス、返金対応どうしてますか', url: 'board.html' },
 
-    function getFavorites() {
-      try { return JSON.parse(localStorage.getItem(FAV_KEY) || '[]'); } catch (e) { return []; }
+    { type: 'コミュニティ', title: 'マーケット動向 情報交換会', desc: '為替・価格改定・競合の動きなど、相場観を共有する新設グループ。', url: 'groups-list.html' },
+    { type: 'コミュニティ', title: '通関書類 相互チェック会', desc: 'インボイスや申告書類を、匿名化した上でお互いにレビューし合うグループ。', url: 'groups-list.html' },
+    { type: 'コミュニティ', title: '福岡 輸出事業者オフ会', desc: '福岡近郊の輸出事業者で、たまに集まって情報交換する緩やかなグループ。', url: 'groups-list.html' },
+    { type: 'コミュニティ', title: '初めての輸出 相談室', desc: 'これから輸出を始める方向け。初歩的な質問こそ歓迎する、オープンなグループです。', url: 'groups-list.html' },
+    { type: 'コミュニティ', title: 'FDA対応 実務者の会', desc: '食品・化粧品の米国輸出を手がける実務者限定。規制対応の一次情報を共有します。', url: 'groups-list.html' },
+    { type: 'コミュニティ', title: 'せどり便乗リサーチ部', desc: 'SHiFT塾の受講生を中心に、便乗リサーチの成果と失敗を持ち寄る非公開グループ。', url: 'groups-list.html' },
+
+    { type: 'マーケット', title: '米Amazon輸出オールサポート', desc: '¥12,000', url: 'market-list.html' },
+    { type: 'マーケット', title: 'FDA施設登録 完全ガイド（PDF）', desc: '¥3,000', url: 'market-list.html' },
+    { type: 'マーケット', title: 'SLC活用セミナー録画（2026年7月開催分）', desc: '¥2,000', url: 'market-list.html' },
+    { type: 'マーケット', title: 'ProFinder リサーチ実践講座（動画）', desc: '¥8,000', url: 'market-list.html' },
+    { type: 'マーケット', title: '米国輸出 スタートアップテンプレート集', desc: '¥5,000', url: 'market-list.html' },
+    { type: 'マーケット', title: '通関書類チェックリスト', desc: '¥1,500', url: 'market-list.html' },
+    { type: 'マーケット', title: 'FBA納品トラブル対応事例集', desc: '¥4,000', url: 'market-list.html' },
+    { type: 'マーケット', title: '米Amazon輸出：商品の販売回転数UP', desc: '¥6,000', url: 'market-list.html' },
+    { type: 'マーケット', title: 'せどり便乗リサーチ 実践テンプレート', desc: '¥2,500', url: 'market-list.html' },
+    { type: 'マーケット', title: 'FDA更新リマインドスプレッドシート', desc: '¥1,200', url: 'market-list.html' },
+    { type: 'マーケット', title: '化粧品ラベル作成チェックシート', desc: '¥1,800', url: 'market-list.html' },
+
+    { type: 'イベント', title: 'FDA施設登録に関するオンライン相談会', url: 'events.html' },
+    { type: 'イベント', title: '初めての輸出セミナー（初心者向け）', url: 'events.html' },
+    { type: 'イベント', title: 'SLC活用セミナー：FBA納品費用の内訳を読み解く', url: 'events.html' },
+    { type: 'イベント', title: '福岡オフ会：輸出事業者の集い', url: 'events.html' },
+    { type: 'イベント', title: 'SLC活用セミナー（2026年7月開催分）', url: 'events.html' },
+    { type: 'イベント', title: 'Export Lab オープン記念キックオフ', url: 'events.html' },
+
+    { type: '公式お知らせ', title: 'FDA施設登録に関するオンライン相談会を開催します', desc: '実務者の会メンバー限定で、更新手続きの個別相談を受け付けます。詳細と申込はグループページから。', url: 'announcement-detail.html' },
+    { type: '公式お知らせ', title: 'Export Lab、正式オープンしました', desc: '輸出の共創コミュニティとして、本日より本格始動します。まずは自己紹介からどうぞ。', url: 'announcements.html' },
+    { type: '公式お知らせ', title: '8月上旬、システムメンテナンスのお知らせ', desc: '投稿・検索機能が一時的にご利用いただけない時間帯がございます。日程は追ってご案内します。', url: 'announcements.html' },
+    { type: '公式お知らせ', title: '投稿ガイドラインを公開しました', desc: '安心して情報交換できる場を保つため、投稿・返信時のルールをまとめました。ぜひご一読ください。', url: 'announcements.html' }
+  ];
+
+  var TYPE_COLOR = {
+    'フォーラム': 'var(--el-teal-deep)',
+    'コミュニティ': 'var(--el-mustard-deep)',
+    'マーケット': 'var(--el-coral)',
+    'イベント': '#3E7EA3',
+    '公式お知らせ': '#6B4FA0'
+  };
+
+  (function () {
+    var params = new URLSearchParams(window.location.search);
+    var q = (params.get('q') || '').trim();
+    var searchInput = document.querySelector('.el-search input[name="q"]');
+    if (searchInput) searchInput.value = q;
+
+    var heading = document.getElementById('searchHeading');
+    var sub = document.getElementById('searchSub');
+    var results = document.getElementById('searchResults');
+    var empty = document.getElementById('searchEmpty');
+
+    if (!q) {
+      heading.textContent = '検索';
+      sub.textContent = '右上の検索欄にキーワードを入力してください。';
+      return;
     }
 
-    var list = getFavorites().filter(function (id) { return PRODUCTS[id]; });
-    var container = document.getElementById('favoritesList');
-    var empty = document.getElementById('favoritesEmpty');
+    heading.textContent = '「' + q + '」の検索結果';
 
-    if (!list.length) {
+    var qLower = q.toLowerCase();
+    var matched = SEARCH_INDEX.filter(function (item) {
+      return item.title.toLowerCase().indexOf(qLower) !== -1 ||
+        (item.desc && item.desc.toLowerCase().indexOf(qLower) !== -1);
+    });
+
+    sub.textContent = matched.length + '件の結果';
+
+    if (!matched.length) {
       empty.hidden = false;
       return;
     }
 
-    list.forEach(function (id) {
-      var p = PRODUCTS[id];
+    matched.forEach(function (item) {
       var row = document.createElement('a');
-      row.href = p.url;
-      row.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 18px;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);margin-bottom:10px;text-decoration:none;color:inherit;';
-      row.innerHTML = '<span style="font-weight:700;color:var(--el-navy);">' + p.title + '</span><strong style="color:var(--el-teal-deep);white-space:nowrap;">' + p.price + '</strong>';
-      container.appendChild(row);
+      row.href = item.url;
+      row.style.cssText = 'display:block;padding:16px 18px;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);margin-bottom:10px;text-decoration:none;color:inherit;';
+      var typeSpan = '<span style="display:inline-block;font-size:11px;font-weight:700;color:#fff;background:' + (TYPE_COLOR[item.type] || 'var(--el-ink-faint)') + ';padding:2px 9px;border-radius:999px;margin-bottom:6px;">' + item.type + '</span>';
+      var descHtml = item.desc ? '<div style="font-size:13px;color:var(--el-ink-faint);margin-top:4px;">' + item.desc + '</div>' : '';
+      row.innerHTML = typeSpan + '<div style="font-weight:700;color:var(--el-navy);margin-top:2px;">' + item.title + '</div>' + descHtml;
+      results.appendChild(row);
     });
   })();
   // ユーザーモード（ゲスト／登録ユーザー／管理者）の切り替えと共通ゲート処理
@@ -402,10 +442,6 @@
       document.querySelectorAll('[data-guest-block]').forEach(function (el) {
         el.addEventListener('click', window.elRequireAuth);
       });
-      var guestPrompt = document.getElementById('guestPrompt');
-      var memberContent = document.getElementById('memberContent');
-      if (guestPrompt) guestPrompt.style.display = 'block';
-      if (memberContent) memberContent.style.display = 'none';
     }
   })();
 </script>

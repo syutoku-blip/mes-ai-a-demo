@@ -33,6 +33,86 @@
   .el-ad-banner .el-ad-body strong{
     color:var(--el-navy, #16233F);
   }
+  /* ユーザーモード切り替えウィジェット */
+  .el-role-switcher{
+    position:fixed;
+    right:18px;
+    bottom:18px;
+    z-index:500;
+    display:flex;
+    gap:4px;
+    background:var(--el-paper, #fff);
+    border:1px solid var(--el-line-soft, #E5DFD2);
+    border-radius:999px;
+    padding:4px;
+    box-shadow:0 4px 16px rgba(22,35,63,.14);
+  }
+  .el-role-switcher button{
+    border:none;
+    background:transparent;
+    color:var(--el-ink-faint, #8A8478);
+    font-size:12px;
+    font-weight:700;
+    padding:7px 12px;
+    border-radius:999px;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .el-role-switcher button.is-active{
+    background:var(--el-navy, #16233F);
+    color:#fff;
+  }
+  .el-auth-modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    z-index:900;
+    align-items:center;
+    justify-content:center;
+  }
+  .el-auth-modal.is-open{ display:flex; }
+  .el-auth-modal-backdrop{
+    position:absolute;
+    inset:0;
+    background:rgba(22,35,63,.45);
+  }
+  .el-auth-modal-panel{
+    position:relative;
+    background:#fff;
+    border-radius:var(--el-radius-m, 14px);
+    padding:28px 26px;
+    max-width:340px;
+    width:90%;
+    text-align:center;
+    box-shadow:0 12px 40px rgba(22,35,63,.25);
+  }
+  .el-auth-modal-panel h3{
+    margin:0 0 10px;
+    font-size:17px;
+    color:var(--el-navy, #16233F);
+  }
+  .el-auth-modal-panel p{
+    margin:0 0 20px;
+    font-size:13px;
+    color:var(--el-ink-faint, #8A8478);
+    line-height:1.7;
+  }
+  .el-auth-modal-actions{
+    display:flex;
+    gap:8px;
+    justify-content:center;
+  }
+  .el-auth-modal-close{
+    position:absolute;
+    top:10px;
+    right:10px;
+    border:none;
+    background:transparent;
+    cursor:pointer;
+    color:var(--el-ink-faint, #8A8478);
+    padding:4px;
+  }
+  [data-guest-hide]{ display:none !important; }
 </style>
 </head>
 <body data-site="community" data-root="..">
@@ -44,10 +124,10 @@
     </button>
     <a href="index.html" class="el-logo">Export Lab<span class="dot">.</span></a>
     <div class="el-header-actions">
-      <div class="el-search">
+      <form class="el-search" action="search.html" method="get">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-        検索
-      </div>
+        <input type="search" name="q" placeholder="検索" aria-label="検索" autocomplete="off">
+      </form>
       <a href="mypage.html" class="el-header-bell" aria-label="通知">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
         <span class="count">3</span>
@@ -73,7 +153,7 @@
           <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
         </summary>
         <div class="el-side-sub">
-          <a href="forum-new.html" class="el-side-cta">
+          <a href="forum-new.html" class="el-side-cta" data-guest-block>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
             新規投稿をする
           </a>
@@ -116,7 +196,7 @@
           <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
         </summary>
         <div class="el-side-sub">
-          <a href="groups.html" class="el-side-cta">
+          <a href="groups.html" class="el-side-cta" data-guest-block>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
             新規コミュニティを作成する
           </a>
@@ -176,7 +256,7 @@
           </div>
         </div>
 
-        <form class="el-apply-form">
+        <form class="el-apply-form" id="applyForm">
           <div class="el-apply-row">
             <div class="el-apply-field">
               <label>お名前・屋号<span class="req">必須</span></label>
@@ -297,6 +377,90 @@
   document.querySelectorAll('.el-side-label-link').forEach(function (el) {
     el.addEventListener('click', function (e) { e.stopPropagation(); });
   });
+  // ユーザーモード（ゲスト／登録ユーザー／管理者）の切り替えと共通ゲート処理
+  (function () {
+    var ROLE_KEY = 'el-user-role';
+    function getRole() {
+      try { return localStorage.getItem(ROLE_KEY) || 'guest'; } catch (e) { return 'guest'; }
+    }
+    function setRole(role) {
+      try { localStorage.setItem(ROLE_KEY, role); } catch (e) {}
+    }
+    window.elGetRole = getRole;
+
+    var role = getRole();
+    document.body.setAttribute('data-role', role);
+
+    // ゲストは通知ベルを非表示
+    var bell = document.querySelector('.el-header-bell');
+    if (bell && role === 'guest') bell.style.display = 'none';
+
+    // 切り替えウィジェットの見た目
+    var switcher = document.getElementById('roleSwitcher');
+    if (switcher) {
+      switcher.querySelectorAll('button[data-role]').forEach(function (btn) {
+        btn.classList.toggle('is-active', btn.dataset.role === role);
+        btn.addEventListener('click', function () {
+          setRole(btn.dataset.role);
+          window.location.reload();
+        });
+      });
+    }
+
+    // 「ユーザー登録してください」モーダル
+    var modal = document.getElementById('authModal');
+    window.elRequireAuth = function (e) {
+      if (getRole() !== 'guest') return true;
+      if (e) e.preventDefault();
+      if (modal) { modal.classList.add('is-open'); modal.setAttribute('aria-hidden', 'false'); }
+      return false;
+    };
+    if (modal) {
+      modal.querySelectorAll('[data-auth-close]').forEach(function (el) {
+        el.addEventListener('click', function () {
+          modal.classList.remove('is-open');
+          modal.setAttribute('aria-hidden', 'true');
+        });
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') { modal.classList.remove('is-open'); modal.setAttribute('aria-hidden', 'true'); }
+      });
+    }
+
+    // ゲストには data-guest-hide の要素を隠す（本文はCSSでも隠すが、動的挿入分もここでカバー）
+    if (role === 'guest') {
+      document.querySelectorAll('[data-guest-block]').forEach(function (el) {
+        el.addEventListener('click', window.elRequireAuth);
+      });
+      var applyForm = document.getElementById('applyForm');
+      if (applyForm) {
+        applyForm.style.opacity = '.4';
+        applyForm.style.pointerEvents = 'none';
+        window.elRequireAuth();
+      }
+    }
+  })();
 </script>
+<div class="el-auth-modal" id="authModal" aria-hidden="true">
+  <div class="el-auth-modal-backdrop" data-auth-close></div>
+  <div class="el-auth-modal-panel" role="dialog" aria-modal="true">
+    <button type="button" class="el-auth-modal-close" data-auth-close aria-label="閉じる">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <h3>ユーザー登録してください</h3>
+    <p>この操作を行うには、会員登録（無料）が必要です。登録すると投稿・返信・購入などすべての機能がご利用いただけます。</p>
+    <div class="el-auth-modal-actions">
+      <a href="#" class="el-btn el-btn--primary el-btn--sm">新規登録する</a>
+      <button type="button" class="el-btn el-btn--ghost el-btn--sm" data-auth-close>閉じる</button>
+    </div>
+  </div>
+</div>
+
+<div class="el-role-switcher" id="roleSwitcher">
+  <button type="button" data-role="guest">ゲスト</button>
+  <button type="button" data-role="member">登録ユーザー</button>
+  <button type="button" data-role="admin">管理者</button>
+</div>
+
 </body>
 </html>
