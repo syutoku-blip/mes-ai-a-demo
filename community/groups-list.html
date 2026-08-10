@@ -137,10 +137,8 @@
     <main class="el-section" style="padding-top:0;">
       <div class="el-catch"><span class="ic">◎</span><p>すべてのコミュニティから、参加したい場所を探せます。</p></div>
       <div class="wrap">
-        <nav class="el-breadcrumb el-page-breadcrumb" aria-label="パンくず"><a href="index.html">ホーム</a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg><a href="groups.html">コミュニティTOP</a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg><span>すべてのコミュニティ</span></nav>
-
-        <div class="el-section-head"><div><h2 id="groupsHeading">コミュニティ一覧</h2></div></div>
-        <div class="el-list-tools-compact">
+        <nav class="el-breadcrumb el-page-breadcrumb" id="groupsBreadcrumb" aria-label="パンくず"><a href="index.html">ホーム</a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg><a href="groups.html">コミュニティTOP</a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg><span>すべてのコミュニティ</span></nav>
+<div class="el-list-tools-compact">
           <label>絞り込み<select id="groupFilter"><option value="">すべて</option><option value="joined">参加中</option><option value="pending">申請中</option></select></label>
           <label>並び順<select id="groupSort"><option value="hot">人気順</option><option value="new">新しい順</option></select></label>
           <span class="el-result-count el-result-count--plain" id="groupCount">0件</span>
@@ -341,7 +339,35 @@
     visible.slice((page-1)*size,page*size).forEach(function(c){list.appendChild(c);c.style.display='';});
     document.getElementById('groupFilter').value=filter; document.getElementById('groupSort').value=sort;
     document.getElementById('groupCount').textContent=visible.length+'件';
-    document.getElementById('groupsHeading').textContent=filter==='joined'?'参加中のコミュニティ':filter==='pending'?'申請中のコミュニティ':'コミュニティ一覧';
+
+    function renderGroupsBreadcrumb(){
+      var breadcrumb=document.getElementById('groupsBreadcrumb');
+      if(!breadcrumb) return;
+
+      breadcrumb.innerHTML='<a href="index.html">ホーム</a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg><a href="groups.html">コミュニティTOP</a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg><span>すべてのコミュニティ</span>';
+
+      var current='';
+      if(sort==='new') current='新着';
+      else if(filter==='joined') current='参加中のコミュニティ';
+      else if(filter==='pending') current='申請中のコミュニティ';
+
+      if(current){
+        var svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+        svg.setAttribute('viewBox','0 0 24 24');
+        svg.setAttribute('fill','none');
+        svg.setAttribute('stroke','currentColor');
+        svg.setAttribute('stroke-width','2.5');
+        var path=document.createElementNS('http://www.w3.org/2000/svg','path');
+        path.setAttribute('d','m9 6 6 6-6 6');
+        svg.appendChild(path);
+        breadcrumb.appendChild(svg);
+
+        var span=document.createElement('span');
+        span.textContent=current;
+        breadcrumb.appendChild(span);
+      }
+    }
+    renderGroupsBreadcrumb();
     function go(){var q=new URLSearchParams();var f=document.getElementById('groupFilter').value,s=document.getElementById('groupSort').value;if(f)q.set('filter',f);q.set('sort',s);window.location.href='groups-list.html?'+q.toString();}
     document.getElementById('groupFilter').addEventListener('change',go); document.getElementById('groupSort').addEventListener('change',go);
   })();
