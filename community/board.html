@@ -540,6 +540,49 @@
 
     renderList();
   })();
+
+  // カテゴリ・ハッシュタグの複数選択プルダウン
+  // チェック操作中だけ開いたまま。枠外・別の絞り込みを押したら閉じる。
+  (function () {
+    var menus = Array.prototype.slice.call(document.querySelectorAll('#boardControls .el-filter-menu'));
+    if (!menus.length) return;
+
+    function closeAll(except) {
+      menus.forEach(function(menu) {
+        if (menu !== except) menu.removeAttribute('open');
+      });
+    }
+
+    menus.forEach(function(menu) {
+      var summary = menu.querySelector(':scope > summary');
+      if (!summary) return;
+
+      summary.addEventListener('click', function(e) {
+        // 開く側のクリック時に、もう片方は閉じる
+        if (!menu.open) closeAll(menu);
+      });
+    });
+
+    // pointerdown を capture で拾うことで、select や他のボタンを押した瞬間にも閉じる
+    document.addEventListener('pointerdown', function(e) {
+      var insideMenu = e.target.closest('#boardControls .el-filter-menu');
+
+      if (insideMenu) {
+        // メニュー内のチェックや「すべて解除」では閉じない
+        closeAll(insideMenu);
+        return;
+      }
+
+      // 枠外、公開範囲、並び順、投稿一覧など、どこを押しても閉じる
+      closeAll();
+    }, true);
+
+    // Escでも閉じる
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeAll();
+    });
+  })();
+
 </script>
 </body>
 </html>
