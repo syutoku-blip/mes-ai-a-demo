@@ -1056,6 +1056,37 @@
       });
     })();
 
+    // 右側の追尾エリアは投稿ボタン群の手前で停止させる。
+    (function () {
+      var side = document.querySelector('.el-compose-side');
+      var actions = document.querySelector('.el-compose-actions');
+      if (!side || !actions) return;
+
+      var ticking = false;
+      function stopBeforeActions() {
+        side.style.transform = '';
+        var sideRect = side.getBoundingClientRect();
+        var actionsRect = actions.getBoundingClientRect();
+        var gap = 20;
+        var overlap = sideRect.bottom - (actionsRect.top - gap);
+
+        if (overlap > 0) {
+          side.style.transform = 'translateY(-' + overlap + 'px)';
+        }
+        ticking = false;
+      }
+
+      function requestUpdate() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(stopBeforeActions);
+      }
+
+      window.addEventListener('scroll', requestUpdate, { passive:true });
+      window.addEventListener('resize', requestUpdate);
+      requestUpdate();
+    })();
+
     try {
       var saved = JSON.parse(localStorage.getItem('el-topic-draft') || 'null');
       if (saved) {
