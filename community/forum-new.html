@@ -317,18 +317,24 @@
 
             <a href="#" class="el-compose-display-ad" aria-label="FDA Compliance Partner">
               <span class="el-display-ad-label">AD</span>
-              <div class="el-display-ad-visual">
-                <span class="globe">◎</span>
-                <span class="box box--1"></span>
-                <span class="box box--2"></span>
-                <span class="route"></span>
+              <div class="el-display-ad-art" aria-hidden="true">
+                <svg viewBox="0 0 220 150" role="img">
+                  <circle cx="150" cy="48" r="35" fill="#E4F1EE"/>
+                  <path d="M120 48h60M150 18c10 10 10 50 0 60M150 18c-10 10-10 50 0 60M125 35h50M125 60h50"
+                        fill="none" stroke="#2F8F82" stroke-width="3" stroke-linecap="round" opacity=".72"/>
+                  <rect x="24" y="82" width="58" height="42" rx="4" fill="#F0B548"/>
+                  <rect x="31" y="89" width="44" height="35" rx="2" fill="#F7CC75"/>
+                  <path d="M53 82v42M24 103h58" stroke="#C88A24" stroke-width="2" opacity=".55"/>
+                  <path d="M80 110c30-32 52-22 84-37" fill="none" stroke="#2F8F82" stroke-width="2.5" stroke-dasharray="5 6" opacity=".55"/>
+                  <circle cx="164" cy="73" r="5" fill="#EAAA3C"/>
+                </svg>
               </div>
               <div class="el-display-ad-copy">
                 <small>WorldShift</small>
-                <strong>FDA Compliance<br>Partner</strong>
+                <strong>FDA Compliance Partner</strong>
                 <span>FDA規制対応を、もっと確実に。</span>
               </div>
-              <span class="el-display-ad-cta">詳しく見る →</span>
+              <span class="el-display-ad-cta">詳しく見る</span>
             </a>
           </aside>
 
@@ -451,81 +457,37 @@
       });
     });
 
-    // 引用。1回目のEnterで引用内に空行、空行でもう一度Enterすると引用を終了。
-    document.getElementById('quoteBtn').addEventListener('mousedown', function(e){ e.preventDefault(); });
-    document.getElementById('quoteBtn').addEventListener('click', function () {
-      restoreSelection();
-      var sel = window.getSelection();
-      var node = sel && sel.anchorNode;
-      var el = node && (node.nodeType === 1 ? node : node.parentElement);
-      var quote = el && el.closest('blockquote');
-      document.execCommand('formatBlock', false, quote ? 'div' : 'blockquote');
-      saveSelection();
-    });
-
-    function isVisuallyEmpty(node) {
-      if (!node) return true;
-      var text = (node.textContent || '').replace(/\u200B/g, '').replace(/\u00A0/g, ' ').trim();
-      if (text) return false;
-      return !node.querySelector || !node.querySelector('img,video,iframe,pre,ul,ol');
-    }
-
-    function exitQuoteAtCaret(quote, sel) {
-      var anchor = sel.anchorNode;
-      var el = anchor && (anchor.nodeType === 1 ? anchor : anchor.parentElement);
-      var line = el && el.closest('div,p');
-
-      if (line && quote.contains(line) && line !== quote && isVisuallyEmpty(line)) {
-        line.remove();
-      } else if (anchor === quote && sel.anchorOffset > 0) {
-        var previous = quote.childNodes[sel.anchorOffset - 1];
-        if (previous && previous.nodeType === 1 && isVisuallyEmpty(previous)) previous.remove();
-      }
-
+    // 引用・コードブロック：Enterで必ず通常入力へ戻す。
+    function exitBlockOnEnter(block, sel) {
       var normal = document.createElement('div');
       normal.innerHTML = '<br>';
-      quote.parentNode.insertBefore(normal, quote.nextSibling);
+      block.parentNode.insertBefore(normal, block.nextSibling);
 
-      while (quote.lastElementChild && isVisuallyEmpty(quote.lastElementChild)) {
-        quote.lastElementChild.remove();
-      }
-      if (isVisuallyEmpty(quote)) quote.remove();
-
-      var r = document.createRange();
-      r.setStart(normal, 0);
-      r.collapse(true);
+      var range = document.createRange();
+      range.setStart(normal, 0);
+      range.collapse(true);
       sel.removeAllRanges();
-      sel.addRange(r);
+      sel.addRange(range);
       editor.focus();
       saveSelection();
     }
 
     editor.addEventListener('keydown', function (e) {
       if (e.key !== 'Enter' || e.shiftKey) return;
+
       var sel = window.getSelection();
       if (!sel || !sel.rangeCount || !sel.isCollapsed) return;
 
       var node = sel.anchorNode;
       var el = node && (node.nodeType === 1 ? node : node.parentElement);
-      var quote = el && el.closest('blockquote');
-      if (!quote) return;
+      if (!el) return;
 
-      var line = el && el.closest('div,p');
-      var emptyCurrentLine = line && line !== quote && isVisuallyEmpty(line);
+      var quote = el.closest('blockquote');
+      var code = el.closest('pre');
 
-      if (emptyCurrentLine) {
+      if (quote || code) {
         e.preventDefault();
-        exitQuoteAtCaret(quote, sel);
-        return;
-      }
-
-      if (node === quote && sel.anchorOffset > 0) {
-        var prev = quote.childNodes[sel.anchorOffset - 1];
-        if (prev && ((prev.nodeType === 1 && isVisuallyEmpty(prev)) ||
-                     (prev.nodeType === 1 && prev.tagName === 'BR'))) {
-          e.preventDefault();
-          exitQuoteAtCaret(quote, sel);
-        }
+        exitBlockOnEnter(quote || code, sel);
       }
     });
 
