@@ -9,9 +9,13 @@
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="../shared/global-header.css">
 <style>
-  /* 「ご利用の前に」と絞り込みバーの余白調整 + 絞り込みバーのデザイン強化 */
+  /* 「ご利用の前に」と絞り込みバーの余白調整 + 絞り込みバーのデザイン統一 */
   .el-pinned-box{ margin-bottom:28px; }
   .el-list-tools-compact{
+    display:flex;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:10px 12px;
     background:var(--el-paper);
     border:1px solid var(--el-line-soft);
     border-radius:var(--el-radius-m);
@@ -22,14 +26,39 @@
   }
   .el-list-tools-compact .el-filter-select-label,
   .el-list-tools-compact .el-filter-menu > summary{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
     background:var(--el-cream-deep);
     border:1px solid var(--el-line-soft);
     border-radius:999px;
     padding:6px 14px;
+    font-size:13px;
+    font-weight:600;
+    color:var(--el-ink-faint);
+    line-height:1.6;
+    white-space:nowrap;
+    cursor:pointer;
+  }
+  .el-list-tools-compact select{
+    border:none;
+    background:transparent;
+    font:inherit;
+    font-weight:700;
+    color:var(--el-navy);
+    padding:0;
+    margin:0;
+    appearance:none;
+    -webkit-appearance:none;
+    -moz-appearance:none;
+    cursor:pointer;
   }
   .el-list-tools-compact .el-result-count--plain{
+    margin-left:auto;
     color:var(--el-ink-faint);
     font-weight:600;
+    font-size:13px;
+    white-space:nowrap;
   }
 </style>
 </head>
@@ -143,7 +172,7 @@
           <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
         </summary>
         <div class="el-side-sub">
-          <a href="market-list.html">コンテンツ一覧</a>
+          <a href="market-list.html">すべて</a>
           <a href="market-official.html">ワールドシフト提供</a>
           <a href="market-apply.html">出品申請</a>
         </div>
@@ -462,6 +491,20 @@
       window.location.href = summary.dataset.href;
     });
   });
+
+  // サイドバーの「フォーラム」内、現在の絞り込み状態に対応する項目に色をつける。
+  (function () {
+    var params = new URLSearchParams(window.location.search);
+    var sort = params.get('sort');
+    var filter = params.get('filter');
+    var sel = 'a[href="board.html"]';
+    if (filter === 'shift') sel = 'a[href="board.html?filter=shift&sort=hot"]';
+    else if (filter === 'unsolved') sel = 'a[href="board.html?filter=unsolved&sort=hot"]';
+    else if (sort === 'new') sel = 'a[href="board.html?sort=new"]';
+    else if (sort === 'hot') sel = 'a[href="board.html?sort=hot"]';
+    var el = document.querySelector('.el-side-forum .el-side-sub ' + sel);
+    if (el) el.classList.add('is-active');
+  })();
 
   // トピック一覧: URLで絞り込み・並び替えを管理。1ページ30件、デフォルト人気順。
   (function () {
