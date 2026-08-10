@@ -51,7 +51,7 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
             新規投稿をする
           </a>
-          <a href="board.html">すべて</a>
+          <a href="board.html?view=all">すべて</a>
           <a href="board.html?sort=new">新着</a>
           <a href="board.html?sort=hot">人気</a>
           <a href="board.html?filter=shift&sort=hot">SHiFT member only</a>
@@ -443,6 +443,8 @@
   (function () {
     var params = new URLSearchParams(window.location.search);
     var sort = params.get('sort') || 'hot';
+    var view = params.get('view') || '';
+    var explicitHot = params.get('sort') === 'hot' && !view;
     var filter = params.get('filter') || '';
     var categories = (params.get('category') || '').split(',').filter(Boolean);
     var tags = (params.get('tag') || '').split(',').filter(Boolean);
@@ -479,12 +481,12 @@
       if(categories.length) p.set('category',categories.join(',')); else p.delete('category');
       if(tags.length) p.set('tag',tags.join(',')); else p.delete('tag');
       p.delete('page');
+      if(filter || categories.length || tags.length || sort !== 'hot') p.delete('view');
       history.replaceState(null,'','board.html'+(p.toString()?'?'+p.toString():''));
     }
 
     function renderBreadcrumb(){
       var breadcrumb=document.getElementById('boardBreadcrumb'); if(!breadcrumb) return;
-      breadcrumb.innerHTML='<a href="index.html">ホーム</a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg><a href="forum.html">フォーラムTOP</a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg><span>すべての投稿</span>';
       var current='';
       if(sort==='new') current='新着';
       else if(filter==='shift') current='SHiFT member only';
@@ -494,6 +496,10 @@
       else if(categories.length>1) current='カテゴリ絞り込み';
       else if(tags.length===1) current=tagNames[tags[0]] || ('#'+tags[0]);
       else if(tags.length>1) current='ハッシュタグ絞り込み';
+      else if(explicitHot) current='人気';
+
+      breadcrumb.innerHTML='<a href="index.html">ホーム</a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg><a href="forum.html">フォーラムTOP</a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>' +
+        (current ? '<a href="board.html?view=all">すべての投稿</a>' : '<span>すべての投稿</span>');
       if(current){
         var svg=document.createElementNS('http://www.w3.org/2000/svg','svg'); svg.setAttribute('viewBox','0 0 24 24'); svg.setAttribute('fill','none'); svg.setAttribute('stroke','currentColor'); svg.setAttribute('stroke-width','2.5');
         var path=document.createElementNS('http://www.w3.org/2000/svg','path'); path.setAttribute('d','m9 6 6 6-6 6'); svg.appendChild(path); breadcrumb.appendChild(svg);
