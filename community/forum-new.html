@@ -146,9 +146,7 @@
           <div>
             <span class="el-compose-kicker">NEW TOPIC</span>
             <h1>新しいトピックを投稿</h1>
-            <p>質問や経験、気づきを共有しましょう。あとから見つけやすいように、カテゴリとハッシュタグも設定できます。</p>
           </div>
-          <a href="forum.html" class="el-compose-close" aria-label="投稿をやめる">×</a>
         </div>
 
         <form class="el-compose-form" id="newTopicForm">
@@ -315,8 +313,23 @@
                 <li>個人情報・機密情報を含めていない</li>
                 <li>カテゴリとタグが内容に合っている</li>
               </ul>
-              <a href="topic.html">投稿ルールを確認する →</a>
             </div>
+
+            <a href="#" class="el-compose-display-ad" aria-label="FDA Compliance Partner">
+              <span class="el-display-ad-label">AD</span>
+              <div class="el-display-ad-visual">
+                <span class="globe">◎</span>
+                <span class="box box--1"></span>
+                <span class="box box--2"></span>
+                <span class="route"></span>
+              </div>
+              <div class="el-display-ad-copy">
+                <small>WorldShift</small>
+                <strong>FDA Compliance<br>Partner</strong>
+                <span>FDA規制対応を、もっと確実に。</span>
+              </div>
+              <span class="el-display-ad-cta">詳しく見る →</span>
+            </a>
           </aside>
 
           <div class="el-compose-actions">
@@ -341,24 +354,7 @@
         </div>
       </dialog>
     </main>
-    <section class="el-section" style="padding-top:0;padding-bottom:24px;">
-      <div class="wrap">
-
-        <div class="el-ad-banner el-page-bottom-ad">
-          <span class="el-ad-tag">AD</span>
-          <span class="el-ad-icon" style="background:var(--el-teal);color:#fff;font-weight:800;">▣</span>
-          <div class="el-ad-body">
-            <strong>SLCサービス</strong>
-            <span>米Amazon FBA納品をもっとシンプルに</span>
-          </div>
-          <a href="#" class="el-btn el-btn--ghost el-btn--sm">詳しく見る</a>
-        </div>
-
-      </div>
-    </section>
-
-
-    <footer class="el-footer">
+<footer class="el-footer">
       <div class="wrap">
         <div class="el-footer-grid">
           <div>
@@ -455,36 +451,81 @@
       });
     });
 
-    // 引用。空行で Enter をもう一度押すと引用を終了する。
+    // 引用。1回目のEnterで引用内に空行、空行でもう一度Enterすると引用を終了。
     document.getElementById('quoteBtn').addEventListener('mousedown', function(e){ e.preventDefault(); });
     document.getElementById('quoteBtn').addEventListener('click', function () {
       restoreSelection();
-      var node = window.getSelection().anchorNode;
+      var sel = window.getSelection();
+      var node = sel && sel.anchorNode;
       var el = node && (node.nodeType === 1 ? node : node.parentElement);
       var quote = el && el.closest('blockquote');
       document.execCommand('formatBlock', false, quote ? 'div' : 'blockquote');
       saveSelection();
     });
+
+    function isVisuallyEmpty(node) {
+      if (!node) return true;
+      var text = (node.textContent || '').replace(/\u200B/g, '').replace(/\u00A0/g, ' ').trim();
+      if (text) return false;
+      return !node.querySelector || !node.querySelector('img,video,iframe,pre,ul,ol');
+    }
+
+    function exitQuoteAtCaret(quote, sel) {
+      var anchor = sel.anchorNode;
+      var el = anchor && (anchor.nodeType === 1 ? anchor : anchor.parentElement);
+      var line = el && el.closest('div,p');
+
+      if (line && quote.contains(line) && line !== quote && isVisuallyEmpty(line)) {
+        line.remove();
+      } else if (anchor === quote && sel.anchorOffset > 0) {
+        var previous = quote.childNodes[sel.anchorOffset - 1];
+        if (previous && previous.nodeType === 1 && isVisuallyEmpty(previous)) previous.remove();
+      }
+
+      var normal = document.createElement('div');
+      normal.innerHTML = '<br>';
+      quote.parentNode.insertBefore(normal, quote.nextSibling);
+
+      while (quote.lastElementChild && isVisuallyEmpty(quote.lastElementChild)) {
+        quote.lastElementChild.remove();
+      }
+      if (isVisuallyEmpty(quote)) quote.remove();
+
+      var r = document.createRange();
+      r.setStart(normal, 0);
+      r.collapse(true);
+      sel.removeAllRanges();
+      sel.addRange(r);
+      editor.focus();
+      saveSelection();
+    }
+
     editor.addEventListener('keydown', function (e) {
-      if (e.key !== 'Enter') return;
+      if (e.key !== 'Enter' || e.shiftKey) return;
       var sel = window.getSelection();
-      if (!sel.rangeCount) return;
+      if (!sel || !sel.rangeCount || !sel.isCollapsed) return;
+
       var node = sel.anchorNode;
       var el = node && (node.nodeType === 1 ? node : node.parentElement);
       var quote = el && el.closest('blockquote');
       if (!quote) return;
-      var currentBlock = el.closest('div,p,blockquote');
-      var text = (currentBlock && currentBlock !== quote ? currentBlock.textContent : '').replace(/\u200B/g,'').trim();
-      // blockquote 直下の空行または空の最後の行で2回目のEnterを押したら抜ける
-      if (text === '' && (currentBlock !== quote || quote.textContent.trim() === '')) {
+
+      var line = el && el.closest('div,p');
+      var emptyCurrentLine = line && line !== quote && isVisuallyEmpty(line);
+
+      if (emptyCurrentLine) {
         e.preventDefault();
-        var p = document.createElement('div');
-        p.innerHTML = '<br>';
-        quote.parentNode.insertBefore(p, quote.nextSibling);
-        var r = document.createRange();
-        r.setStart(p, 0); r.collapse(true);
-        sel.removeAllRanges(); sel.addRange(r);
-        saveSelection();
+        exitQuoteAtCaret(quote, sel);
+        return;
+      }
+
+      if (node === quote && sel.anchorOffset > 0) {
+        var prev = quote.childNodes[sel.anchorOffset - 1];
+        if (prev && ((prev.nodeType === 1 && isVisuallyEmpty(prev)) ||
+                     (prev.nodeType === 1 && prev.tagName === 'BR'))) {
+          e.preventDefault();
+          exitQuoteAtCaret(quote, sel);
+        }
       }
     });
 
@@ -507,15 +548,25 @@
       saveSelection();
     });
 
-    // 文字サイズ
-    document.getElementById('fontSizeSelect').addEventListener('mousedown', saveSelection);
-    document.getElementById('fontSizeSelect').addEventListener('change', function () {
-      if (!this.value) return;
+    // 文字サイズ。選択範囲へ確実にpx指定を反映する。
+    var fontSizeSelect = document.getElementById('fontSizeSelect');
+    fontSizeSelect.addEventListener('pointerdown', function () { saveSelection(); });
+    fontSizeSelect.addEventListener('change', function () {
+      var px = this.value;
+      if (!px) return;
+
       restoreSelection();
+      document.execCommand('styleWithCSS', false, false);
       document.execCommand('fontSize', false, '7');
-      editor.querySelectorAll('font[size="7"]').forEach(function(font){
-        font.removeAttribute('size'); font.style.fontSize = document.getElementById('fontSizeSelect').value;
+
+      editor.querySelectorAll('font[size="7"]').forEach(function (font) {
+        var span = document.createElement('span');
+        span.style.fontSize = px;
+        while (font.firstChild) span.appendChild(font.firstChild);
+        font.replaceWith(span);
       });
+
+      document.execCommand('styleWithCSS', false, true);
       this.value = '';
       saveSelection();
     });
