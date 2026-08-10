@@ -202,7 +202,7 @@
           </div>
         </div>
 
-        <article class="el-post el-post--op">
+        <article class="el-post el-post--op" id="op">
           <div class="el-avatar">山</div>
           <div>
             <div class="el-post-head">
@@ -340,13 +340,31 @@
 
         </div>
 
-        <div class="el-reply-box">
+        <div class="el-reply-box" id="replyBox">
+          <div class="el-reply-context" id="replyContext">
+            <a href="#" id="replyContextLink"></a>
+            <button type="button" id="replyContextClear" aria-label="返信対象を解除">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg>
+            </button>
+          </div>
           <div style="font-size:13px;font-weight:700;margin-bottom:10px;">返信を投稿</div>
-          <textarea placeholder="コメントを入力してください…"></textarea>
+          <textarea id="replyTextarea" placeholder="コメントを入力してください…"></textarea>
           <div class="el-reply-foot">
             <span style="font-size:11.5px;color:var(--el-ink-faint);">Markdown記法に対応しています</span>
             <button class="el-btn el-btn--primary el-btn--sm">返信を送信</button>
           </div>
+        </div>
+
+        <div class="el-ad-banner" id="adBanner">
+          <span class="el-ad-tag">AD</span>
+          <span class="el-ad-icon" id="adIcon">
+            <svg id="adIconSvg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"></svg>
+          </span>
+          <div class="el-ad-body">
+            <strong id="adTitle"></strong>
+            <span id="adDesc"></span>
+          </div>
+          <a href="#" class="el-btn el-btn--ghost el-btn--sm">詳しく見る</a>
         </div>
 
         </div>
@@ -459,6 +477,55 @@
       window.location.href = summary.dataset.href;
     });
   });
+
+  var ADS = [
+    { name: "SLCサービス", desc: "米AmazonFBA納品代行サービス", color: "var(--el-teal)", icon: '<path d="M21 8V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2M3 8v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8M3 8h18"/>' },
+    { name: "FDA Compliance Partner", desc: "FDA規制対応サービス", color: "var(--el-mustard)", icon: '<path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/>' },
+    { name: "ProFinder", desc: "米Amazonリサーチツール", color: "#3E7EA3", icon: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>' },
+    { name: "Allynair", desc: "海外発送代行サービス", color: "var(--el-sage)", icon: '<path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20Z"/><circle cx="12" cy="12" r="10"/>' },
+    { name: "AmaNavi", desc: "米Amazon進出サポートサービス", color: "var(--el-coral)", icon: '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z"/>' }
+  ];
+  (function () {
+    var el = document.getElementById('adBanner');
+    if (!el) return;
+    var ad = ADS[Math.floor(Math.random() * ADS.length)];
+    document.getElementById('adIcon').style.background = ad.color;
+    document.getElementById('adIconSvg').innerHTML = ad.icon;
+    document.getElementById('adTitle').textContent = ad.name;
+    document.getElementById('adDesc').textContent = ad.desc;
+  })();
+
+  // 返信ボタン：誰に返信しているかを自動でメンション表示
+  (function () {
+    var replyBox = document.getElementById('replyBox');
+    var textarea = document.getElementById('replyTextarea');
+    var ctx = document.getElementById('replyContext');
+    var ctxLink = document.getElementById('replyContextLink');
+    var ctxClear = document.getElementById('replyContextClear');
+    if (!replyBox) return;
+
+    document.querySelectorAll('.el-post').forEach(function (post) {
+      var buttons = post.querySelectorAll('.el-post-actions button');
+      var replyBtn = null;
+      buttons.forEach(function (b) { if (b.textContent.indexOf('返信') !== -1) replyBtn = b; });
+      if (!replyBtn) return;
+      var nameEl = post.querySelector('.name');
+      var name = nameEl ? nameEl.textContent.trim() : '';
+      replyBtn.addEventListener('click', function () {
+        textarea.value = '@' + name + ' ';
+        ctxLink.textContent = name + 'さんの投稿に返信中';
+        ctxLink.href = '#' + post.id;
+        ctx.classList.add('is-visible');
+        replyBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        textarea.focus();
+      });
+    });
+
+    ctxClear.addEventListener('click', function () {
+      ctx.classList.remove('is-visible');
+      textarea.value = '';
+    });
+  })();
 </script>
 </body>
 </html>

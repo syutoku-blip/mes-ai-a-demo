@@ -710,6 +710,18 @@
             </div>
             <a href="board.html" class="el-btn el-btn--mustard">投稿を始める</a>
           </div>
+
+          <div class="el-ad-banner" id="adBanner">
+            <span class="el-ad-tag">AD</span>
+            <span class="el-ad-icon" id="adIcon">
+              <svg id="adIconSvg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"></svg>
+            </span>
+            <div class="el-ad-body">
+              <strong id="adTitle"></strong>
+              <span id="adDesc"></span>
+            </div>
+            <a href="#" class="el-btn el-btn--ghost el-btn--sm">詳しく見る</a>
+          </div>
         </div>
       </section>
     </main>
@@ -824,6 +836,23 @@
     openBtn.addEventListener('click', open);
     modal.querySelectorAll('[data-modal-close]').forEach(function (el) { el.addEventListener('click', close); });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+  })();
+
+  var ADS = [
+    { name: "SLCサービス", desc: "米AmazonFBA納品代行サービス", color: "var(--el-teal)", icon: '<path d="M21 8V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2M3 8v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8M3 8h18"/>' },
+    { name: "FDA Compliance Partner", desc: "FDA規制対応サービス", color: "var(--el-mustard)", icon: '<path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/>' },
+    { name: "ProFinder", desc: "米Amazonリサーチツール", color: "#3E7EA3", icon: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>' },
+    { name: "Allynair", desc: "海外発送代行サービス", color: "var(--el-sage)", icon: '<path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20Z"/><circle cx="12" cy="12" r="10"/>' },
+    { name: "AmaNavi", desc: "米Amazon進出サポートサービス", color: "var(--el-coral)", icon: '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z"/>' }
+  ];
+  (function () {
+    var el = document.getElementById('adBanner');
+    if (!el) return;
+    var ad = ADS[Math.floor(Math.random() * ADS.length)];
+    document.getElementById('adIcon').style.background = ad.color;
+    document.getElementById('adIconSvg').innerHTML = ad.icon;
+    document.getElementById('adTitle').textContent = ad.name;
+    document.getElementById('adDesc').textContent = ad.desc;
   })();
 </script>
 </body>

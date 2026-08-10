@@ -866,9 +866,9 @@ button{ font-family:inherit; cursor:pointer; }
 /* ---------- Thread layout: main column (left) + related-content sidebar (right) ---------- */
 .el-thread-layout{
   display:flex; align-items:flex-start; gap:32px;
-  max-width:1180px; padding:0 32px;
+  padding:0 32px;
 }
-.el-thread-main{ flex:1; min-width:0; max-width:740px; }
+.el-thread-main{ flex:1; min-width:0; max-width:800px; }
 @media (max-width:720px){ .el-thread-layout{ padding:0 18px; } }
 
 .el-post--op{
@@ -888,7 +888,7 @@ button{ font-family:inherit; cursor:pointer; }
 
 /* Related-content sidebar (topic detail page) */
 .el-thread-side{
-  width:320px; flex-shrink:0;
+  width:360px; flex-shrink:0;
   display:none;
   position:sticky; top:calc(var(--gh-h, 34px) + var(--header-h) + 24px);
   display:flex; flex-direction:column; gap:20px;
@@ -1231,6 +1231,48 @@ button{ font-family:inherit; cursor:pointer; }
   display:none;
 }
 .el-header-cart .count.is-visible{ display:block; }
+
+/* ---------- Ad banner (rotates between partner services) ---------- */
+.el-ad-banner{
+  position:relative;
+  display:flex; align-items:center; gap:16px;
+  background:var(--el-paper); border:1px solid var(--el-line-soft);
+  border-radius:var(--el-radius-m); padding:18px 22px;
+  margin-top:28px;
+}
+.el-ad-tag{
+  position:absolute; top:8px; right:10px;
+  font-size:9px; font-weight:700; letter-spacing:.06em;
+  color:var(--el-ink-faint); opacity:.7;
+}
+.el-ad-icon{
+  width:44px; height:44px; border-radius:12px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+}
+.el-ad-body{ flex:1; min-width:0; }
+.el-ad-body strong{ display:block; font-size:13.5px; color:var(--el-navy); }
+.el-ad-body span{ display:block; font-size:12px; color:var(--el-ink-faint); margin-top:2px; }
+.el-ad-banner .el-btn{ flex-shrink:0; }
+@media (max-width:560px){
+  .el-ad-banner{ flex-wrap:wrap; }
+  .el-ad-banner .el-btn{ width:100%; }
+}
+
+/* ---------- Reply context indicator (誰に返信しているか) ---------- */
+.el-reply-context{
+  display:none; align-items:center; gap:8px;
+  background:var(--el-teal-tint); border-radius:var(--el-radius-s);
+  padding:8px 12px; margin-bottom:12px;
+  font-size:12px;
+}
+.el-reply-context.is-visible{ display:flex; }
+.el-reply-context a{ color:var(--el-teal-deep); font-weight:700; flex:1; min-width:0; }
+.el-reply-context a:hover{ text-decoration:underline; }
+.el-reply-context button{
+  background:none; border:none; color:var(--el-ink-faint); cursor:pointer;
+  width:18px; height:18px; flex-shrink:0; display:flex; align-items:center; justify-content:center;
+}
+.el-reply-context button:hover{ color:var(--el-navy); }
 
 .el-header-bell{
   position:relative; flex-shrink:0;
