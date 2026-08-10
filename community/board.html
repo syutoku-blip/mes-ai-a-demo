@@ -51,6 +51,7 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
             新規投稿をする
           </a>
+          <a href="board.html">すべて</a>
           <a href="board.html?sort=new">新着</a>
           <a href="board.html?sort=hot">人気</a>
           <a href="board.html?filter=shift&sort=hot">SHiFT member only</a>
@@ -93,6 +94,7 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
             新規コミュニティを作成する
           </a>
+          <a href="groups-list.html">すべて</a>
           <a href="groups-list.html?sort=new">新着</a>
           <a href="groups-list.html?sort=hot">人気</a>
           <a href="groups-list.html?filter=joined&sort=hot">参加中のコミュニティ</a>
@@ -156,18 +158,17 @@
         <div class="el-section-head" style="margin-bottom:16px;">
           <div>
             <h2 id="boardHeading">すべてのトピック</h2>
-            <div class="sub" id="boardSub">288件のトピック・輸出ビジネスのヒントとリアルな声</div>
+            <div class="sub" id="boardSub">投稿を絞り込んで探せます</div>
           </div>
         </div>
 
         <div class="el-board">
-          <div class="el-list-toolbar" id="boardControls">
-            <div class="el-filter-group">
-              <div class="el-field"><label for="visibilityFilter">公開範囲・状態</label><select id="visibilityFilter"><option value="">すべて</option><option value="shift">SHiFT member only</option><option value="unsolved">未解決</option></select></div>
-              <div class="el-field"><label for="categoryFilter">カテゴリ</label><select id="categoryFilter"><option value="">すべて</option><option value="fda">FDA対応</option><option value="customs">通関</option><option value="tariff">関税</option><option value="amazon">Amazon出品</option><option value="logistics">物流</option><option value="chat">雑談・自己紹介</option></select></div>
-              <div class="el-field"><label for="sortSelect">並び順</label><select id="sortSelect"><option value="hot">人気順</option><option value="new">新しい順</option></select></div>
-            </div>
-            <div class="el-result-count" id="boardResultCount">0件</div>
+          <div class="el-list-tools-compact" id="boardControls">
+            <span class="el-list-tools-label">表示</span>
+            <label>公開範囲・状態<select id="visibilityFilter"><option value="">すべて</option><option value="shift">SHiFT member only</option><option value="unsolved">未解決</option></select></label>
+            <label>カテゴリ<select id="categoryFilter"><option value="">すべて</option><option value="fda">FDA対応</option><option value="customs">通関</option><option value="tariff">関税</option><option value="amazon">Amazon出品</option><option value="logistics">物流</option><option value="chat">雑談・自己紹介</option></select></label>
+            <label>並び順<select id="sortSelect"><option value="hot">人気順</option><option value="new">新しい順</option></select></label>
+            <span class="el-result-count el-result-count--plain" id="boardResultCount">0件</span>
           </div>
 
           <div id="topicList">
@@ -404,7 +405,6 @@
     else if(category) label=categoryNames[category] || 'カテゴリ';
     else if(tag) label='#'+tag;
     if(heading) heading.textContent=label;
-    if(sub) sub.textContent='1ページ30件表示・'+(sort==='new'?'新しい順':'人気順');
     if(result) result.textContent=visible.length+'件';
     var vf=document.getElementById('visibilityFilter'), cf=document.getElementById('categoryFilter'), ss=document.getElementById('sortSelect');
     if(vf) vf.value=filter; if(cf) cf.value=category; if(ss) ss.value=sort;

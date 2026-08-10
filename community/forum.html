@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>フォーラムTOP｜Export Lab</title>
+<title>フォーラム｜Export Lab</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&family=Noto+Sans+JP:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
@@ -51,6 +51,7 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
             新規投稿をする
           </a>
+          <a href="board.html">すべて</a>
           <a href="board.html?sort=new">新着</a>
           <a href="board.html?sort=hot">人気</a>
           <a href="board.html?filter=shift&sort=hot">SHiFT member only</a>
@@ -93,6 +94,7 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
             新規コミュニティを作成する
           </a>
+          <a href="groups-list.html">すべて</a>
           <a href="groups-list.html?sort=new">新着</a>
           <a href="groups-list.html?sort=hot">人気</a>
           <a href="groups-list.html?filter=joined&sort=hot">参加中のコミュニティ</a>
@@ -128,6 +130,7 @@
         <span class="lbl">マイページ</span>
       </a>
     </nav>
+
   </aside>
   </div>
 
@@ -155,8 +158,8 @@
 
         <div class="el-section-head" style="margin-bottom:16px;">
           <div>
-            <h2 id="boardHeading">フォーラムをのぞく</h2>
-            <div class="sub" id="boardSub">新着・人気・カテゴリから、今の自分に近い話題を見つけられます</div>
+            <h2 id="boardHeading">すべてのトピック</h2>
+            <div class="sub" id="boardSub">288件のトピック・輸出ビジネスのヒントとリアルな声</div>
           </div>
         </div>
 
@@ -457,7 +460,7 @@
   // トピック一覧のフィルター／並び替え（URLのクエリパラメータで状態を管理）
   (function () {
     var params = new URLSearchParams(window.location.search);
-    var sort = params.get('sort') || 'hot';
+    var sort = params.get('sort') || '';
     var filter = params.get('filter') || '';
     var category = params.get('category') || '';
     var tag = params.get('tag') || '';

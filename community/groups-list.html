@@ -51,6 +51,7 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
             新規投稿をする
           </a>
+          <a href="board.html">すべて</a>
           <a href="board.html?sort=new">新着</a>
           <a href="board.html?sort=hot">人気</a>
           <a href="board.html?filter=shift&sort=hot">SHiFT member only</a>
@@ -93,6 +94,7 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
             新規コミュニティを作成する
           </a>
+          <a href="groups-list.html">すべて</a>
           <a href="groups-list.html?sort=new">新着</a>
           <a href="groups-list.html?sort=hot">人気</a>
           <a href="groups-list.html?filter=joined&sort=hot">参加中のコミュニティ</a>
@@ -135,13 +137,12 @@
     <main class="el-section" style="padding-top:0;">
       <div class="el-catch"><span class="ic">◎</span><p>すべてのコミュニティから、参加したい場所を探せます。</p></div>
       <div class="wrap">
-        <div class="el-section-head"><div><h2 id="groupsHeading">コミュニティ一覧</h2><div class="sub" id="groupsSub">1ページ30件表示・人気順</div></div></div>
-        <div class="el-list-toolbar">
-          <div class="el-filter-group">
-            <div class="el-field"><label for="groupFilter">絞り込み</label><select id="groupFilter"><option value="">すべて</option><option value="joined">参加中</option><option value="pending">申請中</option></select></div>
-            <div class="el-field"><label for="groupSort">並び順</label><select id="groupSort"><option value="hot">人気順</option><option value="new">新しい順</option></select></div>
-          </div>
-          <div class="el-result-count" id="groupCount">0件</div>
+        <div class="el-section-head"><div><h2 id="groupsHeading">コミュニティ一覧</h2><div class="sub" id="groupsSub">参加したいコミュニティを絞り込んで探せます</div></div></div>
+        <div class="el-list-tools-compact">
+          <span class="el-list-tools-label">表示</span>
+          <label>絞り込み<select id="groupFilter"><option value="">すべて</option><option value="joined">参加中</option><option value="pending">申請中</option></select></label>
+          <label>並び順<select id="groupSort"><option value="hot">人気順</option><option value="new">新しい順</option></select></label>
+          <span class="el-result-count el-result-count--plain" id="groupCount">0件</span>
         </div>
         <div class="el-all-groups" id="groupList"><div class="el-group-card" data-state="" data-members="64" data-recency="100">
 <div class="el-group-top">
@@ -324,7 +325,6 @@
     document.getElementById('groupFilter').value=filter; document.getElementById('groupSort').value=sort;
     document.getElementById('groupCount').textContent=visible.length+'件';
     document.getElementById('groupsHeading').textContent=filter==='joined'?'参加中のコミュニティ':filter==='pending'?'申請中のコミュニティ':'コミュニティ一覧';
-    document.getElementById('groupsSub').textContent='1ページ30件表示・'+(sort==='new'?'新しい順':'人気順');
     function go(){var q=new URLSearchParams();var f=document.getElementById('groupFilter').value,s=document.getElementById('groupSort').value;if(f)q.set('filter',f);q.set('sort',s);window.location.href='groups-list.html?'+q.toString();}
     document.getElementById('groupFilter').addEventListener('change',go); document.getElementById('groupSort').addEventListener('change',go);
   })();

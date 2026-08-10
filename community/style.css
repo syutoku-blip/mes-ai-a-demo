@@ -1373,3 +1373,56 @@ button{ font-family:inherit; cursor:pointer; }
   .el-list-toolbar{ align-items:stretch; }
   .el-filter-group,.el-field{ width:100%; }
 }
+
+
+/* ---------- Compact list filters (forum / community) ---------- */
+.el-list-tools-compact{
+  display:flex;
+  align-items:flex-end;
+  flex-wrap:wrap;
+  gap:8px 12px;
+  padding:2px 0 12px;
+  margin-bottom:4px;
+  border-bottom:1px solid var(--el-line-soft);
+}
+.el-list-tools-label{
+  align-self:center;
+  color:var(--el-ink-faint);
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:.06em;
+}
+.el-list-tools-compact label{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  color:var(--el-navy-soft);
+  font-size:12px;
+  font-weight:600;
+}
+.el-list-tools-compact select{
+  min-width:118px;
+  height:34px;
+  padding:0 30px 0 10px;
+  border:1px solid var(--el-line);
+  border-radius:8px;
+  background:rgba(255,255,255,.62);
+  color:var(--el-navy);
+  font:inherit;
+  font-size:13px;
+}
+.el-result-count--plain{
+  margin-left:auto;
+  align-self:center;
+  padding:0;
+  border:0;
+  background:none;
+  color:var(--el-ink-faint);
+  font-size:12px;
+}
+@media (max-width:720px){
+  .el-list-tools-compact{align-items:stretch;}
+  .el-list-tools-compact label{width:100%;justify-content:space-between;}
+  .el-list-tools-compact select{min-width:56%;}
+  .el-result-count--plain{margin-left:0;}
+}
