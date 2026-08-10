@@ -172,6 +172,19 @@
                 <div class="el-editor-toolbar" role="toolbar" aria-label="本文の書式">
                   <button type="button" data-command="bold" title="太字"><strong>B</strong></button>
                   <button type="button" data-command="italic" title="斜体"><em>I</em></button>
+                  <button type="button" data-command="underline" title="下線"><span style="text-decoration:underline;font-weight:700;">U</span></button>
+                  <button type="button" data-command="strikeThrough" title="取り消し線"><span style="text-decoration:line-through;">S</span></button>
+                  <span class="sep"></span>
+                  <select id="fontSizeSelect" class="el-editor-select" title="文字サイズ" aria-label="文字サイズ">
+                    <option value="">文字サイズ</option>
+                    <option value="12px">小</option>
+                    <option value="14px">標準</option>
+                    <option value="18px">大</option>
+                    <option value="24px">特大</option>
+                    <option value="32px">見出し</option>
+                  </select>
+                  <label class="el-editor-color" title="文字色">A<input type="color" id="textColorPicker" value="#16233f" aria-label="文字色"></label>
+                  <label class="el-editor-color el-editor-color--bg" title="背景色"><span>■</span><input type="color" id="bgColorPicker" value="#fff3d8" aria-label="背景色"></label>
                   <span class="sep"></span>
                   <button type="button" data-command="insertUnorderedList" title="箇条書き">
                     <svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
@@ -179,16 +192,31 @@
                   <button type="button" data-command="insertOrderedList" title="番号付きリスト">
                     <svg viewBox="0 0 24 24"><path d="M10 6h11M10 12h11M10 18h11M4 6h1V3M4 3h2M4 12h2l-2 3h2M4 18h2v3H4"/></svg>
                   </button>
-                  <button type="button" data-command="formatBlock" data-value="blockquote" title="引用">
+                  <button type="button" id="quoteBtn" title="引用">
                     <svg viewBox="0 0 24 24"><path d="M10 11H6a4 4 0 0 1 4-4V5a6 6 0 0 0-6 6v6h6v-6ZM20 11h-4a4 4 0 0 1 4-4V5a6 6 0 0 0-6 6v6h6v-6Z"/></svg>
+                  </button>
+                  <button type="button" id="codeBtn" title="ソースコード">
+                    <svg viewBox="0 0 24 24"><path d="m8 9-4 3 4 3M16 9l4 3-4 3M14 5l-4 14"/></svg>
+                  </button>
+                  <button type="button" data-command="insertHorizontalRule" title="区切り線">
+                    <svg viewBox="0 0 24 24"><path d="M4 12h16"/></svg>
                   </button>
                   <span class="sep"></span>
                   <button type="button" id="addLinkBtn" title="リンク">
                     <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
                   </button>
+                  <button type="button" id="imageBtn" title="画像を挿入">
+                    <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9" r="1.5"/><path d="m21 15-5-5L5 20"/></svg>
+                  </button>
+                  <input type="file" id="inlineImageInput" accept="image/*" hidden>
                   <button type="button" id="clearFormatBtn" title="書式を解除">
                     <svg viewBox="0 0 24 24"><path d="m3 3 18 18M9 5h9M13 5l-3 10M6 19h8"/></svg>
                   </button>
+                </div>
+                <div class="el-link-popover" id="linkPopover" hidden>
+                  <input type="url" id="linkUrlInput" placeholder="https://example.com" aria-label="リンク先URL">
+                  <button type="button" id="applyLinkBtn">リンクを設定</button>
+                  <button type="button" id="removeLinkBtn">解除</button>
                 </div>
                 <div id="topicBody" class="el-editor-area" contenteditable="true"
                      data-placeholder="相談したいこと、試したこと、困っている状況などを入力してください…"></div>
@@ -397,25 +425,178 @@
       titleCount.textContent = title.value.length;
     });
 
+    var savedRange = null;
+    function saveSelection() {
+      var sel = window.getSelection();
+      if (sel && sel.rangeCount && editor.contains(sel.anchorNode)) savedRange = sel.getRangeAt(0).cloneRange();
+    }
+    function restoreSelection() {
+      if (!savedRange) { editor.focus(); return; }
+      var sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(savedRange);
+      editor.focus();
+    }
+    function runCommand(cmd, value) {
+      restoreSelection();
+      document.execCommand('styleWithCSS', false, true);
+      document.execCommand(cmd, false, value == null ? null : value);
+      saveSelection();
+    }
+
+    editor.addEventListener('keyup', saveSelection);
+    editor.addEventListener('mouseup', saveSelection);
+    editor.addEventListener('focus', saveSelection);
+
     document.querySelectorAll('.el-editor-toolbar [data-command]').forEach(function (btn) {
+      btn.addEventListener('mousedown', function (e) { e.preventDefault(); });
       btn.addEventListener('click', function () {
-        editor.focus();
-        var cmd = btn.dataset.command;
-        var value = btn.dataset.value || null;
-        document.execCommand(cmd, false, value);
+        runCommand(btn.dataset.command, btn.dataset.value || null);
       });
     });
 
-    document.getElementById('addLinkBtn').addEventListener('click', function () {
-      var url = prompt('リンク先URLを入力してください');
-      if (!url) return;
-      editor.focus();
-      document.execCommand('createLink', false, url);
+    // 引用。空行で Enter をもう一度押すと引用を終了する。
+    document.getElementById('quoteBtn').addEventListener('mousedown', function(e){ e.preventDefault(); });
+    document.getElementById('quoteBtn').addEventListener('click', function () {
+      restoreSelection();
+      var node = window.getSelection().anchorNode;
+      var el = node && (node.nodeType === 1 ? node : node.parentElement);
+      var quote = el && el.closest('blockquote');
+      document.execCommand('formatBlock', false, quote ? 'div' : 'blockquote');
+      saveSelection();
+    });
+    editor.addEventListener('keydown', function (e) {
+      if (e.key !== 'Enter') return;
+      var sel = window.getSelection();
+      if (!sel.rangeCount) return;
+      var node = sel.anchorNode;
+      var el = node && (node.nodeType === 1 ? node : node.parentElement);
+      var quote = el && el.closest('blockquote');
+      if (!quote) return;
+      var currentBlock = el.closest('div,p,blockquote');
+      var text = (currentBlock && currentBlock !== quote ? currentBlock.textContent : '').replace(/\u200B/g,'').trim();
+      // blockquote 直下の空行または空の最後の行で2回目のEnterを押したら抜ける
+      if (text === '' && (currentBlock !== quote || quote.textContent.trim() === '')) {
+        e.preventDefault();
+        var p = document.createElement('div');
+        p.innerHTML = '<br>';
+        quote.parentNode.insertBefore(p, quote.nextSibling);
+        var r = document.createRange();
+        r.setStart(p, 0); r.collapse(true);
+        sel.removeAllRanges(); sel.addRange(r);
+        saveSelection();
+      }
     });
 
+    // ソースコードブロック
+    document.getElementById('codeBtn').addEventListener('mousedown', function(e){ e.preventDefault(); });
+    document.getElementById('codeBtn').addEventListener('click', function () {
+      restoreSelection();
+      var sel = window.getSelection();
+      var text = sel && sel.rangeCount ? sel.toString() : '';
+      var pre = document.createElement('pre');
+      var code = document.createElement('code');
+      code.textContent = text || 'code';
+      pre.appendChild(code);
+      if (sel && sel.rangeCount) {
+        var r = sel.getRangeAt(0);
+        r.deleteContents(); r.insertNode(pre);
+        r.setStartAfter(pre); r.collapse(true);
+        sel.removeAllRanges(); sel.addRange(r);
+      }
+      saveSelection();
+    });
+
+    // 文字サイズ
+    document.getElementById('fontSizeSelect').addEventListener('mousedown', saveSelection);
+    document.getElementById('fontSizeSelect').addEventListener('change', function () {
+      if (!this.value) return;
+      restoreSelection();
+      document.execCommand('fontSize', false, '7');
+      editor.querySelectorAll('font[size="7"]').forEach(function(font){
+        font.removeAttribute('size'); font.style.fontSize = document.getElementById('fontSizeSelect').value;
+      });
+      this.value = '';
+      saveSelection();
+    });
+
+    // 文字色・背景色
+    document.getElementById('textColorPicker').addEventListener('input', function () { runCommand('foreColor', this.value); });
+    document.getElementById('bgColorPicker').addEventListener('input', function () {
+      restoreSelection();
+      var ok = document.execCommand('hiliteColor', false, this.value);
+      if (!ok) document.execCommand('backColor', false, this.value);
+      saveSelection();
+    });
+
+    // 選択文字の直下に出すリンク入力枠
+    var linkPopover = document.getElementById('linkPopover');
+    var linkUrlInput = document.getElementById('linkUrlInput');
+    document.getElementById('addLinkBtn').addEventListener('mousedown', function(e){ e.preventDefault(); });
+    document.getElementById('addLinkBtn').addEventListener('click', function () {
+      saveSelection();
+      if (!savedRange || savedRange.collapsed) {
+        linkPopover.hidden = false;
+        linkPopover.classList.add('is-centered');
+      } else {
+        var rect = savedRange.getBoundingClientRect();
+        var editorRect = document.querySelector('.el-rich-editor').getBoundingClientRect();
+        linkPopover.hidden = false;
+        linkPopover.classList.remove('is-centered');
+        linkPopover.style.left = Math.max(10, Math.min(rect.left - editorRect.left, editorRect.width - 340)) + 'px';
+        linkPopover.style.top = (rect.bottom - editorRect.top + 8) + 'px';
+      }
+      linkUrlInput.value = '';
+      linkUrlInput.focus();
+    });
+    document.getElementById('applyLinkBtn').addEventListener('click', function () {
+      var url = linkUrlInput.value.trim();
+      if (!url) return;
+      if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+      runCommand('createLink', url);
+      linkPopover.hidden = true;
+    });
+    document.getElementById('removeLinkBtn').addEventListener('click', function () {
+      runCommand('unlink'); linkPopover.hidden = true;
+    });
+    document.addEventListener('mousedown', function(e){
+      if (!linkPopover.hidden && !e.target.closest('#linkPopover') && !e.target.closest('#addLinkBtn')) linkPopover.hidden = true;
+    });
+
+    // 本文内への画像挿入
+    var inlineImageInput = document.getElementById('inlineImageInput');
+    document.getElementById('imageBtn').addEventListener('mousedown', function(e){ e.preventDefault(); saveSelection(); });
+    document.getElementById('imageBtn').addEventListener('click', function(){ inlineImageInput.click(); });
+    inlineImageInput.addEventListener('change', function () {
+      var file = this.files && this.files[0];
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function () {
+        restoreSelection();
+        var img = document.createElement('img');
+        img.src = reader.result; img.alt = file.name; img.className = 'el-editor-image';
+        var sel = window.getSelection();
+        var r = sel.rangeCount ? sel.getRangeAt(0) : null;
+        if (r) { r.deleteContents(); r.insertNode(img); r.setStartAfter(img); r.collapse(true); sel.removeAllRanges(); sel.addRange(r); }
+        saveSelection();
+      };
+      reader.readAsDataURL(file); this.value = '';
+    });
+
+    // 書式を解除。文字装飾だけでなくリンク・引用・見出し等も通常段落へ戻す。
+    document.getElementById('clearFormatBtn').addEventListener('mousedown', function(e){ e.preventDefault(); });
     document.getElementById('clearFormatBtn').addEventListener('click', function () {
-      editor.focus();
+      restoreSelection();
       document.execCommand('removeFormat', false, null);
+      document.execCommand('unlink', false, null);
+      var sel = window.getSelection();
+      if (sel.rangeCount) {
+        var node = sel.anchorNode;
+        var el = node && (node.nodeType === 1 ? node : node.parentElement);
+        var block = el && el.closest('blockquote,pre,h1,h2,h3,h4,h5,h6');
+        if (block && editor.contains(block)) document.execCommand('formatBlock', false, 'div');
+      }
+      saveSelection();
     });
 
     var tagPicker = document.getElementById('tagPicker');
