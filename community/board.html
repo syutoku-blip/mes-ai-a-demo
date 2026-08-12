@@ -786,6 +786,12 @@
     if (bell && role === 'guest') bell.style.display = 'none';
     var headerAvatar = document.getElementById('headerAvatar');
     if (headerAvatar && role === 'guest') headerAvatar.style.display = 'none';
+    else if (headerAvatar) {
+      try {
+        var hp = JSON.parse(localStorage.getItem('el-user-profile') || '{}');
+        if (hp.photoUrl) headerAvatar.innerHTML = '<img src="' + hp.photoUrl + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
+      } catch (e) {}
+    }
 
     // ヘッダーの認証リンク：ゲストは「新規登録」「ログイン」、それ以外は「ログアウト」のみ
     var authLinksWrap = document.getElementById('headerAuthLinks');
