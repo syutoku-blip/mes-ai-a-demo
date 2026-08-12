@@ -204,6 +204,66 @@
       max-height:90vh !important;
     }
   }
+  /* 絞り込みバー：他ページと同じデザインに統一 */
+  #marketControls.el-list-tools-compact{
+    display:flex !important;
+    align-items:center !important;
+    flex-wrap:wrap !important;
+    gap:8px 10px !important;
+    background:var(--el-paper) !important;
+    border:1px solid var(--el-line-soft) !important;
+    border-radius:var(--el-radius-m) !important;
+    padding:14px 18px !important;
+    box-shadow:0 2px 10px rgba(22,35,63,.05) !important;
+    margin-bottom:20px !important;
+  }
+  #marketControls .el-filter-select-label,
+  #marketControls .el-filter-menu > summary{
+    display:inline-flex !important;
+    align-items:center !important;
+    gap:5px !important;
+    background:var(--el-cream-deep) !important;
+    border:1px solid var(--el-line-soft) !important;
+    border-radius:999px !important;
+    padding:0 12px !important;
+    height:34px !important;
+    box-sizing:border-box !important;
+    font-size:12.5px !important;
+    font-weight:600 !important;
+    color:var(--el-ink-faint) !important;
+    line-height:1 !important;
+    white-space:nowrap !important;
+    cursor:pointer !important;
+    list-style:none !important;
+    max-width:max-content !important;
+  }
+  #marketControls .el-filter-menu > summary{ list-style:none; }
+  .el-filter-menu > summary::marker{ display:none; content:''; }
+  .el-filter-menu > summary::-webkit-details-marker{ display:none; }
+  #marketControls .el-chip-chevron{ width:12px !important; height:12px !important; flex:none !important; color:var(--el-ink-faint) !important; }
+  #marketControls select{
+    border:none !important;
+    background:transparent !important;
+    font:inherit !important;
+    font-weight:700 !important;
+    color:var(--el-navy) !important;
+    padding:0 !important;
+    margin:0 !important;
+    appearance:none !important;
+    -webkit-appearance:none !important;
+    -moz-appearance:none !important;
+    cursor:pointer !important;
+    max-width:120px !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+  }
+  #marketControls .el-result-count--plain{
+    margin-left:auto !important;
+    color:var(--el-ink-faint) !important;
+    font-weight:600 !important;
+    font-size:13px !important;
+    white-space:nowrap !important;
+  }
 </style>
 </head>
 <body data-site="community" data-root="..">
@@ -351,35 +411,45 @@
           </div>
         </div>
 
-        <div class="el-market-toolbar-list">
-          <div class="el-market-search">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-            <input type="text" placeholder="コンテンツを検索">
-          </div>
-          <div class="el-market-toolbar-row">
-            <div class="el-market-filters">
-              <button class="is-active">すべて</button>
-              <button>FDA</button>
-              <button>Amazon</button>
-              <button>通関・物流</button>
-              <button>テンプレート</button>
-            </div>
-            <div class="el-market-controls">
-              <div class="el-market-select">
-                並び替え：
-                <select>
-                  <option>人気順</option>
-                  <option>新着順</option>
-                  <option>価格が安い順</option>
-                  <option>価格が高い順</option>
-                </select>
-              </div>
-            </div>
-          </div>
+        <div class="el-market-search" style="margin-bottom:14px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input type="text" id="marketSearchInput" placeholder="コンテンツを検索">
         </div>
 
-        <div class="el-market-grid">
-          <div class="el-market-card" data-product="official-amazon-allsupport">
+        <div class="el-list-tools-compact" id="marketControls">
+          <details class="el-filter-menu" id="marketCategoryMenu">
+            <summary>カテゴリ <span class="el-filter-summary-value" id="marketCategorySummary">すべて</span><svg class="el-chip-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg></summary>
+            <div class="el-filter-popover">
+              <label><input type="checkbox" name="marketCategory" value="fda"> FDA</label>
+              <label><input type="checkbox" name="marketCategory" value="amazon"> Amazon</label>
+              <label><input type="checkbox" name="marketCategory" value="logistics"> 通関・物流</label>
+              <label><input type="checkbox" name="marketCategory" value="template"> テンプレート</label>
+              <button type="button" class="el-filter-clear" data-clear="marketCategory">すべて解除</button>
+            </div>
+          </details>
+
+          <label class="el-filter-select-label">並び順
+            <select id="marketSort">
+              <option value="hot">人気順</option>
+              <option value="new">新着順</option>
+              <option value="price-asc">価格が安い順</option>
+              <option value="price-desc">価格が高い順</option>
+            </select>
+            <svg class="el-chip-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+          </label>
+
+          <label class="el-filter-select-label">出品者
+            <select id="marketSeller">
+              <option value="">すべて</option>
+              <option value="WorldShift公式">WorldShift公式</option>
+            </select>
+            <svg class="el-chip-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+          </label>
+          <span class="el-result-count el-result-count--plain" id="marketResultCount">8件</span>
+        </div>
+
+        <div class="el-market-grid" id="marketGrid">
+          <div class="el-market-card" data-product="official-amazon-allsupport" data-category="amazon" data-seller="WorldShift公式" data-price="12000" data-recency="90">
             <div class="el-market-thumb" style="background:var(--el-teal);color:#fff;">
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z"/></svg>
             </div>
@@ -391,7 +461,7 @@
               <div class="el-market-foot"><strong>¥12,000</strong><div class="el-market-btns"><button type="button" class="el-cart-btn" aria-label="カートに追加" data-cart><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button><button type="button" class="el-btn el-btn--primary el-btn--sm" data-buy>今すぐ購入</button></div></div>
             </div>
           </div>
-          <div class="el-market-card" data-product="official-fda-guide">
+          <div class="el-market-card" data-product="official-fda-guide" data-category="fda" data-seller="WorldShift公式" data-price="3000" data-recency="88">
             <div class="el-market-thumb" style="background:var(--el-teal-tint);color:var(--el-teal-deep);">
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
             </div>
@@ -403,7 +473,7 @@
               <div class="el-market-foot"><strong>¥3,000</strong><div class="el-market-btns"><button type="button" class="el-cart-btn" aria-label="カートに追加" data-cart><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button><button type="button" class="el-btn el-btn--primary el-btn--sm" data-buy>今すぐ購入</button></div></div>
             </div>
           </div>
-          <div class="el-market-card" data-product="official-slc-seminar">
+          <div class="el-market-card" data-product="official-slc-seminar" data-category="amazon" data-seller="WorldShift公式" data-price="2000" data-recency="85">
             <div class="el-market-thumb" style="background:var(--el-mustard-tint);color:var(--el-mustard-deep);">
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="m9 10 3 2-3 2z"/></svg>
             </div>
@@ -415,7 +485,7 @@
               <div class="el-market-foot"><strong>¥2,000</strong><div class="el-market-btns"><button type="button" class="el-cart-btn" aria-label="カートに追加" data-cart><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button><button type="button" class="el-btn el-btn--primary el-btn--sm" data-buy>今すぐ購入</button></div></div>
             </div>
           </div>
-          <div class="el-market-card" data-product="official-profinder">
+          <div class="el-market-card" data-product="official-profinder" data-category="amazon" data-seller="WorldShift公式" data-price="8000" data-recency="80">
             <div class="el-market-thumb" style="background:#E8F1F6;color:#3E7EA3;">
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
             </div>
@@ -427,7 +497,7 @@
               <div class="el-market-foot"><strong>¥8,000</strong><div class="el-market-btns"><button type="button" class="el-cart-btn" aria-label="カートに追加" data-cart><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button><button type="button" class="el-btn el-btn--primary el-btn--sm" data-buy>今すぐ購入</button></div></div>
             </div>
           </div>
-          <div class="el-market-card" data-product="official-startup-template">
+          <div class="el-market-card" data-product="official-startup-template" data-category="template" data-seller="WorldShift公式" data-price="5000" data-recency="75">
             <div class="el-market-thumb" style="background:var(--el-sage);color:#fff;">
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.6.6 1 1.4 1 2.5h6c0-1.1.4-1.9 1-2.5A6 6 0 0 0 12 3Z"/></svg>
             </div>
@@ -439,7 +509,7 @@
               <div class="el-market-foot"><strong>¥5,000</strong><div class="el-market-btns"><button type="button" class="el-cart-btn" aria-label="カートに追加" data-cart><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button><button type="button" class="el-btn el-btn--primary el-btn--sm" data-buy>今すぐ購入</button></div></div>
             </div>
           </div>
-          <div class="el-market-card" data-product="official-customs-checklist">
+          <div class="el-market-card" data-product="official-customs-checklist" data-category="logistics" data-seller="WorldShift公式" data-price="1500" data-recency="70">
             <div class="el-market-thumb" style="background:var(--el-sky);color:#fff;">
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M3 9h6"/></svg>
             </div>
@@ -451,7 +521,7 @@
               <div class="el-market-foot"><strong>¥1,500</strong><div class="el-market-btns"><button type="button" class="el-cart-btn" aria-label="カートに追加" data-cart><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button><button type="button" class="el-btn el-btn--primary el-btn--sm" data-buy>今すぐ購入</button></div></div>
             </div>
           </div>
-          <div class="el-market-card" data-product="official-fba-trouble">
+          <div class="el-market-card" data-product="official-fba-trouble" data-category="amazon" data-seller="WorldShift公式" data-price="4000" data-recency="65">
             <div class="el-market-thumb" style="background:var(--el-coral);color:#fff;">
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 8V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2M3 8v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8M3 8h18"/></svg>
             </div>
@@ -463,7 +533,7 @@
               <div class="el-market-foot"><strong>¥4,000</strong><div class="el-market-btns"><button type="button" class="el-cart-btn" aria-label="カートに追加" data-cart><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button><button type="button" class="el-btn el-btn--primary el-btn--sm" data-buy>今すぐ購入</button></div></div>
             </div>
           </div>
-          <div class="el-market-card" data-product="official-amazon-turnover">
+          <div class="el-market-card" data-product="official-amazon-turnover" data-category="amazon" data-seller="WorldShift公式" data-price="6000" data-recency="60">
             <div class="el-market-thumb" style="background:var(--el-mustard);color:#fff;">
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M23 6l-9.5 9.5-5-5L1 18"/><path d="M17 6h6v6"/></svg>
             </div>
@@ -547,6 +617,74 @@
   document.querySelectorAll('.el-side-label-link').forEach(function (el) {
     el.addEventListener('click', function (e) { e.stopPropagation(); });
   });
+
+  // マーケット一覧：カテゴリ／並び順／出品者／検索での絞り込み
+  (function () {
+    var grid = document.getElementById('marketGrid');
+    if (!grid) return;
+    var cards = Array.prototype.slice.call(grid.querySelectorAll('.el-market-card[data-product]'));
+    var categoryNames = { fda: 'FDA', amazon: 'Amazon', logistics: '通関・物流', template: 'テンプレート' };
+
+    var sortSelect = document.getElementById('marketSort');
+    var sellerSelect = document.getElementById('marketSeller');
+    var searchInput = document.getElementById('marketSearchInput');
+    var resultCount = document.getElementById('marketResultCount');
+    var categorySummary = document.getElementById('marketCategorySummary');
+
+    function getCategories() {
+      return Array.prototype.slice.call(document.querySelectorAll('input[name="marketCategory"]:checked')).map(function (x) { return x.value; });
+    }
+
+    function render() {
+      var categories = getCategories();
+      var seller = sellerSelect.value;
+      var sort = sortSelect.value;
+      var q = (searchInput.value || '').trim().toLowerCase();
+
+      var visible = cards.filter(function (card) {
+        if (categories.length && categories.indexOf(card.dataset.category) === -1) return false;
+        if (seller && card.dataset.seller !== seller) return false;
+        if (q) {
+          var title = (card.querySelector('h3') && card.querySelector('h3').textContent || '').toLowerCase();
+          if (title.indexOf(q) === -1) return false;
+        }
+        return true;
+      });
+
+      visible.sort(function (a, b) {
+        if (sort === 'price-asc') return (+a.dataset.price) - (+b.dataset.price);
+        if (sort === 'price-desc') return (+b.dataset.price) - (+a.dataset.price);
+        if (sort === 'new') return (+b.dataset.recency) - (+a.dataset.recency);
+        return (+b.dataset.recency) - (+a.dataset.recency);
+      });
+
+      cards.forEach(function (c) { c.style.display = 'none'; });
+      visible.forEach(function (c) { grid.appendChild(c); c.style.display = ''; });
+
+      if (resultCount) resultCount.textContent = visible.length + '件';
+      if (categorySummary) {
+        if (!categories.length) categorySummary.textContent = 'すべて';
+        else if (categories.length === 1) categorySummary.textContent = categoryNames[categories[0]] || categories[0];
+        else categorySummary.textContent = categories.length + '件選択';
+      }
+    }
+
+    document.querySelectorAll('input[name="marketCategory"]').forEach(function (cb) {
+      cb.addEventListener('change', render);
+    });
+    document.querySelectorAll('.el-filter-clear[data-clear="marketCategory"]').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelectorAll('input[name="marketCategory"]').forEach(function (cb) { cb.checked = false; });
+        render();
+      });
+    });
+    sortSelect.addEventListener('change', render);
+    sellerSelect.addEventListener('change', render);
+    searchInput.addEventListener('input', render);
+
+    render();
+  })();
 </script>
 
 
