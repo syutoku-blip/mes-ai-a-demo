@@ -9,46 +9,65 @@
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="../shared/global-header.css">
 <style>
-  /* 広告バナー：スポンサー枠だとひと目でわかるよう、破線の縁取りとADタグを強調 */
+  /* 広告バナー：スポンサー枠だとひと目でわかるよう、破線の縁取りとADタグ・アイコンで装飾 */
   .el-ad-banner{
-    position:relative;
-    background:var(--el-cream-deep, #FBF3E3);
-    border:1.5px dashed var(--el-mustard-deep, #B9812A);
-    border-radius:var(--el-radius-m, 14px);
-    padding:18px 20px 16px;
+    position:relative !important;
+    display:flex !important;
+    align-items:center !important;
+    gap:16px !important;
+    background:var(--el-cream-deep, #FBF3E3) !important;
+    border:1.5px dashed var(--el-mustard-deep, #B9812A) !important;
+    border-radius:var(--el-radius-m, 14px) !important;
+    padding:22px 20px 18px !important;
+    overflow:visible !important;
+  }
+  .el-ad-banner::before{
+    content:"AD" !important;
+    position:absolute !important;
+    top:-10px !important;
+    left:18px !important;
+    display:inline-block !important;
+    background:var(--el-mustard-deep, #B9812A) !important;
+    color:#fff !important;
+    font-size:10px !important;
+    font-weight:700 !important;
+    letter-spacing:.08em !important;
+    padding:3px 10px !important;
+    border-radius:999px !important;
+    line-height:1.6 !important;
   }
   .el-ad-banner .el-ad-tag{
-    position:absolute;
-    top:-10px;
-    left:16px;
-    background:var(--el-mustard-deep, #B9812A);
-    color:#fff;
-    font-size:10px;
-    font-weight:700;
-    letter-spacing:.06em;
-    padding:2px 9px;
-    border-radius:999px;
-    line-height:1.7;
+    display:none !important;
+  }
+  .el-ad-banner .el-ad-icon{
+    width:48px !important;
+    height:48px !important;
+    min-width:48px !important;
+    border-radius:14px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    flex:none !important;
+    font-size:19px !important;
+    box-shadow:0 3px 8px rgba(0,0,0,.15) !important;
+  }
+  .el-ad-banner .el-ad-body{
+    flex:1 !important;
+    min-width:0 !important;
   }
   .el-ad-banner .el-ad-body strong{
-    color:var(--el-navy, #16233F);
+    display:block !important;
+    color:var(--el-navy, #16233F) !important;
+    font-size:14px !important;
   }
-  .el-fav-btn{
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    width:32px;
-    height:32px;
-    border-radius:999px;
-    border:1px solid var(--el-line-soft);
-    background:var(--el-paper);
-    color:var(--el-ink-faint);
-    cursor:pointer;
-    flex:none;
+  .el-ad-banner .el-ad-body span{
+    display:block !important;
+    color:var(--el-ink-faint, #8A8478) !important;
+    font-size:12.5px !important;
+    margin-top:2px !important;
   }
-  .el-fav-btn.is-active{
-    color:var(--el-coral, #C85A3E);
-    border-color:var(--el-coral, #C85A3E);
+  .el-ad-banner > a.el-btn{
+    flex:none !important;
   }
   /* ユーザーモード切り替えウィジェット */
   .el-role-switcher{
@@ -130,6 +149,37 @@
     padding:4px;
   }
   [data-guest-hide]{ display:none !important; }
+  .el-fav-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:32px;
+    height:32px;
+    border-radius:999px;
+    border:1px solid var(--el-line-soft);
+    background:var(--el-paper);
+    color:var(--el-ink-faint);
+    cursor:pointer;
+    flex:none;
+  }
+  .el-fav-btn.is-active{
+    color:var(--el-coral, #C85A3E);
+    border-color:var(--el-coral, #C85A3E);
+  }
+  /* 商品モーダル：画面に収まるサイズにし、はみ出す分はスクロールできるようにする */
+  .el-product-modal .el-modal-panel{
+    max-width:560px !important;
+    width:92% !important;
+    max-height:88vh !important;
+    overflow-y:auto !important;
+    box-sizing:border-box !important;
+  }
+  @media (max-width:600px){
+    .el-product-modal .el-modal-panel{
+      width:94% !important;
+      max-height:90vh !important;
+    }
+  }
 </style>
 </head>
 <body data-site="community" data-root="..">
@@ -476,6 +526,9 @@
         <div class="el-pm-features" id="pmFeatures"></div>
       </div>
       <div class="el-product-modal-foot">
+        <button type="button" class="el-fav-btn" id="pmFavBtn" data-fav aria-label="お気に入り">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z"/></svg>
+        </button>
         <button type="button" class="el-cart-btn" id="pmCartBtn" aria-label="カートに追加" style="width:44px;height:44px;">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
         </button>
@@ -556,6 +609,13 @@
       }
       document.getElementById('pmCartBtn').dataset.id = id;
       document.getElementById('pmBuyBtn').dataset.id = id;
+      var favBtn = document.getElementById('pmFavBtn');
+      favBtn.dataset.id = id;
+      var favList = [];
+      try { favList = JSON.parse(localStorage.getItem('el-market-favorites') || '[]'); } catch (e) {}
+      var isFav = favList.indexOf(id) !== -1;
+      favBtn.classList.toggle('is-active', isFav);
+      favBtn.querySelector('svg').setAttribute('fill', isFav ? 'currentColor' : 'none');
       modal.classList.add('is-open');
       modal.setAttribute('aria-hidden', 'false');
     }
@@ -577,6 +637,22 @@
     });
     document.getElementById('pmBuyBtn').addEventListener('click', function () {
       goToCheckout(this.dataset.id);
+    });
+    document.getElementById('pmFavBtn').addEventListener('click', function () {
+      var id = this.dataset.id;
+      var list = [];
+      try { list = JSON.parse(localStorage.getItem('el-market-favorites') || '[]'); } catch (e) {}
+      var i = list.indexOf(id);
+      var nowFav = i === -1;
+      if (nowFav) list.push(id); else list.splice(i, 1);
+      try { localStorage.setItem('el-market-favorites', JSON.stringify(list)); } catch (e) {}
+      this.classList.toggle('is-active', nowFav);
+      this.querySelector('svg').setAttribute('fill', nowFav ? 'currentColor' : 'none');
+      var cardBtn = document.querySelector('.el-market-card[data-product="' + id + '"] [data-fav]');
+      if (cardBtn) {
+        cardBtn.classList.toggle('is-active', nowFav);
+        cardBtn.querySelector('svg').setAttribute('fill', nowFav ? 'currentColor' : 'none');
+      }
     });
   })();
 

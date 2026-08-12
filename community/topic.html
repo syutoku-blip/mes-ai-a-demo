@@ -9,43 +9,65 @@
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="../shared/global-header.css">
 <style>
-  /* 広告バナー：スポンサー枠だとひと目でわかるよう、破線の縁取りとADタグを強調 */
+  /* 広告バナー：スポンサー枠だとひと目でわかるよう、破線の縁取りとADタグ・アイコンで装飾 */
   .el-ad-banner{
-    position:relative;
-    background:var(--el-cream-deep, #FBF3E3);
-    border:1.5px dashed var(--el-mustard-deep, #B9812A);
-    border-radius:var(--el-radius-m, 14px);
-    padding:18px 20px 16px;
+    position:relative !important;
+    display:flex !important;
+    align-items:center !important;
+    gap:16px !important;
+    background:var(--el-cream-deep, #FBF3E3) !important;
+    border:1.5px dashed var(--el-mustard-deep, #B9812A) !important;
+    border-radius:var(--el-radius-m, 14px) !important;
+    padding:22px 20px 18px !important;
+    overflow:visible !important;
+  }
+  .el-ad-banner::before{
+    content:"AD" !important;
+    position:absolute !important;
+    top:-10px !important;
+    left:18px !important;
+    display:inline-block !important;
+    background:var(--el-mustard-deep, #B9812A) !important;
+    color:#fff !important;
+    font-size:10px !important;
+    font-weight:700 !important;
+    letter-spacing:.08em !important;
+    padding:3px 10px !important;
+    border-radius:999px !important;
+    line-height:1.6 !important;
   }
   .el-ad-banner .el-ad-tag{
-    position:absolute;
-    top:-10px;
-    left:16px;
-    background:var(--el-mustard-deep, #B9812A);
-    color:#fff;
-    font-size:10px;
-    font-weight:700;
-    letter-spacing:.06em;
-    padding:2px 9px;
-    border-radius:999px;
-    line-height:1.7;
+    display:none !important;
+  }
+  .el-ad-banner .el-ad-icon{
+    width:48px !important;
+    height:48px !important;
+    min-width:48px !important;
+    border-radius:14px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    flex:none !important;
+    font-size:19px !important;
+    box-shadow:0 3px 8px rgba(0,0,0,.15) !important;
+  }
+  .el-ad-banner .el-ad-body{
+    flex:1 !important;
+    min-width:0 !important;
   }
   .el-ad-banner .el-ad-body strong{
-    color:var(--el-navy, #16233F);
+    display:block !important;
+    color:var(--el-navy, #16233F) !important;
+    font-size:14px !important;
   }
-  /* 投稿カード：本文が枠ギリギリまで来ないよう内側に余白を持たせる */
-  article.el-post{
-    padding:18px 20px;
-    box-sizing:border-box;
+  .el-ad-banner .el-ad-body span{
+    display:block !important;
+    color:var(--el-ink-faint, #8A8478) !important;
+    font-size:12.5px !important;
+    margin-top:2px !important;
   }
-  /* パンくず直下のバッジ：絞り込みへのリンクだとわかるようホバー時の見た目を用意 */
-  .el-t-row-badges a.badge{
-    text-decoration:none;
-    cursor:pointer;
-    transition:opacity .15s ease;
-  }
-  .el-t-row-badges a.badge:hover{
-    opacity:.75;
+  .el-ad-banner > a.el-btn{
+    flex:none !important;
   }
   /* ユーザーモード切り替えウィジェット */
   .el-role-switcher{
@@ -127,6 +149,11 @@
     padding:4px;
   }
   [data-guest-hide]{ display:none !important; }
+  /* 投稿本文中のリンクを一目でわかるようにする */
+  .el-post-body a{
+    color:var(--el-teal-deep, #1E6F63) !important;
+    text-decoration:underline !important;
+  }
 </style>
 </head>
 <body data-site="community" data-root="..">
@@ -268,8 +295,7 @@
             <span>FDA対応</span>
           </nav>
           <div class="el-t-row-badges" style="margin-bottom:12px;">
-            <span class="badge badge--pin">固定</span>
-            <span class="badge badge--open">公開</span>
+            <a href="board.html?filter=general&sort=hot" class="badge badge--open">公開</a>
             <a href="board.html?category=fda&sort=hot" class="badge badge--cat">FDA対応</a>
             <a href="board.html?filter=solved&sort=hot" class="badge badge--solved">解決</a>
           </div>

@@ -11,29 +11,65 @@
 <style>
   /* 「ご利用の前に」ボックスとその下のコンテンツの余白 */
   .el-pinned-box{ margin-bottom:28px; }
-  /* 広告バナー：スポンサー枠だとひと目でわかるよう、破線の縁取りとADタグを強調 */
+  /* 広告バナー：スポンサー枠だとひと目でわかるよう、破線の縁取りとADタグ・アイコンで装飾 */
   .el-ad-banner{
-    position:relative;
-    background:var(--el-cream-deep, #FBF3E3);
-    border:1.5px dashed var(--el-mustard-deep, #B9812A);
-    border-radius:var(--el-radius-m, 14px);
-    padding:18px 20px 16px;
+    position:relative !important;
+    display:flex !important;
+    align-items:center !important;
+    gap:16px !important;
+    background:var(--el-cream-deep, #FBF3E3) !important;
+    border:1.5px dashed var(--el-mustard-deep, #B9812A) !important;
+    border-radius:var(--el-radius-m, 14px) !important;
+    padding:22px 20px 18px !important;
+    overflow:visible !important;
+  }
+  .el-ad-banner::before{
+    content:"AD" !important;
+    position:absolute !important;
+    top:-10px !important;
+    left:18px !important;
+    display:inline-block !important;
+    background:var(--el-mustard-deep, #B9812A) !important;
+    color:#fff !important;
+    font-size:10px !important;
+    font-weight:700 !important;
+    letter-spacing:.08em !important;
+    padding:3px 10px !important;
+    border-radius:999px !important;
+    line-height:1.6 !important;
   }
   .el-ad-banner .el-ad-tag{
-    position:absolute;
-    top:-10px;
-    left:16px;
-    background:var(--el-mustard-deep, #B9812A);
-    color:#fff;
-    font-size:10px;
-    font-weight:700;
-    letter-spacing:.06em;
-    padding:2px 9px;
-    border-radius:999px;
-    line-height:1.7;
+    display:none !important;
+  }
+  .el-ad-banner .el-ad-icon{
+    width:48px !important;
+    height:48px !important;
+    min-width:48px !important;
+    border-radius:14px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    flex:none !important;
+    font-size:19px !important;
+    box-shadow:0 3px 8px rgba(0,0,0,.15) !important;
+  }
+  .el-ad-banner .el-ad-body{
+    flex:1 !important;
+    min-width:0 !important;
   }
   .el-ad-banner .el-ad-body strong{
-    color:var(--el-navy, #16233F);
+    display:block !important;
+    color:var(--el-navy, #16233F) !important;
+    font-size:14px !important;
+  }
+  .el-ad-banner .el-ad-body span{
+    display:block !important;
+    color:var(--el-ink-faint, #8A8478) !important;
+    font-size:12.5px !important;
+    margin-top:2px !important;
+  }
+  .el-ad-banner > a.el-btn{
+    flex:none !important;
   }
   /* ユーザーモード切り替えウィジェット */
   .el-role-switcher{
@@ -274,7 +310,7 @@
         </div>
         <div class="el-board">
           <div>
-          <a href="topic.html" class="el-t-row" data-category="amazon" data-visibility="general" data-status="unsolved" data-views="34" data-recency="100" data-pinned="0" data-tags="fba label">
+          <a href="topic.html" class="el-t-row" data-category="amazon" data-visibility="general" data-status="unsolved" data-views="34" data-recency="100" data-tags="fba label">
             <div class="el-t-row-main">
               <div class="el-t-row-badges"><span class="badge badge--open">公開</span><span class="badge badge--cat">Amazon出品</span><span class="badge badge--unsolved">未解決</span></div>
               <span class="el-t-row-title">米国倉庫でのラベル不備、差し戻しを防ぐチェック手順</span>
@@ -285,7 +321,7 @@
               <div><strong>1</strong><span>返信</span></div>
             </div>
           </a>
-          <a href="topic.html" class="el-t-row" data-category="chat" data-visibility="general" data-status="unsolved" data-views="12" data-recency="99" data-pinned="0" data-tags="">
+          <a href="topic.html" class="el-t-row" data-category="chat" data-visibility="general" data-status="unsolved" data-views="12" data-recency="99" data-tags="">
             <div class="el-t-row-main">
               <div class="el-t-row-badges"><span class="badge badge--open">公開</span><span class="badge badge--cat">雑談・自己紹介</span><span class="badge badge--unsolved">未解決</span></div>
               <span class="el-t-row-title">初めまして、雑貨を輸出しています</span>
@@ -296,7 +332,7 @@
               <div><strong>0</strong><span>返信</span></div>
             </div>
           </a>
-          <a href="topic.html" class="el-t-row" data-category="logistics" data-visibility="general" data-status="unsolved" data-views="58" data-recency="98" data-pinned="0" data-tags="warehouse">
+          <a href="topic.html" class="el-t-row" data-category="logistics" data-visibility="general" data-status="unsolved" data-views="58" data-recency="98" data-tags="warehouse">
             <div class="el-t-row-main">
               <div class="el-t-row-badges"><span class="badge badge--open">公開</span><span class="badge badge--cat">物流</span><span class="badge badge--unsolved">未解決</span></div>
               <span class="el-t-row-title">海上輸送の遅延、リードタイムはどう見積もってますか</span>
@@ -307,7 +343,7 @@
               <div><strong>2</strong><span>返信</span></div>
             </div>
           </a>
-          <a href="topic.html" class="el-t-row" data-category="fda" data-visibility="general" data-status="unsolved" data-views="97" data-recency="97" data-pinned="0" data-tags="label">
+          <a href="topic.html" class="el-t-row" data-category="fda" data-visibility="general" data-status="unsolved" data-views="97" data-recency="97" data-tags="label">
             <div class="el-t-row-main">
               <div class="el-t-row-badges"><span class="badge badge--open">公開</span><span class="badge badge--cat">FDA対応</span><span class="badge badge--unsolved">未解決</span></div>
               <span class="el-t-row-title">サプリメントのラベル、栄養成分表示のフォーマット変更点</span>
@@ -332,9 +368,9 @@
         </div>
         <div class="el-board">
           <div>
-          <a href="topic.html" class="el-t-row" data-category="fda" data-visibility="general" data-status="solved" data-views="980" data-recency="90" data-pinned="1" data-tags="facility-registration">
+          <a href="topic.html" class="el-t-row" data-category="fda" data-visibility="general" data-status="solved" data-views="980" data-recency="90" data-tags="facility-registration">
             <div class="el-t-row-main">
-              <div class="el-t-row-badges"><span class="badge badge--pin">固定</span><span class="badge badge--open">公開</span><span class="badge badge--cat">FDA対応</span><span class="badge badge--solved">解決</span></div>
+              <div class="el-t-row-badges"><span class="badge badge--open">公開</span><span class="badge badge--cat">FDA対応</span><span class="badge badge--solved">解決</span></div>
               <span class="el-t-row-title">FDA施設登録、2年更新のタイミングと注意点</span>
               <div class="el-t-row-meta">山口貿易士・昨日</div>
             </div>
@@ -343,7 +379,7 @@
               <div><strong>32</strong><span>返信</span></div>
             </div>
           </a>
-          <a href="topic.html" class="el-t-row" data-category="amazon" data-visibility="member" data-status="solved" data-views="489" data-recency="92" data-pinned="0" data-tags="research">
+          <a href="topic.html" class="el-t-row" data-category="amazon" data-visibility="member" data-status="solved" data-views="489" data-recency="92" data-tags="research">
             <div class="el-t-row-main">
               <div class="el-t-row-badges"><span class="badge badge--restricted">メンバー限定</span><span class="badge badge--cat">Amazon出品</span><span class="badge badge--solved">解決</span></div>
               <span class="el-t-row-title">せどり便乗リサーチ、初月の粗利率どのくらいでしたか</span>
@@ -354,7 +390,7 @@
               <div><strong>21</strong><span>返信</span></div>
             </div>
           </a>
-          <a href="topic.html" class="el-t-row" data-category="amazon" data-visibility="shift" data-status="solved" data-views="340" data-recency="88" data-pinned="0" data-tags="research">
+          <a href="topic.html" class="el-t-row" data-category="amazon" data-visibility="shift" data-status="solved" data-views="340" data-recency="88" data-tags="research">
             <div class="el-t-row-main">
               <div class="el-t-row-badges"><span class="badge badge--member">SHiFT限定</span><span class="badge badge--cat">Amazon出品</span><span class="badge badge--solved">解決</span></div>
               <span class="el-t-row-title">せどり便乗リサーチ、実際の粗利率を公開します</span>
@@ -365,7 +401,7 @@
               <div><strong>5</strong><span>返信</span></div>
             </div>
           </a>
-          <a href="topic.html" class="el-t-row" data-category="customs" data-visibility="member" data-status="solved" data-views="298" data-recency="70" data-pinned="0" data-tags="customs-docs">
+          <a href="topic.html" class="el-t-row" data-category="customs" data-visibility="member" data-status="solved" data-views="298" data-recency="70" data-tags="customs-docs">
             <div class="el-t-row-main">
               <div class="el-t-row-badges"><span class="badge badge--restricted">メンバー限定</span><span class="badge badge--cat">通関</span><span class="badge badge--solved">解決</span></div>
               <span class="el-t-row-title">通関書類のインボイス記載、よくある差し戻し理由まとめ</span>
@@ -394,7 +430,7 @@
         </div>
         <div class="el-board">
           <div>
-          <a href="topic.html" class="el-t-row" data-category="amazon" data-visibility="shift" data-status="solved" data-views="340" data-recency="88" data-pinned="0" data-tags="research">
+          <a href="topic.html" class="el-t-row" data-category="amazon" data-visibility="shift" data-status="solved" data-views="340" data-recency="88" data-tags="research">
             <div class="el-t-row-main">
               <div class="el-t-row-badges"><span class="badge badge--member">SHiFT限定</span><span class="badge badge--cat">Amazon出品</span><span class="badge badge--solved">解決</span></div>
               <span class="el-t-row-title">せどり便乗リサーチ、実際の粗利率を公開します</span>
@@ -405,7 +441,7 @@
               <div><strong>5</strong><span>返信</span></div>
             </div>
           </a>
-          <a href="topic.html" class="el-t-row" data-category="fda" data-visibility="shift" data-status="solved" data-views="210" data-recency="96" data-pinned="0" data-tags="facility-registration">
+          <a href="topic.html" class="el-t-row" data-category="fda" data-visibility="shift" data-status="solved" data-views="210" data-recency="96" data-tags="facility-registration">
             <div class="el-t-row-main">
               <div class="el-t-row-badges"><span class="badge badge--member">SHiFT限定</span><span class="badge badge--cat">FDA対応</span><span class="badge badge--solved">解決</span></div>
               <span class="el-t-row-title">FDA施設登録、実際にかかった費用を公開します</span>
