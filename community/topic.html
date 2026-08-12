@@ -154,6 +154,26 @@
     color:var(--el-teal-deep, #1E6F63) !important;
     text-decoration:underline !important;
   }
+  /* 閲覧権限がない本文・コメントへのモザイク表示 */
+  .el-content-mosaic{
+    filter:blur(6px) !important;
+    user-select:none !important;
+    pointer-events:none !important;
+  }
+  .el-gated{ position:relative !important; }
+  .el-gate-overlay{
+    position:sticky !important;
+    bottom:12px !important;
+    margin:20px 0 !important;
+    background:var(--el-paper, #fff) !important;
+    border:1px solid var(--el-line-soft, #E5DFD2) !important;
+    box-shadow:0 6px 24px rgba(22,35,63,.14) !important;
+    padding:26px 24px !important;
+    text-align:center !important;
+    border-radius:var(--el-radius-m, 14px) !important;
+  }
+  .el-gate-overlay h3{ margin:0 0 8px !important; color:var(--el-navy, #16233F) !important; font-size:16px !important; }
+  .el-gate-overlay p{ margin:0 0 14px !important; color:var(--el-ink-faint, #8A8478) !important; font-size:13px !important; line-height:1.7 !important; }
 </style>
 </head>
 <body data-site="community" data-root="..">
@@ -714,12 +734,90 @@
       });
     }
 
+    // SHiFT会員限定コンテンツ用モーダル
+    var shiftModal = document.getElementById('shiftModal');
+    window.elRequireShift = function () {
+      var r = getRole();
+      if (r === 'shift' || r === 'admin') return true;
+      if (shiftModal) { shiftModal.classList.add('is-open'); shiftModal.setAttribute('aria-hidden', 'false'); }
+      return false;
+    };
+    if (shiftModal) {
+      shiftModal.querySelectorAll('[data-shift-close]').forEach(function (el) {
+        el.addEventListener('click', function () {
+          shiftModal.classList.remove('is-open');
+          shiftModal.setAttribute('aria-hidden', 'true');
+        });
+      });
+    }
+
+    // 管理者にはサイドバーに管理者ページへのリンクを追加
+    if (role === 'admin') {
+      var sideNav = document.querySelector('.el-sidebar nav');
+      if (sideNav && !sideNav.querySelector('a[href="admin.html"]')) {
+        var adminLink = document.createElement('a');
+        adminLink.href = 'admin.html';
+        if (window.location.pathname.indexOf('admin.html') !== -1) adminLink.className = 'is-active';
+        adminLink.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 3 7v6c0 5 4 9 9 9s9-4 9-9V7l-9-5Z"/><path d="m9 12 2 2 4-4"/></svg><span class="lbl">管理者ページ</span>';
+        sideNav.appendChild(adminLink);
+      }
+    }
+
     // ゲストには data-guest-hide の要素を隠す（本文はCSSでも隠すが、動的挿入分もここでカバー）
     if (role === 'guest') {
       document.querySelectorAll('[data-guest-block]').forEach(function (el) {
         el.addEventListener('click', window.elRequireAuth);
       });
     }
+  })();
+
+  // 本文・コメントの閲覧制限（公開範囲に応じたモザイク表示）
+  // デモ用に ?visibility=shift や ?visibility=member でスレッドの公開範囲を切り替えられる（省略時は「公開」）。
+  (function () {
+    var params = new URLSearchParams(window.location.search);
+    var topicVisibility = params.get('visibility') || 'general';
+    var role = 'guest';
+    try { role = localStorage.getItem('el-user-role') || 'guest'; } catch (e) {}
+
+    var mode = null;
+    if (role === 'guest' && topicVisibility !== 'general') mode = 'guest';
+    else if (role === 'member' && topicVisibility === 'shift') mode = 'shift';
+    if (!mode) return;
+
+    var thread = document.querySelector('.el-thread-main');
+    if (!thread) return;
+    thread.classList.add('el-gated');
+
+    var opBody = document.querySelector('#op .el-post-body');
+    if (opBody) {
+      if (mode === 'guest') {
+        // 本文は最初の段落だけ残し、残りにモザイクをかける
+        var firstP = opBody.querySelector('p');
+        Array.prototype.slice.call(opBody.children).forEach(function (el) {
+          if (el !== firstP) el.classList.add('el-content-mosaic');
+        });
+      } else {
+        opBody.classList.add('el-content-mosaic');
+      }
+    }
+
+    document.querySelectorAll('.el-post').forEach(function (post) {
+      if (post.id === 'op') return;
+      post.querySelectorAll('.el-post-body').forEach(function (b) { b.classList.add('el-content-mosaic'); });
+    });
+
+    var replyBox = document.getElementById('replyBox');
+    if (replyBox) replyBox.style.display = 'none';
+    document.querySelectorAll('.el-post-actions button').forEach(function (b) {
+      if (b.textContent.indexOf('返信') !== -1) b.style.display = 'none';
+    });
+
+    var overlay = document.createElement('div');
+    overlay.className = 'el-gate-overlay';
+    overlay.innerHTML = mode === 'guest'
+      ? '<h3>続きを見るには会員登録が必要です</h3><p>本文・コメントの続きは、会員登録（無料）をすると閲覧いただけます。</p><a href="signup.html" class="el-btn el-btn--primary el-btn--sm">新規登録する</a>'
+      : '<h3>SHiFT会員限定のスレッドです</h3><p>この投稿はSHiFT会員だけが閲覧できます。</p><a href="#" class="el-btn el-btn--primary el-btn--sm">SHiFT会員について見る</a>';
+    thread.appendChild(overlay);
   })();
 </script>
 <div class="el-auth-modal" id="authModal" aria-hidden="true">
@@ -731,8 +829,23 @@
     <h3>ユーザー登録してください</h3>
     <p>この操作を行うには、会員登録（無料）が必要です。登録すると投稿・返信・購入などすべての機能がご利用いただけます。</p>
     <div class="el-auth-modal-actions">
-      <a href="#" class="el-btn el-btn--primary el-btn--sm">新規登録する</a>
+      <a href="signup.html" class="el-btn el-btn--primary el-btn--sm">新規登録する</a>
       <button type="button" class="el-btn el-btn--ghost el-btn--sm" data-auth-close>閉じる</button>
+    </div>
+  </div>
+</div>
+
+<div class="el-auth-modal" id="shiftModal" aria-hidden="true">
+  <div class="el-auth-modal-backdrop" data-shift-close></div>
+  <div class="el-auth-modal-panel" role="dialog" aria-modal="true">
+    <button type="button" class="el-auth-modal-close" data-shift-close aria-label="閉じる">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <h3>SHiFT会員限定です</h3>
+    <p>この内容はSHiFT会員（WorldShiftの各種サービスをご利用中の方）だけが閲覧できます。SHiFT会員の方はサポート窓口までお問い合わせください。</p>
+    <div class="el-auth-modal-actions">
+      <a href="#" class="el-btn el-btn--primary el-btn--sm">SHiFT会員について見る</a>
+      <button type="button" class="el-btn el-btn--ghost el-btn--sm" data-shift-close>閉じる</button>
     </div>
   </div>
 </div>
@@ -740,6 +853,7 @@
 <div class="el-role-switcher" id="roleSwitcher">
   <button type="button" data-role="guest">ゲスト</button>
   <button type="button" data-role="member">登録ユーザー</button>
+  <button type="button" data-role="shift">SHiFT会員</button>
   <button type="button" data-role="admin">管理者</button>
 </div>
 
