@@ -237,9 +237,9 @@
     list-style:none !important;
     max-width:max-content !important;
   }
-  #marketControls .el-filter-menu > summary{ list-style:none; }
-  .el-filter-menu > summary::marker{ display:none; content:''; }
-  .el-filter-menu > summary::-webkit-details-marker{ display:none; }
+  .el-filter-menu > summary{ list-style:none !important; }
+  .el-filter-menu > summary::marker{ content:'' !important; display:none !important; font-size:0 !important; }
+  .el-filter-menu > summary::-webkit-details-marker{ display:none !important; }
   #marketControls .el-chip-chevron{ width:12px !important; height:12px !important; flex:none !important; color:var(--el-ink-faint) !important; }
   #marketControls select{
     border:none !important;
@@ -321,11 +321,11 @@
           <details class="el-side-cat">
             <summary>カテゴリで探す<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></summary>
             <div class="el-side-cat-body">
-              <a href="board.html?category=fda&sort=hot">FDA対応</a>
-              <a href="board.html?category=customs&sort=hot">通関</a>
-              <a href="board.html?category=tariff&sort=hot">関税</a>
-              <a href="board.html?category=amazon&sort=hot">Amazon出品</a>
-              <a href="board.html?category=logistics&sort=hot">物流</a>
+              <a href="board.html?category=amazon-ops&sort=hot">Amazon販売・運用</a>
+              <a href="board.html?category=fda-food&sort=hot">FDA・食品規制</a>
+              <a href="board.html?category=intl-logistics&sort=hot">国際物流・通関</a>
+              <a href="board.html?category=mocra&sort=hot">MoCRA・化粧品規制</a>
+              <a href="board.html?category=chat&sort=hot">情報交換・雑談</a>
               <a href="forum-categories.html" class="el-side-more">もっと見る <span>→</span></a>
             </div>
           </details>
@@ -441,7 +441,7 @@
           <label class="el-filter-select-label">出品者
             <select id="marketSeller">
               <option value="">すべて</option>
-              <option value="WorldShift公式">WorldShift公式</option>
+              <option value="WorldShift公式" selected>WorldShift公式</option>
             </select>
             <svg class="el-chip-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
           </label>
