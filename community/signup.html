@@ -26,6 +26,15 @@
     -webkit-appearance:none;
     display:none;
   }
+  /* ヘッダーの新規登録／ログインボタン：紺色のヘッダー上でも文字が見えるようにする */
+  #headerAuthLinks .el-btn{
+    color:#fff !important;
+    border:1px solid rgba(255,255,255,.55) !important;
+    background:rgba(255,255,255,.08) !important;
+  }
+  #headerAuthLinks .el-btn:hover{
+    background:rgba(255,255,255,.18) !important;
+  }
 </style>
 </head>
 <body data-site="community" data-root="..">
@@ -172,28 +181,10 @@
         <form id="signupForm" style="display:flex;flex-direction:column;gap:18px;">
 
           <label style="display:block;">
-            <span style="display:block;font-weight:700;font-size:13px;color:var(--el-navy);margin-bottom:6px;">氏名 <span style="color:var(--el-coral);font-weight:700;">必須</span></span>
-            <input type="text" name="fullname" required style="width:100%;box-sizing:border-box;padding:11px 14px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
-          </label>
-
-          <label style="display:block;">
             <span style="display:block;font-weight:700;font-size:13px;color:var(--el-navy);margin-bottom:6px;">ユーザーネーム <span style="color:var(--el-coral);font-weight:700;">必須</span> <span style="color:var(--el-ink-faint);font-weight:600;">（公開）</span></span>
             <input type="text" name="username" required style="width:100%;box-sizing:border-box;padding:11px 14px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
             <span style="display:block;font-size:12px;color:var(--el-ink-faint);margin-top:4px;">投稿やプロフィールに表示される名前です。</span>
           </label>
-
-          <div>
-            <span style="display:block;font-weight:700;font-size:13px;color:var(--el-navy);margin-bottom:6px;">生年月日</span>
-            <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
-              <input type="date" name="birthdate" style="flex:1;min-width:160px;box-sizing:border-box;padding:11px 14px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
-              <label style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--el-ink-faint);white-space:nowrap;">
-                <input type="radio" name="birthdate_visibility" value="public"> 公開
-              </label>
-              <label style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--el-ink-faint);white-space:nowrap;">
-                <input type="radio" name="birthdate_visibility" value="private" checked> 非公開
-              </label>
-            </div>
-          </div>
 
           <label style="display:block;">
             <span style="display:block;font-weight:700;font-size:13px;color:var(--el-navy);margin-bottom:6px;">メールアドレス <span style="color:var(--el-coral);font-weight:700;">必須</span></span>
@@ -206,19 +197,94 @@
           </label>
 
           <label style="display:block;">
-            <span style="display:block;font-weight:700;font-size:13px;color:var(--el-navy);margin-bottom:6px;">電話番号</span>
-            <input type="tel" name="phone" style="width:100%;box-sizing:border-box;padding:11px 14px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
+            <span style="display:block;font-weight:700;font-size:13px;color:var(--el-navy);margin-bottom:6px;">氏名 <span style="color:var(--el-coral);font-weight:700;">必須</span></span>
+            <input type="text" name="fullname" required style="width:100%;box-sizing:border-box;padding:11px 14px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
           </label>
 
-          <div style="display:flex;gap:10px;">
-            <label style="display:block;flex:1;">
-              <span style="display:block;font-weight:700;font-size:13px;color:var(--el-navy);margin-bottom:6px;">住所（県）</span>
-              <input type="text" name="prefecture" placeholder="例：福岡県" style="width:100%;box-sizing:border-box;padding:11px 14px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
-            </label>
-            <label style="display:block;flex:1;">
-              <span style="display:block;font-weight:700;font-size:13px;color:var(--el-navy);margin-bottom:6px;">住所（市町村）</span>
-              <input type="text" name="city" placeholder="例：福岡市" style="width:100%;box-sizing:border-box;padding:11px 14px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
-            </label>
+          <div>
+            <span style="display:block;font-weight:700;font-size:13px;color:var(--el-navy);margin-bottom:6px;">生年月日 <span style="color:var(--el-coral);font-weight:700;">必須</span></span>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+              <input type="date" name="birthdate" required style="flex:1;min-width:160px;box-sizing:border-box;padding:11px 14px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
+              <label style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--el-ink-faint);white-space:nowrap;">
+                <input type="radio" name="birthdate_visibility" value="public"> 公開
+              </label>
+              <label style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--el-ink-faint);white-space:nowrap;">
+                <input type="radio" name="birthdate_visibility" value="private" checked> 非公開
+              </label>
+            </div>
+          </div>
+
+          <label style="display:block;">
+            <span style="display:block;font-weight:700;font-size:13px;color:var(--el-navy);margin-bottom:6px;">電話番号 <span style="color:var(--el-coral);font-weight:700;">必須</span></span>
+            <input type="tel" name="phone" required style="width:100%;box-sizing:border-box;padding:11px 14px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
+          </label>
+
+          <div>
+            <span style="display:block;font-weight:700;font-size:13px;color:var(--el-navy);margin-bottom:6px;">性別 <span style="color:var(--el-coral);font-weight:700;">必須</span></span>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+              <select name="gender" required style="flex:1;min-width:160px;box-sizing:border-box;padding:11px 14px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;background:#fff;">
+                <option value="">選択してください</option>
+                <option value="male">男性</option>
+                <option value="female">女性</option>
+                <option value="other">その他</option>
+                <option value="unanswered">回答しない</option>
+              </select>
+              <label style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--el-ink-faint);white-space:nowrap;">
+                <input type="radio" name="gender_visibility" value="public"> 公開
+              </label>
+              <label style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--el-ink-faint);white-space:nowrap;">
+                <input type="radio" name="gender_visibility" value="private" checked> 非公開
+              </label>
+            </div>
+          </div>
+
+          <div>
+            <span style="display:block;font-weight:700;font-size:13px;color:var(--el-navy);margin-bottom:6px;">住所（県） <span style="color:var(--el-coral);font-weight:700;">必須</span></span>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+              <input type="text" name="prefecture" required placeholder="例：福岡県" style="flex:1;min-width:160px;box-sizing:border-box;padding:11px 14px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
+              <label style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--el-ink-faint);white-space:nowrap;">
+                <input type="radio" name="prefecture_visibility" value="public"> 公開
+              </label>
+              <label style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--el-ink-faint);white-space:nowrap;">
+                <input type="radio" name="prefecture_visibility" value="private" checked> 非公開
+              </label>
+            </div>
+          </div>
+
+          <div>
+            <span style="display:block;font-weight:700;font-size:13px;color:var(--el-navy);margin-bottom:6px;">住所（市町村以降）</span>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+              <input type="text" name="city" placeholder="例：福岡市〇〇区1-2-3" style="flex:1;min-width:160px;box-sizing:border-box;padding:11px 14px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
+              <label style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--el-ink-faint);white-space:nowrap;">
+                <input type="radio" name="city_visibility" value="public"> 公開
+              </label>
+              <label style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--el-ink-faint);white-space:nowrap;">
+                <input type="radio" name="city_visibility" value="private" checked> 非公開
+              </label>
+            </div>
+          </div>
+
+          <div>
+            <span style="display:block;font-weight:700;font-size:13px;color:var(--el-navy);margin-bottom:6px;">業種 <span style="color:var(--el-coral);font-weight:700;">必須</span></span>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+              <select name="industry" required style="flex:1;min-width:160px;box-sizing:border-box;padding:11px 14px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;background:#fff;">
+                <option value="">選択してください</option>
+                <option value="food">食品</option>
+                <option value="cosmetics">化粧品</option>
+                <option value="apparel">アパレル・雑貨</option>
+                <option value="electronics">家電・電子機器</option>
+                <option value="supplement">サプリメント・健康食品</option>
+                <option value="logistics">物流・倉庫</option>
+                <option value="consulting">コンサルティング・士業</option>
+                <option value="other">その他</option>
+              </select>
+              <label style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--el-ink-faint);white-space:nowrap;">
+                <input type="radio" name="industry_visibility" value="public"> 公開
+              </label>
+              <label style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--el-ink-faint);white-space:nowrap;">
+                <input type="radio" name="industry_visibility" value="private" checked> 非公開
+              </label>
+            </div>
           </div>
 
           <div style="background:var(--el-cream-deep);border:1px solid var(--el-line-soft);border-radius:12px;padding:14px 16px;">
@@ -227,25 +293,18 @@
               SHiFT会員です（WorldShiftの各種サービスをご利用中の方）
             </label>
             <div id="shiftNumberWrap" style="margin-top:12px;display:none;">
-              <span style="display:block;font-weight:700;font-size:13px;color:var(--el-navy);margin-bottom:6px;">SHiFT会員番号</span>
-              <input type="text" name="shift_member_number" style="width:100%;box-sizing:border-box;padding:11px 14px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;background:#fff;">
+              <span style="display:block;font-weight:700;font-size:13px;color:var(--el-navy);margin-bottom:6px;">SHiFT会員番号 <span id="shiftNumberRequired" style="color:var(--el-coral);font-weight:700;">必須</span></span>
+              <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+                <input type="text" name="shift_member_number" id="shiftNumberInput" style="flex:1;min-width:160px;box-sizing:border-box;padding:11px 14px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;background:#fff;">
+                <label style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--el-ink-faint);white-space:nowrap;">
+                  <input type="radio" name="shift_number_visibility" value="public"> 公開
+                </label>
+                <label style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--el-ink-faint);white-space:nowrap;">
+                  <input type="radio" name="shift_number_visibility" value="private" checked> 非公開
+                </label>
+              </div>
             </div>
           </div>
-
-          <label style="display:block;">
-            <span style="display:block;font-weight:700;font-size:13px;color:var(--el-navy);margin-bottom:6px;">業種</span>
-            <select name="industry" style="width:100%;box-sizing:border-box;padding:11px 14px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;background:#fff;">
-              <option value="">選択してください</option>
-              <option value="food">食品</option>
-              <option value="cosmetics">化粧品</option>
-              <option value="apparel">アパレル・雑貨</option>
-              <option value="electronics">家電・電子機器</option>
-              <option value="supplement">サプリメント・健康食品</option>
-              <option value="logistics">物流・倉庫</option>
-              <option value="consulting">コンサルティング・士業</option>
-              <option value="other">その他</option>
-            </select>
-          </label>
 
           <label style="display:block;">
             <span style="display:block;font-weight:700;font-size:13px;color:var(--el-navy);margin-bottom:6px;">自己紹介</span>
@@ -335,18 +394,20 @@
     });
   });
 
-  // SHiFT会員チェック時のみ会員番号欄を表示
+  // SHiFT会員チェック時のみ会員番号欄を表示・必須化
   var shiftCheckbox = document.getElementById('isShiftMember');
   var shiftWrap = document.getElementById('shiftNumberWrap');
+  var shiftNumberInput = document.getElementById('shiftNumberInput');
   shiftCheckbox.addEventListener('change', function () {
     shiftWrap.style.display = this.checked ? 'block' : 'none';
+    shiftNumberInput.required = this.checked;
   });
 
   // ------------------------------------------------------------
   // Google Apps Script（会員シート連携）のウェブアプリURL。
   // デプロイ後に発行される「.../exec」で終わるURLに書き換えてください。
   // ------------------------------------------------------------
-  var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
+  var API_URL = 'ここにGoogle Apps ScriptのウェブアプリURLを貼り付けてください';
 
   var signupForm = document.getElementById('signupForm');
   var submitBtn = signupForm.querySelector('button[type="submit"]');
@@ -362,16 +423,23 @@
     var fd = new FormData(signupForm);
     var payload = {
       action: 'signup',
-      fullname: fd.get('fullname') || '',
       username: fd.get('username') || '',
-      birthdate: fd.get('birthdate') || '',
       email: fd.get('email') || '',
       password: fd.get('password') || '',
+      fullname: fd.get('fullname') || '',
+      birthdate: fd.get('birthdate') || '',
+      birthdateVisibility: fd.get('birthdate_visibility') || 'private',
       phone: fd.get('phone') || '',
+      gender: fd.get('gender') || '',
+      genderVisibility: fd.get('gender_visibility') || 'private',
       prefecture: fd.get('prefecture') || '',
+      prefectureVisibility: fd.get('prefecture_visibility') || 'private',
       city: fd.get('city') || '',
+      cityVisibility: fd.get('city_visibility') || 'private',
       industry: fd.get('industry') || '',
+      industryVisibility: fd.get('industry_visibility') || 'private',
       shiftNumber: fd.get('shift_member_number') || '',
+      shiftNumberVisibility: fd.get('shift_number_visibility') || 'private',
       bio: fd.get('bio') || ''
     };
 
