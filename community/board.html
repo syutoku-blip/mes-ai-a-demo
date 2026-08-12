@@ -174,14 +174,16 @@
     padding:4px;
   }
   [data-guest-hide]{ display:none !important; }
-  /* ヘッダーの新規登録／ログインボタン：紺色のヘッダー上でも文字が見えるようにする */
-  #headerAuthLinks .el-btn{
+  /* ヘッダーの新規登録／ログイン／ログアウトボタン：背景色に関わらず文字が見えるよう、
+     透過ではなく塗りのボタンにする */
+  #headerAuthLinks .el-btn, #headerSignupLink.el-btn, #headerLoginLink.el-btn{
     color:#fff !important;
-    border:1px solid rgba(255,255,255,.55) !important;
-    background:rgba(255,255,255,.08) !important;
+    background:var(--el-navy, #16233F) !important;
+    border:1px solid var(--el-navy, #16233F) !important;
   }
-  #headerAuthLinks .el-btn:hover{
-    background:rgba(255,255,255,.18) !important;
+  #headerAuthLinks .el-btn:hover, #headerSignupLink.el-btn:hover, #headerLoginLink.el-btn:hover{
+    background:var(--el-teal-deep, #1E6F63) !important;
+    border-color:var(--el-teal-deep, #1E6F63) !important;
   }
 </style>
 </head>
@@ -203,7 +205,7 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
         <span class="count">3</span>
       </a>
-      <a href="mypage.html" class="el-avatar" aria-label="マイページ">り</a>
+      <a href="mypage.html" class="el-avatar" id="headerAvatar" aria-label="マイページ">り</a>
     </div>
   </div>
 </header>
@@ -779,9 +781,11 @@
     var role = getRole();
     document.body.setAttribute('data-role', role);
 
-    // ゲストは通知ベルを非表示
+    // ゲストは通知ベルとアイコンを非表示
     var bell = document.querySelector('.el-header-bell');
     if (bell && role === 'guest') bell.style.display = 'none';
+    var headerAvatar = document.getElementById('headerAvatar');
+    if (headerAvatar && role === 'guest') headerAvatar.style.display = 'none';
 
     // ヘッダーの認証リンク：ゲストは「新規登録」「ログイン」、それ以外は「ログアウト」のみ
     var authLinksWrap = document.getElementById('headerAuthLinks');

@@ -28,12 +28,12 @@
   }
   /* ヘッダーの新規登録／ログイン／ログアウトボタン：背景色に関わらず文字が見えるよう、
      透過ではなく塗りのボタンにする */
-  #headerAuthLinks .el-btn{
+  #headerAuthLinks .el-btn, #headerSignupLink.el-btn, #headerLoginLink.el-btn{
     color:#fff !important;
     background:var(--el-navy, #16233F) !important;
     border:1px solid var(--el-navy, #16233F) !important;
   }
-  #headerAuthLinks .el-btn:hover{
+  #headerAuthLinks .el-btn:hover, #headerSignupLink.el-btn:hover, #headerLoginLink.el-btn:hover{
     background:var(--el-teal-deep, #1E6F63) !important;
     border-color:var(--el-teal-deep, #1E6F63) !important;
   }
@@ -57,7 +57,7 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
         <span class="count">3</span>
       </a>
-      <a href="mypage.html" class="el-avatar" aria-label="マイページ">り</a>
+      <a href="mypage.html" class="el-avatar" id="headerAvatar" aria-label="マイページ">り</a>
     </div>
   </div>
 </header>
@@ -262,6 +262,8 @@
     try { role = localStorage.getItem('el-user-role') || 'guest'; } catch (e) {}
     var bell = document.querySelector('.el-header-bell');
     if (bell && role === 'guest') bell.style.display = 'none';
+    var headerAvatar = document.getElementById('headerAvatar');
+    if (headerAvatar && role === 'guest') headerAvatar.style.display = 'none';
     var authLink = document.getElementById('headerSignupLink');
     if (authLink && role !== 'guest') {
       authLink.textContent = 'ログアウト';
@@ -278,7 +280,7 @@
   // Google Apps Script（会員シート連携）のウェブアプリURL。
   // デプロイ後に発行される「.../exec」で終わるURLに書き換えてください。
   // ------------------------------------------------------------
-  var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
+  var API_URL = 'ここにGoogle Apps ScriptのウェブアプリURLを貼り付けてください';
 
   var form = document.getElementById('loginForm');
   var errorBox = document.getElementById('loginError');
