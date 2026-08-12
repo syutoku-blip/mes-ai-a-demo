@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WorldShift Dev Sites</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&family=Zen+Old+Mincho:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#16233F;
+    --teal:#1E6F63;
+    --cream:#FBF3E3;
+    --ink-faint:#8A8478;
+    --line:#E5DFD2;
+  }
+  *{ box-sizing:border-box; }
+  body{
+    margin:0;
+    font-family:'Noto Sans JP', sans-serif;
+    background:var(--cream);
+    color:var(--navy);
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:40px 20px;
+  }
+  .wrap{
+    max-width:760px;
+    width:100%;
+  }
+  .eyebrow{
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:.08em;
+    color:var(--ink-faint);
+    text-transform:uppercase;
+    margin-bottom:10px;
+  }
+  h1{
+    font-family:'Zen Old Mincho', serif;
+    font-size:28px;
+    margin:0 0 8px;
+  }
+  .lead{
+    color:var(--ink-faint);
+    font-size:14px;
+    margin:0 0 36px;
+    line-height:1.8;
+  }
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
+    gap:16px;
+  }
+  a.card{
+    display:block;
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:24px 22px;
+    text-decoration:none;
+    color:inherit;
+    transition:box-shadow .15s ease, transform .15s ease;
+  }
+  a.card:hover{
+    box-shadow:0 8px 24px rgba(22,35,63,.10);
+    transform:translateY(-2px);
+  }
+  .tag{
+    display:inline-block;
+    font-size:10px;
+    font-weight:700;
+    letter-spacing:.05em;
+    color:#fff;
+    background:var(--teal);
+    padding:3px 9px;
+    border-radius:999px;
+    margin-bottom:10px;
+  }
+  a.card h2{
+    font-size:16px;
+    margin:0 0 6px;
+  }
+  a.card p{
+    font-size:12.5px;
+    color:var(--ink-faint);
+    margin:0;
+    line-height:1.6;
+  }
+  .go{
+    display:inline-flex;
+    align-items:center;
+    gap:4px;
+    font-size:12px;
+    font-weight:700;
+    color:var(--teal);
+    margin-top:14px;
+  }
+</style>
+</head>
+<body>
+
+  <div class="wrap">
+    <div class="eyebrow">WorldShift Inc.</div>
+    <h1>Dev Sites</h1>
+    <p class="lead">開発中のサイト一覧です。各カードから該当のサイトへ移動できます。</p>
+
+    <div class="grid">
+      <a href="community/" class="card">
+        <span class="tag">Export Lab</span>
+        <h2>Community</h2>
+        <p>人・モノ・情報がつながる、輸出の共創コミュニティサイト。</p>
+        <span class="go">開く →</span>
+      </a>
+
+      <a href="dev1/" class="card">
+        <span class="tag">開発①</span>
+        <h2>worldSHiFT Member Central</h2>
+        <p>会員向けポータル・各種ツールの開発サイト。</p>
+        <span class="go">開く →</span>
+      </a>
+
+      <a href="dev2/" class="card">
+        <span class="tag">開発②</span>
+        <h2>Dev Sites</h2>
+        <p>開発②の作業用サイト。</p>
+        <span class="go">開く →</span>
+      </a>
+    </div>
+  </div>
+
+</body>
+</html>
