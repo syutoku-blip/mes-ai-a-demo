@@ -9,6 +9,24 @@
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="../shared/global-header.css">
 <style>
+  /* 検索ボックス：input要素の初期スタイル（黒枠など）を消して馴染ませる */
+  .el-search input[type="search"]{
+    border:none !important;
+    outline:none !important;
+    background:transparent !important;
+    box-shadow:none !important;
+    -webkit-appearance:none !important;
+    appearance:none !important;
+    font:inherit !important;
+    color:inherit !important;
+    padding:0 !important;
+    margin:0 !important;
+    width:100%;
+  }
+  .el-search input[type="search"]::-webkit-search-cancel-button{
+    -webkit-appearance:none;
+    display:none;
+  }
   /* 広告バナー：スポンサー枠だとひと目でわかるよう、破線の縁取りとADタグ・アイコンで装飾 */
   .el-ad-banner{
     position:relative !important;
@@ -149,6 +167,67 @@
     padding:4px;
   }
   [data-guest-hide]{ display:none !important; }
+  /* 絞り込みバー：フォーラム側と同じデザインに統一 */
+  .el-list-tools-compact{
+    display:flex;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:8px 10px;
+    background:var(--el-paper);
+    border:1px solid var(--el-line-soft);
+    border-radius:var(--el-radius-m);
+    padding:14px 18px;
+    box-shadow:0 2px 10px rgba(22,35,63,.05);
+    margin-top:0;
+    margin-bottom:20px;
+  }
+  .el-list-tools-compact .el-filter-select-label{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    background:var(--el-cream-deep);
+    border:1px solid var(--el-line-soft);
+    border-radius:999px;
+    padding:0 12px;
+    height:34px;
+    box-sizing:border-box;
+    font-size:12.5px;
+    font-weight:600;
+    color:var(--el-ink-faint);
+    line-height:1;
+    white-space:nowrap;
+    cursor:pointer;
+    max-width:max-content;
+  }
+  .el-list-tools-compact .el-chip-chevron{
+    width:12px;
+    height:12px;
+    flex:none;
+    color:var(--el-ink-faint);
+  }
+  .el-list-tools-compact select{
+    border:none;
+    background:transparent;
+    font:inherit;
+    font-weight:700;
+    color:var(--el-navy);
+    padding:0;
+    margin:0;
+    appearance:none;
+    -webkit-appearance:none;
+    -moz-appearance:none;
+    cursor:pointer;
+    max-width:120px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .el-list-tools-compact .el-result-count--plain{
+    margin-left:auto;
+    color:var(--el-ink-faint);
+    font-weight:600;
+    font-size:13px;
+    white-space:nowrap;
+  }
 </style>
 </head>
 <body data-site="community" data-root="..">
@@ -528,7 +607,7 @@
     document.getElementById('groupFilter').addEventListener('change',go); document.getElementById('groupSort').addEventListener('change',go);
   })();
   // ユーザーモード（ゲスト／登録ユーザー／管理者）の切り替えと共通ゲート処理
-  (function () {
+  document.addEventListener('DOMContentLoaded', function () {
     var ROLE_KEY = 'el-user-role';
     function getRole() {
       try { return localStorage.getItem(ROLE_KEY) || 'guest'; } catch (e) { return 'guest'; }
@@ -612,7 +691,7 @@
         el.addEventListener('click', window.elRequireAuth);
       });
     }
-  })();
+  });
 </script>
 <div class="el-auth-modal" id="authModal" aria-hidden="true">
   <div class="el-auth-modal-backdrop" data-auth-close></div>

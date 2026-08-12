@@ -9,6 +9,24 @@
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="../shared/global-header.css">
 <style>
+  /* 検索ボックス：input要素の初期スタイル（黒枠など）を消して馴染ませる */
+  .el-search input[type="search"]{
+    border:none !important;
+    outline:none !important;
+    background:transparent !important;
+    box-shadow:none !important;
+    -webkit-appearance:none !important;
+    appearance:none !important;
+    font:inherit !important;
+    color:inherit !important;
+    padding:0 !important;
+    margin:0 !important;
+    width:100%;
+  }
+  .el-search input[type="search"]::-webkit-search-cancel-button{
+    -webkit-appearance:none;
+    display:none;
+  }
   /* 広告バナー：スポンサー枠だとひと目でわかるよう、破線の縁取りとADタグ・アイコンで装飾 */
   .el-ad-banner{
     position:relative !important;
@@ -172,7 +190,13 @@
     width:92% !important;
     max-height:88vh !important;
     overflow-y:auto !important;
+    overflow-x:hidden !important;
     box-sizing:border-box !important;
+    border-radius:var(--el-radius-m, 14px) !important;
+  }
+  .el-product-modal .el-pm-banner{
+    border-top-left-radius:var(--el-radius-m, 14px) !important;
+    border-top-right-radius:var(--el-radius-m, 14px) !important;
   }
   @media (max-width:600px){
     .el-product-modal .el-modal-panel{
@@ -185,7 +209,7 @@
     display:flex !important;
     align-items:center !important;
     flex-wrap:wrap !important;
-    gap:10px 12px !important;
+    gap:8px 10px !important;
     background:var(--el-paper) !important;
     border:1px solid var(--el-line-soft) !important;
     border-radius:var(--el-radius-m) !important;
@@ -197,23 +221,26 @@
   #marketControls .el-filter-menu > summary{
     display:inline-flex !important;
     align-items:center !important;
-    gap:6px !important;
+    gap:5px !important;
     background:var(--el-cream-deep) !important;
     border:1px solid var(--el-line-soft) !important;
     border-radius:999px !important;
-    padding:0 14px !important;
+    padding:0 12px !important;
     height:34px !important;
     box-sizing:border-box !important;
-    font-size:13px !important;
+    font-size:12.5px !important;
     font-weight:600 !important;
     color:var(--el-ink-faint) !important;
     line-height:1 !important;
     white-space:nowrap !important;
     cursor:pointer !important;
     list-style:none !important;
+    max-width:max-content !important;
   }
-  #marketControls .el-filter-menu > summary::-webkit-details-marker{ display:none; }
-  #marketControls .el-chip-chevron{ width:13px !important; height:13px !important; flex:none !important; color:var(--el-ink-faint) !important; }
+  #marketControls .el-filter-menu > summary{ list-style:none; }
+  .el-filter-menu > summary::marker{ display:none; content:''; }
+  .el-filter-menu > summary::-webkit-details-marker{ display:none; }
+  #marketControls .el-chip-chevron{ width:12px !important; height:12px !important; flex:none !important; color:var(--el-ink-faint) !important; }
   #marketControls select{
     border:none !important;
     background:transparent !important;
@@ -226,6 +253,9 @@
     -webkit-appearance:none !important;
     -moz-appearance:none !important;
     cursor:pointer !important;
+    max-width:120px !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
   }
   #marketControls .el-result-count--plain{
     margin-left:auto !important;
@@ -918,7 +948,7 @@
     });
   })();
   // ユーザーモード（ゲスト／登録ユーザー／管理者）の切り替えと共通ゲート処理
-  (function () {
+  document.addEventListener('DOMContentLoaded', function () {
     var ROLE_KEY = 'el-user-role';
     function getRole() {
       try { return localStorage.getItem(ROLE_KEY) || 'guest'; } catch (e) { return 'guest'; }
@@ -1002,7 +1032,7 @@
         el.addEventListener('click', window.elRequireAuth);
       });
     }
-  })();
+  });
 </script>
 <div class="el-auth-modal" id="authModal" aria-hidden="true">
   <div class="el-auth-modal-backdrop" data-auth-close></div>

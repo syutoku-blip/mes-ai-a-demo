@@ -9,6 +9,24 @@
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="../shared/global-header.css">
 <style>
+  /* 検索ボックス：input要素の初期スタイル（黒枠など）を消して馴染ませる */
+  .el-search input[type="search"]{
+    border:none !important;
+    outline:none !important;
+    background:transparent !important;
+    box-shadow:none !important;
+    -webkit-appearance:none !important;
+    appearance:none !important;
+    font:inherit !important;
+    color:inherit !important;
+    padding:0 !important;
+    margin:0 !important;
+    width:100%;
+  }
+  .el-search input[type="search"]::-webkit-search-cancel-button{
+    -webkit-appearance:none;
+    display:none;
+  }
   /* 広告バナー：スポンサー枠だとひと目でわかるよう、破線の縁取りとADタグ・アイコンで装飾 */
   .el-ad-banner{
     position:relative !important;
@@ -402,7 +420,7 @@
     });
   });
   // ユーザーモード（ゲスト／登録ユーザー／管理者）の切り替えと共通ゲート処理
-  (function () {
+  document.addEventListener('DOMContentLoaded', function () {
     var ROLE_KEY = 'el-user-role';
     function getRole() {
       try { return localStorage.getItem(ROLE_KEY) || 'guest'; } catch (e) { return 'guest'; }
@@ -486,7 +504,7 @@
         el.addEventListener('click', window.elRequireAuth);
       });
     }
-  })();
+  });
 </script>
 <div class="el-auth-modal" id="authModal" aria-hidden="true">
   <div class="el-auth-modal-backdrop" data-auth-close></div>
