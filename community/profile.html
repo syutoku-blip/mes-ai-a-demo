@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>プロフィール｜Export Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&family=Noto+Sans+JP:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="../shared/global-header.css">
+<style>
+  .el-search input[type="search"]{
+    border:none !important;
+    outline:none !important;
+    background:transparent !important;
+    box-shadow:none !important;
+    -webkit-appearance:none !important;
+    appearance:none !important;
+    font:inherit !important;
+    color:inherit !important;
+    padding:0 !important;
+    margin:0 !important;
+    width:100%;
+  }
+  .el-search input[type="search"]::-webkit-search-cancel-button{
+    -webkit-appearance:none;
+    display:none;
+  }
+  .el-profile-row{
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+    flex-wrap:wrap;
+    padding:14px 4px;
+    border-bottom:1px solid var(--el-line-soft);
+    font-size:14px;
+  }
+  .el-profile-row .k{
+    flex:none;
+    width:170px;
+    font-weight:700;
+    color:var(--el-navy);
+  }
+  .el-profile-row .v{
+    color:var(--el-ink-faint);
+    word-break:break-word;
+  }
+  .el-profile-row .vis{
+    font-size:11px;
+    color:var(--el-ink-faint);
+  }
+</style>
+</head>
+<body data-site="community" data-root="..">
+
+<header class="el-header">
+  <div class="el-header-inner">
+    <button class="el-menu-toggle" id="sidebarToggle" aria-label="メニュー">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+    <a href="index.html" class="el-logo">Export Lab<span class="dot">.</span></a>
+    <div class="el-header-actions">
+      <form class="el-search" action="search.html" method="get">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input type="search" name="q" placeholder="検索" aria-label="検索" autocomplete="off">
+      </form>
+      <span id="headerAuthLinks" style="display:flex;gap:6px;white-space:nowrap;"><a href="signup.html" class="el-btn el-btn--ghost el-btn--sm" id="headerSignupLink">新規登録</a><a href="login.html" class="el-btn el-btn--ghost el-btn--sm" id="headerLoginLink">ログイン</a></span>
+      <a href="mypage.html" class="el-header-bell" aria-label="通知">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="count">3</span>
+      </a>
+      <a href="mypage.html" class="el-avatar" aria-label="マイページ">り</a>
+    </div>
+  </div>
+</header>
+
+<div class="el-app" id="appShell">
+  <div class="el-sidebar-wrap">
+    <aside class="el-sidebar" id="sidebar">
+    <nav>
+      <a href="index.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/><path d="M9 22V12h6v10"/></svg>
+        <span class="lbl">ホーム</span>
+      </a>
+
+      <details class="el-side-forum">
+        <summary data-href="forum.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <span class="lbl">フォーラム</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
+        </summary>
+        <div class="el-side-sub">
+          <a href="forum-new.html" class="el-side-cta" data-guest-block>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+            新規投稿をする
+          </a>
+          <a href="board.html">すべて</a>
+          <a href="board.html?sort=new">新着</a>
+          <a href="board.html?sort=hot">人気</a>
+          <a href="board.html?filter=shift&sort=hot">SHiFT member only</a>
+          <a href="board.html?filter=unsolved&sort=hot">未解決</a>
+
+          <details class="el-side-cat">
+            <summary>カテゴリで探す<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></summary>
+            <div class="el-side-cat-body">
+              <a href="board.html?category=amazon-ops&sort=hot">Amazon販売・運用</a>
+              <a href="board.html?category=fda-food&sort=hot">FDA・食品規制</a>
+              <a href="board.html?category=intl-logistics&sort=hot">国際物流・通関</a>
+              <a href="board.html?category=mocra&sort=hot">MoCRA・化粧品規制</a>
+              <a href="board.html?category=chat&sort=hot">情報交換・雑談</a>
+              <a href="forum-categories.html" class="el-side-more">もっと見る <span>→</span></a>
+            </div>
+          </details>
+
+          <details class="el-side-cat">
+            <summary>ハッシュタグで探す<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></summary>
+            <div class="el-side-cat-body">
+              <a href="board.html?tag=fba&sort=hot">#FBA</a>
+              <a href="board.html?tag=facility-registration&sort=hot">#施設登録・更新</a>
+              <a href="board.html?tag=label&sort=hot">#ラベル</a>
+              <a href="board.html?tag=us-agent&sort=hot">#米国代理人</a>
+              <a href="board.html?tag=prior-notice&sort=hot">#事前申告</a>
+              <a href="forum-tags.html" class="el-side-more">もっと見る <span>→</span></a>
+            </div>
+          </details>
+        </div>
+      </details>
+
+      <details class="el-side-forum">
+        <summary data-href="groups.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <span class="lbl">コミュニティ</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
+        </summary>
+        <div class="el-side-sub">
+          <a href="groups.html" class="el-side-cta" data-guest-block>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+            新規コミュニティを作成する
+          </a>
+          <a href="groups-list.html">すべて</a>
+          <a href="groups-list.html?sort=new">新着</a>
+          <a href="groups-list.html?sort=hot">人気</a>
+          <a href="groups-list.html?filter=joined&sort=hot">参加中のコミュニティ</a>
+          <a href="groups-list.html?filter=pending&sort=hot">申請中のコミュニティ</a>
+        </div>
+      </details>
+
+      <a href="announcements.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
+        <span class="lbl">公式お知らせ</span>
+      </a>
+
+      <a href="events.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        <span class="lbl">イベント</span>
+      </a>
+
+      <details class="el-side-forum">
+        <summary data-href="market.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/></svg>
+          <span class="lbl">マーケット</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
+        </summary>
+        <div class="el-side-sub">
+          <a href="market-list.html">すべて</a>
+          <a href="market-official.html">ワールドシフト提供</a>
+          <a href="market-apply.html">出品申請</a>
+        </div>
+      </details>
+
+      <a href="members.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <span class="lbl">メンバー</span>
+      </a>
+
+      <a href="mypage.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+        <span class="lbl">マイページ</span>
+      </a>
+    </nav>
+  </aside>
+  </div>
+  <div class="el-content">
+    <main class="el-section" style="padding-top:0;">
+      <div class="wrap" style="max-width:640px;">
+        <nav class="el-breadcrumb el-page-breadcrumb" aria-label="パンくず"><a href="index.html">ホーム</a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg><a href="mypage.html">マイページ</a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg><span>プロフィール</span></nav>
+
+        <div id="guestPrompt" style="display:none;padding:44px 24px;text-align:center;background:var(--el-cream-deep);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);margin-top:16px;">
+          <h2 style="margin:0 0 10px;">ログインが必要です</h2>
+          <p style="color:var(--el-ink-faint);font-size:14px;line-height:1.8;margin:0 0 20px;">プロフィールを見るには、ログインしてください。</p>
+          <a href="login.html" class="el-btn el-btn--primary el-btn--sm">ログイン</a>
+        </div>
+
+        <div id="profileContent">
+        <div class="el-section-head" style="margin-top:8px;margin-bottom:20px;">
+          <div>
+            <h2>プロフィール</h2>
+            <div class="sub" id="profileModeSub">登録内容の確認</div>
+          </div>
+          <button type="button" class="el-btn el-btn--ghost el-btn--sm" id="editToggleBtn">編集する</button>
+        </div>
+
+        <div id="profileError" style="display:none;background:#FBEAE6;border:1px solid var(--el-coral);color:var(--el-coral);font-size:13px;font-weight:600;padding:12px 14px;border-radius:10px;margin-bottom:16px;"></div>
+        <div id="profileSuccess" style="display:none;background:#EAF4EF;border:1px solid var(--el-teal-deep);color:var(--el-teal-deep);font-size:13px;font-weight:600;padding:12px 14px;border-radius:10px;margin-bottom:16px;">保存しました。</div>
+
+        <!-- 閲覧モード -->
+        <div id="viewMode" style="display:flex;flex-direction:column;gap:0;">
+          <div class="el-profile-row" data-field="username"><span class="k">ユーザーネーム</span><span class="v" data-out="username">-</span></div>
+          <div class="el-profile-row" data-field="email"><span class="k">メールアドレス</span><span class="v" data-out="email">-</span></div>
+          <div class="el-profile-row"><span class="k">パスワード</span><span class="v">••••••••</span></div>
+          <div class="el-profile-row" data-field="fullname"><span class="k">氏名</span><span class="v" data-out="fullname">-</span></div>
+          <div class="el-profile-row" data-field="birthdate"><span class="k">生年月日</span><span class="v" data-out="birthdate">-</span> <span class="vis" data-out-vis="birthdateVisibility"></span></div>
+          <div class="el-profile-row" data-field="phone"><span class="k">電話番号</span><span class="v" data-out="phone">-</span></div>
+          <div class="el-profile-row" data-field="gender"><span class="k">性別</span><span class="v" data-out="genderLabel">-</span> <span class="vis" data-out-vis="genderVisibility"></span></div>
+          <div class="el-profile-row" data-field="prefecture"><span class="k">住所（県）</span><span class="v" data-out="prefecture">-</span> <span class="vis" data-out-vis="prefectureVisibility"></span></div>
+          <div class="el-profile-row" data-field="city"><span class="k">住所（市町村以降）</span><span class="v" data-out="city">-</span> <span class="vis" data-out-vis="cityVisibility"></span></div>
+          <div class="el-profile-row" data-field="industry"><span class="k">業種</span><span class="v" data-out="industryLabel">-</span> <span class="vis" data-out-vis="industryVisibility"></span></div>
+          <div class="el-profile-row" data-field="shiftNumber"><span class="k">会員番号</span><span class="v" data-out="shiftNumber">-</span> <span class="vis" data-out-vis="shiftNumberVisibility"></span></div>
+          <div class="el-profile-row" data-field="bio"><span class="k">自己紹介</span><span class="v" data-out="bio">-</span></div>
+        </div>
+
+        <!-- 編集モード -->
+        <form id="editForm" style="display:none;flex-direction:column;gap:18px;">
+          <label style="display:block;">
+            <span style="display:block;font-weight:700;font-size:13px;color:var(--el-navy);margin-bottom:6px;">ユーザーネーム</span>
+            <input type="text" name="username" required style="width:100%;box-sizing:border-box;padding:11px 14px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
+          </label>
+          <label style="display:block;">
+            <span style="display:block;font-weight:700;font-size:13px;color:var(--el-navy);margin-bottom:6px;">メールアドレス</span>
+            <input type="email" name="email" required style="width:100%;box-sizing:border-box;padding:11px 14px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
+          </label>
+          <label style="display:block;">
+            <span style="display:block;font-weight:700;font-size:13px;color:var(--el-navy);margin-bottom:6px;">新しいパスワード <span style="color:var(--el-ink-faint);font-weight:600;">（変更する場合のみ入力）</span></span>
+            <input type="password" name="password" style="width:100%;box-sizing:border-box;padding:11px 14px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
+          </label>
+          <label style="display:block;">
+            <span style="display:block;font-weight:700;font-size:13px;color:var(--el-navy);margin-bottom:6px;">氏名</span>
+            <input type="text" name="fullname" required style="width:100%;box-sizing:border-box;padding:11px 14px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
+          </label>
+
+          <div>
+            <span style="display:block;font-weight:700;font-size:13px;color:var(--el-navy);margin-bottom:6px;">生年月日</span>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+              <input type="date" name="birthdate" style="flex:1;min-width:160px;box-sizing:border-box;padding:11px 14px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
+              <label style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--el-ink-faint);white-space:nowrap;"><input type="radio" name="birthdate_visibility" value="public"> 公開</label>
+              <label style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--el-ink-faint);white-space:nowrap;"><input type="radio" name="birthdate_visibility" value="private"> 非公開</label>
+            </div>
+          </div>
+
+          <label style="display:block;">
+            <span style="display:block;font-weight:700;font-size:13px;color:var(--el-navy);margin-bottom:6px;">電話番号</span>
+            <input type="tel" name="phone" style="width:100%;box-sizing:border-box;padding:11px 14px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
+          </label>
+
+          <div>
+            <span style="display:block;font-weight:700;font-size:13px;color:var(--el-navy);margin-bottom:6px;">性別</span>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+              <select name="gender" style="flex:1;min-width:160px;box-sizing:border-box;padding:11px 14px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;background:#fff;">
+                <option value="">選択してください</option>
+                <option value="male">男性</option>
+                <option value="female">女性</option>
+                <option value="other">その他</option>
+                <option value="unanswered">回答しない</option>
+              </select>
+              <label style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--el-ink-faint);white-space:nowrap;"><input type="radio" name="gender_visibility" value="public"> 公開</label>
+              <label style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--el-ink-faint);white-space:nowrap;"><input type="radio" name="gender_visibility" value="private"> 非公開</label>
+            </div>
+          </div>
+
+          <div>
+            <span style="display:block;font-weight:700;font-size:13px;color:var(--el-navy);margin-bottom:6px;">住所（県）</span>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+              <input type="text" name="prefecture" style="flex:1;min-width:160px;box-sizing:border-box;padding:11px 14px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
+              <label style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--el-ink-faint);white-space:nowrap;"><input type="radio" name="prefecture_visibility" value="public"> 公開</label>
+              <label style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--el-ink-faint);white-space:nowrap;"><input type="radio" name="prefecture_visibility" value="private"> 非公開</label>
+            </div>
+          </div>
+
+          <div>
+            <span style="display:block;font-weight:700;font-size:13px;color:var(--el-navy);margin-bottom:6px;">住所（市町村以降）</span>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+              <input type="text" name="city" style="flex:1;min-width:160px;box-sizing:border-box;padding:11px 14px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
+              <label style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--el-ink-faint);white-space:nowrap;"><input type="radio" name="city_visibility" value="public"> 公開</label>
+              <label style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--el-ink-faint);white-space:nowrap;"><input type="radio" name="city_visibility" value="private"> 非公開</label>
+            </div>
+          </div>
+
+          <div>
+            <span style="display:block;font-weight:700;font-size:13px;color:var(--el-navy);margin-bottom:6px;">業種</span>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+              <select name="industry" style="flex:1;min-width:160px;box-sizing:border-box;padding:11px 14px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;background:#fff;">
+                <option value="">選択してください</option>
+                <option value="food">食品</option>
+                <option value="cosmetics">化粧品</option>
+                <option value="apparel">アパレル・雑貨</option>
+                <option value="electronics">家電・電子機器</option>
+                <option value="supplement">サプリメント・健康食品</option>
+                <option value="logistics">物流・倉庫</option>
+                <option value="consulting">コンサルティング・士業</option>
+                <option value="other">その他</option>
+              </select>
+              <label style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--el-ink-faint);white-space:nowrap;"><input type="radio" name="industry_visibility" value="public"> 公開</label>
+              <label style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--el-ink-faint);white-space:nowrap;"><input type="radio" name="industry_visibility" value="private"> 非公開</label>
+            </div>
+          </div>
+
+          <div style="background:var(--el-cream-deep);border:1px solid var(--el-line-soft);border-radius:12px;padding:14px 16px;">
+            <span style="display:block;font-weight:700;font-size:13px;color:var(--el-navy);margin-bottom:6px;">SHiFT会員番号</span>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+              <input type="text" name="shift_member_number" style="flex:1;min-width:160px;box-sizing:border-box;padding:11px 14px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;background:#fff;">
+              <label style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--el-ink-faint);white-space:nowrap;"><input type="radio" name="shift_number_visibility" value="public"> 公開</label>
+              <label style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--el-ink-faint);white-space:nowrap;"><input type="radio" name="shift_number_visibility" value="private"> 非公開</label>
+            </div>
+            <div style="font-size:12px;color:var(--el-ink-faint);margin-top:8px;">SHiFT会員区分の変更（一般⇔SHiFT会員）は運営までお問い合わせください。</div>
+          </div>
+
+          <label style="display:block;">
+            <span style="display:block;font-weight:700;font-size:13px;color:var(--el-navy);margin-bottom:6px;">自己紹介</span>
+            <textarea name="bio" rows="4" style="width:100%;box-sizing:border-box;padding:11px 14px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;resize:vertical;"></textarea>
+          </label>
+
+          <div style="display:flex;gap:10px;">
+            <button type="submit" class="el-btn el-btn--primary" id="saveProfileBtn">保存する</button>
+            <button type="button" class="el-btn el-btn--ghost" id="cancelEditBtn">キャンセル</button>
+          </div>
+        </form>
+        </div>
+
+      </div>
+    </main>
+
+    <footer class="el-footer">
+      <div class="wrap">
+        <div class="el-footer-grid">
+          <div>
+            <a href="index.html" class="el-logo">Export Lab<span class="dot">.</span></a>
+            <p class="tag">人・モノ・情報がつながる、輸出の共創コミュニティ。運営：WorldShift株式会社</p>
+          </div>
+          <div class="el-footer-cols">
+            <div>
+              <h6>コミュニティ</h6>
+              <a href="board.html">フォーラム</a>
+              <a href="groups.html">コミュニティ</a>
+              <a href="announcements.html">公式お知らせ</a>
+              <a href="events.html">イベント</a>
+              <a href="market.html">マーケット</a>
+            </div>
+            <div>
+              <h6>サポート</h6>
+              <a href="#">ガイドライン</a>
+              <a href="#">よくある質問</a>
+              <a href="#">お問い合わせ</a>
+            </div>
+          </div>
+        </div>
+        <div class="el-footer-bottom">
+          <span>© 2026 WorldShift Inc.</span>
+          <span>Export Lab Community</span>
+        </div>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<script src="../shared/global-header.js" defer></script>
+<script>
+  (function () {
+    var appShell = document.getElementById('appShell');
+    var STORAGE_KEY = 'el-sidebar-collapsed';
+    try {
+      if (localStorage.getItem(STORAGE_KEY) === '1') { appShell.classList.add('is-toggled'); }
+    } catch (e) {}
+    document.getElementById('sidebarToggle').addEventListener('click', function () {
+      appShell.classList.toggle('is-toggled');
+      try { localStorage.setItem(STORAGE_KEY, appShell.classList.contains('is-toggled') ? '1' : '0'); } catch (e) {}
+    });
+  })();
+
+  document.querySelectorAll('.el-side-forum > summary[data-href]').forEach(function (summary) {
+    summary.addEventListener('click', function (e) {
+      if (e.target.closest('svg.chev')) return;
+      e.preventDefault();
+      window.location.href = summary.dataset.href;
+    });
+  });
+
+  var GENDER_LABELS = { male: '男性', female: '女性', other: 'その他', unanswered: '回答しない' };
+  var INDUSTRY_LABELS = {
+    food: '食品', cosmetics: '化粧品', apparel: 'アパレル・雑貨', electronics: '家電・電子機器',
+    supplement: 'サプリメント・健康食品', logistics: '物流・倉庫', consulting: 'コンサルティング・士業', other: 'その他'
+  };
+  var VIS_LABELS = { public: '（公開）', private: '（非公開）' };
+
+  (function () {
+    var role = 'guest';
+    var profile = {};
+    try {
+      role = localStorage.getItem('el-user-role') || 'guest';
+      profile = JSON.parse(localStorage.getItem('el-user-profile') || '{}');
+    } catch (e) {}
+
+    var bell = document.querySelector('.el-header-bell');
+    if (bell && role === 'guest') bell.style.display = 'none';
+    var authLinksWrap = document.getElementById('headerAuthLinks');
+    var loginLink = document.getElementById('headerLoginLink');
+    var signupLink = document.getElementById('headerSignupLink');
+    if (role !== 'guest' && authLinksWrap) {
+      if (loginLink) loginLink.remove();
+      if (signupLink) {
+        signupLink.textContent = 'ログアウト';
+        signupLink.href = '#';
+        signupLink.addEventListener('click', function (e) {
+          e.preventDefault();
+          try { localStorage.setItem('el-user-role', 'guest'); } catch (err) {}
+          window.location.href = 'index.html';
+        });
+      }
+    }
+
+    if (role === 'guest') {
+      document.getElementById('guestPrompt').style.display = 'block';
+      document.getElementById('profileContent').style.display = 'none';
+      return;
+    }
+
+    // 閲覧モードへ値を反映
+    function fill() {
+      document.querySelectorAll('[data-out]').forEach(function (el) {
+        var key = el.dataset.out;
+        var val;
+        if (key === 'genderLabel') val = GENDER_LABELS[profile.gender] || profile.gender || '未設定';
+        else if (key === 'industryLabel') val = INDUSTRY_LABELS[profile.industry] || profile.industry || '未設定';
+        else val = profile[key] || '未設定';
+        el.textContent = val;
+      });
+      document.querySelectorAll('[data-out-vis]').forEach(function (el) {
+        var key = el.dataset.outVis;
+        el.textContent = VIS_LABELS[profile[key]] || VIS_LABELS.private;
+      });
+    }
+    fill();
+
+    // 編集モードのフォームへ現在値を流し込む
+    function fillForm() {
+      var form = document.getElementById('editForm');
+      ['username', 'email', 'fullname', 'birthdate', 'phone', 'gender', 'prefecture', 'city', 'industry', 'bio'].forEach(function (key) {
+        if (form[key]) form[key].value = profile[key] || '';
+      });
+      if (form['shift_member_number']) form['shift_member_number'].value = profile.shiftNumber || '';
+      [['birthdate_visibility', 'birthdateVisibility'], ['gender_visibility', 'genderVisibility'],
+       ['prefecture_visibility', 'prefectureVisibility'], ['city_visibility', 'cityVisibility'],
+       ['industry_visibility', 'industryVisibility'], ['shift_number_visibility', 'shiftNumberVisibility']].forEach(function (pair) {
+        var radios = form.querySelectorAll('input[name="' + pair[0] + '"]');
+        var v = profile[pair[1]] || 'private';
+        radios.forEach(function (r) { r.checked = (r.value === v); });
+      });
+    }
+
+    var viewMode = document.getElementById('viewMode');
+    var editForm = document.getElementById('editForm');
+    var editToggleBtn = document.getElementById('editToggleBtn');
+    var cancelEditBtn = document.getElementById('cancelEditBtn');
+    var modeSub = document.getElementById('profileModeSub');
+
+    editToggleBtn.addEventListener('click', function () {
+      fillForm();
+      viewMode.style.display = 'none';
+      editForm.style.display = 'flex';
+      editToggleBtn.style.display = 'none';
+      modeSub.textContent = '登録内容の編集';
+    });
+    cancelEditBtn.addEventListener('click', function () {
+      viewMode.style.display = 'flex';
+      editForm.style.display = 'none';
+      editToggleBtn.style.display = '';
+      modeSub.textContent = '登録内容の確認';
+    });
+
+    // ------------------------------------------------------------
+    // Google Apps Script（会員シート連携）のウェブアプリURL。
+    // ------------------------------------------------------------
+    var API_URL = 'ここにGoogle Apps ScriptのウェブアプリURLを貼り付けてください';
+
+    var errorBox = document.getElementById('profileError');
+    var successBox = document.getElementById('profileSuccess');
+    var saveBtn = document.getElementById('saveProfileBtn');
+
+    editForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      errorBox.style.display = 'none';
+      successBox.style.display = 'none';
+
+      if (API_URL.indexOf('http') !== 0) {
+        errorBox.textContent = 'サーバーの設定が完了していません（API_URL未設定）。管理者にご連絡ください。';
+        errorBox.style.display = 'block';
+        return;
+      }
+
+      var currentEmail = '';
+      var currentPassword = '';
+      try {
+        currentEmail = localStorage.getItem('el-user-email') || '';
+        currentPassword = localStorage.getItem('el-user-password') || '';
+      } catch (err) {}
+
+      var fd = new FormData(editForm);
+      var payload = {
+        action: 'updateProfile',
+        currentEmail: currentEmail,
+        currentPassword: currentPassword,
+        username: fd.get('username') || '',
+        email: fd.get('email') || '',
+        password: fd.get('password') || '',
+        fullname: fd.get('fullname') || '',
+        birthdate: fd.get('birthdate') || '',
+        birthdateVisibility: fd.get('birthdate_visibility') || 'private',
+        phone: fd.get('phone') || '',
+        gender: fd.get('gender') || '',
+        genderVisibility: fd.get('gender_visibility') || 'private',
+        prefecture: fd.get('prefecture') || '',
+        prefectureVisibility: fd.get('prefecture_visibility') || 'private',
+        city: fd.get('city') || '',
+        cityVisibility: fd.get('city_visibility') || 'private',
+        industry: fd.get('industry') || '',
+        industryVisibility: fd.get('industry_visibility') || 'private',
+        bio: fd.get('bio') || ''
+      };
+
+      saveBtn.disabled = true;
+      saveBtn.textContent = '保存中…';
+
+      fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      })
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+          saveBtn.disabled = false;
+          saveBtn.textContent = '保存する';
+          if (!data.ok) {
+            errorBox.textContent = data.error || '保存に失敗しました';
+            errorBox.style.display = 'block';
+            return;
+          }
+          profile = data.profile || profile;
+          try {
+            localStorage.setItem('el-user-profile', JSON.stringify(profile));
+            localStorage.setItem('el-user-role', data.role);
+            localStorage.setItem('el-user-name', profile.fullname || profile.username || '');
+            localStorage.setItem('el-username', profile.username || '');
+            localStorage.setItem('el-user-email', payload.email);
+            if (payload.password) localStorage.setItem('el-user-password', payload.password);
+          } catch (err) {}
+          fill();
+          viewMode.style.display = 'flex';
+          editForm.style.display = 'none';
+          editToggleBtn.style.display = '';
+          modeSub.textContent = '登録内容の確認';
+          successBox.style.display = 'block';
+        })
+        .catch(function () {
+          saveBtn.disabled = false;
+          saveBtn.textContent = '保存する';
+          errorBox.textContent = '通信エラーが発生しました。時間をおいて再度お試しください。';
+          errorBox.style.display = 'block';
+        });
+    });
+  })();
+</script>
+</body>
+</html>

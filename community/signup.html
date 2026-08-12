@@ -462,8 +462,11 @@
         }
         try {
           localStorage.setItem('el-user-role', data.role);
-          localStorage.setItem('el-user-name', payload.fullname || payload.username || '');
+          localStorage.setItem('el-user-name', (data.profile && data.profile.fullname) || payload.fullname || payload.username || '');
           localStorage.setItem('el-username', payload.username || '');
+          localStorage.setItem('el-user-email', payload.email || '');
+          localStorage.setItem('el-user-password', payload.password || '');
+          localStorage.setItem('el-user-profile', JSON.stringify(data.profile || payload));
         } catch (err) {}
         window.location.href = 'mypage.html';
       })
