@@ -214,6 +214,10 @@
         <div id="profileError" style="display:none;background:#FBEAE6;border:1px solid var(--el-coral);color:var(--el-coral);font-size:13px;font-weight:600;padding:12px 14px;border-radius:10px;margin-bottom:16px;"></div>
         <div id="profileSuccess" style="display:none;background:#EAF4EF;border:1px solid var(--el-teal-deep);color:var(--el-teal-deep);font-size:13px;font-weight:600;padding:12px 14px;border-radius:10px;margin-bottom:16px;">保存しました。</div>
 
+        <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px;">
+          <div id="profileAvatarView" style="width:72px;height:72px;border-radius:50%;background:var(--el-cream-deep);border:1px solid var(--el-line-soft);display:flex;align-items:center;justify-content:center;overflow:hidden;flex:none;color:var(--el-ink-faint);font-size:12px;">未設定</div>
+        </div>
+
         <!-- 閲覧モード -->
         <div id="viewMode" style="display:flex;flex-direction:column;gap:0;">
           <div class="el-profile-row" data-field="username"><span class="k">ユーザーネーム</span><span class="v" data-out="username">-</span></div>
@@ -399,6 +403,14 @@
             </div>
           </div>
 
+          <div>
+            <span style="display:block;font-weight:700;font-size:13px;color:var(--el-navy);margin-bottom:6px;">プロフィール画像</span>
+            <div style="display:flex;align-items:center;gap:14px;">
+              <div id="editPhotoPreview" style="width:56px;height:56px;border-radius:50%;background:var(--el-cream-deep);border:1px solid var(--el-line-soft);display:flex;align-items:center;justify-content:center;overflow:hidden;flex:none;color:var(--el-ink-faint);font-size:11px;">未設定</div>
+              <input type="file" name="photo" id="editPhotoInput" accept="image/*" style="font-size:13px;">
+            </div>
+          </div>
+
           <label style="display:block;">
             <span style="display:block;font-weight:700;font-size:13px;color:var(--el-navy);margin-bottom:6px;">自己紹介</span>
             <textarea name="bio" rows="4" style="width:100%;box-sizing:border-box;padding:11px 14px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;resize:vertical;"></textarea>
@@ -491,6 +503,12 @@
     if (bell && role === 'guest') bell.style.display = 'none';
     var headerAvatar = document.getElementById('headerAvatar');
     if (headerAvatar && role === 'guest') headerAvatar.style.display = 'none';
+    else if (headerAvatar) {
+      try {
+        var hp = JSON.parse(localStorage.getItem('el-user-profile') || '{}');
+        if (hp.photoUrl) headerAvatar.innerHTML = '<img src="' + hp.photoUrl + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
+      } catch (e) {}
+    }
     var authLinksWrap = document.getElementById('headerAuthLinks');
     var loginLink = document.getElementById('headerLoginLink');
     var signupLink = document.getElementById('headerSignupLink');
@@ -520,9 +538,11 @@
     var isOwnProfile = !targetUsername || targetUsername === ownUsername;
 
     // ------------------------------------------------------------
-    // Google Apps Script（会員シート連携）のウェブアプリURL。
+    // 会員データファイル（members.json）のURL。閲覧系はここから直接読み込む。
+    // 保存（プロフィール編集・画像アップロード）だけは Apps Script を経由する。
     // ------------------------------------------------------------
-    var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
+    var MEMBERS_JSON_URL = 'ここにmembers.jsonのURLを貼り付けてください';
+    var API_URL = 'ここにGoogle Apps ScriptのウェブアプリURLを貼り付けてください';
 
     if (!isOwnProfile) {
       // 他ユーザーのプロフィール：公開項目のみを取得して閲覧専用で表示する
@@ -532,26 +552,35 @@
         if (!row.dataset.field) row.style.display = 'none'; // パスワード行など
       });
 
-      if (API_URL.indexOf('http') !== 0) {
-        document.getElementById('profileError').textContent = 'サーバーの設定が完了していません（API_URL未設定）。管理者にご連絡ください。';
+      if (MEMBERS_JSON_URL.indexOf('http') !== 0) {
+        document.getElementById('profileError').textContent = 'サーバーの設定が完了していません（MEMBERS_JSON_URL未設定）。管理者にご連絡ください。';
         document.getElementById('profileError').style.display = 'block';
         return;
       }
 
-      fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({ action: 'getPublicProfile', username: targetUsername })
-      })
+      fetch(MEMBERS_JSON_URL, { cache: 'no-store' })
         .then(function (res) { return res.json(); })
         .then(function (data) {
-          if (!data.ok) {
-            document.getElementById('profileError').textContent = data.error || 'ユーザーが見つかりませんでした';
+          var full = (data.members || []).filter(function (m) { return m.username === targetUsername; })[0];
+          if (!full) {
+            document.getElementById('profileError').textContent = '該当するユーザーが見つかりませんでした';
             document.getElementById('profileError').style.display = 'block';
             return;
           }
-          var p = data.profile;
+          // 公開設定になっている項目だけを残す
+          var p = { username: full.username, bio: full.bio, photoUrl: full.photoUrl };
+          if (full.birthdateVisibility === '公開') p.birthdate = full.birthdate;
+          if (full.genderVisibility === '公開') p.gender = full.gender;
+          if (full.prefectureVisibility === '公開') p.prefecture = full.prefecture;
+          if (full.cityVisibility === '公開') p.city = full.city;
+          if (full.industryVisibility === '公開') p.industry = full.industry;
+          if (full.shiftNumberVisibility === '公開') p.shiftNumber = full.shiftNumber;
+
           document.querySelector('#profileModeSub').textContent = p.username + ' さんのプロフィール';
+          if (p.photoUrl) {
+            var avatarEl2 = document.getElementById('profileAvatarView');
+            if (avatarEl2) avatarEl2.innerHTML = '<img src="' + p.photoUrl + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
+          }
           document.querySelectorAll('[data-out]').forEach(function (el) {
             var key = el.dataset.out;
             var raw = key === 'genderLabel' ? p.gender : (key === 'industryLabel' ? p.industry : p[key]);
@@ -575,6 +604,12 @@
 
     // 閲覧モードへ値を反映
     function fill() {
+      var avatarEl = document.getElementById('profileAvatarView');
+      if (avatarEl) {
+        avatarEl.innerHTML = profile.photoUrl
+          ? '<img src="' + profile.photoUrl + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">'
+          : (profile.username ? profile.username.charAt(0) : '未設定');
+      }
       document.querySelectorAll('[data-out]').forEach(function (el) {
         var key = el.dataset.out;
         var val;
@@ -589,6 +624,43 @@
       });
     }
     fill();
+
+    // 画像を一辺200pxに縮小・JPEG圧縮してBase64データURLに変換する
+    function compressImage(file) {
+      return new Promise(function (resolve, reject) {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          var img = new Image();
+          img.onload = function () {
+            var size = 200;
+            var canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            var ctx = canvas.getContext('2d');
+            var scale = Math.max(size / img.width, size / img.height);
+            var w = img.width * scale, h = img.height * scale;
+            ctx.drawImage(img, (size - w) / 2, (size - h) / 2, w, h);
+            resolve(canvas.toDataURL('image/jpeg', 0.8));
+          };
+          img.onerror = reject;
+          img.src = e.target.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    var editPhotoDataUrl = '';
+    var editPhotoInput = document.getElementById('editPhotoInput');
+    var editPhotoPreview = document.getElementById('editPhotoPreview');
+    editPhotoInput.addEventListener('change', function () {
+      var file = editPhotoInput.files[0];
+      if (!file) return;
+      compressImage(file).then(function (dataUrl) {
+        editPhotoDataUrl = dataUrl;
+        editPhotoPreview.innerHTML = '<img src="' + dataUrl + '" style="width:100%;height:100%;object-fit:cover;">';
+      });
+    });
 
     // 編集モードのフォームへ現在値を流し込む
     function fillForm() {
@@ -617,6 +689,13 @@
         var v = profile[pair[1]] || '非公開';
         radios.forEach(function (r) { r.checked = (r.value === v); });
       });
+
+      editPhotoDataUrl = '';
+      if (editPhotoPreview) {
+        editPhotoPreview.innerHTML = profile.photoUrl
+          ? '<img src="' + profile.photoUrl + '" style="width:100%;height:100%;object-fit:cover;">'
+          : '未設定';
+      }
     }
 
     var viewMode = document.getElementById('viewMode');
@@ -693,6 +772,17 @@
       saveBtn.disabled = true;
       saveBtn.textContent = '保存中…';
 
+      var uploadStep = editPhotoDataUrl
+        ? fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: 'uploadPhoto', username: payload.username, photoBase64: editPhotoDataUrl })
+          }).then(function (res) { return res.json(); }).then(function (r) { return r.ok ? r.photoUrl : ''; }).catch(function () { return ''; })
+        : Promise.resolve('');
+
+      uploadStep.then(function (photoUrl) {
+        if (photoUrl) payload.photoUrl = photoUrl;
+
       fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -729,6 +819,7 @@
           errorBox.textContent = '通信エラーが発生しました。時間をおいて再度お試しください。';
           errorBox.style.display = 'block';
         });
+      });
     });
   })();
 </script>
