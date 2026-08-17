@@ -26,35 +26,6 @@
     -webkit-appearance:none;
     display:none;
   }
-  /* ユーザーモード切り替えウィジェット */
-  .el-role-switcher{
-    position:fixed;
-    right:18px;
-    bottom:18px;
-    z-index:500;
-    display:flex;
-    gap:4px;
-    background:var(--el-paper, #fff);
-    border:1px solid var(--el-line-soft, #E5DFD2);
-    border-radius:999px;
-    padding:4px;
-    box-shadow:0 4px 16px rgba(22,35,63,.14);
-  }
-  .el-role-switcher button{
-    border:none;
-    background:transparent;
-    color:var(--el-ink-faint, #8A8478);
-    font-size:12px;
-    font-weight:700;
-    padding:7px 12px;
-    border-radius:999px;
-    cursor:pointer;
-    white-space:nowrap;
-  }
-  .el-role-switcher button.is-active{
-    background:var(--el-navy, #16233F);
-    color:#fff;
-  }
   .el-auth-modal{
     display:none;
     position:fixed;
@@ -106,6 +77,17 @@
     padding:4px;
   }
   [data-guest-hide]{ display:none !important; }
+  /* ヘッダーの新規登録／ログイン／ログアウトボタン：背景色に関わらず文字が見えるよう、
+     透過ではなく塗りのボタンにする */
+  #headerAuthLinks .el-btn, #headerSignupLink.el-btn, #headerLoginLink.el-btn{
+    color:#fff !important;
+    background:var(--el-navy, #16233F) !important;
+    border:1px solid var(--el-navy, #16233F) !important;
+  }
+  #headerAuthLinks .el-btn:hover, #headerSignupLink.el-btn:hover, #headerLoginLink.el-btn:hover{
+    background:var(--el-teal-deep, #1E6F63) !important;
+    border-color:var(--el-teal-deep, #1E6F63) !important;
+  }
 </style>
 </head>
 <body data-site="community" data-root="..">
@@ -126,7 +108,7 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
         <span class="count">3</span>
       </a>
-      <a href="mypage.html" class="el-avatar" aria-label="マイページ">り</a>
+      <a href="mypage.html" class="el-avatar" id="headerAvatar" aria-label="マイページ">り</a>
     </div>
   </div>
 </header>
@@ -249,187 +231,9 @@
           </div>
         </div>
 
-        <div style="display:flex;flex-direction:column;gap:12px;" id="memberList">
-          <div class="el-member-card">
-            <div class="el-avatar" style="width:52px;height:52px;font-size:18px;flex:none;">た</div>
-            <div style="min-width:0;">
-              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-                <h3 style="margin:0;font-size:15px;">たくみ</h3>
-                <span style="display:inline-block;font-size:11px;font-weight:700;background:#EAF4EF;color:#3E8E63;padding:2px 9px;border-radius:999px;">初心者</span>
-              </div>
-              <div class="sub" style="margin:2px 0 8px;">IT・システム</div>
-              <p style="margin:0 0 8px;font-size:13px;color:var(--el-ink-faint);line-height:1.7;">最近Amazon輸出を始めました。まだ分からないことばかりですがよろしくお願いします！</p>
-              <div style="font-size:12px;color:var(--el-teal-deep);font-weight:600;">主な担当領域：Amazon初心者・FBA</div>
-            </div>
-          </div>
-          <div class="el-member-card">
-            <div class="el-avatar" style="width:52px;height:52px;font-size:18px;flex:none;">m</div>
-            <div style="min-width:0;">
-              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-                <h3 style="margin:0;font-size:15px;">miki</h3>
-                <span style="display:inline-block;font-size:11px;font-weight:700;background:#EAF4EF;color:#3E8E63;padding:2px 9px;border-radius:999px;">初心者</span>
-              </div>
-              <div class="sub" style="margin:2px 0 8px;">小売・販売</div>
-              <p style="margin:0 0 8px;font-size:13px;color:var(--el-ink-faint);line-height:1.7;">国内ECを中心にやっていましたが、売上の柱を増やしたくて海外販売にも興味を持ちました。Amazon.comはまだ始めたばかりで、FBAへの納品や関税などを勉強中です。皆さんの投稿を参考にさせてもらえたらと思います🙇‍♀️</p>
-              <div style="font-size:12px;color:var(--el-teal-deep);font-weight:600;">主な担当領域：FBA・海外販売</div>
-            </div>
-          </div>
-          <div class="el-member-card">
-            <div class="el-avatar" style="width:52px;height:52px;font-size:18px;flex:none;">コ</div>
-            <div style="min-width:0;">
-              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-                <h3 style="margin:0;font-size:15px;">コウ</h3>
-                <span style="display:inline-block;font-size:11px;font-weight:700;background:#EAF4EF;color:#3E8E63;padding:2px 9px;border-radius:999px;">初心者</span>
-              </div>
-              <div class="sub" style="margin:2px 0 8px;">会社員</div>
-              <p style="margin:0 0 8px;font-size:13px;color:var(--el-ink-faint);line-height:1.7;">副業でAmazon輸出に挑戦中です。</p>
-              <div style="font-size:12px;color:var(--el-teal-deep);font-weight:600;">主な担当領域：Amazon初心者</div>
-            </div>
-          </div>
-          <div class="el-member-card">
-            <div class="el-avatar" style="width:52px;height:52px;font-size:18px;flex:none;">H</div>
-            <div style="min-width:0;">
-              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-                <h3 style="margin:0;font-size:15px;">Hiroki</h3>
-                <span style="display:inline-block;font-size:11px;font-weight:700;background:#FDF1DD;color:#B9812A;padding:2px 9px;border-radius:999px;">中級者</span>
-              </div>
-              <div class="sub" style="margin:2px 0 8px;">EC・通販</div>
-              <p style="margin:0 0 8px;font-size:13px;color:var(--el-ink-faint);line-height:1.7;">Amazon輸出3年目です。最初は小売仕入れ中心でしたが、最近はメーカー仕入れや卸にも少しずつ切り替えています。Amazonの規制やアカウント健全性について情報交換できたら嬉しいです。</p>
-              <div style="font-size:12px;color:var(--el-teal-deep);font-weight:600;">主な担当領域：真贋・Amazon規制</div>
-            </div>
-          </div>
-          <div class="el-member-card">
-            <div class="el-avatar" style="width:52px;height:52px;font-size:18px;flex:none;">ゆ</div>
-            <div style="min-width:0;">
-              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-                <h3 style="margin:0;font-size:15px;">ゆうすけ</h3>
-                <span style="display:inline-block;font-size:11px;font-weight:700;background:#FDF1DD;color:#B9812A;padding:2px 9px;border-radius:999px;">中級者</span>
-              </div>
-              <div class="sub" style="margin:2px 0 8px;">卸売業</div>
-              <p style="margin:0 0 8px;font-size:13px;color:var(--el-ink-faint);line-height:1.7;">Amazon.comを中心に販売しています。物流コストが最近の悩みです。よろしくお願いします！</p>
-              <div style="font-size:12px;color:var(--el-teal-deep);font-weight:600;">主な担当領域：FBA物流・在庫</div>
-            </div>
-          </div>
-          <div class="el-member-card">
-            <div class="el-avatar" style="width:52px;height:52px;font-size:18px;flex:none;">n</div>
-            <div style="min-width:0;">
-              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-                <h3 style="margin:0;font-size:15px;">nana</h3>
-                <span style="display:inline-block;font-size:11px;font-weight:700;background:#FDF1DD;color:#B9812A;padding:2px 9px;border-radius:999px;">中級者</span>
-              </div>
-              <div class="sub" style="margin:2px 0 8px;">食品・飲料</div>
-              <p style="margin:0 0 8px;font-size:13px;color:var(--el-ink-faint);line-height:1.7;">日本の食品を海外に販売する仕事をしています。AmazonだけでなくFDAやFSVPなど規制関係の情報も知りたくて参加しました。以前、輸出直前になって必要な対応が分かりかなりバタバタした経験があるので、最近は事前に調べるようにしています😂 食品輸出されている方がいたらぜひ情報交換したいです。</p>
-              <div style="font-size:12px;color:var(--el-teal-deep);font-weight:600;">主な担当領域：FDA・FSVP・食品</div>
-            </div>
-          </div>
-          <div class="el-member-card">
-            <div class="el-avatar" style="width:52px;height:52px;font-size:18px;flex:none;">S</div>
-            <div style="min-width:0;">
-              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-                <h3 style="margin:0;font-size:15px;">S.K</h3>
-                <span style="display:inline-block;font-size:11px;font-weight:700;background:#FDF1DD;color:#B9812A;padding:2px 9px;border-radius:999px;">中級〜経験者</span>
-              </div>
-              <div class="sub" style="margin:2px 0 8px;">メーカー・製造業</div>
-              <p style="margin:0 0 8px;font-size:13px;color:var(--el-ink-faint);line-height:1.7;">米Amazon販売歴4年ほど。主に日本製品を扱っています。最近は出品規制やコンプライアンス関係の対応が増えてきた印象。</p>
-              <div style="font-size:12px;color:var(--el-teal-deep);font-weight:600;">主な担当領域：Amazon規制・メーカー</div>
-            </div>
-          </div>
-          <div class="el-member-card">
-            <div class="el-avatar" style="width:52px;height:52px;font-size:18px;flex:none;">K</div>
-            <div style="min-width:0;">
-              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-                <h3 style="margin:0;font-size:15px;">Kenji</h3>
-                <span style="display:inline-block;font-size:11px;font-weight:700;background:#F3E9F7;color:#6B4FA0;padding:2px 9px;border-radius:999px;">経験者</span>
-              </div>
-              <div class="sub" style="margin:2px 0 8px;">貿易・輸出入</div>
-              <p style="margin:0 0 8px;font-size:13px;color:var(--el-ink-faint);line-height:1.7;">輸出関連の仕事をしながらAmazon.comでも販売しています。Amazon販売は7年ほど。FBA納品、通関、IOR周りは一通り経験しています。昔と比べるとAmazon側から求められる書類やコンプライアンス対応もかなり増えましたね。最近はアカウント健全性と米国側の規制情報を中心に見ています。自分で分かる範囲であれば質問にも回答します。</p>
-              <div style="font-size:12px;color:var(--el-teal-deep);font-weight:600;">主な担当領域：通関・IOR・FBA</div>
-            </div>
-          </div>
-          <div class="el-member-card">
-            <div class="el-avatar" style="width:52px;height:52px;font-size:18px;flex:none;">ま</div>
-            <div style="min-width:0;">
-              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-                <h3 style="margin:0;font-size:15px;">まさひろ</h3>
-                <span style="display:inline-block;font-size:11px;font-weight:700;background:#F3E9F7;color:#6B4FA0;padding:2px 9px;border-radius:999px;">経験者</span>
-              </div>
-              <div class="sub" style="margin:2px 0 8px;">EC・ネット通販</div>
-              <p style="margin:0 0 8px;font-size:13px;color:var(--el-ink-faint);line-height:1.7;">Amazon輸出6年目です。いろいろありましたが何とか続いてます笑 最近は新規商品より既存商品の安定運用が中心です。</p>
-              <div style="font-size:12px;color:var(--el-teal-deep);font-weight:600;">主な担当領域：FBA・Amazon運用</div>
-            </div>
-          </div>
-          <div class="el-member-card">
-            <div class="el-avatar" style="width:52px;height:52px;font-size:18px;flex:none;">T</div>
-            <div style="min-width:0;">
-              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-                <h3 style="margin:0;font-size:15px;">Taka</h3>
-                <span style="display:inline-block;font-size:11px;font-weight:700;background:#F3E9F7;color:#6B4FA0;padding:2px 9px;border-radius:999px;">経験者</span>
-              </div>
-              <div class="sub" style="margin:2px 0 8px;">商社</div>
-              <p style="margin:0 0 8px;font-size:13px;color:var(--el-ink-faint);line-height:1.7;">米国向け輸出を長くやっています。Amazonはもちろんですが、最近はFDAや通関関連の情報収集目的で参加しています。よろしくお願いします。</p>
-              <div style="font-size:12px;color:var(--el-teal-deep);font-weight:600;">主な担当領域：FDA・通関・BtoB</div>
-            </div>
-          </div>
-          <div class="el-member-card">
-            <div class="el-avatar" style="width:52px;height:52px;font-size:18px;flex:none;">お</div>
-            <div style="min-width:0;">
-              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-                <h3 style="margin:0;font-size:15px;">おかず@食品工場</h3>
-                <span style="display:inline-block;font-size:11px;font-weight:700;background:#F3E9F7;color:#6B4FA0;padding:2px 9px;border-radius:999px;">経験者</span>
-              </div>
-              <div class="sub" style="margin:2px 0 8px;">食品製造・品質管理</div>
-              <p style="margin:0 0 8px;font-size:13px;color:var(--el-ink-faint);line-height:1.7;">九州の食品メーカーで品質管理をやっています。国内中心でしたが米国向けの話が増えてきたので参加しました。FDA査察は何度か経験しています。Amazonは詳しくありません。</p>
-              <div style="font-size:12px;color:var(--el-teal-deep);font-weight:600;">主な担当領域：FDA査察・食品安全・工場</div>
-            </div>
-          </div>
-          <div class="el-member-card">
-            <div class="el-avatar" style="width:52px;height:52px;font-size:18px;flex:none;">a</div>
-            <div style="min-width:0;">
-              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-                <h3 style="margin:0;font-size:15px;">aya_works</h3>
-                <span style="display:inline-block;font-size:11px;font-weight:700;background:#EAF4EF;color:#3E8E63;padding:2px 9px;border-radius:999px;">初〜中級</span>
-              </div>
-              <div class="sub" style="margin:2px 0 8px;">化粧品メーカー</div>
-              <p style="margin:0 0 8px;font-size:13px;color:var(--el-ink-faint);line-height:1.7;">化粧品会社で海外事業を担当しています。米国販売の話が出てきてMoCRAを勉強中。まだ分からないことも多いので情報交換できるとうれしいです。</p>
-              <div style="font-size:12px;color:var(--el-teal-deep);font-weight:600;">主な担当領域：MoCRA・化粧品</div>
-            </div>
-          </div>
-          <div class="el-member-card">
-            <div class="el-avatar" style="width:52px;height:52px;font-size:18px;flex:none;">N</div>
-            <div style="min-width:0;">
-              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-                <h3 style="margin:0;font-size:15px;">N商店</h3>
-                <span style="display:inline-block;font-size:11px;font-weight:700;background:#FDF1DD;color:#B9812A;padding:2px 9px;border-radius:999px;">中級者</span>
-              </div>
-              <div class="sub" style="margin:2px 0 8px;">メーカー・卸</div>
-              <p style="margin:0 0 8px;font-size:13px;color:var(--el-ink-faint);line-height:1.7;">小さなメーカーで海外販売を担当しています。Amazon.comから始めて、最近は米国の卸や販売代理店も少しずつ開拓しています。</p>
-              <div style="font-size:12px;color:var(--el-teal-deep);font-weight:600;">主な担当領域：販売代理店・海外卸・販路</div>
-            </div>
-          </div>
-          <div class="el-member-card">
-            <div class="el-avatar" style="width:52px;height:52px;font-size:18px;flex:none;">リ</div>
-            <div style="min-width:0;">
-              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-                <h3 style="margin:0;font-size:15px;">リョウ@北九州</h3>
-                <span style="display:inline-block;font-size:11px;font-weight:700;background:#F3E9F7;color:#6B4FA0;padding:2px 9px;border-radius:999px;">経験者</span>
-              </div>
-              <div class="sub" style="margin:2px 0 8px;">EC事業</div>
-              <p style="margin:0 0 8px;font-size:13px;color:var(--el-ink-faint);line-height:1.7;">Amazon.comを長く運用しています。順調な時期もありましたが、Account Healthや真贋対応でかなり苦労したことがあります。同じような方と情報交換できれば。</p>
-              <div style="font-size:12px;color:var(--el-teal-deep);font-weight:600;">主な担当領域：Section 3・真贋・Account Health</div>
-            </div>
-          </div>
-          <div class="el-member-card">
-            <div class="el-avatar" style="width:52px;height:52px;font-size:18px;flex:none;">輸</div>
-            <div style="min-width:0;">
-              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-                <h3 style="margin:0;font-size:15px;">輸出初心者🔰</h3>
-                <span style="display:inline-block;font-size:11px;font-weight:700;background:#EAF4EF;color:#3E8E63;padding:2px 9px;border-radius:999px;">初心者</span>
-              </div>
-              <div class="sub" style="margin:2px 0 8px;">メーカー営業</div>
-              <p style="margin:0 0 8px;font-size:13px;color:var(--el-ink-faint);line-height:1.7;">会社で急に海外販売の担当になりました。輸出は全然わからないので勉強中です。</p>
-              <div style="font-size:12px;color:var(--el-teal-deep);font-weight:600;">主な担当領域：輸出初歩・FDA・通関</div>
-            </div>
-          </div>
+        <div style="display:flex;flex-direction:column;gap:12px;" id="memberList"></div>
+        <div id="memberEmpty" style="padding:44px 20px;text-align:center;color:var(--el-ink-faint);font-size:14px;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);" hidden>
+          まだ登録しているメンバーがいません。
         </div>
 
       </div>
@@ -490,7 +294,59 @@
     });
   });
 
-  document.getElementById('memberCount').textContent = document.querySelectorAll('.el-member-card').length + '人のメンバーが参加しています';
+  // 登録会員一覧：シートに登録されているメンバーだけを表示する
+  (function () {
+    var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
+    var GENDER_LABELS = { male: '男性', female: '女性', other: 'その他', unanswered: '回答しない' };
+    var INDUSTRY_LABELS = {
+      manufacturing: '製造業', wholesale_retail: '卸売・小売業', ec: 'EC・通販', food: '食品・飲料',
+      cosmetics: '化粧品', apparel: 'アパレル・雑貨', electronics: '家電・電子機器', logistics: '物流・倉庫',
+      trade: '貿易・輸出入', it: '情報通信・IT', finance: '金融・保険', construction: '建設・不動産',
+      consulting: 'コンサルティング・士業', education: '教育', medical: '医療・福祉', public: '公務員',
+      student: '学生', freelance: '自営業・フリーランス', other: 'その他'
+    };
+    var ROLE_LABELS = { member: '登録ユーザー', shift: 'SHiFT会員', admin: '管理者' };
+
+    var list = document.getElementById('memberList');
+    var empty = document.getElementById('memberEmpty');
+    var countEl = document.getElementById('memberCount');
+
+    fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'getAllMembers' })
+    })
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        var members = (data.ok && data.members) ? data.members : [];
+        if (!members.length) {
+          empty.hidden = false;
+          countEl.textContent = 'まだ登録しているメンバーがいません';
+          return;
+        }
+        countEl.textContent = members.length + '人のメンバーが参加しています';
+        list.innerHTML = members.map(function (m) {
+          var initial = (m.username || '?').charAt(0);
+          var avatar = m.photoUrl
+            ? '<div class="el-avatar" style="width:52px;height:52px;flex:none;overflow:hidden;"><img src="' + m.photoUrl + '" style="width:100%;height:100%;object-fit:cover;"></div>'
+            : '<div class="el-avatar" style="width:52px;height:52px;font-size:18px;flex:none;">' + initial + '</div>';
+          var roleBadge = '<span style="display:inline-block;font-size:11px;font-weight:700;background:#EAF4EF;color:#3E8E63;padding:2px 9px;border-radius:999px;">' + (ROLE_LABELS[m.role] || '登録ユーザー') + '</span>';
+          var industryLine = m.industry ? '<div class="sub" style="margin:2px 0 8px;">' + (INDUSTRY_LABELS[m.industry] || m.industry) + '</div>' : '';
+          var bioLine = m.bio ? '<p style="margin:0 0 8px;font-size:13px;color:var(--el-ink-faint);line-height:1.7;">' + m.bio + '</p>' : '';
+          return '<a href="profile.html?user=' + encodeURIComponent(m.username) + '" class="el-member-card" style="text-decoration:none;color:inherit;">' +
+            avatar +
+            '<div style="min-width:0;">' +
+              '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;"><h3 style="margin:0;font-size:15px;">' + m.username + '</h3>' + roleBadge + '</div>' +
+              industryLine + bioLine +
+            '</div></a>';
+        }).join('');
+      })
+      .catch(function () {
+        empty.hidden = false;
+        empty.textContent = 'メンバー一覧の取得に失敗しました。時間をおいて再度お試しください。';
+      });
+  })();
+
   document.addEventListener('DOMContentLoaded', function () {
     var ROLE_KEY = 'el-user-role';
     function getRole() {
@@ -506,6 +362,14 @@
 
     var bell = document.querySelector('.el-header-bell');
     if (bell && role === 'guest') bell.style.display = 'none';
+    var headerAvatar = document.getElementById('headerAvatar');
+    if (headerAvatar && role === 'guest') headerAvatar.style.display = 'none';
+    else if (headerAvatar) {
+      try {
+        var hp = JSON.parse(localStorage.getItem('el-user-profile') || '{}');
+        if (hp.photoUrl) headerAvatar.innerHTML = '<img src="' + hp.photoUrl + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
+      } catch (e) {}
+    }
 
     var authLinksWrap = document.getElementById('headerAuthLinks');
     var loginLink = document.getElementById('headerLoginLink');
