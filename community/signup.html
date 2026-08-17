@@ -563,20 +563,21 @@
 
     // 画像がある場合は先にアップロードしてURLを受け取ってから、本登録を送信する
     var photoUploadFailed = false;
+    var photoUploadErrorDetail = '';
     var uploadStep = photoDataUrl
       ? fetch(API_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({ action: 'uploadPhoto', username: username, photoBase64: photoDataUrl })
         }).then(function (res) { return res.json(); }).then(function (r) {
-            if (!r.ok) { photoUploadFailed = true; return ''; }
+            if (!r.ok) { photoUploadFailed = true; photoUploadErrorDetail = r.error || '(詳細不明)'; return ''; }
             return r.photoUrl;
-          }).catch(function () { photoUploadFailed = true; return ''; })
+          }).catch(function (err) { photoUploadFailed = true; photoUploadErrorDetail = (err && err.message) || '通信エラー'; return ''; })
       : Promise.resolve('');
 
     uploadStep.then(function (photoUrl) {
       if (photoUploadFailed) {
-        alert('プロフィール画像のアップロードに失敗したため、画像なしで登録を進めます。マイページの「プロフィールを見る」から後で登録し直せます。');
+        alert('プロフィール画像のアップロードに失敗したため、画像なしで登録を進めます。\n\nエラー詳細：' + photoUploadErrorDetail + '\n\nマイページの「プロフィールを見る」から後で登録し直せます。');
       }
       var payload = {
         action: 'signup',

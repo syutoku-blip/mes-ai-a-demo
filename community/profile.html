@@ -760,21 +760,22 @@
       saveBtn.textContent = '保存中…';
 
       var photoUploadFailed = false;
+      var photoUploadErrorDetail = '';
       var uploadStep = editPhotoDataUrl
         ? fetch(API_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify({ action: 'uploadPhoto', username: payload.username, photoBase64: editPhotoDataUrl })
           }).then(function (res) { return res.json(); }).then(function (r) {
-              if (!r.ok) { photoUploadFailed = true; return ''; }
+              if (!r.ok) { photoUploadFailed = true; photoUploadErrorDetail = r.error || '(詳細不明)'; return ''; }
               return r.photoUrl;
-            }).catch(function () { photoUploadFailed = true; return ''; })
+            }).catch(function (err) { photoUploadFailed = true; photoUploadErrorDetail = (err && err.message) || '通信エラー'; return ''; })
         : Promise.resolve('');
 
       uploadStep.then(function (photoUrl) {
         if (photoUrl) payload.photoUrl = photoUrl;
         if (photoUploadFailed) {
-          alert('プロフィール画像のアップロードに失敗しました。他の変更内容は保存されますが、画像だけは反映されません。もう一度お試しください。');
+          alert('プロフィール画像のアップロードに失敗しました。他の変更内容は保存されますが、画像だけは反映されません。\n\nエラー詳細：' + photoUploadErrorDetail + '\n\nもう一度お試しください。');
         }
 
       fetch(API_URL, {
