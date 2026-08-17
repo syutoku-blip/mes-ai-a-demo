@@ -87,35 +87,6 @@
   .el-ad-banner > a.el-btn{
     flex:none !important;
   }
-  /* ユーザーモード切り替えウィジェット */
-  .el-role-switcher{
-    position:fixed;
-    right:18px;
-    bottom:18px;
-    z-index:500;
-    display:flex;
-    gap:4px;
-    background:var(--el-paper, #fff);
-    border:1px solid var(--el-line-soft, #E5DFD2);
-    border-radius:999px;
-    padding:4px;
-    box-shadow:0 4px 16px rgba(22,35,63,.14);
-  }
-  .el-role-switcher button{
-    border:none;
-    background:transparent;
-    color:var(--el-ink-faint, #8A8478);
-    font-size:12px;
-    font-weight:700;
-    padding:7px 12px;
-    border-radius:999px;
-    cursor:pointer;
-    white-space:nowrap;
-  }
-  .el-role-switcher button.is-active{
-    background:var(--el-navy, #16233F);
-    color:#fff;
-  }
   .el-auth-modal{
     display:none;
     position:fixed;
@@ -167,14 +138,16 @@
     padding:4px;
   }
   [data-guest-hide]{ display:none !important; }
-  /* ヘッダーの新規登録／ログインボタン：紺色のヘッダー上でも文字が見えるようにする */
-  #headerAuthLinks .el-btn{
+  /* ヘッダーの新規登録／ログイン／ログアウトボタン：背景色に関わらず文字が見えるよう、
+     透過ではなく塗りのボタンにする */
+  #headerAuthLinks .el-btn, #headerSignupLink.el-btn, #headerLoginLink.el-btn{
     color:#fff !important;
-    border:1px solid rgba(255,255,255,.55) !important;
-    background:rgba(255,255,255,.08) !important;
+    background:var(--el-navy, #16233F) !important;
+    border:1px solid var(--el-navy, #16233F) !important;
   }
-  #headerAuthLinks .el-btn:hover{
-    background:rgba(255,255,255,.18) !important;
+  #headerAuthLinks .el-btn:hover, #headerSignupLink.el-btn:hover, #headerLoginLink.el-btn:hover{
+    background:var(--el-teal-deep, #1E6F63) !important;
+    border-color:var(--el-teal-deep, #1E6F63) !important;
   }
 </style>
 </head>
@@ -196,7 +169,7 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
         <span class="count">3</span>
       </a>
-      <a href="mypage.html" class="el-avatar" aria-label="マイページ">り</a>
+      <a href="mypage.html" class="el-avatar" id="headerAvatar" aria-label="マイページ">り</a>
     </div>
   </div>
 </header>
@@ -432,116 +405,7 @@
             <h3>NEW</h3>
           </div>
           <div class="el-board">
-          <a href="topic.html" class="el-t-row">
-            <div class="el-t-row-main">
-              <div class="el-t-row-badges"><span class="badge badge--open">公開</span><span class="badge badge--cat">Amazon出品</span><span class="badge badge--unsolved">未解決</span></div>
-              <span class="el-t-row-title">米国倉庫でのラベル不備、差し戻しを防ぐチェック手順</span>
-              <div class="el-t-row-meta">佐藤ストア・12分前</div>
-            </div>
-            <div class="el-t-row-stats">
-              <div><strong>34</strong><span>閲覧</span></div>
-              <div><strong>1</strong><span>返信</span></div>
-            </div>
-          </a>
-          <a href="topic.html" class="el-t-row">
-            <div class="el-t-row-main">
-              <div class="el-t-row-badges"><span class="badge badge--open">公開</span><span class="badge badge--cat">雑談・自己紹介</span><span class="badge badge--unsolved">未解決</span></div>
-              <span class="el-t-row-title">初めまして、雑貨を輸出しています</span>
-              <div class="el-t-row-meta">石井雑貨店・38分前</div>
-            </div>
-            <div class="el-t-row-stats">
-              <div><strong>12</strong><span>閲覧</span></div>
-              <div><strong>0</strong><span>返信</span></div>
-            </div>
-          </a>
-          <a href="topic.html" class="el-t-row">
-            <div class="el-t-row-main">
-              <div class="el-t-row-badges"><span class="badge badge--open">公開</span><span class="badge badge--cat">物流・輸送</span><span class="badge badge--unsolved">未解決</span></div>
-              <span class="el-t-row-title">海上輸送の遅延、リードタイムはどう見積もってますか</span>
-              <div class="el-t-row-meta">田中フーズ・1時間前</div>
-            </div>
-            <div class="el-t-row-stats">
-              <div><strong>58</strong><span>閲覧</span></div>
-              <div><strong>2</strong><span>返信</span></div>
-            </div>
-          </a>
-          <a href="topic.html" class="el-t-row">
-            <div class="el-t-row-main">
-              <div class="el-t-row-badges"><span class="badge badge--open">公開</span><span class="badge badge--cat">FDA対応</span><span class="badge badge--unsolved">未解決</span></div>
-              <span class="el-t-row-title">サプリメントのラベル、栄養成分表示のフォーマット変更点</span>
-              <div class="el-t-row-meta">鈴木ラボ・2時間前</div>
-            </div>
-            <div class="el-t-row-stats">
-              <div><strong>97</strong><span>閲覧</span></div>
-              <div><strong>4</strong><span>返信</span></div>
-            </div>
-          </a>
-          <a href="topic.html" class="el-t-row">
-            <div class="el-t-row-main">
-              <div class="el-t-row-badges"><span class="badge badge--open">公開</span><span class="badge badge--cat">マーケット動向</span><span class="badge badge--solved">解決</span></div>
-              <span class="el-t-row-title">米国の関税改定、価格転嫁のタイミングをどう決めた？</span>
-              <div class="el-t-row-meta">小林商店・3時間前</div>
-            </div>
-            <div class="el-t-row-stats">
-              <div><strong>142</strong><span>閲覧</span></div>
-              <div><strong>6</strong><span>返信</span></div>
-            </div>
-          </a>
-          <a href="topic.html" class="el-t-row">
-            <div class="el-t-row-main">
-              <div class="el-t-row-badges"><span class="badge badge--restricted">メンバー限定</span><span class="badge badge--cat">Amazon出品</span><span class="badge badge--solved">解決</span></div>
-              <span class="el-t-row-title">せどり便乗リサーチ、初月の粗利率どのくらいでしたか</span>
-              <div class="el-t-row-meta">高橋物産・5時間前</div>
-            </div>
-            <div class="el-t-row-stats">
-              <div><strong>489</strong><span>閲覧</span></div>
-              <div><strong>21</strong><span>返信</span></div>
-            </div>
-          </a>
-          <a href="topic.html" class="el-t-row">
-            <div class="el-t-row-main">
-              <div class="el-t-row-badges"><span class="badge badge--open">公開</span><span class="badge badge--cat">雑談・自己紹介</span><span class="badge badge--unsolved">未解決</span></div>
-              <span class="el-t-row-title">化粧品OEMを輸出している者です、情報交換希望</span>
-              <div class="el-t-row-meta">中村コスメ・7時間前</div>
-            </div>
-            <div class="el-t-row-stats">
-              <div><strong>88</strong><span>閲覧</span></div>
-              <div><strong>4</strong><span>返信</span></div>
-            </div>
-          </a>
-          <a href="topic.html" class="el-t-row">
-            <div class="el-t-row-main">
-              <div class="el-t-row-badges"><span class="badge badge--open">公開</span><span class="badge badge--cat">FDA対応</span><span class="badge badge--solved">解決</span></div>
-              <span class="el-t-row-title">FDA施設登録、2年更新のタイミングと注意点</span>
-              <div class="el-t-row-meta">山口貿易士・昨日</div>
-            </div>
-            <div class="el-t-row-stats">
-              <div><strong>980</strong><span>閲覧</span></div>
-              <div><strong>32</strong><span>返信</span></div>
-            </div>
-          </a>
-          <a href="topic.html" class="el-t-row">
-            <div class="el-t-row-main">
-              <div class="el-t-row-badges"><span class="badge badge--open">公開</span><span class="badge badge--cat">Amazon出品</span><span class="badge badge--unsolved">未解決</span></div>
-              <span class="el-t-row-title">現地倉庫のピッキングミス、返金対応どうしてますか</span>
-              <div class="el-t-row-meta">高橋物産・昨日</div>
-            </div>
-            <div class="el-t-row-stats">
-              <div><strong>155</strong><span>閲覧</span></div>
-              <div><strong>7</strong><span>返信</span></div>
-            </div>
-          </a>
-          <a href="topic.html" class="el-t-row">
-            <div class="el-t-row-main">
-              <div class="el-t-row-badges"><span class="badge badge--restricted">メンバー限定</span><span class="badge badge--cat">物流・輸送</span><span class="badge badge--solved">解決</span></div>
-              <span class="el-t-row-title">通関書類のインボイス記載、よくある差し戻し理由まとめ</span>
-              <div class="el-t-row-meta">田中フーズ・2日前</div>
-            </div>
-            <div class="el-t-row-stats">
-              <div><strong>298</strong><span>閲覧</span></div>
-              <div><strong>15</strong><span>返信</span></div>
-            </div>
-          </a>
+          <div style="padding:28px 4px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">まだ投稿がありません。</div>
           </div>
           <div style="text-align:center;margin:18px 0 44px;">
             <a href="board.html?sort=new" class="el-btn el-btn--ghost el-btn--sm">もっと見る</a>
@@ -554,116 +418,7 @@
             <h3>HOT</h3>
           </div>
           <div class="el-board">
-          <a href="topic.html" class="el-t-row">
-            <div class="el-t-row-main">
-              <div class="el-t-row-badges"><span class="badge badge--pin">固定</span><span class="badge badge--open">公開</span><span class="badge badge--cat">FDA対応</span><span class="badge badge--solved">解決</span></div>
-              <span class="el-t-row-title">FDA施設登録、2年更新のタイミングと注意点</span>
-              <div class="el-t-row-meta">山口貿易士・昨日</div>
-            </div>
-            <div class="el-t-row-stats">
-              <div><strong>1.2k</strong><span>閲覧</span></div>
-              <div><strong>32</strong><span>返信</span></div>
-            </div>
-          </a>
-          <a href="topic.html" class="el-t-row">
-            <div class="el-t-row-main">
-              <div class="el-t-row-badges"><span class="badge badge--restricted">メンバー限定</span><span class="badge badge--cat">Amazon出品</span><span class="badge badge--solved">解決</span></div>
-              <span class="el-t-row-title">せどり便乗リサーチ、初月の粗利率どのくらいでしたか</span>
-              <div class="el-t-row-meta">高橋物産・5時間前</div>
-            </div>
-            <div class="el-t-row-stats">
-              <div><strong>578</strong><span>閲覧</span></div>
-              <div><strong>21</strong><span>返信</span></div>
-            </div>
-          </a>
-          <a href="topic.html" class="el-t-row">
-            <div class="el-t-row-main">
-              <div class="el-t-row-badges"><span class="badge badge--announce">公式</span><span class="badge badge--open">公開</span><span class="badge badge--cat">お知らせ</span><span class="badge badge--solved">解決</span></div>
-              <span class="el-t-row-title">Export Lab、正式オープンしました</span>
-              <div class="el-t-row-meta">運営チーム・3時間前</div>
-            </div>
-            <div class="el-t-row-stats">
-              <div><strong>642</strong><span>閲覧</span></div>
-              <div><strong>18</strong><span>返信</span></div>
-            </div>
-          </a>
-          <a href="topic.html" class="el-t-row">
-            <div class="el-t-row-main">
-              <div class="el-t-row-badges"><span class="badge badge--open">公開</span><span class="badge badge--cat">物流・輸送</span><span class="badge badge--solved">解決</span></div>
-              <span class="el-t-row-title">海上輸送の遅延、リードタイムはどう見積もってますか</span>
-              <div class="el-t-row-meta">田中フーズ・2026年8月2日</div>
-            </div>
-            <div class="el-t-row-stats">
-              <div><strong>488</strong><span>閲覧</span></div>
-              <div><strong>14</strong><span>返信</span></div>
-            </div>
-          </a>
-          <a href="topic.html" class="el-t-row">
-            <div class="el-t-row-main">
-              <div class="el-t-row-badges"><span class="badge badge--restricted">メンバー限定</span><span class="badge badge--cat">物流・輸送</span><span class="badge badge--solved">解決</span></div>
-              <span class="el-t-row-title">通関書類のインボイス記載、よくある差し戻し理由まとめ</span>
-              <div class="el-t-row-meta">田中フーズ・2日前</div>
-            </div>
-            <div class="el-t-row-stats">
-              <div><strong>402</strong><span>閲覧</span></div>
-              <div><strong>15</strong><span>返信</span></div>
-            </div>
-          </a>
-          <a href="topic.html" class="el-t-row">
-            <div class="el-t-row-main">
-              <div class="el-t-row-badges"><span class="badge badge--open">公開</span><span class="badge badge--cat">FDA対応</span><span class="badge badge--solved">解決</span></div>
-              <span class="el-t-row-title">サプリメントのラベル、栄養成分表示のフォーマット変更点</span>
-              <div class="el-t-row-meta">鈴木ラボ・2026年7月30日</div>
-            </div>
-            <div class="el-t-row-stats">
-              <div><strong>356</strong><span>閲覧</span></div>
-              <div><strong>11</strong><span>返信</span></div>
-            </div>
-          </a>
-          <a href="topic.html" class="el-t-row">
-            <div class="el-t-row-main">
-              <div class="el-t-row-badges"><span class="badge badge--open">公開</span><span class="badge badge--cat">Amazon出品</span><span class="badge badge--unsolved">未解決</span></div>
-              <span class="el-t-row-title">米国倉庫でのラベル不備、差し戻しを防ぐチェック手順</span>
-              <div class="el-t-row-meta">佐藤ストア・2日前</div>
-            </div>
-            <div class="el-t-row-stats">
-              <div><strong>310</strong><span>閲覧</span></div>
-              <div><strong>9</strong><span>返信</span></div>
-            </div>
-          </a>
-          <a href="topic.html" class="el-t-row">
-            <div class="el-t-row-main">
-              <div class="el-t-row-badges"><span class="badge badge--open">公開</span><span class="badge badge--cat">マーケット動向</span><span class="badge badge--solved">解決</span></div>
-              <span class="el-t-row-title">米国の関税改定、価格転嫁のタイミングをどう決めた？</span>
-              <div class="el-t-row-meta">小林商店・2026年8月1日</div>
-            </div>
-            <div class="el-t-row-stats">
-              <div><strong>201</strong><span>閲覧</span></div>
-              <div><strong>6</strong><span>返信</span></div>
-            </div>
-          </a>
-          <a href="topic.html" class="el-t-row">
-            <div class="el-t-row-main">
-              <div class="el-t-row-badges"><span class="badge badge--open">公開</span><span class="badge badge--cat">Amazon出品</span><span class="badge badge--unsolved">未解決</span></div>
-              <span class="el-t-row-title">現地倉庫のピッキングミス、返金対応どうしてますか</span>
-              <div class="el-t-row-meta">高橋物産・2026年7月31日</div>
-            </div>
-            <div class="el-t-row-stats">
-              <div><strong>168</strong><span>閲覧</span></div>
-              <div><strong>7</strong><span>返信</span></div>
-            </div>
-          </a>
-          <a href="topic.html" class="el-t-row">
-            <div class="el-t-row-main">
-              <div class="el-t-row-badges"><span class="badge badge--open">公開</span><span class="badge badge--cat">雑談・自己紹介</span><span class="badge badge--unsolved">未解決</span></div>
-              <span class="el-t-row-title">はじめまして、化粧品OEMを輸出している者です</span>
-              <div class="el-t-row-meta">中村コスメ・2026年7月31日</div>
-            </div>
-            <div class="el-t-row-stats">
-              <div><strong>96</strong><span>閲覧</span></div>
-              <div><strong>4</strong><span>返信</span></div>
-            </div>
-          </a>
+          <div style="padding:28px 4px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">まだ投稿がありません。</div>
           </div>
           <div style="text-align:center;margin:18px 0 44px;">
             <a href="board.html?sort=hot" class="el-btn el-btn--ghost el-btn--sm">もっと見る</a>
@@ -993,9 +748,19 @@
     var role = getRole();
     document.body.setAttribute('data-role', role);
 
-    // ゲストは通知ベルを非表示
+    // ゲストは通知ベルとアイコンを非表示
     var bell = document.querySelector('.el-header-bell');
     if (bell && role === 'guest') bell.style.display = 'none';
+    var headerAvatar = document.getElementById('headerAvatar');
+    if (headerAvatar && role === 'guest') headerAvatar.style.display = 'none';
+    else if (headerAvatar) {
+      try {
+        var hp = JSON.parse(localStorage.getItem('el-user-profile') || '{}');
+        var hUsername = localStorage.getItem('el-username') || hp.username || '';
+        if (hp.photoUrl) headerAvatar.innerHTML = '<img src="' + hp.photoUrl + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
+        else if (hUsername) headerAvatar.textContent = hUsername.charAt(0);
+      } catch (e) {}
+    }
 
     // ヘッダーの認証リンク：ゲストは「新規登録」「ログイン」、それ以外は「ログアウト」のみ
     var authLinksWrap = document.getElementById('headerAuthLinks');
