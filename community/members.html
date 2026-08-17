@@ -231,7 +231,7 @@
           </div>
         </div>
 
-        <div style="display:flex;flex-direction:column;gap:12px;" id="memberList"></div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(140px, 1fr));gap:16px;" id="memberList"></div>
         <div id="memberEmpty" style="padding:44px 20px;text-align:center;color:var(--el-ink-faint);font-size:14px;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);" hidden>
           まだ登録しているメンバーがいません。
         </div>
@@ -297,15 +297,6 @@
   // 登録会員一覧：シートに登録されているメンバーだけを表示する
   (function () {
     var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
-    var GENDER_LABELS = { male: '男性', female: '女性', other: 'その他', unanswered: '回答しない' };
-    var INDUSTRY_LABELS = {
-      manufacturing: '製造業', wholesale_retail: '卸売・小売業', ec: 'EC・通販', food: '食品・飲料',
-      cosmetics: '化粧品', apparel: 'アパレル・雑貨', electronics: '家電・電子機器', logistics: '物流・倉庫',
-      trade: '貿易・輸出入', it: '情報通信・IT', finance: '金融・保険', construction: '建設・不動産',
-      consulting: 'コンサルティング・士業', education: '教育', medical: '医療・福祉', public: '公務員',
-      student: '学生', freelance: '自営業・フリーランス', other: 'その他'
-    };
-    var ROLE_LABELS = { member: '登録ユーザー', shift: 'SHiFT会員', admin: '管理者' };
 
     var list = document.getElementById('memberList');
     var empty = document.getElementById('memberEmpty');
@@ -328,17 +319,12 @@
         list.innerHTML = members.map(function (m) {
           var initial = (m.username || '?').charAt(0);
           var avatar = m.photoUrl
-            ? '<div class="el-avatar" style="width:52px;height:52px;flex:none;overflow:hidden;"><img src="' + m.photoUrl + '" style="width:100%;height:100%;object-fit:cover;"></div>'
-            : '<div class="el-avatar" style="width:52px;height:52px;font-size:18px;flex:none;">' + initial + '</div>';
-          var roleBadge = '<span style="display:inline-block;font-size:11px;font-weight:700;background:#EAF4EF;color:#3E8E63;padding:2px 9px;border-radius:999px;">' + (ROLE_LABELS[m.role] || '登録ユーザー') + '</span>';
-          var industryLine = m.industry ? '<div class="sub" style="margin:2px 0 8px;">' + (INDUSTRY_LABELS[m.industry] || m.industry) + '</div>' : '';
-          var bioLine = m.bio ? '<p style="margin:0 0 8px;font-size:13px;color:var(--el-ink-faint);line-height:1.7;">' + m.bio + '</p>' : '';
-          return '<a href="profile.html?user=' + encodeURIComponent(m.username) + '" class="el-member-card" style="text-decoration:none;color:inherit;">' +
+            ? '<div class="el-avatar" style="width:64px;height:64px;font-size:22px;overflow:hidden;margin:0 auto 10px;"><img src="' + m.photoUrl + '" style="width:100%;height:100%;object-fit:cover;"></div>'
+            : '<div class="el-avatar" style="width:64px;height:64px;font-size:22px;margin:0 auto 10px;">' + initial + '</div>';
+          return '<a href="profile.html?user=' + encodeURIComponent(m.username) + '" style="display:flex;flex-direction:column;align-items:center;text-align:center;text-decoration:none;color:inherit;padding:16px 8px;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);">' +
             avatar +
-            '<div style="min-width:0;">' +
-              '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;"><h3 style="margin:0;font-size:15px;">' + m.username + '</h3>' + roleBadge + '</div>' +
-              industryLine + bioLine +
-            '</div></a>';
+            '<span style="font-size:13.5px;font-weight:700;color:var(--el-navy);word-break:break-word;">' + m.username + '</span>' +
+            '</a>';
         }).join('');
       })
       .catch(function () {
@@ -367,7 +353,9 @@
     else if (headerAvatar) {
       try {
         var hp = JSON.parse(localStorage.getItem('el-user-profile') || '{}');
+        var hUsername = localStorage.getItem('el-username') || hp.username || '';
         if (hp.photoUrl) headerAvatar.innerHTML = '<img src="' + hp.photoUrl + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
+        else if (hUsername) headerAvatar.textContent = hUsername.charAt(0);
       } catch (e) {}
     }
 
@@ -468,12 +456,6 @@
       <button type="button" class="el-btn el-btn--ghost el-btn--sm" data-auth-close>閉じる</button>
     </div>
   </div>
-</div>
-
-<div class="el-role-switcher" id="roleSwitcher">
-  <button type="button" data-role="guest">ゲスト</button>
-  <button type="button" data-role="member">登録ユーザー</button>
-  <button type="button" data-role="admin">管理者</button>
 </div>
 
 </body>
