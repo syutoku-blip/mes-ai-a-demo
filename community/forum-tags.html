@@ -87,35 +87,6 @@
   .el-ad-banner > a.el-btn{
     flex:none !important;
   }
-  /* ユーザーモード切り替えウィジェット */
-  .el-role-switcher{
-    position:fixed;
-    right:18px;
-    bottom:18px;
-    z-index:500;
-    display:flex;
-    gap:4px;
-    background:var(--el-paper, #fff);
-    border:1px solid var(--el-line-soft, #E5DFD2);
-    border-radius:999px;
-    padding:4px;
-    box-shadow:0 4px 16px rgba(22,35,63,.14);
-  }
-  .el-role-switcher button{
-    border:none;
-    background:transparent;
-    color:var(--el-ink-faint, #8A8478);
-    font-size:12px;
-    font-weight:700;
-    padding:7px 12px;
-    border-radius:999px;
-    cursor:pointer;
-    white-space:nowrap;
-  }
-  .el-role-switcher button.is-active{
-    background:var(--el-navy, #16233F);
-    color:#fff;
-  }
   .el-auth-modal{
     display:none;
     position:fixed;
@@ -167,6 +138,17 @@
     padding:4px;
   }
   [data-guest-hide]{ display:none !important; }
+  /* ヘッダーの新規登録／ログイン／ログアウトボタン：背景色に関わらず文字が見えるよう、
+     透過ではなく塗りのボタンにする */
+  #headerAuthLinks .el-btn, #headerSignupLink.el-btn, #headerLoginLink.el-btn{
+    color:#fff !important;
+    background:var(--el-navy, #16233F) !important;
+    border:1px solid var(--el-navy, #16233F) !important;
+  }
+  #headerAuthLinks .el-btn:hover, #headerSignupLink.el-btn:hover, #headerLoginLink.el-btn:hover{
+    background:var(--el-teal-deep, #1E6F63) !important;
+    border-color:var(--el-teal-deep, #1E6F63) !important;
+  }
 </style>
 </head>
 <body data-site="community" data-root="..">
@@ -182,11 +164,12 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
         <input type="search" name="q" placeholder="検索" aria-label="検索" autocomplete="off">
       </form>
+      <span id="headerAuthLinks" style="display:flex;gap:6px;white-space:nowrap;"><a href="signup.html" class="el-btn el-btn--ghost el-btn--sm" id="headerSignupLink">新規登録</a><a href="login.html" class="el-btn el-btn--ghost el-btn--sm" id="headerLoginLink">ログイン</a></span>
       <a href="mypage.html" class="el-header-bell" aria-label="通知">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
         <span class="count">3</span>
       </a>
-      <a href="mypage.html" class="el-avatar" aria-label="マイページ">り</a>
+      <a href="mypage.html" class="el-avatar" id="headerAvatar" aria-label="マイページ">り</a>
     </div>
   </div>
 </header>
@@ -285,6 +268,11 @@
         </div>
       </details>
 
+      <a href="members.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <span class="lbl">メンバー</span>
+      </a>
+
       <a href="mypage.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
         <span class="lbl">マイページ</span>
@@ -300,7 +288,8 @@
         <nav class="el-breadcrumb el-page-breadcrumb" aria-label="パンくず"><a href="index.html">ホーム</a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg><a href="forum.html">フォーラムTOP</a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg><span>ハッシュタグ一覧</span></nav>
 
         <div class="el-section-head"><div><h2>ハッシュタグで探す</h2><div class="sub">選ぶとフォーラム一覧を人気順で表示します</div></div></div>
-        <div class="el-directory-grid"><a class="el-directory-card" href="board.html?tag=fba&sort=hot"><span class="mark">#</span><div><h3>#FBA</h3><p>このハッシュタグの投稿を表示</p></div><span class="go">→</span></a><a class="el-directory-card" href="board.html?tag=facility-registration&sort=hot"><span class="mark">#</span><div><h3>#施設登録・更新</h3><p>このハッシュタグの投稿を表示</p></div><span class="go">→</span></a><a class="el-directory-card" href="board.html?tag=label&sort=hot"><span class="mark">#</span><div><h3>#ラベル</h3><p>このハッシュタグの投稿を表示</p></div><span class="go">→</span></a><a class="el-directory-card" href="board.html?tag=us-agent&sort=hot"><span class="mark">#</span><div><h3>#米国代理人</h3><p>このハッシュタグの投稿を表示</p></div><span class="go">→</span></a><a class="el-directory-card" href="board.html?tag=prior-notice&sort=hot"><span class="mark">#</span><div><h3>#事前申告</h3><p>このハッシュタグの投稿を表示</p></div><span class="go">→</span></a><a class="el-directory-card" href="board.html?tag=warning-letter&sort=hot"><span class="mark">#</span><div><h3>#警告書</h3><p>このハッシュタグの投稿を表示</p></div><span class="go">→</span></a><a class="el-directory-card" href="board.html?tag=cpsc&sort=hot"><span class="mark">#</span><div><h3>#CPSC</h3><p>このハッシュタグの投稿を表示</p></div><span class="go">→</span></a><a class="el-directory-card" href="board.html?tag=invoice-hs&sort=hot"><span class="mark">#</span><div><h3>#インボイス・HSコード</h3><p>このハッシュタグの投稿を表示</p></div><span class="go">→</span></a><a class="el-directory-card" href="board.html?tag=section201&sort=hot"><span class="mark">#</span><div><h3>#Section201</h3><p>このハッシュタグの投稿を表示</p></div><span class="go">→</span></a><a class="el-directory-card" href="board.html?tag=section301&sort=hot"><span class="mark">#</span><div><h3>#対中追加関税</h3><p>このハッシュタグの投稿を表示</p></div><span class="go">→</span></a><a class="el-directory-card" href="board.html?tag=account-create&sort=hot"><span class="mark">#</span><div><h3>#アカウント作成</h3><p>このハッシュタグの投稿を表示</p></div><span class="go">→</span></a><a class="el-directory-card" href="board.html?tag=account-suspend&sort=hot"><span class="mark">#</span><div><h3>#アカウント停止</h3><p>このハッシュタグの投稿を表示</p></div><span class="go">→</span></a><a class="el-directory-card" href="board.html?tag=listing-restriction&sort=hot"><span class="mark">#</span><div><h3>#出品制限</h3><p>このハッシュタグの投稿を表示</p></div><span class="go">→</span></a><a class="el-directory-card" href="board.html?tag=ocean-freight&sort=hot"><span class="mark">#</span><div><h3>#海上輸送</h3><p>このハッシュタグの投稿を表示</p></div><span class="go">→</span></a><a class="el-directory-card" href="board.html?tag=air-freight&sort=hot"><span class="mark">#</span><div><h3>#航空輸送</h3><p>このハッシュタグの投稿を表示</p></div><span class="go">→</span></a><a class="el-directory-card" href="board.html?tag=warehouse&sort=hot"><span class="mark">#</span><div><h3>#倉庫選定</h3><p>このハッシュタグの投稿を表示</p></div><span class="go">→</span></a><a class="el-directory-card" href="board.html?tag=customs-docs&sort=hot"><span class="mark">#</span><div><h3>#通関書類</h3><p>このハッシュタグの投稿を表示</p></div><span class="go">→</span></a><a class="el-directory-card" href="board.html?tag=research&sort=hot"><span class="mark">#</span><div><h3>#リサーチ</h3><p>このハッシュタグの投稿を表示</p></div><span class="go">→</span></a><a class="el-directory-card" href="board.html?tag=tariff-general&sort=hot"><span class="mark">#</span><div><h3>#関税</h3><p>このハッシュタグの投稿を表示</p></div><span class="go">→</span></a></div>
+        <div id="tagDirectoryEmpty" style="padding:44px 20px;text-align:center;color:var(--el-ink-faint);font-size:14px;" hidden>サイト全体で10件以上使われているハッシュタグがまだありません。</div>
+        <div class="el-directory-grid" id="tagDirectoryGrid"></div>
       </div>
     </main>
     <section class="el-section" style="padding-top:0;padding-bottom:24px;">
@@ -353,6 +342,7 @@
   </div>
 </div>
 
+<script src="data.js"></script>
 <script src="../shared/global-header.js" defer></script>
 <script>
   (function () {
@@ -390,22 +380,36 @@
     var role = getRole();
     document.body.setAttribute('data-role', role);
 
-    // ゲストは通知ベルを非表示
+    // ゲストは通知ベルとアイコンを非表示
     var bell = document.querySelector('.el-header-bell');
     if (bell && role === 'guest') bell.style.display = 'none';
-
-    // 切り替えウィジェットの見た目
-    var switcher = document.getElementById('roleSwitcher');
-    if (switcher) {
-      switcher.querySelectorAll('button[data-role]').forEach(function (btn) {
-        btn.classList.toggle('is-active', btn.dataset.role === role);
-        btn.addEventListener('click', function () {
-          setRole(btn.dataset.role);
-          window.location.reload();
-        });
-      });
+    var headerAvatar = document.getElementById('headerAvatar');
+    if (headerAvatar && role === 'guest') headerAvatar.style.display = 'none';
+    else if (headerAvatar) {
+      try {
+        var hp = JSON.parse(localStorage.getItem('el-user-profile') || '{}');
+        if (hp.photoUrl) headerAvatar.innerHTML = '<img src="' + hp.photoUrl + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
+      } catch (e) {}
     }
 
+    // ヘッダーの認証リンク：ゲストは「新規登録」「ログイン」、それ以外は「ログアウト」のみ
+    var authLinksWrap = document.getElementById('headerAuthLinks');
+    var loginLink = document.getElementById('headerLoginLink');
+    var signupLink = document.getElementById('headerSignupLink');
+    if (role !== 'guest' && authLinksWrap) {
+      if (loginLink) loginLink.remove();
+      if (signupLink) {
+        signupLink.textContent = 'ログアウト';
+        signupLink.href = '#';
+        signupLink.addEventListener('click', function (e) {
+          e.preventDefault();
+          setRole('guest');
+          window.location.href = 'index.html';
+        });
+      }
+    }
+
+    // 切り替えウィジェットの見た目
     // 「ユーザー登録してください」モーダル
     var modal = document.getElementById('authModal');
     window.elRequireAuth = function (e) {
@@ -462,6 +466,21 @@
       });
     }
   });
+
+  // ハッシュタグ一覧：サイト全体で10件以上使われているタグだけを表示する
+  (function () {
+    var grid = document.getElementById('tagDirectoryGrid');
+    var empty = document.getElementById('tagDirectoryEmpty');
+    if (!grid || !window.EL_getVisibleTags) return;
+    var visibleTags = window.EL_getVisibleTags();
+    if (!visibleTags.length) { empty.hidden = false; return; }
+    grid.innerHTML = visibleTags.map(function (item) {
+      var label = window.EL_getTagLabel(item.tag);
+      return '<a class="el-directory-card" href="board.html?tag=' + encodeURIComponent(item.tag) + '&sort=hot">' +
+        '<span class="mark">#</span><div><h3>' + label + '</h3><p>' + item.count + '件の投稿</p></div>' +
+        '<span class="go">→</span></a>';
+    }).join('');
+  })();
 </script>
 <div class="el-auth-modal" id="authModal" aria-hidden="true">
   <div class="el-auth-modal-backdrop" data-auth-close></div>
@@ -491,13 +510,6 @@
       <button type="button" class="el-btn el-btn--ghost el-btn--sm" data-shift-close>閉じる</button>
     </div>
   </div>
-</div>
-
-<div class="el-role-switcher" id="roleSwitcher">
-  <button type="button" data-role="guest">ゲスト</button>
-  <button type="button" data-role="member">登録ユーザー</button>
-  <button type="button" data-role="shift">SHiFT会員</button>
-  <button type="button" data-role="admin">管理者</button>
 </div>
 
 </body>

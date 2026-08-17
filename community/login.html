@@ -283,10 +283,9 @@
   })();
 
   // ------------------------------------------------------------
-  // 会員データファイル（members.json）のURL。Apps Scriptで生成したファイルの
-  // 直接ダウンロードURルに書き換えてください（形式：.../uc?export=download&id=ファイルID）。
+  // Google Apps Script（会員シート連携）のウェブアプリURL。
   // ------------------------------------------------------------
-  var MEMBERS_JSON_URL = 'ここにmembers.jsonのURLを貼り付けてください';
+  var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
 
   var form = document.getElementById('loginForm');
   var errorBox = document.getElementById('loginError');
@@ -296,44 +295,38 @@
     e.preventDefault();
     errorBox.style.display = 'none';
 
-    if (MEMBERS_JSON_URL.indexOf('http') !== 0) {
-      errorBox.textContent = 'サーバーの設定が完了していません（MEMBERS_JSON_URL未設定）。管理者にご連絡ください。';
-      errorBox.style.display = 'block';
-      return;
-    }
-
     var email = form.email.value.trim();
     var password = form.password.value;
 
     submitBtn.disabled = true;
     submitBtn.textContent = 'ログイン中…';
 
-    fetch(MEMBERS_JSON_URL, { cache: 'no-store' })
+    // Content-Type: text/plain で送ることで、Apps Script側でのCORSプリフライトを回避する
+    fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'login', email: email, password: password })
+    })
       .then(function (res) { return res.json(); })
       .then(function (data) {
         submitBtn.disabled = false;
         submitBtn.textContent = 'ログイン';
 
-        var members = data.members || [];
-        var match = members.filter(function (m) {
-          return m.email === email && String(m.password) === String(password);
-        })[0];
-
-        if (!match) {
-          errorBox.textContent = 'メールアドレスまたはパスワードが正しくありません';
+        if (!data.ok) {
+          errorBox.textContent = data.error || 'ログインに失敗しました';
           errorBox.style.display = 'block';
           return;
         }
         try {
-          localStorage.setItem('el-user-role', match.role || 'member');
-          localStorage.setItem('el-user-name', match.fullname || match.username || '');
-          localStorage.setItem('el-username', match.username || '');
+          localStorage.setItem('el-user-role', data.role);
+          localStorage.setItem('el-user-name', (data.profile && data.profile.fullname) || (data.profile && data.profile.username) || '');
+          localStorage.setItem('el-username', (data.profile && data.profile.username) || '');
           localStorage.setItem('el-user-email', email);
           localStorage.setItem('el-user-password', password);
-          localStorage.setItem('el-user-profile', JSON.stringify(match));
+          localStorage.setItem('el-user-profile', JSON.stringify(data.profile || {}));
         } catch (err) {}
 
-        if (match.role === 'admin') window.location.href = 'admin.html';
+        if (data.role === 'admin') window.location.href = 'admin.html';
         else window.location.href = 'mypage.html';
       })
       .catch(function () {

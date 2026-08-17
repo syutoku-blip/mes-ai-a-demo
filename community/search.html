@@ -27,35 +27,6 @@
     -webkit-appearance:none;
     display:none;
   }
-  /* ユーザーモード切り替えウィジェット */
-  .el-role-switcher{
-    position:fixed;
-    right:18px;
-    bottom:18px;
-    z-index:500;
-    display:flex;
-    gap:4px;
-    background:var(--el-paper, #fff);
-    border:1px solid var(--el-line-soft, #E5DFD2);
-    border-radius:999px;
-    padding:4px;
-    box-shadow:0 4px 16px rgba(22,35,63,.14);
-  }
-  .el-role-switcher button{
-    border:none;
-    background:transparent;
-    color:var(--el-ink-faint, #8A8478);
-    font-size:12px;
-    font-weight:700;
-    padding:7px 12px;
-    border-radius:999px;
-    cursor:pointer;
-    white-space:nowrap;
-  }
-  .el-role-switcher button.is-active{
-    background:var(--el-navy, #16233F);
-    color:#fff;
-  }
   .el-auth-modal{
     display:none;
     position:fixed;
@@ -107,6 +78,17 @@
     padding:4px;
   }
   [data-guest-hide]{ display:none !important; }
+  /* ヘッダーの新規登録／ログイン／ログアウトボタン：背景色に関わらず文字が見えるよう、
+     透過ではなく塗りのボタンにする */
+  #headerAuthLinks .el-btn, #headerSignupLink.el-btn, #headerLoginLink.el-btn{
+    color:#fff !important;
+    background:var(--el-navy, #16233F) !important;
+    border:1px solid var(--el-navy, #16233F) !important;
+  }
+  #headerAuthLinks .el-btn:hover, #headerSignupLink.el-btn:hover, #headerLoginLink.el-btn:hover{
+    background:var(--el-teal-deep, #1E6F63) !important;
+    border-color:var(--el-teal-deep, #1E6F63) !important;
+  }
 </style>
 </head>
 <body data-site="community" data-root="..">
@@ -122,11 +104,12 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
         <input type="search" name="q" placeholder="検索" aria-label="検索" autocomplete="off">
       </form>
+      <span id="headerAuthLinks" style="display:flex;gap:6px;white-space:nowrap;"><a href="signup.html" class="el-btn el-btn--ghost el-btn--sm" id="headerSignupLink">新規登録</a><a href="login.html" class="el-btn el-btn--ghost el-btn--sm" id="headerLoginLink">ログイン</a></span>
       <a href="mypage.html" class="el-header-bell" aria-label="通知">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
         <span class="count">3</span>
       </a>
-      <a href="mypage.html" class="el-avatar" aria-label="マイページ">り</a>
+      <a href="mypage.html" class="el-avatar" id="headerAvatar" aria-label="マイページ">り</a>
     </div>
   </div>
 </header>
@@ -225,6 +208,11 @@
         </div>
       </details>
 
+      <a href="members.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <span class="lbl">メンバー</span>
+      </a>
+
       <a href="mypage.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
         <span class="lbl">マイページ</span>
@@ -285,6 +273,7 @@
   </div>
 </div>
 
+<script src="data.js"></script>
 <script src="../shared/global-header.js" defer></script>
 <script>
   (function () {
@@ -309,20 +298,12 @@
 
   // 検索対象インデックス：フォーラムのトピック、コミュニティ（概要のみ）、マーケットのコンテンツ、
   // イベント、公式のお知らせ
-  var SEARCH_INDEX = [
-    { type: 'フォーラム', title: 'FDA施設登録、2年更新のタイミングと注意点', url: 'topic.html' },
-    { type: 'フォーラム', title: '米国倉庫でのラベル不備、差し戻しを防ぐチェック手順', url: 'board.html' },
-    { type: 'フォーラム', title: '初めまして、雑貨を輸出しています', url: 'board.html' },
-    { type: 'フォーラム', title: '海上輸送の遅延、リードタイムはどう見積もってますか', url: 'board.html' },
-    { type: 'フォーラム', title: 'サプリメントのラベル、栄養成分表示のフォーマット変更点', url: 'board.html' },
-    { type: 'フォーラム', title: 'FDA施設登録、実際にかかった費用を公開します', url: 'board.html' },
-    { type: 'フォーラム', title: '米国の関税改定、価格転嫁のタイミングをどう決めた？', url: 'board.html' },
-    { type: 'フォーラム', title: '米国代理人（U.S. Agent）の見直し、皆さんどうしてますか', url: 'board.html' },
-    { type: 'フォーラム', title: 'せどり便乗リサーチ、初月の粗利率どのくらいでしたか', url: 'board.html' },
-    { type: 'フォーラム', title: 'せどり便乗リサーチ、実際の粗利率を公開します', url: 'board.html' },
-    { type: 'フォーラム', title: '通関書類のインボイス記載、よくある差し戻し理由まとめ', url: 'board.html' },
-    { type: 'フォーラム', title: '現地倉庫のピッキングミス、返金対応どうしてますか', url: 'board.html' },
+  // フォーラムは実際の投稿データ（data.js）から動的に組み立てる。今は投稿がすべて削除されているため空になる。
+  var FORUM_SEARCH_ITEMS = (window.EL_TOPICS || []).map(function (t) {
+    return { type: 'フォーラム', title: t.title, url: 'topic.html?id=' + t.id };
+  });
 
+  var SEARCH_INDEX = FORUM_SEARCH_ITEMS.concat([
     { type: 'コミュニティ', title: 'マーケット動向 情報交換会', desc: '為替・価格改定・競合の動きなど、相場観を共有する新設グループ。', url: 'groups-list.html' },
     { type: 'コミュニティ', title: '通関書類 相互チェック会', desc: 'インボイスや申告書類を、匿名化した上でお互いにレビューし合うグループ。', url: 'groups-list.html' },
     { type: 'コミュニティ', title: '福岡 輸出事業者オフ会', desc: '福岡近郊の輸出事業者で、たまに集まって情報交換する緩やかなグループ。', url: 'groups-list.html' },
@@ -353,7 +334,7 @@
     { type: '公式お知らせ', title: 'Export Lab、正式オープンしました', desc: '輸出の共創コミュニティとして、本日より本格始動します。まずは自己紹介からどうぞ。', url: 'announcements.html' },
     { type: '公式お知らせ', title: '8月上旬、システムメンテナンスのお知らせ', desc: '投稿・検索機能が一時的にご利用いただけない時間帯がございます。日程は追ってご案内します。', url: 'announcements.html' },
     { type: '公式お知らせ', title: '投稿ガイドラインを公開しました', desc: '安心して情報交換できる場を保つため、投稿・返信時のルールをまとめました。ぜひご一読ください。', url: 'announcements.html' }
-  ];
+  ]);
 
   var TYPE_COLOR = {
     'フォーラム': 'var(--el-teal-deep)',
@@ -384,8 +365,7 @@
 
     var qLower = q.toLowerCase();
     var matched = SEARCH_INDEX.filter(function (item) {
-      return item.title.toLowerCase().indexOf(qLower) !== -1 ||
-        (item.desc && item.desc.toLowerCase().indexOf(qLower) !== -1);
+      return item.title.toLowerCase() === qLower;
     });
 
     sub.textContent = matched.length + '件の結果';
@@ -419,22 +399,36 @@
     var role = getRole();
     document.body.setAttribute('data-role', role);
 
-    // ゲストは通知ベルを非表示
+    // ゲストは通知ベルとアイコンを非表示
     var bell = document.querySelector('.el-header-bell');
     if (bell && role === 'guest') bell.style.display = 'none';
-
-    // 切り替えウィジェットの見た目
-    var switcher = document.getElementById('roleSwitcher');
-    if (switcher) {
-      switcher.querySelectorAll('button[data-role]').forEach(function (btn) {
-        btn.classList.toggle('is-active', btn.dataset.role === role);
-        btn.addEventListener('click', function () {
-          setRole(btn.dataset.role);
-          window.location.reload();
-        });
-      });
+    var headerAvatar = document.getElementById('headerAvatar');
+    if (headerAvatar && role === 'guest') headerAvatar.style.display = 'none';
+    else if (headerAvatar) {
+      try {
+        var hp = JSON.parse(localStorage.getItem('el-user-profile') || '{}');
+        if (hp.photoUrl) headerAvatar.innerHTML = '<img src="' + hp.photoUrl + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
+      } catch (e) {}
     }
 
+    // ヘッダーの認証リンク：ゲストは「新規登録」「ログイン」、それ以外は「ログアウト」のみ
+    var authLinksWrap = document.getElementById('headerAuthLinks');
+    var loginLink = document.getElementById('headerLoginLink');
+    var signupLink = document.getElementById('headerSignupLink');
+    if (role !== 'guest' && authLinksWrap) {
+      if (loginLink) loginLink.remove();
+      if (signupLink) {
+        signupLink.textContent = 'ログアウト';
+        signupLink.href = '#';
+        signupLink.addEventListener('click', function (e) {
+          e.preventDefault();
+          setRole('guest');
+          window.location.href = 'index.html';
+        });
+      }
+    }
+
+    // 切り替えウィジェットの見た目
     // 「ユーザー登録してください」モーダル
     var modal = document.getElementById('authModal');
     window.elRequireAuth = function (e) {
@@ -520,13 +514,6 @@
       <button type="button" class="el-btn el-btn--ghost el-btn--sm" data-shift-close>閉じる</button>
     </div>
   </div>
-</div>
-
-<div class="el-role-switcher" id="roleSwitcher">
-  <button type="button" data-role="guest">ゲスト</button>
-  <button type="button" data-role="member">登録ユーザー</button>
-  <button type="button" data-role="shift">SHiFT会員</button>
-  <button type="button" data-role="admin">管理者</button>
 </div>
 
 </body>

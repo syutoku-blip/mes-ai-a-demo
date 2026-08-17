@@ -538,11 +538,9 @@
     var isOwnProfile = !targetUsername || targetUsername === ownUsername;
 
     // ------------------------------------------------------------
-    // 会員データファイル（members.json）のURL。閲覧系はここから直接読み込む。
-    // 保存（プロフィール編集・画像アップロード）だけは Apps Script を経由する。
+    // Google Apps Script（会員シート連携）のウェブアプリURL。
     // ------------------------------------------------------------
-    var MEMBERS_JSON_URL = 'ここにmembers.jsonのURLを貼り付けてください';
-    var API_URL = 'ここにGoogle Apps ScriptのウェブアプリURLを貼り付けてください';
+    var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
 
     if (!isOwnProfile) {
       // 他ユーザーのプロフィール：公開項目のみを取得して閲覧専用で表示する
@@ -552,30 +550,19 @@
         if (!row.dataset.field) row.style.display = 'none'; // パスワード行など
       });
 
-      if (MEMBERS_JSON_URL.indexOf('http') !== 0) {
-        document.getElementById('profileError').textContent = 'サーバーの設定が完了していません（MEMBERS_JSON_URL未設定）。管理者にご連絡ください。';
-        document.getElementById('profileError').style.display = 'block';
-        return;
-      }
-
-      fetch(MEMBERS_JSON_URL, { cache: 'no-store' })
+      fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: 'getPublicProfile', username: targetUsername })
+      })
         .then(function (res) { return res.json(); })
         .then(function (data) {
-          var full = (data.members || []).filter(function (m) { return m.username === targetUsername; })[0];
-          if (!full) {
-            document.getElementById('profileError').textContent = '該当するユーザーが見つかりませんでした';
+          if (!data.ok) {
+            document.getElementById('profileError').textContent = data.error || 'ユーザーが見つかりませんでした';
             document.getElementById('profileError').style.display = 'block';
             return;
           }
-          // 公開設定になっている項目だけを残す
-          var p = { username: full.username, bio: full.bio, photoUrl: full.photoUrl };
-          if (full.birthdateVisibility === '公開') p.birthdate = full.birthdate;
-          if (full.genderVisibility === '公開') p.gender = full.gender;
-          if (full.prefectureVisibility === '公開') p.prefecture = full.prefecture;
-          if (full.cityVisibility === '公開') p.city = full.city;
-          if (full.industryVisibility === '公開') p.industry = full.industry;
-          if (full.shiftNumberVisibility === '公開') p.shiftNumber = full.shiftNumber;
-
+          var p = data.profile;
           document.querySelector('#profileModeSub').textContent = p.username + ' さんのプロフィール';
           if (p.photoUrl) {
             var avatarEl2 = document.getElementById('profileAvatarView');

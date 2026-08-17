@@ -59,12 +59,8 @@
     line-height:1;
     white-space:nowrap;
     cursor:pointer;
-    list-style:none !important;
     max-width:max-content;
   }
-  .el-filter-menu > summary{ list-style:none !important; }
-  .el-filter-menu > summary::marker{ content:'' !important; display:none !important; font-size:0 !important; }
-  .el-filter-menu > summary::-webkit-details-marker{ display:none !important; }
   .el-list-tools-compact .el-chip-chevron{
     width:12px;
     height:12px;
@@ -93,35 +89,6 @@
     font-weight:600;
     font-size:13px;
     white-space:nowrap;
-  }
-  /* ユーザーモード切り替えウィジェット */
-  .el-role-switcher{
-    position:fixed;
-    right:18px;
-    bottom:18px;
-    z-index:500;
-    display:flex;
-    gap:4px;
-    background:var(--el-paper, #fff);
-    border:1px solid var(--el-line-soft, #E5DFD2);
-    border-radius:999px;
-    padding:4px;
-    box-shadow:0 4px 16px rgba(22,35,63,.14);
-  }
-  .el-role-switcher button{
-    border:none;
-    background:transparent;
-    color:var(--el-ink-faint, #8A8478);
-    font-size:12px;
-    font-weight:700;
-    padding:7px 12px;
-    border-radius:999px;
-    cursor:pointer;
-    white-space:nowrap;
-  }
-  .el-role-switcher button.is-active{
-    background:var(--el-navy, #16233F);
-    color:#fff;
   }
   .el-auth-modal{
     display:none;
@@ -343,26 +310,26 @@
         </details>
 
         <div class="el-list-tools-compact" id="boardControls">
-          <label class="el-filter-select-label">公開範囲
-            <select id="visibilityFilter">
-              <option value="">すべて</option>
-              <option value="general">公開</option>
-              <option value="shift">SHiFT member only</option>
-            </select>
-            <svg class="el-chip-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
-          </label>
+          <details class="el-filter-menu" id="visibilityMenu">
+            <summary>公開範囲 <span class="el-filter-summary-value" id="visibilitySummary">すべて</span></summary>
+            <div class="el-filter-popover">
+              <label><input type="checkbox" name="visibilityOpt" value="" checked> すべて</label>
+              <label><input type="checkbox" name="visibilityOpt" value="general"> 公開</label>
+              <label><input type="checkbox" name="visibilityOpt" value="shift"> SHiFT member only</label>
+            </div>
+          </details>
 
-          <label class="el-filter-select-label">状態
-            <select id="statusFilter">
-              <option value="">すべて</option>
-              <option value="unsolved">未解決</option>
-              <option value="solved">解決済み</option>
-            </select>
-            <svg class="el-chip-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
-          </label>
+          <details class="el-filter-menu" id="statusMenu">
+            <summary>状態 <span class="el-filter-summary-value" id="statusSummary">すべて</span></summary>
+            <div class="el-filter-popover">
+              <label><input type="checkbox" name="statusOpt" value="" checked> すべて</label>
+              <label><input type="checkbox" name="statusOpt" value="unsolved"> 未解決</label>
+              <label><input type="checkbox" name="statusOpt" value="solved"> 解決済み</label>
+            </div>
+          </details>
 
           <details class="el-filter-menu" id="categoryMenu">
-            <summary>カテゴリ <span class="el-filter-summary-value" id="categorySummary">すべて</span><svg class="el-chip-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg></summary>
+            <summary>カテゴリ <span class="el-filter-summary-value" id="categorySummary">すべて</span></summary>
             <div class="el-filter-popover">
               <label><input type="checkbox" name="category" value="amazon-ops"> Amazon販売・運用</label>
               <label><input type="checkbox" name="category" value="fba-inventory"> FBA・在庫管理</label>
@@ -388,23 +355,19 @@
           </details>
 
           <details class="el-filter-menu" id="tagMenu">
-            <summary>ハッシュタグ <span class="el-filter-summary-value" id="tagSummary">すべて</span><svg class="el-chip-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg></summary>
-            <div class="el-filter-popover">
-              <label data-categories="amazon"><input type="checkbox" name="tag" value="fba"> #FBA</label>
-              <label data-categories="fda"><input type="checkbox" name="tag" value="facility-registration"> #施設登録・更新</label>
-              <label data-categories="fda"><input type="checkbox" name="tag" value="label"> #ラベル</label>
-              <label data-categories="fda"><input type="checkbox" name="tag" value="us-agent"> #米国代理人</label>
-              <label data-categories="customs"><input type="checkbox" name="tag" value="customs-docs"> #通関書類</label>
-              <label data-categories="amazon"><input type="checkbox" name="tag" value="research"> #リサーチ</label>
-              <label data-categories="logistics"><input type="checkbox" name="tag" value="warehouse"> #倉庫選定</label>
-              <button type="button" class="el-filter-clear" data-clear="tag">すべて解除</button>
+            <summary>ハッシュタグ <span class="el-filter-summary-value" id="tagSummary">すべて</span></summary>
+            <div class="el-filter-popover" id="tagPopoverBody">
+              <div style="padding:10px 4px;color:var(--el-ink-faint);font-size:12.5px;">10件以上使われているハッシュタグがまだありません。</div>
             </div>
           </details>
 
-          <label class="el-filter-select-label">並び順
-            <select id="sortSelect"><option value="hot">人気順</option><option value="new">新しい順</option></select>
-            <svg class="el-chip-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
-          </label>
+          <details class="el-filter-menu" id="sortMenu">
+            <summary>並び順 <span class="el-filter-summary-value" id="sortSummary">人気順</span></summary>
+            <div class="el-filter-popover">
+              <label><input type="checkbox" name="sortOpt" value="hot" checked> 人気順</label>
+              <label><input type="checkbox" name="sortOpt" value="new"> 新しい順</label>
+            </div>
+          </details>
           <span class="el-result-count el-result-count--plain" id="boardResultCount">0件</span>
         </div>
 
@@ -597,19 +560,35 @@
 
     var allTopics = (window.EL_TOPICS || []).concat(getExtraTopics());
     var rows = allTopics.map(buildRow);
-    var tagNames = {fba:'#FBA','facility-registration':'#施設登録・更新',label:'#ラベル','us-agent':'#米国代理人','customs-docs':'#通関書類',research:'#リサーチ',warehouse:'#倉庫選定'};
-    var vf=document.getElementById('visibilityFilter');
-    var sf=document.getElementById('statusFilter');
-    var ss=document.getElementById('sortSelect');
-    if(vf) vf.value=filter;
-    if(sf) sf.value=status;
-    if(ss) ss.value=sort;
+    var visibilityNames = {'':'すべて', general:'公開', shift:'SHiFT member only'};
+    var statusNames = {'':'すべて', unsolved:'未解決', solved:'解決済み'};
+    var sortNames = {hot:'人気順', new:'新しい順'};
+
+    // ハッシュタグの絞り込み欄：サイト全体で10件以上使われているタグだけを表示する
+    (function () {
+      var body = document.getElementById('tagPopoverBody');
+      if (!body || !window.EL_getVisibleTags) return;
+      var visibleTags = window.EL_getVisibleTags();
+      if (!visibleTags.length) return; // 静的なプレースホルダー文言のまま
+      var html = visibleTags.map(function (item) {
+        var checked = tags.indexOf(item.tag) !== -1 ? ' checked' : '';
+        return '<label><input type="checkbox" name="tag" value="' + item.tag + '"' + checked + '> ' + window.EL_getTagLabel(item.tag) + '</label>';
+      }).join('') + '<button type="button" class="el-filter-clear" data-clear="tag">すべて解除</button>';
+      body.innerHTML = html;
+    })();
 
     function setChecks(name, values){
       document.querySelectorAll('input[name="'+name+'"]').forEach(function(cb){ cb.checked=values.indexOf(cb.value)!==-1; });
     }
     setChecks('category', categories);
     setChecks('tag', tags);
+    setSingleCheck('visibilityOpt', filter);
+    setSingleCheck('statusOpt', status);
+    setSingleCheck('sortOpt', sort);
+
+    function setSingleCheck(name, value){
+      document.querySelectorAll('input[name="'+name+'"]').forEach(function(cb){ cb.checked = (cb.value === value); });
+    }
 
     function updateSummary(id, values, names){
       var el=document.getElementById(id); if(!el) return;
@@ -640,7 +619,7 @@
       else if(status==='solved') current='解決済み';
       else if(categories.length===1) current=CATEGORY_LABEL[categories[0]] || '';
       else if(categories.length>1) current='カテゴリ絞り込み';
-      else if(tags.length===1) current=tagNames[tags[0]] || ('#'+tags[0]);
+      else if(tags.length===1) current=window.EL_getTagLabel(tags[0]);
       else if(tags.length>1) current='ハッシュタグ絞り込み';
       else if(explicitHot) current='人気';
 
@@ -672,7 +651,10 @@
       rows.forEach(function(r){r.style.display='none';});
       visible.slice(0,pageSize).forEach(function(r){container.appendChild(r);r.style.display='';});
       var result=document.getElementById('boardResultCount'); if(result) result.textContent=visible.length+'件';
-      updateSummary('categorySummary',categories,CATEGORY_LABEL); updateSummary('tagSummary',tags,tagNames); renderBreadcrumb();
+      updateSummary('categorySummary',categories,CATEGORY_LABEL); updateSummary('tagSummary',tags,window.EL_TAG_LABELS || {}); renderBreadcrumb();
+      var visEl=document.getElementById('visibilitySummary'); if(visEl) visEl.textContent = visibilityNames[filter] || 'すべて';
+      var statEl=document.getElementById('statusSummary'); if(statEl) statEl.textContent = statusNames[status] || 'すべて';
+      var sortEl=document.getElementById('sortSummary'); if(sortEl) sortEl.textContent = sortNames[sort] || '人気順';
     }
 
     function navigate(changes){
@@ -681,9 +663,23 @@
       p.delete('page'); window.location.href='board.html'+(p.toString()?'?'+p.toString():'');
     }
 
-    if(vf) vf.addEventListener('change',function(){filter=this.value; syncUrl(); renderList();});
-    if(sf) sf.addEventListener('change',function(){status=this.value; syncUrl(); renderList();});
-    if(ss) ss.addEventListener('change',function(){sort=this.value; syncUrl(); renderList();});
+    function wireSingleSelectGroup(name, getSet, closeMenu){
+      document.querySelectorAll('input[name="'+name+'"]').forEach(function(cb){
+        cb.addEventListener('change', function(){
+          if (!this.checked) { this.checked = true; return; } // 最低ひとつは選択された状態を保つ
+          document.querySelectorAll('input[name="'+name+'"]').forEach(function(other){
+            if (other !== cb) other.checked = false;
+          });
+          getSet(cb.value);
+          syncUrl();
+          renderList();
+          if (closeMenu) closeMenu.removeAttribute('open');
+        });
+      });
+    }
+    wireSingleSelectGroup('visibilityOpt', function(v){ filter = v; }, document.getElementById('visibilityMenu'));
+    wireSingleSelectGroup('statusOpt', function(v){ status = v; }, document.getElementById('statusMenu'));
+    wireSingleSelectGroup('sortOpt', function(v){ sort = v; }, document.getElementById('sortMenu'));
     document.querySelectorAll('input[name="category"]').forEach(function(cb){
       cb.addEventListener('change',function(){
         categories=Array.prototype.slice.call(document.querySelectorAll('input[name="category"]:checked')).map(function(x){return x.value;});
