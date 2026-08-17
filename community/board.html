@@ -152,6 +152,13 @@
     background:var(--el-teal-deep, #1E6F63) !important;
     border-color:var(--el-teal-deep, #1E6F63) !important;
   }
+  /* フッターの背景色が正しく当たらない場合の保険（文字が背景と同化して見えなくなるのを防ぐ） */
+  .el-footer{ background:var(--el-navy, #16233F) !important; }
+  .el-footer .tag{ color:rgba(255,255,255,.72) !important; }
+  .el-footer .el-logo{ color:#fff !important; }
+  .el-footer-cols a{ color:rgba(255,255,255,.72) !important; }
+  .el-footer-cols h6{ color:#fff !important; }
+  .el-footer-bottom{ color:rgba(255,255,255,.55) !important; }
 </style>
 </head>
 <body data-site="community" data-root="..">
@@ -385,7 +392,7 @@
         <div class="el-footer-grid">
           <div>
             <a href="index.html" class="el-logo">Export Lab<span class="dot">.</span></a>
-            <p class="tag">人・モノ・情報がつながる、輸出の共創コミュニティ。運営：WorldShift株式会社</p>
+            <p class="tag">人・モノ・情報がつながる、輸出の共創コミュニティ。<br>運営：WorldShift株式会社</p>
           </div>
           <div class="el-footer-cols">
             <div>
@@ -808,7 +815,6 @@
       }
     }
 
-    // 切り替えウィジェットの見た目
     // 「ユーザー登録してください」モーダル
     var modal = document.getElementById('authModal');
     window.elRequireAuth = function (e) {

@@ -60,6 +60,13 @@
     background:var(--el-teal-deep, #1E6F63) !important;
     border-color:var(--el-teal-deep, #1E6F63) !important;
   }
+  /* フッターの背景色が正しく当たらない場合の保険（文字が背景と同化して見えなくなるのを防ぐ） */
+  .el-footer{ background:var(--el-navy, #16233F) !important; }
+  .el-footer .tag{ color:rgba(255,255,255,.72) !important; }
+  .el-footer .el-logo{ color:#fff !important; }
+  .el-footer-cols a{ color:rgba(255,255,255,.72) !important; }
+  .el-footer-cols h6{ color:#fff !important; }
+  .el-footer-bottom{ color:rgba(255,255,255,.55) !important; }
 </style>
 </head>
 <body data-site="community" data-root="..">
@@ -215,7 +222,9 @@
         <div id="profileSuccess" style="display:none;background:#EAF4EF;border:1px solid var(--el-teal-deep);color:var(--el-teal-deep);font-size:13px;font-weight:600;padding:12px 14px;border-radius:10px;margin-bottom:16px;">保存しました。</div>
 
         <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px;">
-          <div id="profileAvatarView" style="width:72px;height:72px;border-radius:50%;background:var(--el-cream-deep);border:1px solid var(--el-line-soft);display:flex;align-items:center;justify-content:center;overflow:hidden;flex:none;color:var(--el-ink-faint);font-size:12px;">未設定</div>
+          <div id="profileAvatarView" style="width:72px;height:72px;border-radius:50%;background:var(--el-cream-deep);border:1px solid var(--el-line-soft);display:flex;align-items:center;justify-content:center;overflow:hidden;flex:none;color:var(--el-ink-faint);font-size:12px;cursor:default;">未設定</div>
+          <input type="file" id="avatarPhotoInput" accept="image/*" hidden>
+          <span id="avatarPhotoHint" style="display:none;font-size:12px;color:var(--el-ink-faint);">アイコンをクリックして画像を変更</span>
         </div>
 
         <!-- 閲覧モード -->
@@ -403,14 +412,6 @@
             </div>
           </div>
 
-          <div>
-            <span style="display:block;font-weight:700;font-size:13px;color:var(--el-navy);margin-bottom:6px;">プロフィール画像</span>
-            <div style="display:flex;align-items:center;gap:14px;">
-              <div id="editPhotoPreview" style="width:56px;height:56px;border-radius:50%;background:var(--el-cream-deep);border:1px solid var(--el-line-soft);display:flex;align-items:center;justify-content:center;overflow:hidden;flex:none;color:var(--el-ink-faint);font-size:11px;">未設定</div>
-              <input type="file" name="photo" id="editPhotoInput" accept="image/*" style="font-size:13px;">
-            </div>
-          </div>
-
           <label style="display:block;">
             <span style="display:block;font-weight:700;font-size:13px;color:var(--el-navy);margin-bottom:6px;">自己紹介</span>
             <textarea name="bio" rows="4" style="width:100%;box-sizing:border-box;padding:11px 14px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;resize:vertical;"></textarea>
@@ -431,7 +432,7 @@
         <div class="el-footer-grid">
           <div>
             <a href="index.html" class="el-logo">Export Lab<span class="dot">.</span></a>
-            <p class="tag">人・モノ・情報がつながる、輸出の共創コミュニティ。運営：WorldShift株式会社</p>
+            <p class="tag">人・モノ・情報がつながる、輸出の共創コミュニティ。<br>運営：WorldShift株式会社</p>
           </div>
           <div class="el-footer-cols">
             <div>
@@ -506,7 +507,9 @@
     else if (headerAvatar) {
       try {
         var hp = JSON.parse(localStorage.getItem('el-user-profile') || '{}');
+        var hUsername = localStorage.getItem('el-username') || hp.username || '';
         if (hp.photoUrl) headerAvatar.innerHTML = '<img src="' + hp.photoUrl + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
+        else if (hUsername) headerAvatar.textContent = hUsername.charAt(0);
       } catch (e) {}
     }
     var authLinksWrap = document.getElementById('headerAuthLinks');
@@ -612,43 +615,6 @@
     }
     fill();
 
-    // 画像を一辺200pxに縮小・JPEG圧縮してBase64データURLに変換する
-    function compressImage(file) {
-      return new Promise(function (resolve, reject) {
-        var reader = new FileReader();
-        reader.onload = function (e) {
-          var img = new Image();
-          img.onload = function () {
-            var size = 200;
-            var canvas = document.createElement('canvas');
-            canvas.width = size;
-            canvas.height = size;
-            var ctx = canvas.getContext('2d');
-            var scale = Math.max(size / img.width, size / img.height);
-            var w = img.width * scale, h = img.height * scale;
-            ctx.drawImage(img, (size - w) / 2, (size - h) / 2, w, h);
-            resolve(canvas.toDataURL('image/jpeg', 0.8));
-          };
-          img.onerror = reject;
-          img.src = e.target.result;
-        };
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
-    }
-
-    var editPhotoDataUrl = '';
-    var editPhotoInput = document.getElementById('editPhotoInput');
-    var editPhotoPreview = document.getElementById('editPhotoPreview');
-    editPhotoInput.addEventListener('change', function () {
-      var file = editPhotoInput.files[0];
-      if (!file) return;
-      compressImage(file).then(function (dataUrl) {
-        editPhotoDataUrl = dataUrl;
-        editPhotoPreview.innerHTML = '<img src="' + dataUrl + '" style="width:100%;height:100%;object-fit:cover;">';
-      });
-    });
-
     // 編集モードのフォームへ現在値を流し込む
     function fillForm() {
       var form = document.getElementById('editForm');
@@ -676,13 +642,6 @@
         var v = profile[pair[1]] || '非公開';
         radios.forEach(function (r) { r.checked = (r.value === v); });
       });
-
-      editPhotoDataUrl = '';
-      if (editPhotoPreview) {
-        editPhotoPreview.innerHTML = profile.photoUrl
-          ? '<img src="' + profile.photoUrl + '" style="width:100%;height:100%;object-fit:cover;">'
-          : '未設定';
-      }
     }
 
     var viewMode = document.getElementById('viewMode');
@@ -690,6 +649,48 @@
     var editToggleBtn = document.getElementById('editToggleBtn');
     var cancelEditBtn = document.getElementById('cancelEditBtn');
     var modeSub = document.getElementById('profileModeSub');
+    var avatarViewEl = document.getElementById('profileAvatarView');
+    var avatarPhotoInput = document.getElementById('avatarPhotoInput');
+    var avatarPhotoHint = document.getElementById('avatarPhotoHint');
+    var pendingPhotoDataUrl = '';
+
+    // 画像を一辺200pxに縮小・JPEG圧縮してBase64データURLに変換する
+    function compressImage(file) {
+      return new Promise(function (resolve, reject) {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          var img = new Image();
+          img.onload = function () {
+            var size = 200;
+            var canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            var ctx = canvas.getContext('2d');
+            var scale = Math.max(size / img.width, size / img.height);
+            var w = img.width * scale, h = img.height * scale;
+            ctx.drawImage(img, (size - w) / 2, (size - h) / 2, w, h);
+            resolve(canvas.toDataURL('image/jpeg', 0.8));
+          };
+          img.onerror = reject;
+          img.src = e.target.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    avatarViewEl.addEventListener('click', function () {
+      if (editForm.style.display !== 'flex') return; // 編集モード中のみ変更可
+      avatarPhotoInput.click();
+    });
+    avatarPhotoInput.addEventListener('change', function () {
+      var file = avatarPhotoInput.files[0];
+      if (!file) return;
+      compressImage(file).then(function (dataUrl) {
+        pendingPhotoDataUrl = dataUrl;
+        avatarViewEl.innerHTML = '<img src="' + dataUrl + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
+      });
+    });
 
     editToggleBtn.addEventListener('click', function () {
       fillForm();
@@ -697,12 +698,18 @@
       editForm.style.display = 'flex';
       editToggleBtn.style.display = 'none';
       modeSub.textContent = '登録内容の編集';
+      avatarViewEl.style.cursor = 'pointer';
+      avatarPhotoHint.style.display = '';
     });
     cancelEditBtn.addEventListener('click', function () {
       viewMode.style.display = 'flex';
       editForm.style.display = 'none';
       editToggleBtn.style.display = '';
       modeSub.textContent = '登録内容の確認';
+      avatarViewEl.style.cursor = 'default';
+      avatarPhotoHint.style.display = 'none';
+      pendingPhotoDataUrl = '';
+      fill(); // アップロード予定だった画像を元に戻す
     });
 
     var errorBox = document.getElementById('profileError');
@@ -755,28 +762,10 @@
         industryVisibility: fd.get('industry_visibility') || '非公開',
         bio: fd.get('bio') || ''
       };
+      if (pendingPhotoDataUrl) payload.photoUrl = pendingPhotoDataUrl;
 
       saveBtn.disabled = true;
       saveBtn.textContent = '保存中…';
-
-      var photoUploadFailed = false;
-      var photoUploadErrorDetail = '';
-      var uploadStep = editPhotoDataUrl
-        ? fetch(API_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({ action: 'uploadPhoto', username: payload.username, photoBase64: editPhotoDataUrl })
-          }).then(function (res) { return res.json(); }).then(function (r) {
-              if (!r.ok) { photoUploadFailed = true; photoUploadErrorDetail = r.error || '(詳細不明)'; return ''; }
-              return r.photoUrl;
-            }).catch(function (err) { photoUploadFailed = true; photoUploadErrorDetail = (err && err.message) || '通信エラー'; return ''; })
-        : Promise.resolve('');
-
-      uploadStep.then(function (photoUrl) {
-        if (photoUrl) payload.photoUrl = photoUrl;
-        if (photoUploadFailed) {
-          alert('プロフィール画像のアップロードに失敗しました。他の変更内容は保存されますが、画像だけは反映されません。\n\nエラー詳細：' + photoUploadErrorDetail + '\n\nもう一度お試しください。');
-        }
 
       fetch(API_URL, {
         method: 'POST',
@@ -806,6 +795,9 @@
           editForm.style.display = 'none';
           editToggleBtn.style.display = '';
           modeSub.textContent = '登録内容の確認';
+          avatarViewEl.style.cursor = 'default';
+          avatarPhotoHint.style.display = 'none';
+          pendingPhotoDataUrl = '';
           successBox.style.display = 'block';
         })
         .catch(function () {
@@ -814,7 +806,6 @@
           errorBox.textContent = '通信エラーが発生しました。時間をおいて再度お試しください。';
           errorBox.style.display = 'block';
         });
-      });
     });
   })();
 </script>
