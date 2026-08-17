@@ -759,16 +759,23 @@
       saveBtn.disabled = true;
       saveBtn.textContent = '保存中…';
 
+      var photoUploadFailed = false;
       var uploadStep = editPhotoDataUrl
         ? fetch(API_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify({ action: 'uploadPhoto', username: payload.username, photoBase64: editPhotoDataUrl })
-          }).then(function (res) { return res.json(); }).then(function (r) { return r.ok ? r.photoUrl : ''; }).catch(function () { return ''; })
+          }).then(function (res) { return res.json(); }).then(function (r) {
+              if (!r.ok) { photoUploadFailed = true; return ''; }
+              return r.photoUrl;
+            }).catch(function () { photoUploadFailed = true; return ''; })
         : Promise.resolve('');
 
       uploadStep.then(function (photoUrl) {
         if (photoUrl) payload.photoUrl = photoUrl;
+        if (photoUploadFailed) {
+          alert('プロフィール画像のアップロードに失敗しました。他の変更内容は保存されますが、画像だけは反映されません。もう一度お試しください。');
+        }
 
       fetch(API_URL, {
         method: 'POST',

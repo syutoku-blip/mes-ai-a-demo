@@ -252,9 +252,12 @@
 
         <div id="memberContent">
         <div class="el-section-head" style="margin-top:8px;margin-bottom:8px;">
-          <div>
-            <h2 style="margin:0;" id="profileName">りか さん</h2>
-            <div class="sub" id="profileRoleLabel">登録ユーザー</div>
+          <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+            <div class="el-avatar" id="profileAvatar" style="width:56px;height:56px;font-size:20px;">り</div>
+            <div>
+              <h2 style="margin:0;" id="profileName">りか さん</h2>
+              <div class="sub" id="profileRoleLabel">登録ユーザー</div>
+            </div>
           </div>
           <a href="profile.html" class="el-btn el-btn--ghost el-btn--sm">プロフィールを見る</a>
         </div>
@@ -432,9 +435,14 @@
 
     var roleLabels = { member: '登録ユーザー', shift: 'SHiFT会員', admin: '管理者', guest: 'ゲスト' };
     var nameEl = document.getElementById('profileName');
+    var avatarEl = document.getElementById('profileAvatar');
     var roleEl = document.getElementById('profileRoleLabel');
     if (nameEl) nameEl.textContent = (name || 'りか') + ' さん';
     if (roleEl) roleEl.textContent = roleLabels[role] || '登録ユーザー';
+    if (avatarEl) {
+      if (photoUrl) avatarEl.innerHTML = '<img src="' + photoUrl + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
+      else avatarEl.textContent = (name || 'り').charAt(0);
+    }
     var headerAvatarEl = document.getElementById('headerAvatar');
     if (headerAvatarEl && photoUrl) headerAvatarEl.innerHTML = '<img src="' + photoUrl + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
   })();
