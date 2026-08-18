@@ -58,16 +58,34 @@
     display:none !important;
   }
   .el-ad-banner .el-ad-icon{
-    width:48px !important;
-    height:48px !important;
-    min-width:48px !important;
-    border-radius:14px !important;
+    width:80px !important;
+    height:80px !important;
+    min-width:80px !important;
+    border-radius:16px !important;
     display:flex !important;
     align-items:center !important;
     justify-content:center !important;
     flex:none !important;
     font-size:19px !important;
-    box-shadow:0 3px 8px rgba(0,0,0,.15) !important;
+    box-shadow:0 4px 12px rgba(0,0,0,.18) !important;
+    overflow:hidden !important;
+    position:relative !important;
+  }
+  .el-ad-banner .el-ad-icon img{
+    width:100% !important;
+    height:100% !important;
+    object-fit:cover !important;
+  }
+  .el-ad-banner .el-ad-icon::after{
+    content:'';
+    position:absolute;
+    inset:0;
+    background:linear-gradient(160deg, rgba(255,255,255,.28), rgba(0,0,0,.12));
+    pointer-events:none;
+  }
+  .el-ad-banner{
+    padding:18px 20px !important;
+    gap:18px !important;
   }
   .el-ad-banner .el-ad-body{
     flex:1 !important;
@@ -86,35 +104,6 @@
   }
   .el-ad-banner > a.el-btn{
     flex:none !important;
-  }
-  /* ユーザーモード切り替えウィジェット */
-  .el-role-switcher{
-    position:fixed;
-    right:18px;
-    bottom:18px;
-    z-index:500;
-    display:flex;
-    gap:4px;
-    background:var(--el-paper, #fff);
-    border:1px solid var(--el-line-soft, #E5DFD2);
-    border-radius:999px;
-    padding:4px;
-    box-shadow:0 4px 16px rgba(22,35,63,.14);
-  }
-  .el-role-switcher button{
-    border:none;
-    background:transparent;
-    color:var(--el-ink-faint, #8A8478);
-    font-size:12px;
-    font-weight:700;
-    padding:7px 12px;
-    border-radius:999px;
-    cursor:pointer;
-    white-space:nowrap;
-  }
-  .el-role-switcher button.is-active{
-    background:var(--el-navy, #16233F);
-    color:#fff;
   }
   .el-auth-modal{
     display:none;
@@ -203,6 +192,14 @@
     background:var(--el-teal-deep, #1E6F63) !important;
     border-color:var(--el-teal-deep, #1E6F63) !important;
   }
+  /* フッターの背景色が正しく当たらない場合の保険（文字が背景と同化して見えなくなるのを防ぐ） */
+  .el-footer{ background:#EDE4D0 !important; border-top:1px solid var(--el-line-soft, #E5DFD2) !important; }
+  .el-footer .tag{ color:var(--el-ink-faint, #8A8478) !important; }
+  .el-footer .el-logo{ color:var(--el-navy, #16233F) !important; }
+  .el-footer .el-logo .dot{ color:var(--el-mustard-deep, #B9812A) !important; }
+  .el-footer-cols a{ color:var(--el-ink-faint, #8A8478) !important; }
+  .el-footer-cols h6{ color:var(--el-navy, #16233F) !important; }
+  .el-footer-bottom{ color:var(--el-ink-faint, #8A8478) !important; border-top-color:var(--el-line-soft, #E5DFD2) !important; }
 </style>
 </head>
 <body data-site="community" data-root="..">
@@ -323,7 +320,7 @@
       </details>
 
       <a href="members.html">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M6 16c.5-1.6 1.7-2.5 3-2.5s2.5.9 3 2.5"/><path d="M14 9h4M14 13h4"/></svg>
         <span class="lbl">メンバー</span>
       </a>
 
@@ -465,7 +462,7 @@
         <div class="el-footer-grid">
           <div>
             <a href="index.html" class="el-logo">Export Lab<span class="dot">.</span></a>
-            <p class="tag">人・モノ・情報がつながる、輸出の共創コミュニティ。運営：WorldShift株式会社</p>
+            <p class="tag">人・モノ・情報がつながる、輸出の共創コミュニティ。<br>運営：WorldShift株式会社</p>
           </div>
           <div class="el-footer-cols">
             <div>
@@ -630,11 +627,44 @@
   (function () {
     var el = document.getElementById('adBanner');
     if (!el) return;
-    var ad = ADS[Math.floor(Math.random() * ADS.length)];
-    document.getElementById('adIcon').style.background = ad.color;
-    document.getElementById('adIconSvg').innerHTML = ad.icon;
-    document.getElementById('adTitle').textContent = ad.name;
-    document.getElementById('adDesc').textContent = ad.desc;
+
+    function renderMockAd() {
+      var ad = ADS[Math.floor(Math.random() * ADS.length)];
+      document.getElementById('adIcon').style.background = ad.color;
+      document.getElementById('adIconSvg').style.display = '';
+      document.getElementById('adIconSvg').innerHTML = ad.icon;
+      document.getElementById('adTitle').textContent = ad.name;
+      document.getElementById('adDesc').textContent = ad.desc;
+    }
+
+    var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
+    fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'listContent', type: 'ad' })
+    })
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        var ads = (data.ok && data.items) ? data.items : [];
+        if (!ads.length) { renderMockAd(); return; }
+        var ad = ads[Math.floor(Math.random() * ads.length)];
+        var iconSvg = document.getElementById('adIconSvg');
+        if (ad.imageUrl) {
+          document.getElementById('adIcon').style.background = 'var(--el-cream-deep)';
+          iconSvg.style.display = 'none';
+          document.getElementById('adIcon').insertAdjacentHTML('beforeend', '<img src="' + ad.imageUrl + '">');
+        } else {
+          document.getElementById('adIcon').style.background = 'var(--el-teal)';
+        }
+        document.getElementById('adTitle').textContent = ad.serviceName || '';
+        document.getElementById('adDesc').textContent = ad.description || '';
+        var ctaLink = el.querySelector('a.el-btn');
+        if (ctaLink) {
+          ctaLink.textContent = ad.ctaText || '詳しく見る';
+          if (ad.ctaUrl) ctaLink.href = ad.ctaUrl;
+        }
+      })
+      .catch(renderMockAd);
   })();
 
   // 返信ボタン：誰に返信しているかを自動でメンション表示
@@ -714,6 +744,14 @@
     if (bell && role === 'guest') bell.style.display = 'none';
     var headerAvatar = document.getElementById('headerAvatar');
     if (headerAvatar && role === 'guest') headerAvatar.style.display = 'none';
+    else if (headerAvatar) {
+      try {
+        var hp = JSON.parse(localStorage.getItem('el-user-profile') || '{}');
+        var hUsername = localStorage.getItem('el-username') || hp.username || '';
+        if (hp.photoUrl) headerAvatar.innerHTML = '<img src="' + hp.photoUrl + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
+        else if (hUsername) headerAvatar.textContent = hUsername.charAt(0);
+      } catch (e) {}
+    }
 
     var authLinksWrap = document.getElementById('headerAuthLinks');
     var loginLink = document.getElementById('headerLoginLink');
@@ -731,7 +769,6 @@
       }
     }
 
-    // 切り替えウィジェットの見た目
     // 「ユーザー登録してください」モーダル
     var modal = document.getElementById('authModal');
     window.elRequireAuth = function (e) {

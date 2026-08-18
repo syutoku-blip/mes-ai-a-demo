@@ -235,39 +235,48 @@
 
         <div id="noAccess" style="display:none;padding:44px 24px;text-align:center;background:var(--el-cream-deep);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);margin-top:16px;">
           <h2 style="margin:0 0 10px;">このページは管理者専用です</h2>
-          <p style="color:var(--el-ink-faint);font-size:14px;">右下の切り替えから「管理者」を選択してください。</p>
+          <p style="color:var(--el-ink-faint);font-size:14px;">管理者アカウントでログインしてください。</p>
         </div>
 
         <div id="adminContent">
         <div class="el-section-head" style="margin-top:8px;margin-bottom:20px;">
           <div>
             <h2>管理者ページ</h2>
-            <div class="sub">会員管理・お知らせ・マーケットの運営業務をまとめて行えます</div>
           </div>
         </div>
 
         <div class="el-tabs" id="adminTabs" style="margin-bottom:22px;">
           <a href="#" data-tab="users" class="is-active">登録ユーザー一覧</a>
           <a href="#" data-tab="announce">お知らせ登録</a>
+          <a href="#" data-tab="event">イベント登録</a>
           <a href="#" data-tab="content">コンテンツ登録</a>
+          <a href="#" data-tab="ads">広告設定</a>
           <a href="#" data-tab="apply">出品申請の確認</a>
           <a href="#" data-tab="badge">バッジの付与</a>
         </div>
 
         <!-- 登録ユーザー一覧 -->
         <div class="el-admin-panel" data-panel="users">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:10px;">
+            <div id="userTableStatus" style="font-size:13px;color:var(--el-ink-faint);">読み込み中…</div>
+            <button type="button" class="el-btn el-btn--ghost el-btn--sm" id="exportCsvBtn">CSVでダウンロード</button>
+          </div>
           <div style="overflow-x:auto;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);">
-            <table style="width:100%;border-collapse:collapse;font-size:13px;" id="userTable">
+            <table style="width:100%;min-width:1180px;border-collapse:collapse;font-size:13px;" id="userTable">
               <thead>
                 <tr style="text-align:left;border-bottom:1px solid var(--el-line-soft);">
-                  <th style="padding:12px 14px;">氏名</th>
-                  <th style="padding:12px 14px;">ユーザーネーム</th>
-                  <th style="padding:12px 14px;">メールアドレス</th>
-                  <th style="padding:12px 14px;">生年月日</th>
-                  <th style="padding:12px 14px;">業種</th>
-                  <th style="padding:12px 14px;">SHiFT会員番号</th>
-                  <th style="padding:12px 14px;">状態</th>
-                  <th style="padding:12px 14px;"></th>
+                  <th style="padding:12px 14px;white-space:nowrap;">氏名</th>
+                  <th style="padding:12px 14px;white-space:nowrap;">ユーザーネーム</th>
+                  <th style="padding:12px 14px;white-space:nowrap;">メールアドレス</th>
+                  <th style="padding:12px 14px;white-space:nowrap;">生年月日</th>
+                  <th style="padding:12px 14px;white-space:nowrap;">性別</th>
+                  <th style="padding:12px 14px;white-space:nowrap;">電話番号</th>
+                  <th style="padding:12px 14px;white-space:nowrap;">住所</th>
+                  <th style="padding:12px 14px;white-space:nowrap;">業種</th>
+                  <th style="padding:12px 14px;white-space:nowrap;">区分</th>
+                  <th style="padding:12px 14px;white-space:nowrap;">SHiFT会員番号</th>
+                  <th style="padding:12px 14px;white-space:nowrap;">状態</th>
+                  <th style="padding:12px 14px;white-space:nowrap;"></th>
                 </tr>
               </thead>
               <tbody id="userTableBody"></tbody>
@@ -277,10 +286,10 @@
 
         <!-- お知らせ登録 -->
         <div class="el-admin-panel" data-panel="announce" style="display:none;">
-          <form id="announceForm" style="display:flex;flex-direction:column;gap:16px;max-width:560px;">
+          <form id="announceForm" style="display:flex;flex-direction:column;gap:16px;max-width:720px;">
             <label>
               <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">種別</span>
-              <select style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
+              <select name="category" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
                 <option>お知らせ</option>
                 <option>メンテナンス</option>
                 <option>ガイドライン</option>
@@ -288,26 +297,53 @@
             </label>
             <label>
               <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">タイトル</span>
-              <input type="text" required style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
+              <input type="text" name="title" required style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
             </label>
             <label>
               <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">本文</span>
-              <textarea rows="5" required style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;resize:vertical;"></textarea>
+              <div id="announceEditorMount"></div>
             </label>
             <button type="submit" class="el-btn el-btn--primary" style="align-self:flex-start;">お知らせを登録する</button>
           </form>
+          <div id="announceList" style="margin-top:32px;"></div>
+        </div>
+
+        <!-- イベント登録 -->
+        <div class="el-admin-panel" data-panel="event" style="display:none;">
+          <form id="eventForm" style="display:flex;flex-direction:column;gap:16px;max-width:720px;">
+            <label>
+              <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">イベント名</span>
+              <input type="text" name="title" required style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
+            </label>
+            <div style="display:flex;gap:12px;flex-wrap:wrap;">
+              <label style="flex:1;min-width:200px;">
+                <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">開催日時</span>
+                <input type="datetime-local" name="eventDate" required style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
+              </label>
+              <label style="flex:1;min-width:200px;">
+                <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">開催場所</span>
+                <input type="text" name="place" placeholder="オンライン／福岡市 など" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
+              </label>
+            </div>
+            <label>
+              <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">詳細</span>
+              <div id="eventEditorMount"></div>
+            </label>
+            <button type="submit" class="el-btn el-btn--primary" style="align-self:flex-start;">イベントを登録する</button>
+          </form>
+          <div id="eventList" style="margin-top:32px;"></div>
         </div>
 
         <!-- マーケットコンテンツ登録 -->
         <div class="el-admin-panel" data-panel="content" style="display:none;">
-          <form id="contentForm" style="display:flex;flex-direction:column;gap:16px;max-width:560px;">
+          <form id="contentForm" style="display:flex;flex-direction:column;gap:16px;max-width:720px;">
             <label>
               <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">タイトル</span>
-              <input type="text" required style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
+              <input type="text" name="title" required style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
             </label>
             <label>
               <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">カテゴリ</span>
-              <select style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
+              <select name="category" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
                 <option value="fda">FDA</option>
                 <option value="amazon">Amazon</option>
                 <option value="logistics">通関・物流</option>
@@ -316,14 +352,48 @@
             </label>
             <label>
               <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">価格（円）</span>
-              <input type="number" min="0" step="100" required style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
+              <input type="number" name="price" min="0" step="100" required style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
             </label>
             <label>
               <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">説明</span>
-              <textarea rows="4" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;resize:vertical;"></textarea>
+              <div id="contentEditorMount"></div>
             </label>
             <button type="submit" class="el-btn el-btn--primary" style="align-self:flex-start;">コンテンツを登録する（WorldShift公式として掲載）</button>
           </form>
+          <div id="contentAdminList" style="margin-top:32px;"></div>
+        </div>
+
+        <!-- 広告設定 -->
+        <div class="el-admin-panel" data-panel="ads" style="display:none;">
+          <form id="adForm" style="display:flex;flex-direction:column;gap:16px;max-width:520px;">
+            <label>
+              <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">サービス名</span>
+              <input type="text" name="serviceName" required style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
+            </label>
+            <label>
+              <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">サービス紹介文</span>
+              <textarea name="description" rows="3" required style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;resize:vertical;"></textarea>
+            </label>
+            <label>
+              <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">画像URL</span>
+              <input type="url" name="imageUrl" placeholder="https://..." style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
+              <div id="adImagePreview" style="margin-top:8px;width:100%;max-width:280px;height:120px;border-radius:10px;background:var(--el-cream-deep);border:1px solid var(--el-line-soft);display:flex;align-items:center;justify-content:center;color:var(--el-ink-faint);font-size:12px;overflow:hidden;">画像プレビュー</div>
+            </label>
+            <label>
+              <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">CTA文言</span>
+              <input type="text" name="ctaText" placeholder="詳しく見る" required style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
+            </label>
+            <label>
+              <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">CTAリンク先URL</span>
+              <input type="url" name="ctaUrl" placeholder="https://..." style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
+            </label>
+            <button type="submit" class="el-btn el-btn--primary" style="align-self:flex-start;">広告を登録する</button>
+          </form>
+          <div style="margin-top:28px;">
+            <h3 style="font-size:14px;margin:0 0 12px;">プレビュー</h3>
+            <div id="adPreview"></div>
+          </div>
+          <div id="adList" style="margin-top:32px;"></div>
         </div>
 
         <!-- 出品申請の確認 -->
@@ -430,44 +500,162 @@
     document.getElementById('adminContent').style.display = 'none';
   }
 
-  // モックのユーザーデータ（非公開情報を含め、管理者はすべて閲覧できる）
-  var USERS = [
-    { name: '山口 貿易士', username: 'yamaguchi_trade', email: 'yamaguchi@example.com', birthdate: '1985-04-12', birthdatePublic: false, industry: 'FDA対応', shiftNumber: 'SH-10231', status: '有効' },
-    { name: '高橋 物産', username: 'takahashi_shoji', email: 'takahashi@example.com', birthdate: '1990-11-02', birthdatePublic: true, industry: 'Amazon出品', shiftNumber: 'SH-10456', status: '有効' },
-    { name: '鈴木 ラボ', username: 'suzuki_lab', email: 'suzuki@example.com', birthdate: '1978-06-23', birthdatePublic: false, industry: '化粧品', shiftNumber: '（非会員）', status: '有効' },
-    { name: '田中 フーズ', username: 'tanaka_foods', email: 'tanaka@example.com', birthdate: '1982-01-30', birthdatePublic: false, industry: '食品', shiftNumber: 'SH-10789', status: 'ブロック中' },
-    { name: '佐藤 ストア', username: 'sato_store', email: 'sato@example.com', birthdate: '1995-09-08', birthdatePublic: true, industry: 'アパレル・雑貨', shiftNumber: '（非会員）', status: '有効' }
-  ];
+  // ------------------------------------------------------------
+  // Google Apps Script のウェブアプリURL
+  // ------------------------------------------------------------
+  var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
+
+  function apiPost(payload) {
+    return fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    }).then(function (res) { return res.json(); });
+  }
+
+  // ------------------------------------------------------------
+  // 簡易リッチエディター：太字/斜体/下線/リスト/リンクの基本操作＋
+  // 「HTMLソースを編集」でHTML・CSSを直接書ける。反映範囲はiframe内に限定される。
+  // ------------------------------------------------------------
+  function createRichEditor(mountEl) {
+    mountEl.innerHTML =
+      '<div style="border:1px solid var(--el-line-soft);border-radius:10px;overflow:hidden;">' +
+        '<div style="display:flex;flex-wrap:wrap;gap:4px;padding:8px;background:var(--el-cream-deep);border-bottom:1px solid var(--el-line-soft);">' +
+          '<button type="button" data-cmd="bold" style="width:30px;height:30px;border:1px solid var(--el-line-soft);border-radius:6px;background:#fff;font-weight:700;cursor:pointer;">B</button>' +
+          '<button type="button" data-cmd="italic" style="width:30px;height:30px;border:1px solid var(--el-line-soft);border-radius:6px;background:#fff;font-style:italic;cursor:pointer;">I</button>' +
+          '<button type="button" data-cmd="underline" style="width:30px;height:30px;border:1px solid var(--el-line-soft);border-radius:6px;background:#fff;text-decoration:underline;cursor:pointer;">U</button>' +
+          '<button type="button" data-cmd="insertUnorderedList" style="width:30px;height:30px;border:1px solid var(--el-line-soft);border-radius:6px;background:#fff;cursor:pointer;">•一覧</button>' +
+          '<button type="button" data-cmd="createLink" style="height:30px;padding:0 8px;border:1px solid var(--el-line-soft);border-radius:6px;background:#fff;cursor:pointer;">リンク</button>' +
+          '<button type="button" class="el-re-htmltoggle" style="height:30px;padding:0 10px;border:1px solid var(--el-line-soft);border-radius:6px;background:#fff;cursor:pointer;margin-left:auto;">HTMLソースを編集</button>' +
+        '</div>' +
+        '<div class="el-re-wysiwyg" contenteditable="true" style="min-height:140px;padding:12px;font:inherit;outline:none;"></div>' +
+        '<textarea class="el-re-html" hidden rows="8" style="width:100%;box-sizing:border-box;border:none;padding:12px;font-family:monospace;font-size:12.5px;resize:vertical;" placeholder="&lt;p&gt;ここにHTMLやCSSを直接記述できます&lt;/p&gt;"></textarea>' +
+        '<div class="el-re-previewwrap" hidden style="border-top:1px solid var(--el-line-soft);">' +
+          '<div style="padding:6px 12px;font-size:11px;color:var(--el-ink-faint);background:var(--el-cream-deep);">プレビュー（この枠内だけに反映されます）</div>' +
+          '<iframe class="el-re-preview" sandbox style="width:100%;height:180px;border:none;display:block;"></iframe>' +
+        '</div>' +
+      '</div>';
+
+    var wysiwyg = mountEl.querySelector('.el-re-wysiwyg');
+    var htmlBox = mountEl.querySelector('.el-re-html');
+    var previewWrap = mountEl.querySelector('.el-re-previewwrap');
+    var preview = mountEl.querySelector('.el-re-preview');
+    var toggleBtn = mountEl.querySelector('.el-re-htmltoggle');
+    var isHtmlMode = false;
+
+    mountEl.querySelectorAll('button[data-cmd]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        wysiwyg.focus();
+        if (btn.dataset.cmd === 'createLink') {
+          var url = prompt('リンク先URLを入力してください');
+          if (url) document.execCommand('createLink', false, url);
+        } else {
+          document.execCommand(btn.dataset.cmd, false, null);
+        }
+      });
+    });
+
+    function updatePreview() {
+      preview.srcdoc = htmlBox.value || '<p style="color:#999;font-family:sans-serif;">（プレビューする内容がありません）</p>';
+    }
+
+    toggleBtn.addEventListener('click', function () {
+      isHtmlMode = !isHtmlMode;
+      if (isHtmlMode) {
+        htmlBox.value = wysiwyg.innerHTML;
+        wysiwyg.hidden = true;
+        htmlBox.hidden = false;
+        previewWrap.hidden = false;
+        toggleBtn.textContent = '編集モードに戻る';
+        updatePreview();
+      } else {
+        wysiwyg.innerHTML = htmlBox.value;
+        wysiwyg.hidden = false;
+        htmlBox.hidden = true;
+        previewWrap.hidden = true;
+        toggleBtn.textContent = 'HTMLソースを編集';
+      }
+    });
+    htmlBox.addEventListener('input', updatePreview);
+
+    return {
+      getHtml: function () { return isHtmlMode ? htmlBox.value : wysiwyg.innerHTML; },
+      clear: function () { wysiwyg.innerHTML = ''; htmlBox.value = ''; }
+    };
+  }
+
+  var announceEditor = createRichEditor(document.getElementById('announceEditorMount'));
+  var eventEditor = createRichEditor(document.getElementById('eventEditorMount'));
+  var contentEditor = createRichEditor(document.getElementById('contentEditorMount'));
+
+  // ------------------------------------------------------------
+  // 登録ユーザー一覧：シートから取得（公開・非公開に関わらず全項目）
+  // ------------------------------------------------------------
+  var GENDER_LABELS_ADM = { male: '男性', female: '女性', other: 'その他', unanswered: '回答しない' };
+  var INDUSTRY_LABELS_ADM = {
+    manufacturing: '製造業', wholesale_retail: '卸売・小売業', ec: 'EC・通販', food: '食品・飲料',
+    cosmetics: '化粧品', apparel: 'アパレル・雑貨', electronics: '家電・電子機器', logistics: '物流・倉庫',
+    trade: '貿易・輸出入', it: '情報通信・IT', finance: '金融・保険', construction: '建設・不動産',
+    consulting: 'コンサルティング・士業', education: '教育', medical: '医療・福祉', public: '公務員',
+    student: '学生', freelance: '自営業・フリーランス', other: 'その他'
+  };
+  var ROLE_LABELS_ADM = { member: '一般', shift: 'SHiFT会員', admin: '管理者' };
 
   var userTableBody = document.getElementById('userTableBody');
+  var userTableStatus = document.getElementById('userTableStatus');
   var badgeUserSelect = document.getElementById('badgeUserSelect');
+  var USERS = [];
+
+  function visTag(vis) { return vis === '公開' ? '' : '<span style="color:var(--el-ink-faint);font-size:11px;">（非公開）</span>'; }
+
   function renderUsers() {
     userTableBody.innerHTML = '';
     badgeUserSelect.innerHTML = '';
     USERS.forEach(function (u, i) {
+      var address = [u.prefecture, u.city].filter(Boolean).join(' ') || '-';
+      var genderLabel = GENDER_LABELS_ADM[u.gender] || u.gender || '-';
+      var industryLabel = INDUSTRY_LABELS_ADM[u.industry] || u.industry || '-';
       var tr = document.createElement('tr');
       tr.style.borderBottom = '1px solid var(--el-line-soft)';
       tr.innerHTML =
-        '<td style="padding:10px 14px;font-weight:700;">' + u.name + '</td>' +
-        '<td style="padding:10px 14px;">' + u.username + '</td>' +
-        '<td style="padding:10px 14px;">' + u.email + '</td>' +
-        '<td style="padding:10px 14px;">' + u.birthdate + (u.birthdatePublic ? '' : '<span style="color:var(--el-ink-faint);font-size:11px;">（非公開）</span>') + '</td>' +
-        '<td style="padding:10px 14px;">' + u.industry + '</td>' +
-        '<td style="padding:10px 14px;">' + u.shiftNumber + '</td>' +
-        '<td style="padding:10px 14px;">' + (u.status === '有効' ? '<span class="badge badge--open">有効</span>' : '<span class="badge badge--coral" style="background:var(--el-coral);color:#fff;">ブロック中</span>') + '</td>' +
+        '<td style="padding:10px 14px;font-weight:700;white-space:nowrap;">' + (u.fullname || '-') + '</td>' +
+        '<td style="padding:10px 14px;white-space:nowrap;">' + u.username + '</td>' +
+        '<td style="padding:10px 14px;white-space:nowrap;">' + (u.email || '-') + '</td>' +
+        '<td style="padding:10px 14px;white-space:nowrap;">' + (u.birthdate || '-') + visTag(u.birthdateVisibility) + '</td>' +
+        '<td style="padding:10px 14px;white-space:nowrap;">' + genderLabel + visTag(u.genderVisibility) + '</td>' +
+        '<td style="padding:10px 14px;white-space:nowrap;">' + (u.phone || '-') + '</td>' +
+        '<td style="padding:10px 14px;white-space:nowrap;">' + address + visTag(u.prefectureVisibility) + '</td>' +
+        '<td style="padding:10px 14px;white-space:nowrap;">' + industryLabel + visTag(u.industryVisibility) + '</td>' +
+        '<td style="padding:10px 14px;white-space:nowrap;">' + (ROLE_LABELS_ADM[u.role] || '一般') + '</td>' +
+        '<td style="padding:10px 14px;white-space:nowrap;">' + (u.shiftNumber || '-') + visTag(u.shiftNumberVisibility) + '</td>' +
+        '<td style="padding:10px 14px;white-space:nowrap;">' + (u.status === 'ブロック中' ? '<span class="badge badge--coral" style="background:var(--el-coral);color:#fff;">ブロック中</span>' : '<span class="badge badge--open">有効</span>') + '</td>' +
         '<td style="padding:10px 14px;white-space:nowrap;">' +
         '<button type="button" class="el-btn el-btn--ghost el-btn--sm" data-action="view" data-i="' + i + '">詳細</button> ' +
-        '<button type="button" class="el-btn el-btn--ghost el-btn--sm" data-action="block" data-i="' + i + '">' + (u.status === '有効' ? 'ブロック' : '解除') + '</button> ' +
-        '<button type="button" class="el-btn el-btn--ghost el-btn--sm" data-action="impersonate" data-i="' + i + '">成り代わり</button>' +
+        '<button type="button" class="el-btn el-btn--ghost el-btn--sm" data-action="block" data-i="' + i + '">' + (u.status === 'ブロック中' ? '解除' : 'ブロック') + '</button>' +
         '</td>';
       userTableBody.appendChild(tr);
 
       var opt = document.createElement('option');
-      opt.value = i; opt.textContent = u.name + '（' + u.username + '）';
+      opt.value = i; opt.textContent = (u.fullname || u.username) + '（' + u.username + '）';
       badgeUserSelect.appendChild(opt);
     });
   }
-  renderUsers();
+
+  function loadUsers() {
+    userTableStatus.textContent = '読み込み中…';
+    apiPost({ action: 'getAllMembersAdmin' }).then(function (data) {
+      if (!data.ok) {
+        userTableStatus.textContent = '取得に失敗しました: ' + (data.error || '');
+        return;
+      }
+      USERS = data.members || [];
+      userTableStatus.textContent = USERS.length + '人の登録ユーザー';
+      renderUsers();
+    }).catch(function () {
+      userTableStatus.textContent = 'サーバーへの接続に失敗しました。';
+    });
+  }
+  loadUsers();
 
   var udModal = document.getElementById('userDetailModal');
   function closeUd() { udModal.classList.remove('is-open'); udModal.setAttribute('aria-hidden', 'true'); }
@@ -478,33 +666,201 @@
     if (!btn) return;
     var u = USERS[+btn.dataset.i];
     if (btn.dataset.action === 'view') {
-      document.getElementById('udTitle').textContent = u.name + ' さんの詳細';
+      document.getElementById('udTitle').textContent = (u.fullname || u.username) + ' さんの詳細';
       document.getElementById('udBody').innerHTML =
         'ユーザーネーム：' + u.username + '<br>' +
-        'メールアドレス：' + u.email + '<br>' +
-        '生年月日：' + u.birthdate + '（' + (u.birthdatePublic ? '公開' : '非公開') + '設定）<br>' +
-        '業種：' + u.industry + '<br>' +
-        'SHiFT会員番号：' + u.shiftNumber + '<br>' +
-        '状態：' + u.status;
+        'メールアドレス：' + (u.email || '-') + '<br>' +
+        '生年月日：' + (u.birthdate || '-') + '（' + (u.birthdateVisibility || '非公開') + '）<br>' +
+        '性別：' + (GENDER_LABELS_ADM[u.gender] || u.gender || '-') + '（' + (u.genderVisibility || '非公開') + '）<br>' +
+        '電話番号：' + (u.phone || '-') + '<br>' +
+        '住所：' + ([u.prefecture, u.city].filter(Boolean).join(' ') || '-') + '（' + (u.prefectureVisibility || '非公開') + '）<br>' +
+        '業種：' + (INDUSTRY_LABELS_ADM[u.industry] || u.industry || '-') + '（' + (u.industryVisibility || '非公開') + '）<br>' +
+        '区分：' + (ROLE_LABELS_ADM[u.role] || '一般') + '<br>' +
+        'SHiFT会員番号：' + (u.shiftNumber || '-') + '（' + (u.shiftNumberVisibility || '非公開') + '）<br>' +
+        '自己紹介：' + (u.bio || '-') + '<br>' +
+        '状態：' + (u.status || '有効');
       udModal.classList.add('is-open');
       udModal.setAttribute('aria-hidden', 'false');
     } else if (btn.dataset.action === 'block') {
-      u.status = u.status === '有効' ? 'ブロック中' : '有効';
-      renderUsers();
-    } else if (btn.dataset.action === 'impersonate') {
-      alert(u.name + ' さんとして成り代わりログインします（デモのため実際の切り替えは行われません）。');
+      var newStatus = u.status === 'ブロック中' ? '有効' : 'ブロック中';
+      apiPost({ action: 'setMemberStatus', username: u.username, status: newStatus }).then(function (data) {
+        if (data.ok) { u.status = newStatus; renderUsers(); }
+        else alert(data.error || '更新に失敗しました');
+      });
     }
   });
 
-  // お知らせ登録／コンテンツ登録／バッジ付与：バックエンドが無いため送信を防ぎ完了メッセージのみ表示
-  ['announceForm', 'contentForm', 'badgeForm'].forEach(function (id) {
-    var form = document.getElementById(id);
-    if (!form) return;
-    form.addEventListener('submit', function (e) {
-      e.preventDefault();
-      alert('登録しました（デモのため実際には保存されません）。');
-      form.reset();
+  // CSVダウンロード
+  document.getElementById('exportCsvBtn').addEventListener('click', function () {
+    var headers = ['氏名', 'ユーザーネーム', 'メールアドレス', '生年月日', '性別', '電話番号', '住所（県）', '住所（市町村）', '業種', '区分', 'SHiFT会員番号', '状態'];
+    var rows = USERS.map(function (u) {
+      return [
+        u.fullname || '', u.username || '', u.email || '', u.birthdate || '',
+        GENDER_LABELS_ADM[u.gender] || u.gender || '', u.phone || '', u.prefecture || '', u.city || '',
+        INDUSTRY_LABELS_ADM[u.industry] || u.industry || '', ROLE_LABELS_ADM[u.role] || '一般',
+        u.shiftNumber || '', u.status || '有効'
+      ];
     });
+    function csvEscape(v) { return '"' + String(v).replace(/"/g, '""') + '"'; }
+    var csv = [headers].concat(rows).map(function (r) { return r.map(csvEscape).join(','); }).join('\r\n');
+    var blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = '登録ユーザー一覧_' + new Date().toISOString().slice(0, 10) + '.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+
+  // ------------------------------------------------------------
+  // お知らせ登録
+  // ------------------------------------------------------------
+  function renderSimpleList(containerId, items, renderItem) {
+    var el = document.getElementById(containerId);
+    if (!items.length) {
+      el.innerHTML = '<div style="padding:24px;text-align:center;color:var(--el-ink-faint);font-size:13px;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);">まだ登録がありません。</div>';
+      return;
+    }
+    el.innerHTML = '<h3 style="font-size:14px;margin:0 0 12px;">登録済み一覧</h3>' +
+      '<div style="display:flex;flex-direction:column;gap:10px;">' + items.map(renderItem).join('') + '</div>';
+  }
+
+  function loadAnnouncements() {
+    apiPost({ action: 'listContent', type: 'announcement' }).then(function (data) {
+      if (!data.ok) return;
+      renderSimpleList('announceList', data.items, function (it) {
+        return '<div style="padding:14px 16px;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);">' +
+          '<span class="badge badge--announce">' + it.category + '</span> <strong>' + it.title + '</strong>' +
+          '<div style="font-size:12px;color:var(--el-ink-faint);margin-top:4px;">' + new Date(it.createdAt).toLocaleString('ja-JP') + '</div></div>';
+      });
+    });
+  }
+  loadAnnouncements();
+
+  document.getElementById('announceForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var fd = new FormData(e.target);
+    apiPost({
+      action: 'createContent', type: 'announcement',
+      title: fd.get('title'), category: fd.get('category'), bodyHtml: announceEditor.getHtml()
+    }).then(function (data) {
+      if (data.ok) { alert('お知らせを登録しました。'); e.target.reset(); announceEditor.clear(); loadAnnouncements(); }
+      else alert(data.error || '登録に失敗しました');
+    }).catch(function () { alert('通信エラーが発生しました。'); });
+  });
+
+  // ------------------------------------------------------------
+  // イベント登録
+  // ------------------------------------------------------------
+  function loadEvents() {
+    apiPost({ action: 'listContent', type: 'event' }).then(function (data) {
+      if (!data.ok) return;
+      renderSimpleList('eventList', data.items, function (it) {
+        return '<div style="padding:14px 16px;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);">' +
+          '<strong>' + it.title + '</strong>' +
+          '<div style="font-size:12.5px;color:var(--el-ink-faint);margin-top:4px;">' + (it.eventDate ? new Date(it.eventDate).toLocaleString('ja-JP') : '') + (it.place ? '・' + it.place : '') + '</div></div>';
+      });
+    });
+  }
+  loadEvents();
+
+  document.getElementById('eventForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var fd = new FormData(e.target);
+    apiPost({
+      action: 'createContent', type: 'event',
+      title: fd.get('title'), eventDate: fd.get('eventDate'), place: fd.get('place'), bodyHtml: eventEditor.getHtml()
+    }).then(function (data) {
+      if (data.ok) { alert('イベントを登録しました。'); e.target.reset(); eventEditor.clear(); loadEvents(); }
+      else alert(data.error || '登録に失敗しました');
+    }).catch(function () { alert('通信エラーが発生しました。'); });
+  });
+
+  // ------------------------------------------------------------
+  // マーケットコンテンツ登録
+  // ------------------------------------------------------------
+  function loadContentAdmin() {
+    apiPost({ action: 'listContent', type: 'marketContent' }).then(function (data) {
+      if (!data.ok) return;
+      renderSimpleList('contentAdminList', data.items, function (it) {
+        return '<div style="padding:14px 16px;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);">' +
+          '<strong>' + it.title + '</strong> ・ ¥' + Number(it.price || 0).toLocaleString() +
+          '<div style="font-size:12px;color:var(--el-ink-faint);margin-top:4px;">' + it.category + '</div></div>';
+      });
+    });
+  }
+  loadContentAdmin();
+
+  document.getElementById('contentForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var fd = new FormData(e.target);
+    apiPost({
+      action: 'createContent', type: 'marketContent',
+      title: fd.get('title'), category: fd.get('category'), price: fd.get('price'), bodyHtml: contentEditor.getHtml()
+    }).then(function (data) {
+      if (data.ok) { alert('コンテンツを登録しました。'); e.target.reset(); contentEditor.clear(); loadContentAdmin(); }
+      else alert(data.error || '登録に失敗しました');
+    }).catch(function () { alert('通信エラーが発生しました。'); });
+  });
+
+  // ------------------------------------------------------------
+  // 広告設定
+  // ------------------------------------------------------------
+  var adForm = document.getElementById('adForm');
+  var adPreview = document.getElementById('adPreview');
+  var adImagePreview = document.getElementById('adImagePreview');
+
+  function renderAdPreview(ad) {
+    var img = ad.imageUrl
+      ? '<img src="' + ad.imageUrl + '" style="width:100%;height:100%;object-fit:cover;">'
+      : '';
+    return '<div style="display:flex;align-items:center;gap:16px;padding:16px 20px;background:var(--el-cream-deep);border:1px dashed var(--el-mustard-deep);border-radius:var(--el-radius-m);position:relative;">' +
+      '<span style="position:absolute;top:-10px;left:18px;background:var(--el-mustard-deep);color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:999px;">AD</span>' +
+      '<div style="width:64px;height:64px;border-radius:14px;overflow:hidden;flex:none;background:var(--el-teal);box-shadow:0 4px 10px rgba(22,35,63,.12);">' + img + '</div>' +
+      '<div style="flex:1;min-width:0;"><strong style="display:block;font-size:15px;color:var(--el-navy);">' + (ad.serviceName || 'サービス名') + '</strong>' +
+      '<span style="display:block;font-size:12.5px;color:var(--el-ink-faint);margin-top:2px;">' + (ad.description || 'サービス紹介文') + '</span></div>' +
+      '<span class="el-btn el-btn--ghost el-btn--sm" style="flex:none;">' + (ad.ctaText || '詳しく見る') + '</span>' +
+      '</div>';
+  }
+
+  function updateAdPreviewFromForm() {
+    var fd = new FormData(adForm);
+    var ad = { serviceName: fd.get('serviceName'), description: fd.get('description'), imageUrl: fd.get('imageUrl'), ctaText: fd.get('ctaText') };
+    adPreview.innerHTML = renderAdPreview(ad);
+    if (ad.imageUrl) adImagePreview.innerHTML = '<img src="' + ad.imageUrl + '" style="width:100%;height:100%;object-fit:cover;">';
+    else adImagePreview.innerHTML = '画像プレビュー';
+  }
+  adForm.addEventListener('input', updateAdPreviewFromForm);
+  updateAdPreviewFromForm();
+
+  function loadAds() {
+    apiPost({ action: 'listContent', type: 'ad' }).then(function (data) {
+      if (!data.ok) return;
+      renderSimpleList('adList', data.items, function (it) { return renderAdPreview(it); });
+    });
+  }
+  loadAds();
+
+  adForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var fd = new FormData(adForm);
+    apiPost({
+      action: 'createContent', type: 'ad',
+      serviceName: fd.get('serviceName'), description: fd.get('description'),
+      imageUrl: fd.get('imageUrl'), ctaText: fd.get('ctaText'), ctaUrl: fd.get('ctaUrl')
+    }).then(function (data) {
+      if (data.ok) { alert('広告を登録しました。'); adForm.reset(); updateAdPreviewFromForm(); loadAds(); }
+      else alert(data.error || '登録に失敗しました');
+    }).catch(function () { alert('通信エラーが発生しました。'); });
+  });
+
+  // バッジ付与：対象機能が未実装のためデモ表示のまま
+  document.getElementById('badgeForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    alert('バッジを付与しました（デモのため実際には保存されません）。');
+    e.target.reset();
   });
 
   // 出品申請の確認：モックの申請一覧
