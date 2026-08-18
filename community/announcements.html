@@ -149,6 +149,14 @@
     background:var(--el-teal-deep, #1E6F63) !important;
     border-color:var(--el-teal-deep, #1E6F63) !important;
   }
+  /* フッターの背景色が正しく当たらない場合の保険（文字が背景と同化して見えなくなるのを防ぐ） */
+  .el-footer{ background:#EDE4D0 !important; border-top:1px solid var(--el-line-soft, #E5DFD2) !important; }
+  .el-footer .tag{ color:var(--el-ink-faint, #8A8478) !important; }
+  .el-footer .el-logo{ color:var(--el-navy, #16233F) !important; }
+  .el-footer .el-logo .dot{ color:var(--el-mustard-deep, #B9812A) !important; }
+  .el-footer-cols a{ color:var(--el-ink-faint, #8A8478) !important; }
+  .el-footer-cols h6{ color:var(--el-navy, #16233F) !important; }
+  .el-footer-bottom{ color:var(--el-ink-faint, #8A8478) !important; border-top-color:var(--el-line-soft, #E5DFD2) !important; }
 </style>
 </head>
 <body data-site="community" data-root="..">
@@ -269,7 +277,7 @@
       </details>
 
       <a href="members.html">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M6 16c.5-1.6 1.7-2.5 3-2.5s2.5.9 3 2.5"/><path d="M14 9h4M14 13h4"/></svg>
         <span class="lbl">メンバー</span>
       </a>
 
@@ -294,44 +302,10 @@
           <h1 style="font-family:var(--font-display);font-size:27px;margin:10px 0 6px;">運営からのお知らせ</h1>
         </div>
 
-        <div class="el-announce-list">
-
-          <div class="el-announce-card">
-            <div class="el-announce-date"><div class="d">08</div><div class="m">AUG 2026</div></div>
-            <div>
-              <span class="badge badge--announce tag">お知らせ</span>
-              <h4><a href="announcement-detail.html">FDA施設登録に関するオンライン相談会を開催します</a></h4>
-              <p>実務者の会メンバー限定で、更新手続きの個別相談を受け付けます。詳細と申込はグループページから。</p>
-            </div>
-          </div>
-
-          <div class="el-announce-card">
-            <div class="el-announce-date"><div class="d">01</div><div class="m">AUG 2026</div></div>
-            <div>
-              <span class="badge badge--announce tag">お知らせ</span>
-              <h4><a href="announcement-detail.html">Export Lab、正式オープンしました</a></h4>
-              <p>輸出の共創コミュニティとして、本日より本格始動します。まずは自己紹介からどうぞ。</p>
-            </div>
-          </div>
-
-          <div class="el-announce-card">
-            <div class="el-announce-date"><div class="d">28</div><div class="m">JUL 2026</div></div>
-            <div>
-              <span class="badge badge--cat tag">メンテナンス</span>
-              <h4><a href="announcement-detail.html">8月上旬、システムメンテナンスのお知らせ</a></h4>
-              <p>投稿・検索機能が一時的にご利用いただけない時間帯がございます。日程は追ってご案内します。</p>
-            </div>
-          </div>
-
-          <div class="el-announce-card">
-            <div class="el-announce-date"><div class="d">15</div><div class="m">JUL 2026</div></div>
-            <div>
-              <span class="badge badge--cat tag">ガイドライン</span>
-              <h4><a href="announcement-detail.html">投稿ガイドラインを公開しました</a></h4>
-              <p>安心して情報交換できる場を保つため、投稿・返信時のルールをまとめました。ぜひご一読ください。</p>
-            </div>
-          </div>
-
+        <div class="el-announce-list" id="announceListPublic">
+        </div>
+        <div id="announceListEmpty" style="padding:40px 20px;text-align:center;color:var(--el-ink-faint);font-size:14px;" hidden>
+          まだお知らせがありません。
         </div>
       </div>
     </main>
@@ -357,7 +331,7 @@
         <div class="el-footer-grid">
           <div>
             <a href="index.html" class="el-logo">Export Lab<span class="dot">.</span></a>
-            <p class="tag">人・モノ・情報がつながる、輸出の共創コミュニティ。運営：WorldShift株式会社</p>
+            <p class="tag">人・モノ・情報がつながる、輸出の共創コミュニティ。<br>運営：WorldShift株式会社</p>
           </div>
           <div class="el-footer-cols">
             <div>
@@ -508,6 +482,37 @@
       });
     }
   });
+
+  // 公式お知らせ一覧：管理者ページで登録された内容をシートから取得して表示する
+  (function () {
+    var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
+    var list = document.getElementById('announceListPublic');
+    var empty = document.getElementById('announceListEmpty');
+    var badgeClass = { 'お知らせ': 'badge--announce', 'メンテナンス': 'badge--cat', 'ガイドライン': 'badge--cat' };
+
+    fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'listContent', type: 'announcement' })
+    })
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        var items = (data.ok && data.items) ? data.items : [];
+        if (!items.length) { empty.hidden = false; return; }
+        list.innerHTML = items.map(function (it) {
+          var dt = new Date(it.createdAt);
+          var d = ('0' + dt.getDate()).slice(-2);
+          var m = dt.toLocaleString('en-US', { month: 'short' }).toUpperCase() + ' ' + dt.getFullYear();
+          var plain = (it.bodyHtml || '').replace(/<[^>]*>/g, '').slice(0, 90);
+          return '<div class="el-announce-card">' +
+            '<div class="el-announce-date"><div class="d">' + d + '</div><div class="m">' + m + '</div></div>' +
+            '<div><span class="badge ' + (badgeClass[it.category] || 'badge--announce') + ' tag">' + (it.category || 'お知らせ') + '</span>' +
+            '<h4><a href="announcement-detail.html?id=' + encodeURIComponent(it.id) + '">' + it.title + '</a></h4>' +
+            '<p>' + plain + '</p></div></div>';
+        }).join('');
+      })
+      .catch(function () { empty.hidden = false; empty.textContent = 'お知らせの取得に失敗しました。'; });
+  })();
 </script>
 <div class="el-auth-modal" id="authModal" aria-hidden="true">
   <div class="el-auth-modal-backdrop" data-auth-close></div>

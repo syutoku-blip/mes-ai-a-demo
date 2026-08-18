@@ -149,6 +149,14 @@
     background:var(--el-teal-deep, #1E6F63) !important;
     border-color:var(--el-teal-deep, #1E6F63) !important;
   }
+  /* フッターの背景色が正しく当たらない場合の保険（文字が背景と同化して見えなくなるのを防ぐ） */
+  .el-footer{ background:#EDE4D0 !important; border-top:1px solid var(--el-line-soft, #E5DFD2) !important; }
+  .el-footer .tag{ color:var(--el-ink-faint, #8A8478) !important; }
+  .el-footer .el-logo{ color:var(--el-navy, #16233F) !important; }
+  .el-footer .el-logo .dot{ color:var(--el-mustard-deep, #B9812A) !important; }
+  .el-footer-cols a{ color:var(--el-ink-faint, #8A8478) !important; }
+  .el-footer-cols h6{ color:var(--el-navy, #16233F) !important; }
+  .el-footer-bottom{ color:var(--el-ink-faint, #8A8478) !important; border-top-color:var(--el-line-soft, #E5DFD2) !important; }
 </style>
 </head>
 <body data-site="community" data-root="..">
@@ -269,7 +277,7 @@
       </details>
 
       <a href="members.html">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M6 16c.5-1.6 1.7-2.5 3-2.5s2.5.9 3 2.5"/><path d="M14 9h4M14 13h4"/></svg>
         <span class="lbl">メンバー</span>
       </a>
 
@@ -297,7 +305,7 @@
           </div>
         </div>
 
-        <div class="el-event-grid">
+        <div class="el-event-grid" id="eventGrid">
           <a href="#" class="el-event-card">
             <div class="el-event-thumb" style="background:linear-gradient(135deg,#2F8F82,#1B5A52);">
               <span class="el-event-date-tag"><span class="d">20</span><span class="m">AUG</span></span>
@@ -414,7 +422,7 @@
         <div class="el-footer-grid">
           <div>
             <a href="index.html" class="el-logo">Export Lab<span class="dot">.</span></a>
-            <p class="tag">人・モノ・情報がつながる、輸出の共創コミュニティ。運営：WorldShift株式会社</p>
+            <p class="tag">人・モノ・情報がつながる、輸出の共創コミュニティ。<br>運営：WorldShift株式会社</p>
           </div>
           <div class="el-footer-cols">
             <div>
@@ -565,6 +573,43 @@
       });
     }
   });
+
+  // 管理者ページで登録された実際のイベントを先頭に追加する
+  (function () {
+    var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
+    var grid = document.getElementById('eventGrid');
+    if (!grid) return;
+
+    fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'listContent', type: 'event' })
+    })
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        var items = (data.ok && data.items) ? data.items : [];
+        if (!items.length) return;
+        var html = items.map(function (it) {
+          var dt = it.eventDate ? new Date(it.eventDate) : null;
+          var d = dt ? ('0' + dt.getDate()).slice(-2) : '-';
+          var m = dt ? dt.toLocaleString('en-US', { month: 'short' }).toUpperCase() : '';
+          var metaText = (dt ? dt.toLocaleString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'short', hour: '2-digit', minute: '2-digit' }) : '') + (it.place ? '・' + it.place : '');
+          var plain = (it.bodyHtml || '').replace(/<[^>]*>/g, '').slice(0, 70);
+          return '<a href="#" class="el-event-card">' +
+            '<div class="el-event-thumb" style="background:linear-gradient(135deg,#2F8F82,#1B5A52);">' +
+            '<span class="el-event-date-tag"><span class="d">' + d + '</span><span class="m">' + m + '</span></span>' +
+            '<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>' +
+            '</div><div class="el-event-body">' +
+            '<h3>' + it.title + '</h3>' +
+            '<div class="meta">' + metaText + '</div>' +
+            '<p>' + plain + '</p>' +
+            '<span class="el-event-cta">詳細 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></span>' +
+            '</div></a>';
+        }).join('');
+        grid.insertAdjacentHTML('afterbegin', html);
+      })
+      .catch(function () {});
+  })();
 </script>
 <div class="el-auth-modal" id="authModal" aria-hidden="true">
   <div class="el-auth-modal-backdrop" data-auth-close></div>

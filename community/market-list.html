@@ -739,6 +739,9 @@
     searchInput.addEventListener('input', render);
 
     render();
+    window.__marketRerender = render;
+    window.__marketCards = cards;
+    window.__marketGrid = grid;
   })();
 
   // 絞り込みメニューの開閉：別の項目を操作したら他は閉じる、枠外クリックでも閉じる
@@ -887,6 +890,7 @@
         openModal(card.dataset.product);
       });
     });
+    window.__marketOpenModal = openModal;
     modal.querySelectorAll('[data-modal-close]').forEach(function (el) { el.addEventListener('click', closeModal); });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeModal(); });
 
@@ -1077,6 +1081,71 @@
       });
     }
   });
+
+  // 管理者ページで登録された実際のマーケットコンテンツを取得し、既存の一覧に合流させる
+  (function () {
+    var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
+    fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'listContent', type: 'marketContent' })
+    })
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        var items = (data.ok && data.items) ? data.items : [];
+        if (!items.length || !window.__marketGrid) return;
+
+        items.forEach(function (it) {
+          var id = 'admin-' + it.id;
+          var priceNum = Number(it.price || 0);
+
+          PRODUCTS[id] = {
+            title: it.title, seller: 'WorldShift公式', price: '¥' + priceNum.toLocaleString(), badge: '公式',
+            recommend: '', detail: it.bodyHtml || '',
+            bannerColor: 'linear-gradient(135deg, var(--el-teal), #1F6E63)',
+            bannerIcon: '<path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/>'
+          };
+
+          var card = document.createElement('div');
+          card.className = 'el-market-card';
+          card.dataset.product = id;
+          card.dataset.category = it.category || 'template';
+          card.dataset.seller = 'WorldShift公式';
+          card.dataset.price = priceNum;
+          card.dataset.recency = 100;
+          card.innerHTML =
+            '<div class="el-market-thumb" style="background:var(--el-teal);color:#fff;">' +
+            '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg></div>' +
+            '<div class="el-market-body">' +
+            '<span class="badge badge--announce">公式</span>' +
+            '<h3>' + it.title + '</h3>' +
+            '<p>' + (it.bodyHtml || '').replace(/<[^>]*>/g, '').slice(0, 60) + '</p>' +
+            '<div class="el-market-rating"><span class="stars">★★★★★</span><span class="count">(0)</span></div>' +
+            '<div class="el-market-foot"><strong>¥' + priceNum.toLocaleString() + '</strong>' +
+            '<div class="el-market-btns"><button type="button" class="el-cart-btn" aria-label="カートに追加" data-cart><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button>' +
+            '<button type="button" class="el-btn el-btn--primary el-btn--sm" data-buy>今すぐ購入</button></div></div></div>';
+
+          window.__marketGrid.appendChild(card);
+          window.__marketCards.push(card);
+
+          card.addEventListener('click', function (e) {
+            if (e.target.closest('[data-cart]') || e.target.closest('[data-buy]')) return;
+            if (window.__marketOpenModal) window.__marketOpenModal(id);
+          });
+          card.querySelector('[data-cart]').addEventListener('click', function (e) {
+            e.stopPropagation();
+            addToCart(id);
+          });
+          card.querySelector('[data-buy]').addEventListener('click', function (e) {
+            e.stopPropagation();
+            goToCheckout(id);
+          });
+        });
+
+        window.__marketRerender();
+      })
+      .catch(function () {});
+  })();
 </script>
 <div class="el-auth-modal" id="authModal" aria-hidden="true">
   <div class="el-auth-modal-backdrop" data-auth-close></div>
