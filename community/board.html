@@ -498,7 +498,7 @@
     var CATEGORY_LABEL = window.EL_CATEGORY_LABEL || {};
 
     function relativeTime(dateStr){
-      var d = new Date(dateStr + 'T00:00:00');
+      var d = new Date(dateStr.indexOf('T') !== -1 ? dateStr : dateStr + 'T00:00:00');
       var today = new Date('2026-08-12T00:00:00');
       var diffDays = Math.round((today - d) / 86400000);
       if (diffDays <= 0) return '今日';
