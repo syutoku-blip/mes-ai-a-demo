@@ -200,6 +200,19 @@
   .el-footer-cols a{ color:var(--el-ink-faint, #8A8478) !important; }
   .el-footer-cols h6{ color:var(--el-navy, #16233F) !important; }
   .el-footer-bottom{ color:var(--el-ink-faint, #8A8478) !important; border-top-color:var(--el-line-soft, #E5DFD2) !important; }
+  /* サイドメニューを折りたたんだ時、トピック画面の右側に余白が残らないよう幅いっぱいに広げる */
+  #appShell.is-toggled .el-thread-layout{
+    max-width:none !important;
+    width:100% !important;
+    box-sizing:border-box !important;
+  }
+  #appShell.is-toggled main.el-section{
+    max-width:none !important;
+  }
+  #appShell.is-toggled main.el-section > .wrap{
+    max-width:none !important;
+    width:100% !important;
+  }
 </style>
 </head>
 <body data-site="community" data-root="..">
