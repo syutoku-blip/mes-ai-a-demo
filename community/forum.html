@@ -421,18 +421,7 @@
           </div>
           <a href="forum-tags.html" class="el-btn el-btn--ghost el-btn--sm">もっと見る</a>
         </div>
-        <div class="el-tag-cloud">
-          <a href="board.html?tag=fba">#FBA<span class="count">86</span></a>
-          <a href="board.html?tag=facility-registration">#施設登録<span class="count">54</span></a>
-          <a href="board.html?tag=label">#ラベル表示<span class="count">31</span></a>
-          <a href="board.html?tag=tariff-tag">#関税<span class="count">47</span></a>
-          <a href="board.html?tag=customs-docs">#通関書類<span class="count">28</span></a>
-          <a href="board.html?tag=research">#リサーチ<span class="count">72</span></a>
-          <a href="board.html?tag=us-agent">#米国代理人<span class="count">19</span></a>
-          <a href="board.html?tag=pricing">#価格改定<span class="count">33</span></a>
-          <a href="board.html?tag=refund">#返金対応<span class="count">22</span></a>
-          <a href="board.html?tag=warehouse">#倉庫選定<span class="count">14</span></a>
-        </div>
+        <div class="el-tag-cloud" id="forumTagCloud"></div>
 
       </div>
     </main>
@@ -720,6 +709,16 @@
     renderList('forumNewList', byNew);
     renderList('forumHotList', byHot);
     renderList('forumShiftList', shiftOnly);
+
+    // ハッシュタグで探す：実際に使われているタグを件数順で表示（多めに表示）
+    var tagCloud = document.getElementById('forumTagCloud');
+    if (tagCloud && window.EL_getVisibleTags) {
+      var visibleTags = window.EL_getVisibleTags().slice(0, 15);
+      tagCloud.innerHTML = visibleTags.map(function (item) {
+        return '<a href="board.html?tag=' + encodeURIComponent(item.tag) + '&sort=hot">' +
+          window.EL_getTagLabel(item.tag) + '<span class="count">' + item.count + '</span></a>';
+      }).join('');
+    }
   })();
 </script>
 <div class="el-auth-modal" id="authModal" aria-hidden="true">
