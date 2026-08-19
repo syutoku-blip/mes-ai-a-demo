@@ -494,9 +494,9 @@
     var badges = document.getElementById('topicBadges');
     if (badges) {
       var visBadge = (t.visibility === 'shift')
-        ? '<span class="badge badge--member">SHiFT限定</span>'
+        ? '<a href="board.html?filter=shift&sort=hot" class="badge badge--member">SHiFT限定</a>'
         : (t.visibility === 'member')
-          ? '<span class="badge badge--restricted">メンバー限定</span>'
+          ? '<a href="board.html?filter=general&sort=hot" class="badge badge--restricted">メンバー限定</a>'
           : '<a href="board.html?filter=general&sort=hot" class="badge badge--open">公開</a>';
       var statusBadge = t.status === 'solved' ? '<a href="board.html?filter=solved&sort=hot" class="badge badge--solved">解決</a>'
         : t.status === 'unsolved' ? '<a href="board.html?status=unsolved&sort=hot" class="badge badge--unsolved">未解決</a>' : '';
@@ -558,7 +558,7 @@
     if (list) {
       list.innerHTML = comments.map(function (c, i) {
         var profileUrl = 'profile.html?user=' + encodeURIComponent(c.user);
-        return '<article class="el-post" id="c' + (i + 1) + '" data-reply-to="op">' +
+        return '<article class="el-post" id="c' + (i + 1) + '" data-reply-to="' + (c.replyTo || 'op') + '">' +
           '<a href="' + profileUrl + '" class="el-avatar" style="text-decoration:none;">' + c.user.charAt(0) + '</a>' +
           '<div>' +
             '<div class="el-reply-tag-slot"></div>' +
