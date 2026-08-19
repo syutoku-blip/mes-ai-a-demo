@@ -223,6 +223,15 @@
 
 <script src="../shared/global-header.js" defer></script>
 <script>
+  // Googleドライブの共有リンクを、<img>で直接表示できる形式のURLに変換する
+  function elDriveImgUrl(url) {
+    if (!url) return url;
+    var m = url.match(/drive\.google\.com\/file\/d\/([^/]+)/) || url.match(/[?&]id=([^&]+)/);
+    if (m && m[1]) return 'https://drive.google.com/uc?export=view&id=' + m[1];
+    return url;
+  }
+  window.elDriveImgUrl = elDriveImgUrl;
+
   (function () {
     var appShell = document.getElementById('appShell');
     var STORAGE_KEY = 'el-sidebar-collapsed';
@@ -255,7 +264,7 @@
       try {
         var hp = JSON.parse(localStorage.getItem('el-user-profile') || '{}');
         var hUsername = localStorage.getItem('el-username') || hp.username || '';
-        if (hp.photoUrl) headerAvatar.innerHTML = '<img src="' + hp.photoUrl + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
+        if (hp.photoUrl) headerAvatar.innerHTML = '<img src="' + window.elDriveImgUrl(hp.photoUrl) + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
         else if (hUsername) headerAvatar.textContent = hUsername.charAt(0);
       } catch (e) {}
     }

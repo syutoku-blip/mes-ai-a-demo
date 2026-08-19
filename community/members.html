@@ -306,7 +306,7 @@
         list.innerHTML = members.map(function (m) {
           var initial = (m.username || '?').charAt(0);
           var avatar = m.photoUrl
-            ? '<div class="el-avatar" style="width:64px;height:64px;font-size:22px;overflow:hidden;margin:0 auto 10px;"><img src="' + m.photoUrl + '" style="width:100%;height:100%;object-fit:cover;"></div>'
+            ? '<div class="el-avatar" style="width:64px;height:64px;font-size:22px;overflow:hidden;margin:0 auto 10px;"><img src="' + elDriveImgUrl(m.photoUrl) + '" style="width:100%;height:100%;object-fit:cover;"></div>'
             : '<div class="el-avatar" style="width:64px;height:64px;font-size:22px;margin:0 auto 10px;">' + initial + '</div>';
           return '<a href="profile.html?user=' + encodeURIComponent(m.username) + '" style="display:flex;flex-direction:column;align-items:center;text-align:center;text-decoration:none;color:inherit;padding:16px 8px;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);">' +
             avatar +
@@ -319,6 +319,15 @@
         empty.textContent = 'メンバー一覧の取得に失敗しました。時間をおいて再度お試しください。';
       });
   })();
+
+  // Googleドライブの共有リンクを、<img>で直接表示できる形式のURLに変換する
+  function elDriveImgUrl(url) {
+    if (!url) return url;
+    var m = url.match(/drive\.google\.com\/file\/d\/([^/]+)/) || url.match(/[?&]id=([^&]+)/);
+    if (m && m[1]) return 'https://drive.google.com/uc?export=view&id=' + m[1];
+    return url;
+  }
+  window.elDriveImgUrl = elDriveImgUrl;
 
   document.addEventListener('DOMContentLoaded', function () {
     var ROLE_KEY = 'el-user-role';
@@ -341,7 +350,7 @@
       try {
         var hp = JSON.parse(localStorage.getItem('el-user-profile') || '{}');
         var hUsername = localStorage.getItem('el-username') || hp.username || '';
-        if (hp.photoUrl) headerAvatar.innerHTML = '<img src="' + hp.photoUrl + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
+        if (hp.photoUrl) headerAvatar.innerHTML = '<img src="' + window.elDriveImgUrl(hp.photoUrl) + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
         else if (hUsername) headerAvatar.textContent = hUsername.charAt(0);
       } catch (e) {}
     }
