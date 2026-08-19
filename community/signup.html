@@ -37,6 +37,14 @@
     background:var(--el-teal-deep, #1E6F63) !important;
     border-color:var(--el-teal-deep, #1E6F63) !important;
   }
+  /* フッターの背景色が正しく当たらない場合の保険（文字が背景と同化して見えなくなるのを防ぐ） */
+  .el-footer{ background:#EDE4D0 !important; border-top:1px solid var(--el-line-soft, #E5DFD2) !important; }
+  .el-footer .tag{ color:var(--el-ink-faint, #8A8478) !important; }
+  .el-footer .el-logo{ color:var(--el-navy, #16233F) !important; }
+  .el-footer .el-logo .dot{ color:var(--el-mustard-deep, #B9812A) !important; }
+  .el-footer-cols a{ color:var(--el-ink-faint, #8A8478) !important; }
+  .el-footer-cols h6{ color:var(--el-navy, #16233F) !important; }
+  .el-footer-bottom{ color:var(--el-ink-faint, #8A8478) !important; border-top-color:var(--el-line-soft, #E5DFD2) !important; }
 </style>
 </head>
 <body data-site="community" data-root="..">
@@ -88,29 +96,8 @@
           <a href="board.html?filter=shift&sort=hot">SHiFT member only</a>
           <a href="board.html?filter=unsolved&sort=hot">未解決</a>
 
-          <details class="el-side-cat">
-            <summary>カテゴリで探す<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></summary>
-            <div class="el-side-cat-body">
-              <a href="board.html?category=amazon-ops&sort=hot">Amazon販売・運用</a>
-              <a href="board.html?category=fda-food&sort=hot">FDA・食品規制</a>
-              <a href="board.html?category=intl-logistics&sort=hot">国際物流・通関</a>
-              <a href="board.html?category=mocra&sort=hot">MoCRA・化粧品規制</a>
-              <a href="board.html?category=chat&sort=hot">情報交換・雑談</a>
-              <a href="forum-categories.html" class="el-side-more">もっと見る <span>→</span></a>
-            </div>
-          </details>
-
-          <details class="el-side-cat">
-            <summary>ハッシュタグで探す<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></summary>
-            <div class="el-side-cat-body">
-              <a href="board.html?tag=fba&sort=hot">#FBA</a>
-              <a href="board.html?tag=facility-registration&sort=hot">#施設登録・更新</a>
-              <a href="board.html?tag=label&sort=hot">#ラベル</a>
-              <a href="board.html?tag=us-agent&sort=hot">#米国代理人</a>
-              <a href="board.html?tag=prior-notice&sort=hot">#事前申告</a>
-              <a href="forum-tags.html" class="el-side-more">もっと見る <span>→</span></a>
-            </div>
-          </details>
+          <a href="forum-categories.html">カテゴリで探す</a>
+          <a href="forum-tags.html">ハッシュタグで探す</a>
         </div>
       </details>
 
@@ -157,7 +144,7 @@
       </details>
 
       <a href="members.html">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M6 16c.5-1.6 1.7-2.5 3-2.5s2.5.9 3 2.5"/><path d="M14 9h4M14 13h4"/></svg>
         <span class="lbl">メンバー</span>
       </a>
 
@@ -383,14 +370,6 @@
             </div>
           </div>
 
-          <div>
-            <span style="display:block;font-weight:700;font-size:13px;color:var(--el-navy);margin-bottom:6px;">プロフィール画像</span>
-            <div style="display:flex;align-items:center;gap:14px;">
-              <div id="photoPreview" style="width:56px;height:56px;border-radius:50%;background:var(--el-cream-deep);border:1px solid var(--el-line-soft);display:flex;align-items:center;justify-content:center;overflow:hidden;flex:none;color:var(--el-ink-faint);font-size:11px;">未設定</div>
-              <input type="file" name="photo" id="photoInput" accept="image/*" style="font-size:13px;">
-            </div>
-          </div>
-
           <label style="display:block;">
             <span style="display:block;font-weight:700;font-size:13px;color:var(--el-navy);margin-bottom:6px;">自己紹介</span>
             <textarea name="bio" rows="4" style="width:100%;box-sizing:border-box;padding:11px 14px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;resize:vertical;"></textarea>
@@ -407,7 +386,7 @@
         <div class="el-footer-grid">
           <div>
             <a href="index.html" class="el-logo">Export Lab<span class="dot">.</span></a>
-            <p class="tag">人・モノ・情報がつながる、輸出の共創コミュニティ。運営：WorldShift株式会社</p>
+            <p class="tag">人・モノ・情報がつながる、輸出の共創コミュニティ。<br>運営：WorldShift株式会社</p>
           </div>
           <div class="el-footer-cols">
             <div>
@@ -459,7 +438,9 @@
     else if (headerAvatar) {
       try {
         var hp = JSON.parse(localStorage.getItem('el-user-profile') || '{}');
+        var hUsername = localStorage.getItem('el-username') || hp.username || '';
         if (hp.photoUrl) headerAvatar.innerHTML = '<img src="' + hp.photoUrl + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
+        else if (hUsername) headerAvatar.textContent = hUsername.charAt(0);
       } catch (e) {}
     }
     var authLinksWrap = document.getElementById('headerAuthLinks');
@@ -502,45 +483,8 @@
   // ------------------------------------------------------------
   var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
 
-  // 画像を一辺200pxに縮小・JPEG圧縮してBase64データURLに変換する
-  function compressImage(file) {
-    return new Promise(function (resolve, reject) {
-      var reader = new FileReader();
-      reader.onload = function (e) {
-        var img = new Image();
-        img.onload = function () {
-          var size = 200;
-          var canvas = document.createElement('canvas');
-          canvas.width = size;
-          canvas.height = size;
-          var ctx = canvas.getContext('2d');
-          var scale = Math.max(size / img.width, size / img.height);
-          var w = img.width * scale, h = img.height * scale;
-          ctx.drawImage(img, (size - w) / 2, (size - h) / 2, w, h);
-          resolve(canvas.toDataURL('image/jpeg', 0.8));
-        };
-        img.onerror = reject;
-        img.src = e.target.result;
-      };
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
-  }
-
   var signupForm = document.getElementById('signupForm');
   var submitBtn = signupForm.querySelector('button[type="submit"]');
-  var photoInput = document.getElementById('photoInput');
-  var photoPreview = document.getElementById('photoPreview');
-  var photoDataUrl = '';
-
-  photoInput.addEventListener('change', function () {
-    var file = photoInput.files[0];
-    if (!file) return;
-    compressImage(file).then(function (dataUrl) {
-      photoDataUrl = dataUrl;
-      photoPreview.innerHTML = '<img src="' + dataUrl + '" style="width:100%;height:100%;object-fit:cover;">';
-    });
-  });
 
   signupForm.addEventListener('submit', function (e) {
     e.preventDefault();
@@ -561,46 +505,27 @@
     submitBtn.disabled = true;
     submitBtn.textContent = '登録中…';
 
-    // 画像がある場合は先にアップロードしてURLを受け取ってから、本登録を送信する
-    var photoUploadFailed = false;
-    var photoUploadErrorDetail = '';
-    var uploadStep = photoDataUrl
-      ? fetch(API_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({ action: 'uploadPhoto', username: username, photoBase64: photoDataUrl })
-        }).then(function (res) { return res.json(); }).then(function (r) {
-            if (!r.ok) { photoUploadFailed = true; photoUploadErrorDetail = r.error || '(詳細不明)'; return ''; }
-            return r.photoUrl;
-          }).catch(function (err) { photoUploadFailed = true; photoUploadErrorDetail = (err && err.message) || '通信エラー'; return ''; })
-      : Promise.resolve('');
-
-    uploadStep.then(function (photoUrl) {
-      if (photoUploadFailed) {
-        alert('プロフィール画像のアップロードに失敗したため、画像なしで登録を進めます。\n\nエラー詳細：' + photoUploadErrorDetail + '\n\nマイページの「プロフィールを見る」から後で登録し直せます。');
-      }
-      var payload = {
-        action: 'signup',
-        username: username,
-        email: fd.get('email') || '',
-        password: fd.get('password') || '',
-        fullname: fd.get('fullname') || '',
-        birthdate: birthdate,
-        birthdateVisibility: fd.get('birthdate_visibility') || '非公開',
-        phone: phone,
-        gender: fd.get('gender') || '',
-        genderVisibility: fd.get('gender_visibility') || '非公開',
-        prefecture: fd.get('prefecture') || '',
-        prefectureVisibility: fd.get('prefecture_visibility') || '非公開',
-        city: fd.get('city') || '',
-        cityVisibility: fd.get('city_visibility') || '非公開',
-        industry: fd.get('industry') || '',
-        industryVisibility: fd.get('industry_visibility') || '非公開',
-        shiftNumber: fd.get('shift_member_number') || '',
-        shiftNumberVisibility: fd.get('shift_number_visibility') || '非公開',
-        bio: fd.get('bio') || '',
-        photoUrl: photoUrl
-      };
+    var payload = {
+      action: 'signup',
+      username: username,
+      email: fd.get('email') || '',
+      password: fd.get('password') || '',
+      fullname: fd.get('fullname') || '',
+      birthdate: birthdate,
+      birthdateVisibility: fd.get('birthdate_visibility') || '非公開',
+      phone: phone,
+      gender: fd.get('gender') || '',
+      genderVisibility: fd.get('gender_visibility') || '非公開',
+      prefecture: fd.get('prefecture') || '',
+      prefectureVisibility: fd.get('prefecture_visibility') || '非公開',
+      city: fd.get('city') || '',
+      cityVisibility: fd.get('city_visibility') || '非公開',
+      industry: fd.get('industry') || '',
+      industryVisibility: fd.get('industry_visibility') || '非公開',
+      shiftNumber: fd.get('shift_member_number') || '',
+      shiftNumberVisibility: fd.get('shift_number_visibility') || '非公開',
+      bio: fd.get('bio') || ''
+    };
 
     // Content-Type: text/plain で送ることで、Apps Script側でのCORSプリフライトを回避する
     fetch(API_URL, {
@@ -646,7 +571,6 @@
         alert('登録処理を送信しました。画面の反映に時間がかかる場合がありますが、登録は完了しています。');
         window.location.href = 'mypage.html';
       });
-    });
   });
 </script>
 </body>
