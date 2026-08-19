@@ -898,13 +898,56 @@
       return false;
     }
 
+    // 1つのゾーン（本文 or 1つのコメント）の中にある一致箇所を「すべて」ハイライトする
+    function highlightAllIn(root) {
+      var count = 0;
+      var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
+      var textNodes = [];
+      var node;
+      while (node = walker.nextNode()) {
+        if (!node.parentElement || node.parentElement.closest('script,style,mark,.el-breadcrumb,.badge,nav,.el-t-row-meta,.el-post-head')) continue;
+        textNodes.push(node);
+      }
+      textNodes.forEach(function (textNode) {
+        var text = textNode.nodeValue;
+        var lower = text.toLowerCase();
+        if (lower.indexOf(hlLower) === -1) return;
+        var frag = document.createDocumentFragment();
+        var cursor = 0;
+        var idx;
+        while ((idx = lower.indexOf(hlLower, cursor)) !== -1) {
+          frag.appendChild(document.createTextNode(text.slice(cursor, idx)));
+          var mark = document.createElement('mark');
+          mark.style.cssText = 'background:#FFE58A;color:inherit;padding:0 2px;border-radius:3px;';
+          mark.textContent = text.slice(idx, idx + hl.length);
+          frag.appendChild(mark);
+          count++;
+          cursor = idx + hl.length;
+        }
+        frag.appendChild(document.createTextNode(text.slice(cursor)));
+        textNode.parentNode.replaceChild(frag, textNode);
+      });
+      return count;
+    }
+
     // 本文・コメントの動的描画が終わるのを少し待ってから探す
     setTimeout(function () {
-      // まず本文・コメント本体を優先的に探し、見つからなければページ全体から探す
+      // 投稿本文・すべてのコメントを対象に、一致箇所を漏れなくハイライトする
+      // （同じトピック内で本文・コメント両方に一致があれば、両方に印が付く）
       var priorityZones = document.querySelectorAll('#opBody, .el-post-body');
-      for (var i = 0; i < priorityZones.length; i++) {
-        if (highlightAndScroll(priorityZones[i])) return;
+      var totalHits = 0;
+      var firstMark = null;
+      priorityZones.forEach(function (zone) {
+        var before = zone.querySelectorAll('mark').length;
+        highlightAllIn(zone);
+        totalHits += zone.querySelectorAll('mark').length - before;
+      });
+      firstMark = document.querySelector('#opBody mark, .el-post-body mark');
+      if (firstMark) {
+        setTimeout(function () { firstMark.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 200);
+        return;
       }
+      // 本文・コメントに一致が無ければ、ページ全体から1件だけ探す（従来通り）
       var main = document.querySelector('main') || document.body;
       highlightAndScroll(main);
     }, 700);
