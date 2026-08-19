@@ -200,18 +200,19 @@
   .el-footer-cols a{ color:var(--el-ink-faint, #8A8478) !important; }
   .el-footer-cols h6{ color:var(--el-navy, #16233F) !important; }
   .el-footer-bottom{ color:var(--el-ink-faint, #8A8478) !important; border-top-color:var(--el-line-soft, #E5DFD2) !important; }
-  /* サイドメニューを折りたたんだ時、トピック画面の右側に余白が残らないよう幅いっぱいに広げる */
-  #appShell.is-toggled .el-thread-layout{
+  /* サイドメニューを折りたたんだ時、トピック画面の右側に余白が残らないよう幅いっぱいに広げる
+     （実際にどの要素の max-width が効いているか外部CSSからは分からないため、
+     考えられる階層をすべて対象にしています） */
+  #appShell.is-toggled .el-content,
+  #appShell.is-toggled main,
+  #appShell.is-toggled main.el-section,
+  #appShell.is-toggled .el-thread-layout,
+  #appShell.is-toggled .wrap,
+  #appShell.is-toggled main.el-section > *,
+  #appShell.is-toggled .el-thread-main{
     max-width:none !important;
     width:100% !important;
     box-sizing:border-box !important;
-  }
-  #appShell.is-toggled main.el-section{
-    max-width:none !important;
-  }
-  #appShell.is-toggled main.el-section > .wrap{
-    max-width:none !important;
-    width:100% !important;
   }
 </style>
 </head>
@@ -591,13 +592,40 @@
   (function () {
     var appShell = document.getElementById('appShell');
     var STORAGE_KEY = 'el-sidebar-collapsed';
+
+    // サイドメニューが折りたたまれている間、実際に効いている max-width 指定を
+    // （どのクラスが原因かに関わらず）見つけて無効化し、余白が残らないようにする
+    function fixMainWidth() {
+      var main = document.querySelector('main.el-section');
+      if (!main) return;
+      var toggled = appShell.classList.contains('is-toggled');
+      var targets = [main].concat(Array.prototype.slice.call(main.querySelectorAll('*')));
+      targets.forEach(function (el) {
+        if (toggled) {
+          var cs = window.getComputedStyle(el);
+          if (cs.maxWidth && cs.maxWidth !== 'none' && el.offsetWidth > 0) {
+            if (el.dataset.elOrigMaxWidth === undefined) {
+              el.dataset.elOrigMaxWidth = el.style.maxWidth || '';
+            }
+            el.style.setProperty('max-width', 'none', 'important');
+          }
+        } else if (el.dataset.elOrigMaxWidth !== undefined) {
+          el.style.maxWidth = el.dataset.elOrigMaxWidth;
+          delete el.dataset.elOrigMaxWidth;
+        }
+      });
+    }
+
     try {
       if (localStorage.getItem(STORAGE_KEY) === '1') { appShell.classList.add('is-toggled'); }
     } catch (e) {}
     document.getElementById('sidebarToggle').addEventListener('click', function () {
       appShell.classList.toggle('is-toggled');
       try { localStorage.setItem(STORAGE_KEY, appShell.classList.contains('is-toggled') ? '1' : '0'); } catch (e) {}
+      fixMainWidth();
     });
+    // ページ読み込み時点ですでに折りたたみ状態だった場合にも適用する
+    setTimeout(fixMainWidth, 300);
   })();
 
   // フォーラム／コミュニティ／マーケットの見出し：矢印以外をクリックしたらページ遷移、矢印は開閉のみ
