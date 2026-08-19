@@ -581,6 +581,15 @@
     });
   });
   // ユーザーモード（ゲスト／登録ユーザー／管理者）の切り替えと共通ゲート処理
+  // Googleドライブの共有リンクを、<img>で直接表示できる形式のURLに変換する
+  function elDriveImgUrl(url) {
+    if (!url) return url;
+    var m = url.match(/drive\.google\.com\/file\/d\/([^/]+)/) || url.match(/[?&]id=([^&]+)/);
+    if (m && m[1]) return 'https://drive.google.com/uc?export=view&id=' + m[1];
+    return url;
+  }
+  window.elDriveImgUrl = elDriveImgUrl;
+
   document.addEventListener('DOMContentLoaded', function () {
     var ROLE_KEY = 'el-user-role';
     function getRole() {
@@ -603,7 +612,7 @@
       try {
         var hp = JSON.parse(localStorage.getItem('el-user-profile') || '{}');
         var hUsername = localStorage.getItem('el-username') || hp.username || '';
-        if (hp.photoUrl) headerAvatar.innerHTML = '<img src="' + hp.photoUrl + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
+        if (hp.photoUrl) headerAvatar.innerHTML = '<img src="' + window.elDriveImgUrl(hp.photoUrl) + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
         else if (hUsername) headerAvatar.textContent = hUsername.charAt(0);
       } catch (e) {}
     }
@@ -681,6 +690,114 @@
       });
     }
   });
+
+  // コミュニティ詳細モーダル：カードをクリックすると開く
+  (function () {
+    var GROUP_DETAILS = {
+      'マーケット動向 情報交換会': {
+        creator: '小林 恵子', category: '情報交換・雑談', color: 'var(--el-sky)',
+        members: ['小林 恵子', '田中 亮', '山口 美咲', '佐々木 誠', '中村 由紀', '高橋 悠', '伊藤 麻衣', '渡辺 健太', '加藤 真由美', '吉田 大輔', '山本 沙織']
+      },
+      '通関書類 相互チェック会': {
+        creator: '田中 一郎', category: '国際物流・通関', color: 'var(--el-teal)',
+        members: ['田中 一郎', '高橋 saki', '鈴木 陽介', '斉藤 美穂', '松本 拓也', '井上 香織', '木村 隆', '林 明日香', '清水 亮太', '山下 千尋']
+      },
+      '福岡 輸出事業者オフ会': {
+        creator: '山口 貴博', category: '情報交換・雑談', color: 'var(--el-navy-soft)',
+        members: ['山口 貴博', '石井 美和', '橋本 翔太', '松田 恵美', '大塚 健一', '西村 香菜', '小川 拓真', '福田 由美子']
+      },
+      '初めての輸出 相談室': {
+        creator: '高橋 直子', category: '経営・事業相談', color: 'var(--el-sky)',
+        members: ['高橋 直子', '小林 潤', '林 彩', '中島 大輝', '岡田 美咲', '藤田 健二', '長谷川 誠', '村上 智子']
+      },
+      'FDA対応 実務者の会': {
+        creator: '山口 貿易士', category: 'FDA・食品規制', color: 'var(--el-teal)',
+        members: ['山口 貿易士', '佐藤 ストア', '田中 フーズ', '鈴木 ラボ', '高橋 物産', '中村 明美', '井上 恵', '木下 亮']
+      },
+      'せどり便乗リサーチ部': {
+        creator: '高橋 物産', category: 'Amazon仕入れ・商品選定', color: 'var(--el-mustard)',
+        members: ['高橋 物産', '鈴木 ラボ', '中村 拓', '木村 彩香', '斎藤 大地', '山田 恵', '林 なつき']
+      }
+    };
+
+    var modal = document.getElementById('groupDetailModal');
+    if (!modal) return;
+    var view = document.getElementById('gdmView');
+    var memberView = document.getElementById('gdmMemberView');
+
+    function openModal(card) {
+      var title = (card.querySelector('h4') || {}).textContent || '';
+      var desc = (card.querySelector('.desc') || {}).textContent || '';
+      var visibility = (card.querySelector('.visibility') || {}).textContent || '';
+      var memberCount = card.dataset.members || '0';
+      var iconColor = (card.querySelector('.el-group-icon') || {}).style.background || 'var(--el-teal)';
+      var iconSvg = (card.querySelector('.el-group-icon svg') || {}).outerHTML || '';
+      var state = card.dataset.state || '';
+      var detail = GROUP_DETAILS[title] || { creator: '運営メンバー', category: '未分類', members: [] };
+
+      document.getElementById('gdmIcon').style.background = iconColor;
+      document.getElementById('gdmIcon').innerHTML = iconSvg;
+      document.getElementById('gdmTitle').textContent = title;
+      document.getElementById('gdmVisibility').textContent = visibility;
+      document.getElementById('gdmDesc').textContent = desc;
+      document.getElementById('gdmCreator').textContent = detail.creator;
+      document.getElementById('gdmCategory').textContent = detail.category;
+      document.getElementById('gdmMemberCount').textContent = memberCount + '人（クリックで一覧を見る）';
+
+      var joinBtn = document.getElementById('gdmJoinBtn');
+      if (state === 'joined') { joinBtn.textContent = '参加中'; joinBtn.disabled = true; }
+      else if (state === 'pending') { joinBtn.textContent = '承認待ち'; joinBtn.disabled = true; }
+      else if (visibility.indexOf('メンバー限定') !== -1) { joinBtn.textContent = '参加申請'; joinBtn.disabled = false; }
+      else { joinBtn.textContent = '参加する'; joinBtn.disabled = false; }
+
+      modal.dataset.currentGroup = title;
+      modal.dataset.currentCount = memberCount;
+      view.hidden = false;
+      memberView.hidden = true;
+      modal.classList.add('is-open');
+      modal.setAttribute('aria-hidden', 'false');
+    }
+
+    document.querySelectorAll('.el-group-card').forEach(function (card) {
+      card.style.cursor = 'pointer';
+      card.addEventListener('click', function (e) {
+        if (e.target.closest('button')) return; // 参加する等のボタンはこれまで通りの動作
+        openModal(card);
+      });
+    });
+
+    document.getElementById('gdmMemberBtn').addEventListener('click', function () {
+      var title = modal.dataset.currentGroup;
+      var count = modal.dataset.currentCount;
+      var detail = GROUP_DETAILS[title] || { members: [] };
+      document.getElementById('gdmMemberViewCount').textContent = count + '人が参加しています';
+      var shown = detail.members;
+      var remaining = Math.max(0, (+count) - shown.length);
+      var html = shown.map(function (m) {
+        return '<div style="display:flex;align-items:center;gap:10px;padding:8px 4px;border-bottom:1px solid var(--el-line-soft);">' +
+          '<div class="el-avatar" style="width:32px;height:32px;font-size:13px;flex:none;">' + m.charAt(0) + '</div>' +
+          '<span style="font-size:13.5px;color:var(--el-navy);">' + m + '</span></div>';
+      }).join('');
+      if (remaining > 0) {
+        html += '<div style="padding:10px 4px;font-size:12.5px;color:var(--el-ink-faint);">ほか' + remaining + '人</div>';
+      }
+      document.getElementById('gdmMemberList').innerHTML = html;
+      view.hidden = true;
+      memberView.hidden = false;
+    });
+    document.getElementById('gdmBackBtn').addEventListener('click', function () {
+      view.hidden = false;
+      memberView.hidden = true;
+    });
+
+    modal.querySelectorAll('[data-group-close]').forEach(function (el) {
+      el.addEventListener('click', function () {
+        modal.classList.remove('is-open');
+        modal.setAttribute('aria-hidden', 'true');
+      });
+    });
+  })();
+
 </script>
 <div class="el-auth-modal" id="authModal" aria-hidden="true">
   <div class="el-auth-modal-backdrop" data-auth-close></div>
@@ -708,6 +825,44 @@
     <div class="el-auth-modal-actions">
       <a href="#" class="el-btn el-btn--primary el-btn--sm">SHiFT会員について見る</a>
       <button type="button" class="el-btn el-btn--ghost el-btn--sm" data-shift-close>閉じる</button>
+    </div>
+  </div>
+</div>
+
+<div class="el-auth-modal" id="groupDetailModal" aria-hidden="true">
+  <div class="el-auth-modal-backdrop" data-group-close></div>
+  <div class="el-auth-modal-panel" role="dialog" aria-modal="true" style="max-width:480px;text-align:left;">
+    <button type="button" class="el-auth-modal-close" data-group-close aria-label="閉じる">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <div id="gdmView">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px;">
+        <div id="gdmIcon" style="width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex:none;color:#fff;"></div>
+        <div>
+          <h3 id="gdmTitle" style="margin:0;font-size:17px;"></h3>
+          <div id="gdmVisibility" style="font-size:12px;color:var(--el-ink-faint);margin-top:2px;"></div>
+        </div>
+      </div>
+      <p id="gdmDesc" style="font-size:14px;color:var(--el-navy);line-height:1.8;margin:14px 0;"></p>
+      <div style="display:flex;flex-direction:column;gap:8px;font-size:13.5px;color:var(--el-navy);margin-bottom:16px;">
+        <div><strong style="color:var(--el-ink-faint);font-weight:600;">作成者：</strong><span id="gdmCreator"></span></div>
+        <div><strong style="color:var(--el-ink-faint);font-weight:600;">カテゴリ：</strong><span id="gdmCategory"></span></div>
+        <button type="button" id="gdmMemberBtn" style="text-align:left;background:none;border:none;padding:0;cursor:pointer;color:inherit;font:inherit;">
+          <strong style="color:var(--el-ink-faint);font-weight:600;">メンバー：</strong><span id="gdmMemberCount" style="text-decoration:underline;color:var(--el-teal-deep);"></span>
+        </button>
+      </div>
+      <div class="el-auth-modal-actions">
+        <button type="button" class="el-btn el-btn--primary el-btn--sm" id="gdmJoinBtn">参加する</button>
+        <button type="button" class="el-btn el-btn--ghost el-btn--sm" data-group-close>閉じる</button>
+      </div>
+    </div>
+    <div id="gdmMemberView" hidden>
+      <h3 style="margin:0 0 4px;font-size:16px;">メンバー一覧</h3>
+      <div style="font-size:12.5px;color:var(--el-ink-faint);margin-bottom:14px;" id="gdmMemberViewCount"></div>
+      <div id="gdmMemberList" style="max-height:320px;overflow-y:auto;display:flex;flex-direction:column;gap:2px;"></div>
+      <div class="el-auth-modal-actions">
+        <button type="button" class="el-btn el-btn--ghost el-btn--sm" id="gdmBackBtn">戻る</button>
+      </div>
     </div>
   </div>
 </div>

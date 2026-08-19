@@ -214,6 +214,61 @@
     width:100% !important;
     box-sizing:border-box !important;
   }
+
+  /* 投稿本文の枠と中身の余白を広げる */
+  .el-post{
+    padding:24px 26px !important;
+    box-sizing:border-box !important;
+  }
+  .el-post-body{
+    margin-top:12px !important;
+    margin-bottom:14px !important;
+  }
+  .el-post-tags{
+    margin-bottom:14px !important;
+  }
+
+  /* WorldShift Trade Watch ニュースカード */
+  .el-side-news-card{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:9px 4px;
+    text-decoration:none;
+    border-bottom:1px solid var(--el-line-soft, #E5DFD2);
+  }
+  .el-side-news-card:last-of-type{
+    border-bottom:none;
+  }
+  .el-side-news-card .thumb{
+    width:40px;
+    height:40px;
+    border-radius:8px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex:none;
+  }
+  .el-side-news-card .txt{
+    display:flex;
+    flex-direction:column;
+    min-width:0;
+  }
+  .el-side-news-card .txt strong{
+    font-size:12.5px;
+    font-weight:700;
+    color:var(--el-navy, #16233F);
+    line-height:1.4;
+    display:-webkit-box;
+    -webkit-line-clamp:2;
+    -webkit-box-orient:vertical;
+    overflow:hidden;
+  }
+  .el-side-news-card .txt span{
+    font-size:11px;
+    color:var(--el-ink-faint, #8A8478);
+    margin-top:3px;
+  }
 </style>
 </head>
 <body data-site="community" data-root="..">
@@ -444,6 +499,30 @@
               </span>
               <span class="txt"><strong>FDA更新リマインドスプレッドシート</strong><span>山口貿易士・¥1,200</span></span>
             </a>
+          </div>
+
+          <div class="el-side-panel">
+            <h4>WorldShift Trade Watch</h4>
+            <div class="sub" style="font-size:12px;color:var(--el-ink-faint);margin:-6px 0 12px;">米国輸出の最新ニュースをまとめてお届け</div>
+            <a href="https://tradewatch.worldshift-inc.com/articles/reciprocal-tariff-update" target="_blank" rel="noopener" class="el-side-news-card">
+              <div class="thumb" style="background:linear-gradient(135deg,#2F6FA3,#1B3E5C);">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><path d="M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20Z"/><path d="M2 12h20"/></svg>
+              </div>
+              <span class="txt"><strong>相互関税の運用見直し、実務への影響を解説</strong><span>2026年8月18日</span></span>
+            </a>
+            <a href="https://tradewatch.worldshift-inc.com/articles/fda-facility-renewal-2026" target="_blank" rel="noopener" class="el-side-news-card">
+              <div class="thumb" style="background:linear-gradient(135deg,#3E8E63,#1F5C3E);">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+              </div>
+              <span class="txt"><strong>FDA施設登録、2026年更新シーズンの注意点</strong><span>2026年8月14日</span></span>
+            </a>
+            <a href="https://tradewatch.worldshift-inc.com/articles/amazon-fba-fee-2026h2" target="_blank" rel="noopener" class="el-side-news-card">
+              <div class="thumb" style="background:linear-gradient(135deg,#B9812A,#8A5E1A);">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+              </div>
+              <span class="txt"><strong>Amazon FBA手数料、2026年下期の改定ポイント</strong><span>2026年8月10日</span></span>
+            </a>
+            <a href="https://tradewatch.worldshift-inc.com" target="_blank" rel="noopener" class="el-side-more" style="display:block;text-align:right;margin-top:4px;">WorldShift Trade Watchで見る <span>→</span></a>
           </div>
         </aside>
 
