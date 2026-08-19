@@ -476,11 +476,11 @@
   var EL_CURRENT_TOPIC = null;
   (function () {
     var params = new URLSearchParams(window.location.search);
-    var id = parseInt(params.get('id') || '1', 10);
+    var id = params.get('id');
     var extra = [];
     try { extra = JSON.parse(localStorage.getItem('el-user-topics') || '[]'); } catch (e) {}
     var all = (window.EL_TOPICS || []).concat(extra);
-    var t = all.filter(function (x) { return x.id === id; })[0] || all[0];
+    var t = (id ? all.filter(function (x) { return x.id === id; })[0] : null) || all[0];
     if (!t) return;
     EL_CURRENT_TOPIC = t;
 
