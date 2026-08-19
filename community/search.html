@@ -376,7 +376,8 @@
 
       matched.forEach(function (item) {
         var row = document.createElement('a');
-        row.href = item.url;
+        var sep = item.url.indexOf('?') === -1 ? '?' : '&';
+        row.href = item.url + sep + 'hl=' + encodeURIComponent(q);
         row.style.cssText = 'display:block;padding:16px 18px;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);margin-bottom:10px;text-decoration:none;color:inherit;';
         var typeSpan = '<span style="display:inline-block;font-size:11px;font-weight:700;color:#fff;background:' + (TYPE_COLOR[item.type] || 'var(--el-ink-faint)') + ';padding:2px 9px;border-radius:999px;margin-bottom:6px;">' + item.type + '</span>';
         var descHtml = item.desc ? '<div style="font-size:13px;color:var(--el-ink-faint);margin-top:4px;">' + item.desc + '</div>' : '';

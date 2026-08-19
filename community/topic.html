@@ -851,6 +851,46 @@
       : '<h3>SHiFT会員限定のスレッドです</h3><p>この投稿はSHiFT会員だけが閲覧できます。</p><a href="#" class="el-btn el-btn--primary el-btn--sm">SHiFT会員について見る</a>';
     thread.appendChild(overlay);
   })();
+
+  // 検索結果からのキーワードをハイライトして該当箇所までスクロールする
+  (function () {
+    var params = new URLSearchParams(window.location.search);
+    var hl = params.get('hl');
+    if (!hl) return;
+    var hlLower = hl.toLowerCase();
+
+    function highlightAndScroll(root) {
+      var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
+      var node;
+      while (node = walker.nextNode()) {
+        if (!node.parentElement || node.parentElement.closest('script,style,mark')) continue;
+        var text = node.nodeValue;
+        var idx = text.toLowerCase().indexOf(hlLower);
+        if (idx !== -1) {
+          var before = text.slice(0, idx);
+          var match = text.slice(idx, idx + hl.length);
+          var after = text.slice(idx + hl.length);
+          var mark = document.createElement('mark');
+          mark.style.cssText = 'background:#FFE58A;color:inherit;padding:0 2px;border-radius:3px;';
+          mark.textContent = match;
+          var frag = document.createDocumentFragment();
+          frag.appendChild(document.createTextNode(before));
+          frag.appendChild(mark);
+          frag.appendChild(document.createTextNode(after));
+          node.parentNode.replaceChild(frag, node);
+          setTimeout(function () { mark.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 200);
+          return true;
+        }
+      }
+      return false;
+    }
+
+    // 本文・コメントの動的描画が終わるのを少し待ってから探す
+    setTimeout(function () {
+      var main = document.querySelector('main') || document.body;
+      highlightAndScroll(main);
+    }, 700);
+  })();
 </script>
 <div class="el-auth-modal" id="authModal" aria-hidden="true">
   <div class="el-auth-modal-backdrop" data-auth-close></div>
