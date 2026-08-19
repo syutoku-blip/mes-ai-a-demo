@@ -94,6 +94,14 @@
     background:var(--el-teal-deep, #1E6F63) !important;
     border-color:var(--el-teal-deep, #1E6F63) !important;
   }
+  /* フッターの背景色が正しく当たらない場合の保険（文字が背景と同化して見えなくなるのを防ぐ） */
+  .el-footer{ background:#EDE4D0 !important; border-top:1px solid var(--el-line-soft, #E5DFD2) !important; }
+  .el-footer .tag{ color:var(--el-ink-faint, #8A8478) !important; }
+  .el-footer .el-logo{ color:var(--el-navy, #16233F) !important; }
+  .el-footer .el-logo .dot{ color:var(--el-mustard-deep, #B9812A) !important; }
+  .el-footer-cols a{ color:var(--el-ink-faint, #8A8478) !important; }
+  .el-footer-cols h6{ color:var(--el-navy, #16233F) !important; }
+  .el-footer-bottom{ color:var(--el-ink-faint, #8A8478) !important; border-top-color:var(--el-line-soft, #E5DFD2) !important; }
 </style>
 </head>
 <body data-site="community" data-root="..">
@@ -214,7 +222,7 @@
       </details>
 
       <a href="members.html">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M6 16c.5-1.6 1.7-2.5 3-2.5s2.5.9 3 2.5"/><path d="M14 9h4M14 13h4"/></svg>
         <span class="lbl">メンバー</span>
       </a>
 
@@ -320,12 +328,25 @@
                 <span class="el-form-hint">複数選択可</span>
               </div>
               <div class="el-category-picker" id="categoryPicker">
-                <label><input type="checkbox" name="categories" value="fda"><span>FDA対応</span></label>
-                <label><input type="checkbox" name="categories" value="customs"><span>通関</span></label>
-                <label><input type="checkbox" name="categories" value="tariff"><span>関税</span></label>
-                <label><input type="checkbox" name="categories" value="amazon"><span>Amazon出品</span></label>
-                <label><input type="checkbox" name="categories" value="logistics"><span>物流</span></label>
-                <label><input type="checkbox" name="categories" value="chat"><span>雑談・自己紹介</span></label>
+                <label><input type="checkbox" name="categories" value="amazon-ops"><span>Amazon販売・運用</span></label>
+                <label><input type="checkbox" name="categories" value="fba-inventory"><span>FBA・在庫管理</span></label>
+                <label><input type="checkbox" name="categories" value="amazon-account"><span>Amazon規制・アカウント</span></label>
+                <label><input type="checkbox" name="categories" value="amazon-sourcing"><span>Amazon仕入れ・商品選定</span></label>
+                <label><input type="checkbox" name="categories" value="fba-logistics"><span>FBA物流</span></label>
+                <label><input type="checkbox" name="categories" value="intl-logistics"><span>国際物流・通関</span></label>
+                <label><input type="checkbox" name="categories" value="ior"><span>IOR・輸入者</span></label>
+                <label><input type="checkbox" name="categories" value="overseas-warehouse"><span>海外倉庫・3PL</span></label>
+                <label><input type="checkbox" name="categories" value="fda-food"><span>FDA・食品規制</span></label>
+                <label><input type="checkbox" name="categories" value="fsvp"><span>FSVP</span></label>
+                <label><input type="checkbox" name="categories" value="food-label"><span>食品ラベル・表示</span></label>
+                <label><input type="checkbox" name="categories" value="fda-inspection"><span>FDA査察・違反対応</span></label>
+                <label><input type="checkbox" name="categories" value="food-safety"><span>食品安全・製造管理</span></label>
+                <label><input type="checkbox" name="categories" value="mocra"><span>MoCRA・化粧品規制</span></label>
+                <label><input type="checkbox" name="categories" value="overseas-ec"><span>海外EC・自社EC</span></label>
+                <label><input type="checkbox" name="categories" value="overseas-wholesale"><span>海外卸・BtoB</span></label>
+                <label><input type="checkbox" name="categories" value="overseas-sales"><span>海外営業・販路開拓</span></label>
+                <label><input type="checkbox" name="categories" value="biz-consulting"><span>経営・事業相談</span></label>
+                <label><input type="checkbox" name="categories" value="chat"><span>情報交換・雑談</span></label>
               </div>
             </div>
 
@@ -450,7 +471,7 @@
         <div class="el-footer-grid">
           <div>
             <a href="index.html" class="el-logo">Export Lab<span class="dot">.</span></a>
-            <p class="tag">人・モノ・情報がつながる、輸出の共創コミュニティ。運営：WorldShift株式会社</p>
+            <p class="tag">人・モノ・情報がつながる、輸出の共創コミュニティ。<br>運営：WorldShift株式会社</p>
           </div>
           <div class="el-footer-cols">
             <div>
@@ -1113,9 +1134,7 @@
         return;
       }
       document.getElementById('previewTitle').textContent = title.value || '（タイトル未入力）';
-      var categoryLabels = {
-        fda:'FDA対応', customs:'通関', tariff:'関税', amazon:'Amazon出品', logistics:'物流', chat:'雑談・自己紹介'
-      };
+      var categoryLabels = window.EL_CATEGORY_LABEL || {};
       var categories = Array.prototype.map.call(categoryPicker.querySelectorAll('input:checked'), function(i){
         return categoryLabels[i.value] || i.value;
       });
@@ -1243,7 +1262,9 @@
     else if (headerAvatar) {
       try {
         var hp = JSON.parse(localStorage.getItem('el-user-profile') || '{}');
+        var hUsername = localStorage.getItem('el-username') || hp.username || '';
         if (hp.photoUrl) headerAvatar.innerHTML = '<img src="' + hp.photoUrl + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
+        else if (hUsername) headerAvatar.textContent = hUsername.charAt(0);
       } catch (e) {}
     }
 
@@ -1264,7 +1285,6 @@
       }
     }
 
-    // 切り替えウィジェットの見た目
     // 「ユーザー登録してください」モーダル
     var modal = document.getElementById('authModal');
     window.elRequireAuth = function (e) {
