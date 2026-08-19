@@ -1538,10 +1538,8 @@ window.EL_TOPICS = [
   }
 ];
 
-// ハッシュタグの表示ルール：サイト全体で10件以上使われているハッシュタグだけを
-// 絞り込み・ハッシュタグ一覧・新規投稿の候補に表示する。
-// 誰でも自由にハッシュタグを作成できるが、この基準を満たすまでは一覧には出てこない。
-window.EL_TAG_THRESHOLD = 10;
+// ハッシュタグの表示ルール：誰でも自由にハッシュタグを作成でき、使われているものは
+// 件数に関わらずすべて絞り込み・ハッシュタグ一覧・新規投稿の候補に表示する。
 
 window.EL_getTagCounts = function () {
   var extra = [];
@@ -1556,12 +1554,10 @@ window.EL_getTagCounts = function () {
   return counts;
 };
 
-// 表示条件（10件以上）を満たしているタグのIDだけを、件数の多い順で返す
+// 使われているタグをすべて、件数の多い順で返す
 window.EL_getVisibleTags = function () {
   var counts = window.EL_getTagCounts();
-  var threshold = window.EL_TAG_THRESHOLD;
   return Object.keys(counts)
-    .filter(function (tag) { return counts[tag] >= threshold; })
     .sort(function (a, b) { return counts[b] - counts[a]; })
     .map(function (tag) { return { tag: tag, count: counts[tag] }; });
 };

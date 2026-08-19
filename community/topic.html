@@ -579,7 +579,7 @@
     if (list) {
       list.innerHTML = comments.map(function (c, i) {
         var profileUrl = 'profile.html?user=' + encodeURIComponent(c.user);
-        return '<article class="el-post" id="c' + (i + 1) + '">' +
+        return '<article class="el-post" id="c' + (i + 1) + '" data-reply-to="op">' +
           '<a href="' + profileUrl + '" class="el-avatar" style="text-decoration:none;">' + c.user.charAt(0) + '</a>' +
           '<div>' +
             '<div class="el-reply-tag-slot"></div>' +

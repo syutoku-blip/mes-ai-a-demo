@@ -365,7 +365,7 @@
           <details class="el-filter-menu" id="tagMenu">
             <summary>ハッシュタグ <span class="el-filter-summary-value" id="tagSummary">すべて</span></summary>
             <div class="el-filter-popover" id="tagPopoverBody">
-              <div style="padding:10px 4px;color:var(--el-ink-faint);font-size:12.5px;">10件以上使われているハッシュタグがまだありません。</div>
+              <div style="padding:10px 4px;color:var(--el-ink-faint);font-size:12.5px;">使われているハッシュタグがまだありません。</div>
             </div>
           </details>
 
@@ -572,7 +572,7 @@
     var statusNames = {'':'すべて', unsolved:'未解決', solved:'解決済み'};
     var sortNames = {hot:'人気順', new:'新しい順'};
 
-    // ハッシュタグの絞り込み欄：サイト全体で10件以上使われているタグだけを表示する
+    // ハッシュタグの絞り込み欄：使われているタグをすべて表示する
     (function () {
       var body = document.getElementById('tagPopoverBody');
       if (!body || !window.EL_getVisibleTags) return;

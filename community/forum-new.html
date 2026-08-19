@@ -913,7 +913,7 @@
     var tagSuggestions = document.getElementById('tagSuggestions');
     var selectedTagsBox = document.getElementById('selectedTags');
 
-    // 候補として表示するのは、サイト全体で10件以上使われているハッシュタグだけ。
+    // 候補として表示するのは、サイト全体で使われているハッシュタグ。
     // ハッシュタグ自体は誰でも自由に作成できるため、下の「カスタムタグ」入力からは
     // 候補にない新しいタグも引き続き追加できる。
     var TAG_CATALOG = (window.EL_getVisibleTags ? window.EL_getVisibleTags() : []).map(function (item) {
