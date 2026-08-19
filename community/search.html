@@ -89,6 +89,14 @@
     background:var(--el-teal-deep, #1E6F63) !important;
     border-color:var(--el-teal-deep, #1E6F63) !important;
   }
+  /* フッターの背景色が正しく当たらない場合の保険（文字が背景と同化して見えなくなるのを防ぐ） */
+  .el-footer{ background:#EDE4D0 !important; border-top:1px solid var(--el-line-soft, #E5DFD2) !important; }
+  .el-footer .tag{ color:var(--el-ink-faint, #8A8478) !important; }
+  .el-footer .el-logo{ color:var(--el-navy, #16233F) !important; }
+  .el-footer .el-logo .dot{ color:var(--el-mustard-deep, #B9812A) !important; }
+  .el-footer-cols a{ color:var(--el-ink-faint, #8A8478) !important; }
+  .el-footer-cols h6{ color:var(--el-navy, #16233F) !important; }
+  .el-footer-bottom{ color:var(--el-ink-faint, #8A8478) !important; border-top-color:var(--el-line-soft, #E5DFD2) !important; }
 </style>
 </head>
 <body data-site="community" data-root="..">
@@ -140,29 +148,8 @@
           <a href="board.html?filter=shift&sort=hot">SHiFT member only</a>
           <a href="board.html?filter=unsolved&sort=hot">未解決</a>
 
-          <details class="el-side-cat">
-            <summary>カテゴリで探す<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></summary>
-            <div class="el-side-cat-body">
-              <a href="board.html?category=amazon-ops&sort=hot">Amazon販売・運用</a>
-              <a href="board.html?category=fda-food&sort=hot">FDA・食品規制</a>
-              <a href="board.html?category=intl-logistics&sort=hot">国際物流・通関</a>
-              <a href="board.html?category=mocra&sort=hot">MoCRA・化粧品規制</a>
-              <a href="board.html?category=chat&sort=hot">情報交換・雑談</a>
-              <a href="forum-categories.html" class="el-side-more">もっと見る <span>→</span></a>
-            </div>
-          </details>
-
-          <details class="el-side-cat">
-            <summary>ハッシュタグで探す<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></summary>
-            <div class="el-side-cat-body">
-              <a href="board.html?tag=fba&sort=hot">#FBA</a>
-              <a href="board.html?tag=facility-registration&sort=hot">#施設登録・更新</a>
-              <a href="board.html?tag=label&sort=hot">#ラベル</a>
-              <a href="board.html?tag=us-agent&sort=hot">#米国代理人</a>
-              <a href="board.html?tag=prior-notice&sort=hot">#事前申告</a>
-              <a href="forum-tags.html" class="el-side-more">もっと見る <span>→</span></a>
-            </div>
-          </details>
+          <a href="forum-categories.html">カテゴリで探す</a>
+          <a href="forum-tags.html">ハッシュタグで探す</a>
         </div>
       </details>
 
@@ -209,7 +196,7 @@
       </details>
 
       <a href="members.html">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M6 16c.5-1.6 1.7-2.5 3-2.5s2.5.9 3 2.5"/><path d="M14 9h4M14 13h4"/></svg>
         <span class="lbl">メンバー</span>
       </a>
 
@@ -245,7 +232,7 @@
         <div class="el-footer-grid">
           <div>
             <a href="index.html" class="el-logo">Export Lab<span class="dot">.</span></a>
-            <p class="tag">人・モノ・情報がつながる、輸出の共創コミュニティ。運営：WorldShift株式会社</p>
+            <p class="tag">人・モノ・情報がつながる、輸出の共創コミュニティ。<br>運営：WorldShift株式会社</p>
           </div>
           <div class="el-footer-cols">
             <div>
@@ -299,11 +286,17 @@
   // 検索対象インデックス：フォーラムのトピック、コミュニティ（概要のみ）、マーケットのコンテンツ、
   // イベント、公式のお知らせ
   // フォーラムは実際の投稿データ（data.js）から動的に組み立てる。今は投稿がすべて削除されているため空になる。
+  // search フィールド：フォーラムはタイトル＋本文＋コメント、それ以外はタイトル＋詳細文が対象。
   var FORUM_SEARCH_ITEMS = (window.EL_TOPICS || []).map(function (t) {
-    return { type: 'フォーラム', title: t.title, url: 'topic.html?id=' + t.id };
+    var commentText = (t.comments || []).map(function (c) { return c.body; }).join(' ');
+    return {
+      type: 'フォーラム', title: t.title,
+      search: [t.title, t.body, commentText].join(' '),
+      url: 'topic.html?id=' + t.id
+    };
   });
 
-  var SEARCH_INDEX = FORUM_SEARCH_ITEMS.concat([
+  var STATIC_INDEX = [
     { type: 'コミュニティ', title: 'マーケット動向 情報交換会', desc: '為替・価格改定・競合の動きなど、相場観を共有する新設グループ。', url: 'groups-list.html' },
     { type: 'コミュニティ', title: '通関書類 相互チェック会', desc: 'インボイスや申告書類を、匿名化した上でお互いにレビューし合うグループ。', url: 'groups-list.html' },
     { type: 'コミュニティ', title: '福岡 輸出事業者オフ会', desc: '福岡近郊の輸出事業者で、たまに集まって情報交換する緩やかなグループ。', url: 'groups-list.html' },
@@ -311,30 +304,32 @@
     { type: 'コミュニティ', title: 'FDA対応 実務者の会', desc: '食品・化粧品の米国輸出を手がける実務者限定。規制対応の一次情報を共有します。', url: 'groups-list.html' },
     { type: 'コミュニティ', title: 'せどり便乗リサーチ部', desc: 'SHiFT塾の受講生を中心に、便乗リサーチの成果と失敗を持ち寄る非公開グループ。', url: 'groups-list.html' },
 
-    { type: 'マーケット', title: '米Amazon輸出オールサポート', desc: '¥12,000', url: 'market-list.html' },
-    { type: 'マーケット', title: 'FDA施設登録 完全ガイド（PDF）', desc: '¥3,000', url: 'market-list.html' },
-    { type: 'マーケット', title: 'SLC活用セミナー録画（2026年7月開催分）', desc: '¥2,000', url: 'market-list.html' },
-    { type: 'マーケット', title: 'ProFinder リサーチ実践講座（動画）', desc: '¥8,000', url: 'market-list.html' },
-    { type: 'マーケット', title: '米国輸出 スタートアップテンプレート集', desc: '¥5,000', url: 'market-list.html' },
-    { type: 'マーケット', title: '通関書類チェックリスト', desc: '¥1,500', url: 'market-list.html' },
-    { type: 'マーケット', title: 'FBA納品トラブル対応事例集', desc: '¥4,000', url: 'market-list.html' },
-    { type: 'マーケット', title: '米Amazon輸出：商品の販売回転数UP', desc: '¥6,000', url: 'market-list.html' },
-    { type: 'マーケット', title: 'せどり便乗リサーチ 実践テンプレート', desc: '¥2,500', url: 'market-list.html' },
-    { type: 'マーケット', title: 'FDA更新リマインドスプレッドシート', desc: '¥1,200', url: 'market-list.html' },
-    { type: 'マーケット', title: '化粧品ラベル作成チェックシート', desc: '¥1,800', url: 'market-list.html' },
+    { type: 'マーケット', title: '米Amazon輸出オールサポート', desc: 'アカウント開設から出品、運用改善まで、まとめて相談できるサポートコンテンツです。米国Amazonへの輸出に関わる工程を整理し、実際に使っているチェックリストや設定手順を公開しています。', url: 'market-list.html' },
+    { type: 'マーケット', title: 'FDA施設登録 完全ガイド（PDF）', desc: 'FDA施設登録の申請から2年ごとの更新までの流れを、実際の差し戻し事例を交えて解説したPDFガイドです。', url: 'market-list.html' },
+    { type: 'マーケット', title: 'SLC活用セミナー録画（2026年7月開催分）', desc: '実際のSLC画面を見ながら、納品費用の内訳や削減余地の見つけ方を解説したセミナーのアーカイブ動画です。', url: 'market-list.html' },
+    { type: 'マーケット', title: 'ProFinder リサーチ実践講座（動画）', desc: 'ProFinderを使ったASINリサーチから仕入れ判断までの流れを画面共有しながら解説する実践講座です。', url: 'market-list.html' },
+    { type: 'マーケット', title: '米国輸出 スタートアップテンプレート集', desc: '初回輸出に必要な書類・チェックリストをひとまとめにしたスターターキットです。', url: 'market-list.html' },
+    { type: 'マーケット', title: '通関書類チェックリスト', desc: '差し戻しの多い記載ミスを実例ベースで一覧化したチェックリストです。', url: 'market-list.html' },
+    { type: 'マーケット', title: 'FBA納品トラブル対応事例集', desc: 'ラベル不備・数量差異などよくあるFBA納品トラブルと解決までの流れをまとめた事例集です。', url: 'market-list.html' },
+    { type: 'マーケット', title: '米Amazon輸出：商品の販売回転数UP', desc: '販売回転数を上げるための価格設定・広告運用・レビュー獲得の考え方を整理したコンテンツです。', url: 'market-list.html' },
+    { type: 'マーケット', title: 'せどり便乗リサーチ 実践テンプレート', desc: '粗利率を自動計算できるスプレッドシートです。ASINと仕入れ値を入力するだけで判断できます。', url: 'market-list.html' },
+    { type: 'マーケット', title: 'FDA更新リマインドスプレッドシート', desc: '登録番号ごとに更新期限を自動アラートしてくれるツールです。', url: 'market-list.html' },
+    { type: 'マーケット', title: '化粧品ラベル作成チェックシート', desc: '成分表示・警告文の必須項目を規制別に一覧化したチェックシートです。', url: 'market-list.html' },
 
-    { type: 'イベント', title: 'FDA施設登録に関するオンライン相談会', url: 'events.html' },
-    { type: 'イベント', title: '初めての輸出セミナー（初心者向け）', url: 'events.html' },
-    { type: 'イベント', title: 'SLC活用セミナー：FBA納品費用の内訳を読み解く', url: 'events.html' },
-    { type: 'イベント', title: '福岡オフ会：輸出事業者の集い', url: 'events.html' },
-    { type: 'イベント', title: 'SLC活用セミナー（2026年7月開催分）', url: 'events.html' },
-    { type: 'イベント', title: 'Export Lab オープン記念キックオフ', url: 'events.html' },
+    { type: 'イベント', title: 'FDA施設登録に関するオンライン相談会', desc: '更新期限の考え方や、よくある差し戻し事例への対処法を運営チームが直接ご案内します。', url: 'events.html' },
+    { type: 'イベント', title: '初めての輸出セミナー（初心者向け）', desc: 'これから輸出を始める方向けの基礎セミナーです。', url: 'events.html' },
+    { type: 'イベント', title: 'SLC活用セミナー：FBA納品費用の内訳を読み解く', desc: 'FBA納品費用の内訳と削減余地の見つけ方を解説します。', url: 'events.html' },
+    { type: 'イベント', title: '福岡オフ会：輸出事業者の集い', desc: '福岡近郊の輸出事業者が集まる交流会です。', url: 'events.html' },
+    { type: 'イベント', title: 'SLC活用セミナー（2026年7月開催分）', desc: 'SLC活用セミナーのアーカイブ配信です。', url: 'events.html' },
+    { type: 'イベント', title: 'Export Lab オープン記念キックオフ', desc: 'Export Labのオープンを記念したキックオフイベントです。', url: 'events.html' },
 
     { type: '公式お知らせ', title: 'FDA施設登録に関するオンライン相談会を開催します', desc: '実務者の会メンバー限定で、更新手続きの個別相談を受け付けます。詳細と申込はグループページから。', url: 'announcement-detail.html' },
     { type: '公式お知らせ', title: 'Export Lab、正式オープンしました', desc: '輸出の共創コミュニティとして、本日より本格始動します。まずは自己紹介からどうぞ。', url: 'announcements.html' },
     { type: '公式お知らせ', title: '8月上旬、システムメンテナンスのお知らせ', desc: '投稿・検索機能が一時的にご利用いただけない時間帯がございます。日程は追ってご案内します。', url: 'announcements.html' },
     { type: '公式お知らせ', title: '投稿ガイドラインを公開しました', desc: '安心して情報交換できる場を保つため、投稿・返信時のルールをまとめました。ぜひご一読ください。', url: 'announcements.html' }
-  ]);
+  ];
+
+  var SEARCH_INDEX = FORUM_SEARCH_ITEMS.concat(STATIC_INDEX);
 
   var TYPE_COLOR = {
     'フォーラム': 'var(--el-teal-deep)',
@@ -363,27 +358,68 @@
 
     heading.textContent = '「' + q + '」の検索結果';
 
-    var qLower = q.toLowerCase();
-    var matched = SEARCH_INDEX.filter(function (item) {
-      return item.title.toLowerCase() === qLower;
-    });
+    function runSearch(index) {
+      var qLower = q.toLowerCase();
+      var matched = index.filter(function (item) {
+        var haystack = (item.title + ' ' + (item.search || item.desc || '')).toLowerCase();
+        return haystack.indexOf(qLower) !== -1;
+      });
 
-    sub.textContent = matched.length + '件の結果';
+      sub.textContent = matched.length + '件の結果';
+      results.innerHTML = '';
 
-    if (!matched.length) {
-      empty.hidden = false;
-      return;
+      if (!matched.length) {
+        empty.hidden = false;
+        return;
+      }
+      empty.hidden = true;
+
+      matched.forEach(function (item) {
+        var row = document.createElement('a');
+        row.href = item.url;
+        row.style.cssText = 'display:block;padding:16px 18px;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);margin-bottom:10px;text-decoration:none;color:inherit;';
+        var typeSpan = '<span style="display:inline-block;font-size:11px;font-weight:700;color:#fff;background:' + (TYPE_COLOR[item.type] || 'var(--el-ink-faint)') + ';padding:2px 9px;border-radius:999px;margin-bottom:6px;">' + item.type + '</span>';
+        var descHtml = item.desc ? '<div style="font-size:13px;color:var(--el-ink-faint);margin-top:4px;">' + item.desc + '</div>' : '';
+        row.innerHTML = typeSpan + '<div style="font-weight:700;color:var(--el-navy);margin-top:2px;">' + item.title + '</div>' + descHtml;
+        results.appendChild(row);
+      });
     }
 
-    matched.forEach(function (item) {
-      var row = document.createElement('a');
-      row.href = item.url;
-      row.style.cssText = 'display:block;padding:16px 18px;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);margin-bottom:10px;text-decoration:none;color:inherit;';
-      var typeSpan = '<span style="display:inline-block;font-size:11px;font-weight:700;color:#fff;background:' + (TYPE_COLOR[item.type] || 'var(--el-ink-faint)') + ';padding:2px 9px;border-radius:999px;margin-bottom:6px;">' + item.type + '</span>';
-      var descHtml = item.desc ? '<div style="font-size:13px;color:var(--el-ink-faint);margin-top:4px;">' + item.desc + '</div>' : '';
-      row.innerHTML = typeSpan + '<div style="font-weight:700;color:var(--el-navy);margin-top:2px;">' + item.title + '</div>' + descHtml;
-      results.appendChild(row);
-    });
+    // まずは静的データ＋フォーラムの実データで表示し、続けて管理者ページで登録した
+    // 実際のお知らせ・イベント・マーケットコンテンツも取得できたら合流させて再表示する。
+    runSearch(SEARCH_INDEX);
+
+    var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
+    function fetchContent(type) {
+      return fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: 'listContent', type: type })
+      }).then(function (res) { return res.json(); }).catch(function () { return { ok: false }; });
+    }
+
+    Promise.all([fetchContent('announcement'), fetchContent('event'), fetchContent('marketContent')])
+      .then(function (resArr) {
+        var extra = [];
+        var plain = function (html) { return (html || '').replace(/<[^>]*>/g, ''); };
+
+        var announcements = (resArr[0].ok && resArr[0].items) ? resArr[0].items : [];
+        announcements.forEach(function (it) {
+          extra.push({ type: '公式お知らせ', title: it.title, desc: plain(it.bodyHtml).slice(0, 80), url: 'announcement-detail.html?id=' + it.id });
+        });
+
+        var events = (resArr[1].ok && resArr[1].items) ? resArr[1].items : [];
+        events.forEach(function (it) {
+          extra.push({ type: 'イベント', title: it.title, desc: plain(it.bodyHtml).slice(0, 80), url: 'events.html' });
+        });
+
+        var contents = (resArr[2].ok && resArr[2].items) ? resArr[2].items : [];
+        contents.forEach(function (it) {
+          extra.push({ type: 'マーケット', title: it.title, desc: plain(it.bodyHtml).slice(0, 80), url: 'market-list.html' });
+        });
+
+        if (extra.length) runSearch(SEARCH_INDEX.concat(extra));
+      });
   })();
   // ユーザーモード（ゲスト／登録ユーザー／管理者）の切り替えと共通ゲート処理
   document.addEventListener('DOMContentLoaded', function () {
@@ -407,7 +443,9 @@
     else if (headerAvatar) {
       try {
         var hp = JSON.parse(localStorage.getItem('el-user-profile') || '{}');
+        var hUsername = localStorage.getItem('el-username') || hp.username || '';
         if (hp.photoUrl) headerAvatar.innerHTML = '<img src="' + hp.photoUrl + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
+        else if (hUsername) headerAvatar.textContent = hUsername.charAt(0);
       } catch (e) {}
     }
 
@@ -428,7 +466,6 @@
       }
     }
 
-    // 切り替えウィジェットの見た目
     // 「ユーザー登録してください」モーダル
     var modal = document.getElementById('authModal');
     window.elRequireAuth = function (e) {
