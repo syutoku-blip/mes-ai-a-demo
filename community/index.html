@@ -439,10 +439,10 @@
             SHiFT会員のみ閲覧できます。<button type="button" class="el-note-link" id="shiftAboutBtn">SHiFT会員とは</button>
           </div>
           <div class="el-board">
-          <div style="padding:28px 4px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">まだ投稿がありません。</div>
+          <div id="topShiftList" style="padding:28px 4px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">まだ投稿がありません。</div>
           </div>
           <div style="text-align:center;margin:18px 0 44px;">
-            <a href="groups.html" class="el-btn el-btn--ghost el-btn--sm">もっと見る</a>
+            <a href="board.html?filter=shift&sort=hot" class="el-btn el-btn--ghost el-btn--sm">もっと見る</a>
           </div>
         </div>
       </section>
@@ -846,11 +846,15 @@
 
     var byNew = topics.slice().sort(function(a,b){ return (b.recency||0) - (a.recency||0); }).slice(0, 4);
     var byHot = topics.slice().sort(function(a,b){ return (b.views||0) - (a.views||0); }).slice(0, 4);
+    var shiftOnly = topics.filter(function(t){ return t.visibility === 'shift'; })
+      .sort(function(a,b){ return (b.views||0) - (a.views||0); }).slice(0, 4);
 
     var newEl = document.getElementById('topNewList');
     if (newEl && byNew.length) { newEl.parentElement.innerHTML = byNew.map(buildRowHtml).join(''); }
     var hotEl = document.getElementById('topHotList');
     if (hotEl && byHot.length) { hotEl.parentElement.innerHTML = byHot.map(buildRowHtml).join(''); }
+    var shiftEl = document.getElementById('topShiftList');
+    if (shiftEl && shiftOnly.length) { shiftEl.parentElement.innerHTML = shiftOnly.map(buildRowHtml).join(''); }
   })();
 </script>
 <div class="el-auth-modal" id="authModal" aria-hidden="true">
