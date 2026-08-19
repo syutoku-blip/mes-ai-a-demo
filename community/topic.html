@@ -863,7 +863,7 @@
       var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
       var node;
       while (node = walker.nextNode()) {
-        if (!node.parentElement || node.parentElement.closest('script,style,mark')) continue;
+        if (!node.parentElement || node.parentElement.closest('script,style,mark,.el-breadcrumb,.badge,nav,.el-t-row-meta,.el-post-head')) continue;
         var text = node.nodeValue;
         var idx = text.toLowerCase().indexOf(hlLower);
         if (idx !== -1) {
@@ -887,6 +887,11 @@
 
     // 本文・コメントの動的描画が終わるのを少し待ってから探す
     setTimeout(function () {
+      // まず本文・コメント本体を優先的に探し、見つからなければページ全体から探す
+      var priorityZones = document.querySelectorAll('#opBody, .el-post-body');
+      for (var i = 0; i < priorityZones.length; i++) {
+        if (highlightAndScroll(priorityZones[i])) return;
+      }
       var main = document.querySelector('main') || document.body;
       highlightAndScroll(main);
     }, 700);

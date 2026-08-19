@@ -747,7 +747,7 @@
       var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
       var node;
       while (node = walker.nextNode()) {
-        if (!node.parentElement || node.parentElement.closest('script,style,mark')) continue;
+        if (!node.parentElement || node.parentElement.closest('script,style,mark,.el-breadcrumb,.badge,nav')) continue;
         var text = node.nodeValue;
         var idx = text.toLowerCase().indexOf(hlLower);
         if (idx !== -1) {

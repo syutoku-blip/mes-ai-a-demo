@@ -537,6 +537,39 @@
         iframe.srcdoc = '<div style="font-family:sans-serif;line-height:1.8;">' + (item.bodyHtml || '') + '</div>';
         iframe.addEventListener('load', function () {
           try { iframe.style.height = iframe.contentWindow.document.body.scrollHeight + 'px'; } catch (e) {}
+          // 検索結果からのキーワードは、iframeの中身自体にもハイライトを入れる
+          try {
+            var params = new URLSearchParams(window.location.search);
+            var hl = params.get('hl');
+            if (hl) {
+              var idoc = iframe.contentWindow.document;
+              var hlLower = hl.toLowerCase();
+              var walker = idoc.createTreeWalker(idoc.body, NodeFilter.SHOW_TEXT, null);
+              var node;
+              while (node = walker.nextNode()) {
+                var text = node.nodeValue;
+                var idx = text.toLowerCase().indexOf(hlLower);
+                if (idx !== -1) {
+                  var before = text.slice(0, idx);
+                  var match = text.slice(idx, idx + hl.length);
+                  var after = text.slice(idx + hl.length);
+                  var mark = idoc.createElement('mark');
+                  mark.style.cssText = 'background:#FFE58A;color:inherit;padding:0 2px;border-radius:3px;';
+                  mark.textContent = match;
+                  var frag = idoc.createDocumentFragment();
+                  frag.appendChild(idoc.createTextNode(before));
+                  frag.appendChild(mark);
+                  frag.appendChild(idoc.createTextNode(after));
+                  node.parentNode.replaceChild(frag, node);
+                  setTimeout(function () {
+                    mark.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    iframe.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                  }, 200);
+                  break;
+                }
+              }
+            }
+          } catch (e) {}
         });
       });
   })();
@@ -551,7 +584,7 @@
       var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
       var node;
       while (node = walker.nextNode()) {
-        if (!node.parentElement || node.parentElement.closest('script,style,mark')) continue;
+        if (!node.parentElement || node.parentElement.closest('script,style,mark,.el-breadcrumb,.badge,nav')) continue;
         var text = node.nodeValue;
         var idx = text.toLowerCase().indexOf(hlLower);
         if (idx !== -1) {
