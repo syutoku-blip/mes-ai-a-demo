@@ -21,7 +21,7 @@ window.EL_TOPICS = [
     "date": "2026-07-06",
     "views": 20,
     "recency": 100,
-    "status": "unsolved",
+    "status": "solved",
     "visibility": "general",
     "comments": [
       {
@@ -56,7 +56,7 @@ window.EL_TOPICS = [
     "date": "2026-07-07",
     "views": 33,
     "recency": 99,
-    "status": "unsolved",
+    "status": "solved",
     "visibility": "general",
     "comments": [
       {
@@ -92,7 +92,7 @@ window.EL_TOPICS = [
     "date": "2026-07-08",
     "views": 46,
     "recency": 98,
-    "status": "unsolved",
+    "status": "solved",
     "visibility": "general",
     "comments": [
       {
@@ -128,7 +128,7 @@ window.EL_TOPICS = [
     "date": "2026-07-09",
     "views": 59,
     "recency": 97,
-    "status": "unsolved",
+    "status": "solved",
     "visibility": "general",
     "comments": [
       {
@@ -163,7 +163,7 @@ window.EL_TOPICS = [
     "date": "2026-07-10",
     "views": 72,
     "recency": 96,
-    "status": "unsolved",
+    "status": "solved",
     "visibility": "general",
     "comments": [
       {
@@ -199,7 +199,7 @@ window.EL_TOPICS = [
     "date": "2026-07-11",
     "views": 85,
     "recency": 95,
-    "status": "unsolved",
+    "status": "solved",
     "visibility": "general",
     "comments": [
       {
@@ -235,7 +235,7 @@ window.EL_TOPICS = [
     "date": "2026-07-12",
     "views": 98,
     "recency": 94,
-    "status": "unsolved",
+    "status": "solved",
     "visibility": "general",
     "comments": [
       {
@@ -271,7 +271,7 @@ window.EL_TOPICS = [
     "date": "2026-07-13",
     "views": 111,
     "recency": 93,
-    "status": "unsolved",
+    "status": "solved",
     "visibility": "general",
     "comments": [
       {
@@ -307,7 +307,7 @@ window.EL_TOPICS = [
     "date": "2026-07-14",
     "views": 124,
     "recency": 92,
-    "status": "unsolved",
+    "status": "solved",
     "visibility": "general",
     "comments": [
       {
@@ -343,7 +343,7 @@ window.EL_TOPICS = [
     "date": "2026-07-15",
     "views": 137,
     "recency": 91,
-    "status": "unsolved",
+    "status": "solved",
     "visibility": "general",
     "comments": [
       {
@@ -410,7 +410,7 @@ window.EL_TOPICS = [
     "date": "2026-07-17",
     "views": 163,
     "recency": 89,
-    "status": "unsolved",
+    "status": "solved",
     "visibility": "general",
     "comments": [
       {
@@ -572,7 +572,7 @@ window.EL_TOPICS = [
     "date": "2026-07-22",
     "views": 228,
     "recency": 84,
-    "status": "unsolved",
+    "status": "solved",
     "visibility": "general",
     "comments": [
       {
@@ -638,7 +638,7 @@ window.EL_TOPICS = [
     "date": "2026-07-24",
     "views": 254,
     "recency": 82,
-    "status": "unsolved",
+    "status": "solved",
     "visibility": "general",
     "comments": [
       {
@@ -674,7 +674,7 @@ window.EL_TOPICS = [
     "date": "2026-07-25",
     "views": 267,
     "recency": 81,
-    "status": "unsolved",
+    "status": "solved",
     "visibility": "general",
     "comments": [
       {
@@ -710,7 +710,7 @@ window.EL_TOPICS = [
     "date": "2026-07-26",
     "views": 280,
     "recency": 80,
-    "status": "unsolved",
+    "status": "solved",
     "visibility": "general",
     "comments": [
       {
@@ -746,7 +746,7 @@ window.EL_TOPICS = [
     "date": "2026-07-27",
     "views": 293,
     "recency": 79,
-    "status": "unsolved",
+    "status": "solved",
     "visibility": "general",
     "comments": [
       {
@@ -782,7 +782,7 @@ window.EL_TOPICS = [
     "date": "2026-07-28",
     "views": 306,
     "recency": 78,
-    "status": "unsolved",
+    "status": "solved",
     "visibility": "general",
     "comments": [
       {
@@ -818,7 +818,7 @@ window.EL_TOPICS = [
     "date": "2026-07-29",
     "views": 319,
     "recency": 77,
-    "status": "unsolved",
+    "status": "solved",
     "visibility": "general",
     "comments": [
       {
@@ -855,7 +855,7 @@ window.EL_TOPICS = [
     "date": "2026-07-30",
     "views": 32,
     "recency": 76,
-    "status": "unsolved",
+    "status": "solved",
     "visibility": "general",
     "comments": [
       {
@@ -892,7 +892,7 @@ window.EL_TOPICS = [
     "date": "2026-07-31",
     "views": 45,
     "recency": 75,
-    "status": "unsolved",
+    "status": "solved",
     "visibility": "general",
     "comments": [
       {
@@ -929,7 +929,7 @@ window.EL_TOPICS = [
     "date": "2026-08-01",
     "views": 58,
     "recency": 74,
-    "status": "unsolved",
+    "status": "solved",
     "visibility": "general",
     "comments": [
       {
@@ -966,7 +966,7 @@ window.EL_TOPICS = [
     "date": "2026-08-02",
     "views": 71,
     "recency": 73,
-    "status": "unsolved",
+    "status": "solved",
     "visibility": "general",
     "comments": [
       {
@@ -1065,7 +1065,7 @@ window.EL_TOPICS = [
     "date": "2026-08-05",
     "views": 110,
     "recency": 70,
-    "status": "unsolved",
+    "status": "solved",
     "visibility": "general",
     "comments": [
       {
@@ -1102,7 +1102,7 @@ window.EL_TOPICS = [
     "date": "2026-08-06",
     "views": 123,
     "recency": 69,
-    "status": "unsolved",
+    "status": "solved",
     "visibility": "general",
     "comments": [
       {
@@ -1200,7 +1200,7 @@ window.EL_TOPICS = [
     "date": "2026-08-09",
     "views": 162,
     "recency": 66,
-    "status": "unsolved",
+    "status": "solved",
     "visibility": "general",
     "comments": [
       {
@@ -1235,7 +1235,7 @@ window.EL_TOPICS = [
     "date": "2026-08-10",
     "views": 175,
     "recency": 65,
-    "status": "unsolved",
+    "status": "solved",
     "visibility": "general",
     "comments": [
       {
@@ -1270,7 +1270,7 @@ window.EL_TOPICS = [
     "date": "2026-08-11",
     "views": 188,
     "recency": 64,
-    "status": "unsolved",
+    "status": "solved",
     "visibility": "general",
     "comments": [
       {
@@ -1305,7 +1305,7 @@ window.EL_TOPICS = [
     "date": "2026-08-12",
     "views": 201,
     "recency": 63,
-    "status": "unsolved",
+    "status": "solved",
     "visibility": "general",
     "comments": [
       {
@@ -1340,7 +1340,7 @@ window.EL_TOPICS = [
     "date": "2026-08-13",
     "views": 214,
     "recency": 62,
-    "status": "unsolved",
+    "status": "solved",
     "visibility": "general",
     "comments": [
       {
@@ -1375,7 +1375,7 @@ window.EL_TOPICS = [
     "date": "2026-08-14",
     "views": 227,
     "recency": 61,
-    "status": "unsolved",
+    "status": "solved",
     "visibility": "general",
     "comments": [
       {
@@ -1411,7 +1411,7 @@ window.EL_TOPICS = [
     "date": "2026-08-15",
     "views": 240,
     "recency": 60,
-    "status": "unsolved",
+    "status": "solved",
     "visibility": "general",
     "comments": [
       {
@@ -1446,7 +1446,7 @@ window.EL_TOPICS = [
     "date": "2026-08-16",
     "views": 253,
     "recency": 59,
-    "status": "unsolved",
+    "status": "solved",
     "visibility": "general",
     "comments": [
       {
@@ -1481,7 +1481,7 @@ window.EL_TOPICS = [
     "date": "2026-08-17",
     "views": 266,
     "recency": 58,
-    "status": "unsolved",
+    "status": "solved",
     "visibility": "general",
     "comments": [
       {
@@ -1516,7 +1516,7 @@ window.EL_TOPICS = [
     "date": "2026-08-18",
     "views": 279,
     "recency": 57,
-    "status": "unsolved",
+    "status": "solved",
     "visibility": "general",
     "comments": [
       {

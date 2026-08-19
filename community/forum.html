@@ -151,6 +151,14 @@
     background:var(--el-teal-deep, #1E6F63) !important;
     border-color:var(--el-teal-deep, #1E6F63) !important;
   }
+  /* フッターの背景色が正しく当たらない場合の保険（文字が背景と同化して見えなくなるのを防ぐ） */
+  .el-footer{ background:#EDE4D0 !important; border-top:1px solid var(--el-line-soft, #E5DFD2) !important; }
+  .el-footer .tag{ color:var(--el-ink-faint, #8A8478) !important; }
+  .el-footer .el-logo{ color:var(--el-navy, #16233F) !important; }
+  .el-footer .el-logo .dot{ color:var(--el-mustard-deep, #B9812A) !important; }
+  .el-footer-cols a{ color:var(--el-ink-faint, #8A8478) !important; }
+  .el-footer-cols h6{ color:var(--el-navy, #16233F) !important; }
+  .el-footer-bottom{ color:var(--el-ink-faint, #8A8478) !important; border-top-color:var(--el-line-soft, #E5DFD2) !important; }
 </style>
 </head>
 <body data-site="community" data-root="..">
@@ -271,7 +279,7 @@
       </details>
 
       <a href="members.html">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M6 16c.5-1.6 1.7-2.5 3-2.5s2.5.9 3 2.5"/><path d="M14 9h4M14 13h4"/></svg>
         <span class="lbl">メンバー</span>
       </a>
 
@@ -315,7 +323,7 @@
           <h3>NEW</h3>
         </div>
         <div class="el-board">
-          <div>
+          <div id="forumNewList">
           <div style="padding:28px 4px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">まだ投稿がありません。</div>
           </div>
         </div>
@@ -330,7 +338,7 @@
           <h3>HOT</h3>
         </div>
         <div class="el-board">
-          <div>
+          <div id="forumHotList">
           <div style="padding:28px 4px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">まだ投稿がありません。</div>
           </div>
         </div>
@@ -349,7 +357,7 @@
           SHiFT会員のみ閲覧できます。<button type="button" class="el-note-link" id="shiftAboutBtn">SHiFT会員とは</button>
         </div>
         <div class="el-board">
-          <div>
+          <div id="forumShiftList">
           <div style="padding:28px 4px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">まだ投稿がありません。</div>
           </div>
         </div>
@@ -471,7 +479,7 @@
         <div class="el-footer-grid">
           <div>
             <a href="index.html" class="el-logo">Export Lab<span class="dot">.</span></a>
-            <p class="tag">人・モノ・情報がつながる、輸出の共創コミュニティ。運営：WorldShift株式会社</p>
+            <p class="tag">人・モノ・情報がつながる、輸出の共創コミュニティ。<br>運営：WorldShift株式会社</p>
           </div>
           <div class="el-footer-cols">
             <div>
@@ -543,6 +551,7 @@
   </div>
 </div>
 
+<script src="data.js"></script>
 <script src="../shared/global-header.js" defer></script>
 <script>
   (function () {
@@ -622,7 +631,6 @@
       }
     }
 
-    // 切り替えウィジェットの見た目
     // 「ユーザー登録してください」モーダル
     var modal = document.getElementById('authModal');
     window.elRequireAuth = function (e) {
@@ -679,6 +687,61 @@
       });
     }
   });
+
+  // フォーラムTOP：NEW／HOT／SHiFT会員限定を実際の投稿データから描画する
+  (function () {
+    var CATEGORY_LABEL = window.EL_CATEGORY_LABEL || {};
+    var topics = window.EL_TOPICS || [];
+    if (!topics.length) return;
+
+    function relativeTime(dateStr){
+      var d = new Date(dateStr + 'T00:00:00');
+      var today = new Date();
+      var diffDays = Math.round((today - d) / 86400000);
+      if (diffDays <= 0) return '今日';
+      if (diffDays === 1) return '昨日';
+      if (diffDays < 30) return diffDays + '日前';
+      var months = Math.floor(diffDays / 30);
+      return months + 'ヶ月前';
+    }
+
+    function buildRowHtml(t){
+      var visBadge = (t.visibility === 'shift')
+        ? '<span class="badge badge--member">SHiFT限定</span>'
+        : (t.visibility === 'member')
+          ? '<span class="badge badge--restricted">メンバー限定</span>'
+          : '<span class="badge badge--open">公開</span>';
+      var statusBadge = t.status === 'solved' ? '<span class="badge badge--solved">解決</span>'
+        : t.status === 'unsolved' ? '<span class="badge badge--unsolved">未解決</span>' : '';
+      var catLabel = CATEGORY_LABEL[t.category] || t.category;
+      return '<a href="topic.html?id=' + t.id + '" class="el-t-row">' +
+        '<div class="el-t-row-main">' +
+          '<div class="el-t-row-badges">' + visBadge + '<span class="badge badge--cat">' + catLabel + '</span>' + statusBadge + '</div>' +
+          '<span class="el-t-row-title">' + t.title + '</span>' +
+          '<div class="el-t-row-meta">' + t.author + '・' + relativeTime(t.date) + '</div>' +
+        '</div>' +
+        '<div class="el-t-row-stats">' +
+          '<div><strong>' + (t.views || 0) + '</strong><span>閲覧</span></div>' +
+          '<div><strong>' + (t.comments ? t.comments.length : 0) + '</strong><span>返信</span></div>' +
+        '</div></a>';
+    }
+
+    function renderList(id, list){
+      var el = document.getElementById(id);
+      if (!el) return;
+      if (!list.length) return; // 「まだ投稿がありません」のまま
+      el.innerHTML = list.map(buildRowHtml).join('');
+    }
+
+    var byNew = topics.slice().sort(function(a,b){ return (b.recency||0) - (a.recency||0); }).slice(0, 4);
+    var byHot = topics.slice().sort(function(a,b){ return (b.views||0) - (a.views||0); }).slice(0, 4);
+    var shiftOnly = topics.filter(function(t){ return t.visibility === 'shift'; })
+      .sort(function(a,b){ return (b.views||0) - (a.views||0); }).slice(0, 4);
+
+    renderList('forumNewList', byNew);
+    renderList('forumHotList', byHot);
+    renderList('forumShiftList', shiftOnly);
+  })();
 </script>
 <div class="el-auth-modal" id="authModal" aria-hidden="true">
   <div class="el-auth-modal-backdrop" data-auth-close></div>

@@ -430,7 +430,7 @@
             <h3>NEW</h3>
           </div>
           <div class="el-board">
-          <div style="padding:28px 4px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">まだ投稿がありません。</div>
+          <div id="topNewList" style="padding:28px 4px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">まだ投稿がありません。</div>
           </div>
           <div style="text-align:center;margin:18px 0 44px;">
             <a href="board.html?sort=new" class="el-btn el-btn--ghost el-btn--sm">もっと見る</a>
@@ -443,7 +443,7 @@
             <h3>HOT</h3>
           </div>
           <div class="el-board">
-          <div style="padding:28px 4px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">まだ投稿がありません。</div>
+          <div id="topHotList" style="padding:28px 4px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">まだ投稿がありません。</div>
           </div>
           <div style="text-align:center;margin:18px 0 44px;">
             <a href="board.html?sort=hot" class="el-btn el-btn--ghost el-btn--sm">もっと見る</a>
@@ -639,6 +639,7 @@
   </div>
 </div>
 
+<script src="data.js"></script>
 <script src="../shared/global-header.js" defer></script>
 <script>
   (function () {
@@ -825,6 +826,53 @@
       });
     }
   });
+
+  // サイトTOP：NEW／HOTを実際の投稿データから描画する
+  (function () {
+    var CATEGORY_LABEL = window.EL_CATEGORY_LABEL || {};
+    var topics = window.EL_TOPICS || [];
+    if (!topics.length) return;
+
+    function relativeTime(dateStr){
+      var d = new Date(dateStr + 'T00:00:00');
+      var today = new Date();
+      var diffDays = Math.round((today - d) / 86400000);
+      if (diffDays <= 0) return '今日';
+      if (diffDays === 1) return '昨日';
+      if (diffDays < 30) return diffDays + '日前';
+      var months = Math.floor(diffDays / 30);
+      return months + 'ヶ月前';
+    }
+
+    function buildRowHtml(t){
+      var visBadge = (t.visibility === 'shift')
+        ? '<span class="badge badge--member">SHiFT限定</span>'
+        : (t.visibility === 'member')
+          ? '<span class="badge badge--restricted">メンバー限定</span>'
+          : '<span class="badge badge--open">公開</span>';
+      var statusBadge = t.status === 'solved' ? '<span class="badge badge--solved">解決</span>'
+        : t.status === 'unsolved' ? '<span class="badge badge--unsolved">未解決</span>' : '';
+      var catLabel = CATEGORY_LABEL[t.category] || t.category;
+      return '<a href="topic.html?id=' + t.id + '" class="el-t-row">' +
+        '<div class="el-t-row-main">' +
+          '<div class="el-t-row-badges">' + visBadge + '<span class="badge badge--cat">' + catLabel + '</span>' + statusBadge + '</div>' +
+          '<span class="el-t-row-title">' + t.title + '</span>' +
+          '<div class="el-t-row-meta">' + t.author + '・' + relativeTime(t.date) + '</div>' +
+        '</div>' +
+        '<div class="el-t-row-stats">' +
+          '<div><strong>' + (t.views || 0) + '</strong><span>閲覧</span></div>' +
+          '<div><strong>' + (t.comments ? t.comments.length : 0) + '</strong><span>返信</span></div>' +
+        '</div></a>';
+    }
+
+    var byNew = topics.slice().sort(function(a,b){ return (b.recency||0) - (a.recency||0); }).slice(0, 4);
+    var byHot = topics.slice().sort(function(a,b){ return (b.views||0) - (a.views||0); }).slice(0, 4);
+
+    var newEl = document.getElementById('topNewList');
+    if (newEl && byNew.length) { newEl.parentElement.innerHTML = byNew.map(buildRowHtml).join(''); }
+    var hotEl = document.getElementById('topHotList');
+    if (hotEl && byHot.length) { hotEl.parentElement.innerHTML = byHot.map(buildRowHtml).join(''); }
+  })();
 </script>
 <div class="el-auth-modal" id="authModal" aria-hidden="true">
   <div class="el-auth-modal-backdrop" data-auth-close></div>
