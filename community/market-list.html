@@ -828,8 +828,8 @@
       document.getElementById('pmTitle').textContent = p.title;
       document.getElementById('pmMeta').textContent = '出品者：' + p.seller;
       document.getElementById('pmPrice').textContent = p.price;
-      document.getElementById('pmRecommend').textContent = p.recommend;
-      document.getElementById('pmDetail').textContent = p.detail;
+      document.getElementById('pmRecommend').innerHTML = p.recommend;
+      document.getElementById('pmDetail').innerHTML = p.detail;
       var badgeEl = document.getElementById('pmBadge');
       if (p.badge) { badgeEl.style.display = ''; badgeEl.textContent = p.badge; } else { badgeEl.style.display = 'none'; }
       var banner = document.getElementById('pmBanner');
@@ -960,6 +960,15 @@
     });
   })();
   // ユーザーモード（ゲスト／登録ユーザー／管理者）の切り替えと共通ゲート処理
+  // Googleドライブの共有リンクを、<img>で直接表示できる形式のURLに変換する
+  function elDriveImgUrl(url) {
+    if (!url) return url;
+    var m = url.match(/drive\.google\.com\/file\/d\/([^/]+)/) || url.match(/[?&]id=([^&]+)/);
+    if (m && m[1]) return 'https://drive.google.com/uc?export=view&id=' + m[1];
+    return url;
+  }
+  window.elDriveImgUrl = elDriveImgUrl;
+
   document.addEventListener('DOMContentLoaded', function () {
     var ROLE_KEY = 'el-user-role';
     function getRole() {
@@ -982,7 +991,7 @@
       try {
         var hp = JSON.parse(localStorage.getItem('el-user-profile') || '{}');
         var hUsername = localStorage.getItem('el-username') || hp.username || '';
-        if (hp.photoUrl) headerAvatar.innerHTML = '<img src="' + hp.photoUrl + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
+        if (hp.photoUrl) headerAvatar.innerHTML = '<img src="' + window.elDriveImgUrl(hp.photoUrl) + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
         else if (hUsername) headerAvatar.textContent = hUsername.charAt(0);
       } catch (e) {}
     }
@@ -1077,10 +1086,13 @@
         items.forEach(function (it) {
           var id = 'admin-' + it.id;
           var priceNum = Number(it.price || 0);
+          var thumbHtml = it.thumbnailUrl
+            ? '<img src="' + it.thumbnailUrl + '" style="width:100%;height:100%;object-fit:cover;">'
+            : '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>';
 
           PRODUCTS[id] = {
             title: it.title, seller: 'WorldShift公式', price: '¥' + priceNum.toLocaleString(), badge: '公式',
-            recommend: '', detail: it.bodyHtml || '',
+            recommend: it.recommendHtml || '', detail: it.detailHtml || '',
             bannerColor: 'linear-gradient(135deg, var(--el-teal), #1F6E63)',
             bannerIcon: '<path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/>'
           };
@@ -1093,12 +1105,11 @@
           card.dataset.price = priceNum;
           card.dataset.recency = 100;
           card.innerHTML =
-            '<div class="el-market-thumb" style="background:var(--el-teal);color:#fff;">' +
-            '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg></div>' +
+            '<div class="el-market-thumb" style="background:var(--el-teal);color:#fff;overflow:hidden;">' + thumbHtml + '</div>' +
             '<div class="el-market-body">' +
             '<span class="badge badge--announce">公式</span>' +
             '<h3>' + it.title + '</h3>' +
-            '<p>' + (it.bodyHtml || '').replace(/<[^>]*>/g, '').slice(0, 60) + '</p>' +
+            '<p>' + (it.recommendHtml || it.detailHtml || '').replace(/<[^>]*>/g, '').slice(0, 60) + '</p>' +
             '<div class="el-market-rating"><span class="stars">★★★★★</span><span class="count">(0)</span></div>' +
             '<div class="el-market-foot"><strong>¥' + priceNum.toLocaleString() + '</strong>' +
             '<div class="el-market-btns"><button type="button" class="el-cart-btn" aria-label="カートに追加" data-cart><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button>' +
