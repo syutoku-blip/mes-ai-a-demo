@@ -110,6 +110,7 @@
     overflow:hidden !important;
     background:var(--el-cream-deep, #FBF3E3) !important;
     aspect-ratio:960 / 220;
+    max-height:200px !important;
   }
   .el-ad-tag-v2{
     position:absolute !important;
@@ -465,7 +466,6 @@
               <div class="el-display-ad-copy">
                 <small id="composeDisplayAdSmall">WorldShift</small>
                 <strong id="composeDisplayAdTitle">FDA Compliance Partner</strong>
-                <span id="composeDisplayAdDesc">FDA規制対応を、もっと確実に。</span>
               </div>
               <span class="el-display-ad-cta" id="composeDisplayAdCta">詳しく見る</span>
             </a>
@@ -1414,7 +1414,6 @@
         if (ad.imageUrl) art.innerHTML = '<img src="' + ad.imageUrl + '" style="width:100%;height:100%;object-fit:cover;">';
         document.getElementById('composeDisplayAdSmall').textContent = 'スポンサー';
         document.getElementById('composeDisplayAdTitle').textContent = ad.serviceName || '';
-        document.getElementById('composeDisplayAdDesc').textContent = ad.description || '';
         document.getElementById('composeDisplayAdCta').textContent = ad.ctaText || '詳しく見る';
         if (ad.ctaUrl) document.getElementById('composeDisplayAd').href = ad.ctaUrl;
       })
