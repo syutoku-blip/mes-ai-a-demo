@@ -219,6 +219,7 @@
   .el-footer-cols a{ color:var(--el-ink-faint, #8A8478) !important; }
   .el-footer-cols h6{ color:var(--el-navy, #16233F) !important; }
   .el-footer-bottom{ color:var(--el-ink-faint, #8A8478) !important; border-top-color:var(--el-line-soft, #E5DFD2) !important; }
+  .el-group-card{ cursor:pointer !important; }
 </style>
 </head>
 <body data-site="community" data-root="..">
@@ -640,7 +641,7 @@
   function elDriveImgUrl(url) {
     if (!url) return url;
     var m = url.match(/drive\.google\.com\/file\/d\/([^/]+)/) || url.match(/[?&]id=([^&]+)/);
-    if (m && m[1]) return 'https://drive.google.com/uc?export=view&id=' + m[1];
+    if (m && m[1]) return 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w1000';
     return url;
   }
   window.elDriveImgUrl = elDriveImgUrl;
@@ -813,12 +814,11 @@
       modal.setAttribute('aria-hidden', 'false');
     }
 
-    document.querySelectorAll('.el-group-card').forEach(function (card) {
-      card.style.cursor = 'pointer';
-      card.addEventListener('click', function (e) {
-        if (e.target.closest('button')) return; // 参加する等のボタンはこれまで通りの動作
-        openModal(card);
-      });
+    document.addEventListener('click', function (e) {
+      var card = e.target.closest('.el-group-card');
+      if (!card) return;
+      if (e.target.closest('button')) return; // 参加する等のボタンはこれまで通りの動作
+      openModal(card);
     });
 
     document.getElementById('gdmMemberBtn').addEventListener('click', function () {
