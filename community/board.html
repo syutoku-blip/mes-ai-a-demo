@@ -160,6 +160,86 @@
   .el-footer-cols a{ color:var(--el-ink-faint, #8A8478) !important; }
   .el-footer-cols h6{ color:var(--el-navy, #16233F) !important; }
   .el-footer-bottom{ color:var(--el-ink-faint, #8A8478) !important; border-top-color:var(--el-line-soft, #E5DFD2) !important; }
+  .el-pagination{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:6px;
+    margin-top:24px;
+  }
+  .el-pagination button{
+    min-width:34px;
+    height:34px;
+    padding:0 8px;
+    border:1px solid var(--el-line-soft, #E5DFD2);
+    border-radius:8px;
+    background:var(--el-paper, #fff);
+    color:var(--el-navy, #16233F);
+    font-size:13px;
+    font-weight:600;
+    cursor:pointer;
+  }
+  .el-pagination button:hover:not(:disabled){
+    background:var(--el-cream-deep, #F1E9D8);
+  }
+  .el-pagination button.is-active{
+    background:var(--el-navy, #16233F);
+    border-color:var(--el-navy, #16233F);
+    color:#fff;
+  }
+  .el-pagination button:disabled{
+    opacity:.4;
+    cursor:default;
+  }
+
+  /* 広告バナー：横長の画像1枚を全面に表示し、CTAボタンとスポンサー表記を重ねる */
+  .el-ad-banner-v2{
+    position:relative !important;
+    display:block !important;
+    border-radius:var(--el-radius-m, 14px) !important;
+    overflow:hidden !important;
+    background:var(--el-cream-deep, #FBF3E3) !important;
+    aspect-ratio:960 / 220;
+  }
+  .el-ad-tag-v2{
+    position:absolute !important;
+    top:12px !important;
+    left:12px !important;
+    z-index:2 !important;
+    background:rgba(0,0,0,.55) !important;
+    color:#fff !important;
+    font-size:10px !important;
+    font-weight:700 !important;
+    letter-spacing:.08em !important;
+    padding:3px 10px !important;
+    border-radius:999px !important;
+    line-height:1.6 !important;
+  }
+  .el-ad-image-v2{
+    position:absolute !important;
+    inset:0 !important;
+    background-size:cover !important;
+    background-position:center !important;
+    background-color:var(--el-teal, #2F8F82) !important;
+  }
+  .el-ad-cta-v2{
+    position:absolute !important;
+    right:16px !important;
+    bottom:16px !important;
+    z-index:2 !important;
+    box-shadow:0 3px 10px rgba(0,0,0,.25) !important;
+  }
+  .el-ad-sponsor-v2{
+    position:absolute !important;
+    left:12px !important;
+    bottom:10px !important;
+    z-index:2 !important;
+    font-size:11px !important;
+    color:rgba(255,255,255,.85) !important;
+    background:rgba(0,0,0,.35) !important;
+    padding:2px 9px !important;
+    border-radius:999px !important;
+  }
 </style>
 </head>
 <body data-site="community" data-root="..">
@@ -363,6 +443,13 @@
         </div>
 
         <div class="el-pagination" id="boardPagination" aria-label="ページネーション"></div>
+
+        <div class="el-ad-banner-v2" id="adBanner" style="margin-top:32px;">
+          <span class="el-ad-tag-v2">AD</span>
+          <div class="el-ad-image-v2" id="adImageV2"></div>
+          <a href="#" class="el-btn el-btn--primary el-btn--sm el-ad-cta-v2" id="adCtaV2">詳しく見る</a>
+          <span class="el-ad-sponsor-v2" id="adSponsorV2"></span>
+        </div>
 
       </div>
     </main>
@@ -641,12 +728,39 @@
       });
       visible.sort(function(a,b){ return sort==='new' ? (+b.dataset.recency)-(+a.dataset.recency) : (+b.dataset.views)-(+a.dataset.views); });
       rows.forEach(function(r){r.style.display='none';});
-      visible.slice(0,pageSize).forEach(function(r){container.appendChild(r);r.style.display='';});
+      var totalPages = Math.max(1, Math.ceil(visible.length / pageSize));
+      if (page > totalPages) page = totalPages;
+      var startIdx = (page - 1) * pageSize;
+      visible.slice(startIdx, startIdx + pageSize).forEach(function(r){container.appendChild(r);r.style.display='';});
       var result=document.getElementById('boardResultCount'); if(result) result.textContent=visible.length+'件';
+      renderPagination(totalPages);
       updateSummary('categorySummary',categories,CATEGORY_LABEL); updateSummary('tagSummary',tags,window.EL_TAG_LABELS || {}); renderBreadcrumb();
       var visEl=document.getElementById('visibilitySummary'); if(visEl) visEl.textContent = visibilityNames[filter] || 'すべて';
       var statEl=document.getElementById('statusSummary'); if(statEl) statEl.textContent = statusNames[status] || 'すべて';
       var sortEl=document.getElementById('sortSummary'); if(sortEl) sortEl.textContent = sortNames[sort] || '人気順';
+    }
+
+    function renderPagination(totalPages){
+      var el = document.getElementById('boardPagination');
+      if (!el) return;
+      if (totalPages <= 1) { el.innerHTML = ''; return; }
+      var html = '';
+      html += '<button type="button" data-page="' + Math.max(1, page - 1) + '"' + (page === 1 ? ' disabled' : '') + ' aria-label="前のページ">‹</button>';
+      for (var i = 1; i <= totalPages; i++) {
+        html += '<button type="button" data-page="' + i + '"' + (i === page ? ' class="is-active" aria-current="page"' : '') + '>' + i + '</button>';
+      }
+      html += '<button type="button" data-page="' + Math.min(totalPages, page + 1) + '"' + (page === totalPages ? ' disabled' : '') + ' aria-label="次のページ">›</button>';
+      el.innerHTML = html;
+      el.querySelectorAll('button[data-page]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          page = parseInt(btn.dataset.page, 10);
+          var p = new URLSearchParams(window.location.search);
+          if (page > 1) p.set('page', page); else p.delete('page');
+          history.replaceState(null, '', 'board.html' + (p.toString() ? '?' + p.toString() : ''));
+          renderList();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+      });
     }
 
     function navigate(changes){
