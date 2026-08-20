@@ -748,7 +748,7 @@
   });
 
   // コミュニティ詳細モーダル：カードをクリックすると開く
-  (function () {
+  document.addEventListener('DOMContentLoaded', function () {
     var GROUP_DETAILS = {
       'マーケット動向 情報交換会': {
         creator: '小林 恵子', category: '情報交換・雑談', color: 'var(--el-sky)',
@@ -851,7 +851,7 @@
         modal.setAttribute('aria-hidden', 'true');
       });
     });
-  })();
+  });
 
   // 検索結果からのキーワードをハイライトして該当箇所までスクロールする
   (function () {

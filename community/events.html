@@ -614,7 +614,7 @@
   })();
 
   // イベント詳細モーダル：カードをクリックすると開く（href="#"のカードのみ対象。実リンクは通常通り遷移）
-  (function () {
+  document.addEventListener('DOMContentLoaded', function () {
     var modal = document.getElementById('eventDetailModal');
     if (!modal) return;
 
@@ -659,7 +659,7 @@
     modal.querySelectorAll('[data-event-close]').forEach(function (el) {
       el.addEventListener('click', closeModal);
     });
-  })();
+  });
 
   // 検索結果からのキーワードをハイライトして該当箇所までスクロールする
   (function () {
