@@ -832,7 +832,7 @@
     })
       .then(function (res) { return res.json(); })
       .then(function (data) {
-        var ads = (data.ok && data.items) ? data.items : [];
+        var ads = ((data.ok && data.items) ? data.items : []).filter(function (a) { return (a.adType || 'banner') === 'banner'; });
         if (!ads.length) { renderMockAd(); return; }
         var ad = ads[Math.floor(Math.random() * ads.length)];
         if (ad.imageUrl) {

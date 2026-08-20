@@ -373,6 +373,20 @@
         <!-- 広告設定 -->
         <div class="el-admin-panel" data-panel="ads" style="display:none;">
           <form id="adForm" style="display:flex;flex-direction:column;gap:16px;max-width:520px;">
+            <div>
+              <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">広告の種類 <span style="color:#B9541F;font-weight:700;">必須</span></span>
+              <div style="display:flex;gap:10px;">
+                <label style="flex:1;display:flex;align-items:center;gap:8px;padding:12px 14px;border:1px solid var(--el-line-soft);border-radius:10px;cursor:pointer;">
+                  <input type="radio" name="adType" value="banner" checked>
+                  <span style="font-size:13.5px;font-weight:600;">横長バナー</span>
+                </label>
+                <label style="flex:1;display:flex;align-items:center;gap:8px;padding:12px 14px;border:1px solid var(--el-line-soft);border-radius:10px;cursor:pointer;">
+                  <input type="radio" name="adType" value="square">
+                  <span style="font-size:13.5px;font-weight:600;">スクエア（サイドバー）</span>
+                </label>
+              </div>
+              <div id="adTypeExplain" style="margin-top:10px;padding:12px 14px;background:var(--el-cream-deep);border-radius:10px;font-size:12.5px;color:var(--el-navy);line-height:1.7;"></div>
+            </div>
             <label>
               <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">サービス名</span>
               <input type="text" name="serviceName" required style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
@@ -382,7 +396,7 @@
               <textarea name="description" rows="3" required style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;resize:vertical;"></textarea>
             </label>
             <label>
-              <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">画像</span>
+              <span id="adImageLabel" style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">画像</span>
               <div style="display:flex;align-items:center;gap:14px;">
                 <div id="adImagePreview" style="width:96px;height:96px;border-radius:10px;background:var(--el-cream-deep);border:1px solid var(--el-line-soft);display:flex;align-items:center;justify-content:center;color:var(--el-ink-faint);font-size:11px;overflow:hidden;flex:none;">未設定</div>
                 <input type="file" id="adImageInput" accept="image/*" style="font-size:13px;">
@@ -400,7 +414,7 @@
           </form>
           <div style="margin-top:28px;">
             <h3 style="font-size:14px;margin:0 0 12px;">プレビュー</h3>
-            <div id="adPreview"></div>
+            <div id="adPreview" style="max-width:400px;"></div>
           </div>
           <div id="adList" style="margin-top:32px;"></div>
         </div>
@@ -1111,6 +1125,21 @@
   wireImageUpload(document.getElementById('adImageInput'), adImagePreview, function (dataUrl) { adImageDataUrl = dataUrl; updateAdPreviewFromForm(); });
 
   function renderAdPreview(ad) {
+    if (ad.adType === 'square') {
+      var sqBg = ad.imageUrl
+        ? 'background-image:url(' + ad.imageUrl + ');background-size:cover;background-position:center;'
+        : 'background:var(--el-teal);';
+      return '<div style="position:relative;border-radius:var(--el-radius-m);overflow:hidden;border:1px solid var(--el-line-soft);width:260px;">' +
+        '<div style="position:relative;height:150px;' + sqBg + '">' +
+        '<span style="position:absolute;top:10px;left:10px;background:rgba(0,0,0,.55);color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:999px;">AD</span>' +
+        '</div>' +
+        '<div style="padding:12px 14px;background:var(--el-paper);">' +
+        '<small style="display:block;font-size:11px;color:var(--el-ink-faint);">' + (ad.serviceName ? 'スポンサー：' + ad.serviceName : 'スポンサー名') + '</small>' +
+        '<strong style="display:block;font-size:14px;color:var(--el-navy);margin:2px 0 4px;">' + (ad.serviceName || 'サービス名') + '</strong>' +
+        '<span style="display:block;font-size:12px;color:var(--el-ink-faint);margin-bottom:10px;">' + (ad.description || 'サービス紹介文') + '</span>' +
+        '<span class="el-btn el-btn--primary el-btn--sm" style="display:inline-block;">' + (ad.ctaText || '詳しく見る') + '</span>' +
+        '</div></div>';
+    }
     var bg = ad.imageUrl
       ? 'background-image:url(' + ad.imageUrl + ');background-size:cover;background-position:center;'
       : 'background:var(--el-teal);';
@@ -1121,9 +1150,21 @@
       '</div>';
   }
 
+  var AD_TYPE_INFO = {
+    banner: '<strong>表示場所：</strong>サイトTOP・トピック詳細ページの上部（横長バナー）<br><strong>推奨画像サイズ：</strong>960 × 220px（アスペクト比 約4.4:1）。この比率からずれる画像は、左右または上下がトリミングされます。',
+    square: '<strong>表示場所：</strong>新規トピック投稿画面のサイドバー（正方形に近いカード型）<br><strong>推奨画像サイズ：</strong>520 × 300px（アスペクト比 約1.7:1）。カード上部の画像エリアに表示され、下にサービス名・紹介文・CTAボタンが続きます。'
+  };
+  function updateAdTypeExplain() {
+    var type = adForm.querySelector('input[name="adType"]:checked').value;
+    document.getElementById('adTypeExplain').innerHTML = AD_TYPE_INFO[type];
+    document.getElementById('adImageLabel').textContent = type === 'square' ? '画像（推奨 520×300px）' : '画像（推奨 960×220px）';
+  }
+  adForm.querySelectorAll('input[name="adType"]').forEach(function (r) { r.addEventListener('change', function () { updateAdTypeExplain(); updateAdPreviewFromForm(); }); });
+  updateAdTypeExplain();
+
   function updateAdPreviewFromForm() {
     var fd = new FormData(adForm);
-    var ad = { serviceName: fd.get('serviceName'), description: fd.get('description'), imageUrl: adImageDataUrl, ctaText: fd.get('ctaText') };
+    var ad = { adType: fd.get('adType'), serviceName: fd.get('serviceName'), description: fd.get('description'), imageUrl: adImageDataUrl, ctaText: fd.get('ctaText') };
     adPreview.innerHTML = renderAdPreview(ad);
   }
   adForm.addEventListener('input', updateAdPreviewFromForm);
@@ -1142,13 +1183,13 @@
     var fd = new FormData(adForm);
     apiPost({
       action: 'createContent', type: 'ad',
-      serviceName: fd.get('serviceName'), description: fd.get('description'),
+      adType: fd.get('adType'), serviceName: fd.get('serviceName'), description: fd.get('description'),
       imageUrl: adImageDataUrl, ctaText: fd.get('ctaText'), ctaUrl: fd.get('ctaUrl')
     }).then(function (data) {
       if (data.ok) {
         alert('広告を登録しました。'); adForm.reset();
         adImageDataUrl = ''; adImagePreview.innerHTML = '未設定';
-        updateAdPreviewFromForm(); loadAds();
+        updateAdTypeExplain(); updateAdPreviewFromForm(); loadAds();
       } else alert(data.error || '登録に失敗しました');
     }).catch(function () { alert('通信エラーが発生しました。'); });
   });
