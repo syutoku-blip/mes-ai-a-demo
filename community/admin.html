@@ -1111,15 +1111,13 @@
   wireImageUpload(document.getElementById('adImageInput'), adImagePreview, function (dataUrl) { adImageDataUrl = dataUrl; updateAdPreviewFromForm(); });
 
   function renderAdPreview(ad) {
-    var img = ad.imageUrl
-      ? '<img src="' + ad.imageUrl + '" style="width:100%;height:100%;object-fit:cover;">'
-      : '';
-    return '<div style="display:flex;align-items:center;gap:16px;padding:16px 20px;background:var(--el-cream-deep);border:1px dashed var(--el-mustard-deep);border-radius:var(--el-radius-m);position:relative;">' +
-      '<span style="position:absolute;top:-10px;left:18px;background:var(--el-mustard-deep);color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:999px;">AD</span>' +
-      '<div style="width:64px;height:64px;border-radius:14px;overflow:hidden;flex:none;background:var(--el-teal);box-shadow:0 4px 10px rgba(22,35,63,.12);">' + img + '</div>' +
-      '<div style="flex:1;min-width:0;"><strong style="display:block;font-size:15px;color:var(--el-navy);">' + (ad.serviceName || 'サービス名') + '</strong>' +
-      '<span style="display:block;font-size:12.5px;color:var(--el-ink-faint);margin-top:2px;">' + (ad.description || 'サービス紹介文') + '</span></div>' +
-      '<span class="el-btn el-btn--ghost el-btn--sm" style="flex:none;">' + (ad.ctaText || '詳しく見る') + '</span>' +
+    var bg = ad.imageUrl
+      ? 'background-image:url(' + ad.imageUrl + ');background-size:cover;background-position:center;'
+      : 'background:var(--el-teal);';
+    return '<div style="position:relative;border-radius:var(--el-radius-m);overflow:hidden;aspect-ratio:960/220;' + bg + '">' +
+      '<span style="position:absolute;top:12px;left:12px;background:rgba(0,0,0,.55);color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:999px;">AD</span>' +
+      '<span style="position:absolute;right:16px;bottom:16px;box-shadow:0 3px 10px rgba(0,0,0,.25);" class="el-btn el-btn--primary el-btn--sm">' + (ad.ctaText || '詳しく見る') + '</span>' +
+      '<span style="position:absolute;left:12px;bottom:10px;font-size:11px;color:rgba(255,255,255,.85);background:rgba(0,0,0,.35);padding:2px 9px;border-radius:999px;">スポンサー：' + (ad.serviceName || 'サービス名') + '</span>' +
       '</div>';
   }
 
