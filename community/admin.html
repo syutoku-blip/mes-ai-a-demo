@@ -392,10 +392,6 @@
               <input type="text" name="serviceName" required style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
             </label>
             <label>
-              <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">サービス紹介文</span>
-              <textarea name="description" rows="3" required style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;resize:vertical;"></textarea>
-            </label>
-            <label>
               <span id="adImageLabel" style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">画像</span>
               <div style="display:flex;align-items:center;gap:14px;">
                 <div id="adImagePreview" style="width:96px;height:96px;border-radius:10px;background:var(--el-cream-deep);border:1px solid var(--el-line-soft);display:flex;align-items:center;justify-content:center;color:var(--el-ink-faint);font-size:11px;overflow:hidden;flex:none;">未設定</div>
@@ -1135,8 +1131,7 @@
         '</div>' +
         '<div style="padding:12px 14px;background:var(--el-paper);">' +
         '<small style="display:block;font-size:11px;color:var(--el-ink-faint);">' + (ad.serviceName ? 'スポンサー：' + ad.serviceName : 'スポンサー名') + '</small>' +
-        '<strong style="display:block;font-size:14px;color:var(--el-navy);margin:2px 0 4px;">' + (ad.serviceName || 'サービス名') + '</strong>' +
-        '<span style="display:block;font-size:12px;color:var(--el-ink-faint);margin-bottom:10px;">' + (ad.description || 'サービス紹介文') + '</span>' +
+        '<strong style="display:block;font-size:14px;color:var(--el-navy);margin:2px 0 10px;">' + (ad.serviceName || 'サービス名') + '</strong>' +
         '<span class="el-btn el-btn--primary el-btn--sm" style="display:inline-block;">' + (ad.ctaText || '詳しく見る') + '</span>' +
         '</div></div>';
     }
@@ -1164,7 +1159,7 @@
 
   function updateAdPreviewFromForm() {
     var fd = new FormData(adForm);
-    var ad = { adType: fd.get('adType'), serviceName: fd.get('serviceName'), description: fd.get('description'), imageUrl: adImageDataUrl, ctaText: fd.get('ctaText') };
+    var ad = { adType: fd.get('adType'), serviceName: fd.get('serviceName'), imageUrl: adImageDataUrl, ctaText: fd.get('ctaText') };
     adPreview.innerHTML = renderAdPreview(ad);
   }
   adForm.addEventListener('input', updateAdPreviewFromForm);
@@ -1183,7 +1178,7 @@
     var fd = new FormData(adForm);
     apiPost({
       action: 'createContent', type: 'ad',
-      adType: fd.get('adType'), serviceName: fd.get('serviceName'), description: fd.get('description'),
+      adType: fd.get('adType'), serviceName: fd.get('serviceName'),
       imageUrl: adImageDataUrl, ctaText: fd.get('ctaText'), ctaUrl: fd.get('ctaUrl')
     }).then(function (data) {
       if (data.ok) {
