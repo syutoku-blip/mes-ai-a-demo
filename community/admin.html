@@ -1126,12 +1126,11 @@
         ? 'background-image:url(' + ad.imageUrl + ');background-size:cover;background-position:center;'
         : 'background:var(--el-teal);';
       return '<div style="position:relative;border-radius:var(--el-radius-m);overflow:hidden;border:1px solid var(--el-line-soft);width:260px;">' +
-        '<div style="position:relative;height:150px;' + sqBg + '">' +
+        '<div style="position:relative;height:190px;' + sqBg + '">' +
         '<span style="position:absolute;top:10px;left:10px;background:rgba(0,0,0,.55);color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:999px;">AD</span>' +
         '</div>' +
         '<div style="padding:12px 14px;background:var(--el-paper);">' +
-        '<small style="display:block;font-size:11px;color:var(--el-ink-faint);">' + (ad.serviceName ? 'スポンサー：' + ad.serviceName : 'スポンサー名') + '</small>' +
-        '<strong style="display:block;font-size:14px;color:var(--el-navy);margin:2px 0 10px;">' + (ad.serviceName || 'サービス名') + '</strong>' +
+        '<small style="display:block;font-size:11px;color:var(--el-ink-faint);margin-bottom:10px;">' + (ad.serviceName ? 'スポンサー：' + ad.serviceName : 'スポンサー名') + '</small>' +
         '<span class="el-btn el-btn--primary el-btn--sm" style="display:inline-block;">' + (ad.ctaText || '詳しく見る') + '</span>' +
         '</div></div>';
     }

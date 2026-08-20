@@ -466,7 +466,6 @@
               </div>
               <div class="el-display-ad-copy">
                 <small id="composeDisplayAdSmall">WorldShift</small>
-                <strong id="composeDisplayAdTitle">FDA Compliance Partner</strong>
               </div>
               <span class="el-display-ad-cta" id="composeDisplayAdCta">詳しく見る</span>
             </a>
@@ -1413,8 +1412,7 @@
         var ad = ads[Math.floor(Math.random() * ads.length)];
         var art = document.getElementById('composeDisplayAdArt');
         if (ad.imageUrl) art.innerHTML = '<img src="' + ad.imageUrl + '" style="width:100%;height:100%;object-fit:cover;">';
-        document.getElementById('composeDisplayAdSmall').textContent = 'スポンサー';
-        document.getElementById('composeDisplayAdTitle').textContent = ad.serviceName || '';
+        document.getElementById('composeDisplayAdSmall').textContent = 'スポンサー：' + (ad.serviceName || '');
         document.getElementById('composeDisplayAdCta').textContent = ad.ctaText || '詳しく見る';
         if (ad.ctaUrl) document.getElementById('composeDisplayAd').href = ad.ctaUrl;
       })
