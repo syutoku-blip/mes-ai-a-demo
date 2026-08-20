@@ -289,6 +289,29 @@
   .el-side-tradewatch-more svg{
     flex:none;
   }
+
+  /* ベストアンサー */
+  .el-post--best{
+    background:#FFFBEA !important;
+    border:1px solid var(--el-mustard-deep, #B9812A) !important;
+  }
+  .el-best-answer-mark{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    font-size:12px;
+    font-weight:700;
+    color:#8A5E1A;
+    background:#FCECC4;
+    padding:3px 10px;
+    border-radius:999px;
+    margin-bottom:8px;
+  }
+  .el-best-answer-btn{
+    margin-left:auto !important;
+    color:var(--el-mustard-deep, #B9812A) !important;
+    font-weight:700 !important;
+  }
 </style>
 </head>
 <body data-site="community" data-root="..">
@@ -607,17 +630,38 @@
     var bc = document.getElementById('topicBreadcrumbCat'); if (bc) bc.textContent = catLabel;
     var titleEl = document.getElementById('topicTitle'); if (titleEl) titleEl.textContent = t.title;
 
-    var badges = document.getElementById('topicBadges');
-    if (badges) {
+    // ベストアンサー：投稿者だけが設定でき、設定するとトピックが解決済み扱いになる。
+    // 実データベースが無いため、このブラウザ内（localStorage）に保存する。
+    var BEST_ANSWER_KEY = 'el-best-answer-' + t.id;
+    function getBestAnswerIndex() {
+      var v = null;
+      try { v = localStorage.getItem(BEST_ANSWER_KEY); } catch (e) {}
+      return v === null ? null : parseInt(v, 10);
+    }
+    function setBestAnswerIndex(idx) {
+      try {
+        if (idx === null) localStorage.removeItem(BEST_ANSWER_KEY);
+        else localStorage.setItem(BEST_ANSWER_KEY, String(idx));
+      } catch (e) {}
+    }
+    function isEffectivelySolved() {
+      return getBestAnswerIndex() !== null || t.status === 'solved';
+    }
+
+    function renderStatusBadge() {
+      var badges = document.getElementById('topicBadges');
+      if (!badges) return;
       var visBadge = (t.visibility === 'shift')
         ? '<a href="board.html?filter=shift&sort=hot" class="badge badge--member">SHiFT限定</a>'
         : (t.visibility === 'member')
           ? '<a href="board.html?filter=general&sort=hot" class="badge badge--restricted">メンバー限定</a>'
           : '<a href="board.html?filter=general&sort=hot" class="badge badge--open">公開</a>';
-      var statusBadge = t.status === 'solved' ? '<a href="board.html?filter=solved&sort=hot" class="badge badge--solved">解決</a>'
-        : t.status === 'unsolved' ? '<a href="board.html?status=unsolved&sort=hot" class="badge badge--unsolved">未解決</a>' : '';
+      var solved = isEffectivelySolved();
+      var statusBadge = solved ? '<a href="board.html?filter=solved&sort=hot" class="badge badge--solved">解決</a>'
+        : '<a href="board.html?status=unsolved&sort=hot" class="badge badge--unsolved">未解決</a>';
       badges.innerHTML = visBadge + '<a href="board.html?category=' + t.category + '&sort=hot" class="badge badge--cat">' + catLabel + '</a>' + statusBadge;
     }
+    renderStatusBadge();
 
     function fmtDate(d) {
       var parts = d.split('-');
@@ -672,21 +716,75 @@
 
     var list = document.getElementById('commentsList');
     if (list) {
-      list.innerHTML = comments.map(function (c, i) {
-        var profileUrl = 'profile.html?user=' + encodeURIComponent(c.user);
-        return '<article class="el-post" id="c' + (i + 1) + '" data-reply-to="' + (c.replyTo || 'op') + '">' +
-          '<a href="' + profileUrl + '" class="el-avatar" style="text-decoration:none;">' + c.user.charAt(0) + '</a>' +
-          '<div>' +
-            '<div class="el-reply-tag-slot"></div>' +
-            '<div class="el-post-head"><a href="' + profileUrl + '" class="name" style="color:inherit;text-decoration:none;">' + c.user + '</a><span class="time">' + fmtDate(c.date) + '</span></div>' +
-            '<div class="el-post-body"><p>' + c.body + '</p></div>' +
-            '<div class="el-post-actions">' +
-              '<button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14Z"/></svg> ' + (2 + i) + '</button>' +
-              '<button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H4l2.4-3.6A8.5 8.5 0 1 1 21 11.5Z"/></svg> 返信</button>' +
+      var currentUsername = '';
+      try { currentUsername = localStorage.getItem('el-username') || ''; } catch (e) {}
+      var isOp = !!t.author && currentUsername === t.author;
+      var bestIdx = getBestAnswerIndex();
+
+      function wireReplyTagsForComments() {
+        document.querySelectorAll('.el-post[data-reply-to]').forEach(function (post) {
+          var slot = post.querySelector('.el-reply-tag-slot');
+          var targetId = post.dataset.replyTo;
+          var target = document.getElementById(targetId);
+          if (!slot || !target) return;
+          slot.innerHTML = '';
+          var targetName = target.querySelector('.name');
+          var name = targetName ? targetName.textContent.trim() : '';
+          var tag = document.createElement('a');
+          tag.href = '#' + targetId;
+          tag.className = 'el-reply-tag';
+          tag.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 5 5v6"/></svg>返信 <strong>' + name + '</strong>';
+          tag.addEventListener('click', function (e) {
+            e.preventDefault();
+            target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            target.classList.remove('is-highlighted');
+            void target.offsetWidth;
+            target.classList.add('is-highlighted');
+          });
+          slot.appendChild(tag);
+        });
+      }
+
+      function renderComments() {
+        bestIdx = getBestAnswerIndex();
+        list.innerHTML = comments.map(function (c, i) {
+          var profileUrl = 'profile.html?user=' + encodeURIComponent(c.user);
+          var isBest = bestIdx === i;
+          var bestMark = isBest
+            ? '<div class="el-best-answer-mark"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg> ベストアンサー</div>'
+            : '';
+          var bestBtn = isOp
+            ? '<button class="el-best-answer-btn" data-best-index="' + i + '">' + (isBest ? 'ベストアンサーを取り消す' : 'ベストアンサーにする') + '</button>'
+            : '';
+          return '<article class="el-post' + (isBest ? ' el-post--best' : '') + '" id="c' + (i + 1) + '" data-reply-to="' + (c.replyTo || 'op') + '">' +
+            '<a href="' + profileUrl + '" class="el-avatar" style="text-decoration:none;">' + c.user.charAt(0) + '</a>' +
+            '<div>' +
+              '<div class="el-reply-tag-slot"></div>' +
+              bestMark +
+              '<div class="el-post-head"><a href="' + profileUrl + '" class="name" style="color:inherit;text-decoration:none;">' + c.user + '</a><span class="time">' + fmtDate(c.date) + '</span></div>' +
+              '<div class="el-post-body"><p>' + c.body + '</p></div>' +
+              '<div class="el-post-actions">' +
+                '<button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14Z"/></svg> ' + (2 + i) + '</button>' +
+                '<button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H4l2.4-3.6A8.5 8.5 0 1 1 21 11.5Z"/></svg> 返信</button>' +
+                bestBtn +
+              '</div>' +
             '</div>' +
-          '</div>' +
-        '</article>';
-      }).join('');
+          '</article>';
+        }).join('');
+        wireReplyTagsForComments();
+      }
+
+      list.addEventListener('click', function (e) {
+        var btn = e.target.closest('.el-best-answer-btn');
+        if (!btn) return;
+        var idx = parseInt(btn.dataset.bestIndex, 10);
+        var current = getBestAnswerIndex();
+        setBestAnswerIndex(current === idx ? null : idx);
+        renderComments();
+        renderStatusBadge();
+      });
+
+      renderComments();
     }
   })();
 </script>
@@ -1128,29 +1226,6 @@
     });
   })();
 
-  // 各コメントに「誰への返信か」を常時表示する矢印タグ
-  (function () {
-    document.querySelectorAll('.el-post[data-reply-to]').forEach(function (post) {
-      var slot = post.querySelector('.el-reply-tag-slot');
-      var targetId = post.dataset.replyTo;
-      var target = document.getElementById(targetId);
-      if (!slot || !target) return;
-      var targetName = target.querySelector('.name');
-      var name = targetName ? targetName.textContent.trim() : '';
-      var tag = document.createElement('a');
-      tag.href = '#' + targetId;
-      tag.className = 'el-reply-tag';
-      tag.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 5 5v6"/></svg>返信 <strong>' + name + '</strong>';
-      tag.addEventListener('click', function (e) {
-        e.preventDefault();
-        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        target.classList.remove('is-highlighted');
-        void target.offsetWidth;
-        target.classList.add('is-highlighted');
-      });
-      slot.appendChild(tag);
-    });
-  })();
   // ユーザーモード（ゲスト／登録ユーザー／管理者）の切り替えと共通ゲート処理
   // Googleドライブの共有リンクを、<img>で直接表示できる形式のURLに変換する
   function elDriveImgUrl(url) {

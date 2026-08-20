@@ -512,13 +512,18 @@
       try { return JSON.parse(localStorage.getItem('el-user-topics') || '[]'); } catch (e) { return []; }
     }
 
+    function isLocallySolved(topicId) {
+      try { return localStorage.getItem('el-best-answer-' + topicId) !== null; } catch (e) { return false; }
+    }
+
     function buildRow(t){
       var a = document.createElement('a');
       a.href = 'topic.html?id=' + t.id;
       a.className = 'el-t-row';
       a.dataset.category = t.category;
       a.dataset.visibility = t.visibility || 'general';
-      a.dataset.status = t.status || '';
+      var effectiveSolved = t.status === 'solved' || isLocallySolved(t.id);
+      a.dataset.status = effectiveSolved ? 'solved' : 'unsolved';
       a.dataset.views = t.views || 0;
       a.dataset.recency = t.recency != null ? t.recency : 0;
       a.dataset.tags = (t.tags || []).join(' ');
@@ -528,8 +533,8 @@
         : (t.visibility === 'member')
           ? '<span class="badge badge--restricted">メンバー限定</span>'
           : '<span class="badge badge--open">公開</span>';
-      var statusBadge = t.status === 'solved' ? '<span class="badge badge--solved">解決</span>'
-        : t.status === 'unsolved' ? '<span class="badge badge--unsolved">未解決</span>' : '';
+      var statusBadge = effectiveSolved ? '<span class="badge badge--solved">解決</span>'
+        : '<span class="badge badge--unsolved">未解決</span>';
       var catLabel = CATEGORY_LABEL[t.category] || t.category;
 
       a.innerHTML =
