@@ -157,6 +157,17 @@
   .el-footer-cols a{ color:var(--el-ink-faint, #8A8478) !important; }
   .el-footer-cols h6{ color:var(--el-navy, #16233F) !important; }
   .el-footer-bottom{ color:var(--el-ink-faint, #8A8478) !important; border-top-color:var(--el-line-soft, #E5DFD2) !important; }
+  .el-event-thumb{ position:relative !important; }
+  .el-event-date-tag{
+    position:absolute !important;
+    top:10px !important;
+    left:10px !important;
+    right:auto !important;
+    bottom:auto !important;
+    margin:0 !important;
+    transform:none !important;
+  }
+  .el-event-card{ cursor:pointer !important; }
 </style>
 </head>
 <body data-site="community" data-root="..">
@@ -456,7 +467,7 @@
   function elDriveImgUrl(url) {
     if (!url) return url;
     var m = url.match(/drive\.google\.com\/file\/d\/([^/]+)/) || url.match(/[?&]id=([^&]+)/);
-    if (m && m[1]) return 'https://drive.google.com/uc?export=view&id=' + m[1];
+    if (m && m[1]) return 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w1000';
     return url;
   }
   window.elDriveImgUrl = elDriveImgUrl;
@@ -601,6 +612,55 @@
       })
       .catch(function () {});
   })();
+
+  // イベント詳細モーダル：カードをクリックすると開く（href="#"のカードのみ対象。実リンクは通常通り遷移）
+  (function () {
+    var modal = document.getElementById('eventDetailModal');
+    if (!modal) return;
+
+    function closeModal() {
+      modal.classList.remove('is-open');
+      modal.setAttribute('aria-hidden', 'true');
+    }
+
+    document.addEventListener('click', function (e) {
+      var card = e.target.closest('.el-event-card');
+      if (!card) return;
+      if (card.getAttribute('href') !== '#') return; // 実際のリンク先があるカードはそのまま遷移させる
+      e.preventDefault();
+
+      var title = (card.querySelector('h3') || {}).textContent || '';
+      var meta = (card.querySelector('.meta') || {}).textContent || '';
+      var desc = (card.querySelector('p') || {}).textContent || '';
+      var badgeEl = card.querySelector('.badge');
+      var thumbEl = card.querySelector('.el-event-thumb');
+
+      document.getElementById('edmTitle').textContent = title;
+      document.getElementById('edmMeta').textContent = meta;
+      document.getElementById('edmDesc').textContent = desc;
+      var badgeOut = document.getElementById('edmBadge');
+      badgeOut.className = badgeEl ? badgeEl.className : 'badge badge--open';
+      badgeOut.textContent = badgeEl ? badgeEl.textContent : '公開';
+
+      var thumbOut = document.getElementById('edmThumb');
+      thumbOut.innerHTML = '';
+      thumbOut.style.background = thumbEl ? thumbEl.style.background : 'var(--el-teal)';
+      var img = thumbEl && thumbEl.querySelector('img');
+      if (img) {
+        var clone = img.cloneNode(true);
+        clone.style.cssText = 'width:100%;height:100%;object-fit:cover;position:absolute;inset:0;';
+        thumbOut.appendChild(clone);
+      }
+
+      modal.classList.add('is-open');
+      modal.setAttribute('aria-hidden', 'false');
+    });
+
+    modal.querySelectorAll('[data-event-close]').forEach(function (el) {
+      el.addEventListener('click', closeModal);
+    });
+  })();
+
   // 検索結果からのキーワードをハイライトして該当箇所までスクロールする
   (function () {
     var params = new URLSearchParams(window.location.search);
@@ -668,6 +728,26 @@
     <div class="el-auth-modal-actions">
       <a href="#" class="el-btn el-btn--primary el-btn--sm">SHiFT会員について見る</a>
       <button type="button" class="el-btn el-btn--ghost el-btn--sm" data-shift-close>閉じる</button>
+    </div>
+  </div>
+</div>
+
+<div class="el-auth-modal" id="eventDetailModal" aria-hidden="true">
+  <div class="el-auth-modal-backdrop" data-event-close></div>
+  <div class="el-auth-modal-panel" role="dialog" aria-modal="true" style="max-width:480px;text-align:left;padding:0;overflow:hidden;">
+    <button type="button" class="el-auth-modal-close" data-event-close aria-label="閉じる" style="z-index:2;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <div id="edmThumb" style="height:150px;position:relative;background:var(--el-teal);"></div>
+    <div style="padding:24px;">
+      <span id="edmBadge" class="badge badge--open" style="margin-bottom:8px;display:inline-block;"></span>
+      <h3 id="edmTitle" style="margin:0 0 8px;font-size:18px;"></h3>
+      <div id="edmMeta" style="font-size:13px;color:var(--el-ink-faint);margin-bottom:16px;"></div>
+      <p id="edmDesc" style="font-size:14px;color:var(--el-navy);line-height:1.8;margin:0 0 20px;"></p>
+      <div class="el-auth-modal-actions">
+        <a href="#" id="edmApplyBtn" class="el-btn el-btn--primary el-btn--sm">詳細・申込</a>
+        <button type="button" class="el-btn el-btn--ghost el-btn--sm" data-event-close>閉じる</button>
+      </div>
     </div>
   </div>
 </div>

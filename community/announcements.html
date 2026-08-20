@@ -365,7 +365,7 @@
   function elDriveImgUrl(url) {
     if (!url) return url;
     var m = url.match(/drive\.google\.com\/file\/d\/([^/]+)/) || url.match(/[?&]id=([^&]+)/);
-    if (m && m[1]) return 'https://drive.google.com/uc?export=view&id=' + m[1];
+    if (m && m[1]) return 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w1000';
     return url;
   }
   window.elDriveImgUrl = elDriveImgUrl;
