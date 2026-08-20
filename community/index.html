@@ -147,6 +147,53 @@
   .el-footer-cols a{ color:var(--el-ink-faint, #8A8478) !important; }
   .el-footer-cols h6{ color:var(--el-navy, #16233F) !important; }
   .el-footer-bottom{ color:var(--el-ink-faint, #8A8478) !important; border-top-color:var(--el-line-soft, #E5DFD2) !important; }
+
+  /* WorldShift Trade Watch ニュースカード（ホーム画面） */
+  .el-news-grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:18px;
+  }
+  @media (max-width:820px){
+    .el-news-grid{ grid-template-columns:1fr; }
+  }
+  .el-news-card{
+    display:block;
+    background:var(--el-paper, #fff);
+    border:1px solid var(--el-line-soft, #E5DFD2);
+    border-radius:var(--el-radius-m, 14px);
+    overflow:hidden;
+    text-decoration:none;
+  }
+  .el-news-card .thumb{
+    height:120px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .el-news-card .body{
+    padding:14px 16px;
+  }
+  .el-news-card .date{
+    display:block;
+    font-size:11.5px;
+    color:var(--el-ink-faint, #8A8478);
+    margin-bottom:4px;
+  }
+  .el-news-card h4{
+    margin:0 0 8px;
+    font-size:14.5px;
+    line-height:1.5;
+    color:var(--el-navy, #16233F);
+  }
+  .el-news-card .ext{
+    display:inline-flex;
+    align-items:center;
+    gap:4px;
+    font-size:11.5px;
+    font-weight:700;
+    color:var(--el-teal-deep, #1E6F63);
+  }
 </style>
 </head>
 <body data-site="community" data-root="..">
@@ -493,6 +540,53 @@
                 <button class="el-btn el-btn--primary el-btn--sm">参加する</button>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="el-section" style="border-top:1px solid var(--el-line); padding-top:48px;">
+        <div class="wrap">
+          <div class="el-section-head">
+            <div>
+              <h2>WorldShift Trade Watch</h2>
+              <div class="sub">米国輸出の最新ニュースをまとめてお届け</div>
+            </div>
+            <a href="https://news.worldshift-inc.jp/index.html" target="_blank" rel="noopener" class="el-btn el-btn--ghost el-btn--sm">
+              サイトで見る
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:4px;vertical-align:-1px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg>
+            </a>
+          </div>
+          <div class="el-news-grid" id="homeNewsGrid">
+            <a href="https://news.worldshift-inc.jp/articles/reciprocal-tariff-update" target="_blank" rel="noopener" class="el-news-card">
+              <div class="thumb" style="background:linear-gradient(135deg,#2F6FA3,#1B3E5C);">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><path d="M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20Z"/><path d="M2 12h20"/></svg>
+              </div>
+              <div class="body">
+                <span class="date">2026年8月18日</span>
+                <h4>相互関税の運用見直し、実務への影響を解説</h4>
+                <span class="ext">外部サイトへ <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg></span>
+              </div>
+            </a>
+            <a href="https://news.worldshift-inc.jp/articles/fda-facility-renewal-2026" target="_blank" rel="noopener" class="el-news-card">
+              <div class="thumb" style="background:linear-gradient(135deg,#3E8E63,#1F5C3E);">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+              </div>
+              <div class="body">
+                <span class="date">2026年8月14日</span>
+                <h4>FDA施設登録、2026年更新シーズンの注意点</h4>
+                <span class="ext">外部サイトへ <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg></span>
+              </div>
+            </a>
+            <a href="https://news.worldshift-inc.jp/articles/amazon-fba-fee-2026h2" target="_blank" rel="noopener" class="el-news-card">
+              <div class="thumb" style="background:linear-gradient(135deg,#B9812A,#8A5E1A);">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+              </div>
+              <div class="body">
+                <span class="date">2026年8月10日</span>
+                <h4>Amazon FBA手数料、2026年下期の改定ポイント</h4>
+                <span class="ext">外部サイトへ <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg></span>
+              </div>
+            </a>
           </div>
         </div>
       </section>
