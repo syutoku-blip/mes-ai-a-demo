@@ -3,288 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FDA施設登録、2年更新のタイミングと注意点｜Export Lab</title>
+<title id="pageTitle">トピック｜Export Lab</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&family=Noto+Sans+JP:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="../shared/global-header.css">
-<style>
-  /* 検索ボックス：input要素の初期スタイル（黒枠など）を消して馴染ませる */
-  .el-search input[type="search"]{
-    border:none !important;
-    outline:none !important;
-    background:transparent !important;
-    box-shadow:none !important;
-    -webkit-appearance:none !important;
-    appearance:none !important;
-    font:inherit !important;
-    color:inherit !important;
-    padding:0 !important;
-    margin:0 !important;
-    width:100%;
-  }
-  .el-search input[type="search"]::-webkit-search-cancel-button{
-    -webkit-appearance:none;
-    display:none;
-  }
-  /* 広告バナー：横長の画像1枚を全面に表示し、CTAボタンとスポンサー表記を重ねる */
-  .el-ad-banner-v2{
-    position:relative !important;
-    display:block !important;
-    width:100% !important;
-    border-radius:var(--el-radius-m, 14px) !important;
-    overflow:hidden !important;
-    background:var(--el-cream-deep, #FBF3E3) !important;
-    aspect-ratio:960 / 220;
-    max-height:200px !important;
-  }
-  .el-ad-tag-v2{
-    position:absolute !important;
-    top:12px !important;
-    left:12px !important;
-    z-index:2 !important;
-    background:rgba(0,0,0,.55) !important;
-    color:#fff !important;
-    font-size:10px !important;
-    font-weight:700 !important;
-    letter-spacing:.08em !important;
-    padding:3px 10px !important;
-    border-radius:999px !important;
-    line-height:1.6 !important;
-  }
-  .el-ad-image-v2{
-    position:absolute !important;
-    inset:0 !important;
-    background-size:cover !important;
-    background-position:center !important;
-    background-color:var(--el-teal, #2F8F82) !important;
-  }
-  .el-ad-cta-v2{
-    position:absolute !important;
-    right:16px !important;
-    bottom:16px !important;
-    z-index:2 !important;
-    box-shadow:0 3px 10px rgba(0,0,0,.25) !important;
-  }
-  .el-ad-sponsor-v2{
-    position:absolute !important;
-    left:12px !important;
-    bottom:10px !important;
-    z-index:2 !important;
-    font-size:11px !important;
-    color:rgba(255,255,255,.85) !important;
-    background:rgba(0,0,0,.35) !important;
-    padding:2px 9px !important;
-    border-radius:999px !important;
-  }
-  .el-auth-modal{
-    display:none;
-    position:fixed;
-    inset:0;
-    z-index:900;
-    align-items:center;
-    justify-content:center;
-  }
-  .el-auth-modal.is-open{ display:flex; }
-  .el-auth-modal-backdrop{
-    position:absolute;
-    inset:0;
-    background:rgba(22,35,63,.45);
-  }
-  .el-auth-modal-panel{
-    position:relative;
-    background:#fff;
-    border-radius:var(--el-radius-m, 14px);
-    padding:28px 26px;
-    max-width:340px;
-    width:90%;
-    text-align:center;
-    box-shadow:0 12px 40px rgba(22,35,63,.25);
-  }
-  .el-auth-modal-panel h3{
-    margin:0 0 10px;
-    font-size:17px;
-    color:var(--el-navy, #16233F);
-  }
-  .el-auth-modal-panel p{
-    margin:0 0 20px;
-    font-size:13px;
-    color:var(--el-ink-faint, #8A8478);
-    line-height:1.7;
-  }
-  .el-auth-modal-actions{
-    display:flex;
-    gap:8px;
-    justify-content:center;
-  }
-  .el-auth-modal-close{
-    position:absolute;
-    top:10px;
-    right:10px;
-    border:none;
-    background:transparent;
-    cursor:pointer;
-    color:var(--el-ink-faint, #8A8478);
-    padding:4px;
-  }
-  [data-guest-hide]{ display:none !important; }
-  /* 投稿本文中のリンクを一目でわかるようにする */
-  .el-post-body a{
-    color:var(--el-teal-deep, #1E6F63) !important;
-    text-decoration:underline !important;
-  }
-  /* 閲覧権限がない本文・コメントへのモザイク表示 */
-  .el-content-mosaic{
-    filter:blur(6px) !important;
-    user-select:none !important;
-    pointer-events:none !important;
-  }
-  .el-gated{ position:relative !important; }
-  .el-gate-overlay{
-    position:sticky !important;
-    bottom:12px !important;
-    margin:20px 0 !important;
-    background:var(--el-paper, #fff) !important;
-    border:1px solid var(--el-line-soft, #E5DFD2) !important;
-    box-shadow:0 6px 24px rgba(22,35,63,.14) !important;
-    padding:26px 24px !important;
-    text-align:center !important;
-    border-radius:var(--el-radius-m, 14px) !important;
-  }
-  .el-gate-overlay h3{ margin:0 0 8px !important; color:var(--el-navy, #16233F) !important; font-size:16px !important; }
-  .el-gate-overlay p{ margin:0 0 14px !important; color:var(--el-ink-faint, #8A8478) !important; font-size:13px !important; line-height:1.7 !important; }
-  /* ヘッダーの新規登録／ログイン／ログアウトボタン：背景色に関わらず文字が見えるよう、
-     透過ではなく塗りのボタンにする */
-  #headerAuthLinks .el-btn, #headerSignupLink.el-btn, #headerLoginLink.el-btn{
-    color:#fff !important;
-    background:var(--el-navy, #16233F) !important;
-    border:1px solid var(--el-navy, #16233F) !important;
-  }
-  #headerAuthLinks .el-btn:hover, #headerSignupLink.el-btn:hover, #headerLoginLink.el-btn:hover{
-    background:var(--el-teal-deep, #1E6F63) !important;
-    border-color:var(--el-teal-deep, #1E6F63) !important;
-  }
-  /* フッターの背景色が正しく当たらない場合の保険（文字が背景と同化して見えなくなるのを防ぐ） */
-  .el-footer{ background:#EDE4D0 !important; border-top:1px solid var(--el-line-soft, #E5DFD2) !important; }
-  .el-footer .tag{ color:var(--el-ink-faint, #8A8478) !important; }
-  .el-footer .el-logo{ color:var(--el-navy, #16233F) !important; }
-  .el-footer .el-logo .dot{ color:var(--el-mustard-deep, #B9812A) !important; }
-  .el-footer-cols a{ color:var(--el-ink-faint, #8A8478) !important; }
-  .el-footer-cols h6{ color:var(--el-navy, #16233F) !important; }
-  .el-footer-bottom{ color:var(--el-ink-faint, #8A8478) !important; border-top-color:var(--el-line-soft, #E5DFD2) !important; }
-  /* サイドメニューを折りたたんだ時、トピック画面の右側に余白が残らないよう幅いっぱいに広げる
-     （実際にどの要素の max-width が効いているか外部CSSからは分からないため、
-     考えられる階層をすべて対象にしています） */
-  #appShell.is-toggled .el-content,
-  #appShell.is-toggled main,
-  #appShell.is-toggled main.el-section,
-  #appShell.is-toggled .el-thread-layout,
-  #appShell.is-toggled .wrap,
-  #appShell.is-toggled main.el-section > *,
-  #appShell.is-toggled .el-thread-main{
-    max-width:none !important;
-    width:100% !important;
-    box-sizing:border-box !important;
-  }
-
-  /* 投稿本文の枠と中身の余白を広げる */
-  .el-post{
-    padding:24px 26px !important;
-    box-sizing:border-box !important;
-  }
-  .el-post-body{
-    margin-top:12px !important;
-    margin-bottom:14px !important;
-  }
-  .el-post-tags{
-    margin-bottom:14px !important;
-  }
-
-  /* WorldShift Trade Watch ニュースカード */
-  .el-side-news-card{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    padding:9px 4px;
-    text-decoration:none;
-    border-bottom:1px solid var(--el-line-soft, #E5DFD2);
-  }
-  .el-side-news-card:last-of-type{
-    border-bottom:none;
-  }
-  .el-side-news-card .thumb{
-    width:40px;
-    height:40px;
-    border-radius:8px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    flex:none;
-  }
-  .el-side-news-card .txt{
-    display:flex;
-    flex-direction:column;
-    min-width:0;
-  }
-  .el-side-news-card .txt strong{
-    font-size:12.5px;
-    font-weight:700;
-    color:var(--el-navy, #16233F);
-    line-height:1.4;
-    display:-webkit-box;
-    -webkit-line-clamp:2;
-    -webkit-box-orient:vertical;
-    overflow:hidden;
-  }
-  .el-side-news-card .txt span{
-    font-size:11px;
-    color:var(--el-ink-faint, #8A8478);
-    margin-top:3px;
-  }
-  .el-side-tradewatch-more{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:6px;
-    margin-top:10px;
-    padding:10px 12px;
-    border-radius:10px;
-    background:var(--el-cream-deep, #F1E9D8);
-    color:var(--el-navy, #16233F);
-    font-size:12.5px;
-    font-weight:700;
-    text-decoration:none;
-  }
-  .el-side-tradewatch-more:hover{
-    background:var(--el-line-soft, #E5DFD2);
-  }
-  .el-side-tradewatch-more svg{
-    flex:none;
-  }
-
-  /* ベストアンサー */
-  .el-post--best{
-    background:#FFFBEA !important;
-    border:1px solid var(--el-mustard-deep, #B9812A) !important;
-  }
-  .el-best-answer-mark{
-    display:inline-flex;
-    align-items:center;
-    gap:5px;
-    font-size:12px;
-    font-weight:700;
-    color:#8A5E1A;
-    background:#FCECC4;
-    padding:3px 10px;
-    border-radius:999px;
-    margin-bottom:8px;
-  }
-  .el-best-answer-btn{
-    margin-left:auto !important;
-    color:var(--el-mustard-deep, #B9812A) !important;
-    font-weight:700 !important;
-  }
-</style>
+<script src="data.js"></script>
 </head>
 <body data-site="community" data-root="..">
 
@@ -295,16 +19,15 @@
     </button>
     <a href="index.html" class="el-logo">Export Lab<span class="dot">.</span></a>
     <div class="el-header-actions">
-      <form class="el-search" action="search.html" method="get">
+      <div class="el-search">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-        <input type="search" name="q" placeholder="検索" aria-label="検索" autocomplete="off">
-      </form>
-      <span id="headerAuthLinks" style="display:flex;gap:6px;white-space:nowrap;"><a href="signup.html" class="el-btn el-btn--ghost el-btn--sm" id="headerSignupLink">新規登録</a><a href="login.html" class="el-btn el-btn--ghost el-btn--sm" id="headerLoginLink">ログイン</a></span>
+        検索
+      </div>
       <a href="mypage.html" class="el-header-bell" aria-label="通知">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
         <span class="count">3</span>
       </a>
-      <a href="mypage.html" class="el-avatar" id="headerAvatar" aria-label="マイページ">り</a>
+      <a href="mypage.html" class="el-avatar" aria-label="マイページ">り</a>
     </div>
   </div>
 </header>
@@ -319,24 +42,49 @@
       </a>
 
       <details class="el-side-forum" open>
-        <summary class="is-active" data-href="forum.html">
+        <summary class="is-active" data-href="board.html">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
           <span class="lbl">フォーラム</span>
           <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
         </summary>
         <div class="el-side-sub">
-          <a href="forum-new.html" class="el-side-cta" data-guest-block>
+          <a href="board.html" class="el-side-cta">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
             新規投稿をする
           </a>
-          <a href="board.html">すべて</a>
           <a href="board.html?sort=new">新着</a>
           <a href="board.html?sort=hot">人気</a>
-          <a href="board.html?filter=shift&sort=hot">SHiFT member only</a>
-          <a href="board.html?filter=unsolved&sort=hot">未解決</a>
+          <a href="board.html?filter=shift">SHiFT member only</a>
+          <a href="board.html?filter=unsolved">未解決</a>
 
-          <a href="forum-categories.html">カテゴリで探す</a>
-          <a href="forum-tags.html">ハッシュタグで探す</a>
+          <div class="el-side-sub-label">カテゴリで探す</div>
+          <a href="board.html?category=fda">FDA対応</a>
+          <a href="board.html?category=customs">通関</a>
+          <a href="board.html?category=tariff">関税</a>
+          <a href="board.html?category=amazon">Amazon出品</a>
+          <a href="board.html?category=logistics">物流</a>
+          <a href="board.html?category=chat">雑談・自己紹介</a>
+
+          <div class="el-side-sub-label">ハッシュタグで探す</div>
+          <a href="board.html?tag=fba">#FBA</a>
+          <a href="board.html?tag=facility-registration">#施設登録・更新</a>
+          <a href="board.html?tag=label">#ラベル</a>
+          <a href="board.html?tag=us-agent">#米国代理人</a>
+          <a href="board.html?tag=prior-notice">#事前申告</a>
+          <a href="board.html?tag=warning-letter">#警告書</a>
+          <a href="board.html?tag=cpsc">#CPSC</a>
+          <a href="board.html?tag=invoice-hs">#インボイス・HSコード</a>
+          <a href="board.html?tag=section201">#Section201</a>
+          <a href="board.html?tag=section301">#対中追加関税</a>
+          <a href="board.html?tag=account-create">#アカウント作成</a>
+          <a href="board.html?tag=account-suspend">#アカウント停止</a>
+          <a href="board.html?tag=listing-restriction">#出品制限</a>
+          <a href="board.html?tag=ocean-freight">#海上輸送</a>
+          <a href="board.html?tag=air-freight">#航空輸送</a>
+          <a href="board.html?tag=warehouse">#倉庫選定</a>
+          <a href="board.html?tag=customs-docs">#通関書類</a>
+          <a href="board.html?tag=research">#リサーチ</a>
+          <a href="board.html?tag=tariff-general">#関税</a>
         </div>
       </details>
 
@@ -347,15 +95,14 @@
           <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
         </summary>
         <div class="el-side-sub">
-          <a href="groups.html" class="el-side-cta" data-guest-block>
+          <a href="groups.html" class="el-side-cta">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
             新規コミュニティを作成する
           </a>
-          <a href="groups-list.html">すべて</a>
-          <a href="groups-list.html?sort=new">新着</a>
-          <a href="groups-list.html?sort=hot">人気</a>
-          <a href="groups-list.html?filter=joined&sort=hot">参加中のコミュニティ</a>
-          <a href="groups-list.html?filter=pending&sort=hot">申請中のコミュニティ</a>
+          <a href="groups.html">新着</a>
+          <a href="groups.html">人気</a>
+          <a href="groups.html">参加中のコミュニティ</a>
+          <a href="groups.html">申請中のコミュニティ</a>
         </div>
       </details>
 
@@ -376,16 +123,11 @@
           <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
         </summary>
         <div class="el-side-sub">
-          <a href="market-list.html">すべて</a>
+          <a href="market-list.html">コンテンツ一覧</a>
           <a href="market-official.html">ワールドシフト提供</a>
           <a href="market-apply.html">出品申請</a>
         </div>
       </details>
-
-      <a href="members.html">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M6 16c.5-1.6 1.7-2.5 3-2.5s2.5.9 3 2.5"/><path d="M14 9h4M14 13h4"/></svg>
-        <span class="lbl">メンバー</span>
-      </a>
 
       <a href="mypage.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
@@ -401,53 +143,44 @@
       <div class="el-thread-layout">
         <div class="el-thread-main">
 
-        <div class="el-thread-head">
+        <div class="el-thread-head" id="threadHead">
           <nav class="el-breadcrumb" aria-label="breadcrumb">
             <a href="index.html">ホーム</a>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
             <a href="board.html">フォーラム</a>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
-            <span id="topicBreadcrumbCat">FDA・食品規制</span>
+            <span id="threadCategoryCrumb">読み込み中…</span>
           </nav>
-          <div class="el-t-row-badges" style="margin-bottom:12px;" id="topicBadges">
-            <a href="board.html?filter=general&sort=hot" class="badge badge--open">公開</a>
-            <a href="board.html?category=fda-food&sort=hot" class="badge badge--cat">FDA・食品規制</a>
-          </div>
-          <h1 id="topicTitle">FDA施設登録、2年更新のタイミングと注意点</h1>
-          <div class="el-thread-meta" id="topicMeta">
-            <div class="el-avatars" id="topicAvatars"><div class="el-avatar">山</div></div>
-            <span id="topicReplyCount">0件の返信</span><span>・</span><span id="topicViewCount">0回の閲覧</span><span>・</span><span id="topicUpdatedAt">最終更新：-</span>
-          </div>
+          <div class="el-t-row-badges" style="margin-bottom:12px;" id="threadBadges"></div>
+          <h1 id="threadTitle">読み込み中…</h1>
+          <div class="el-thread-meta" id="threadMeta"></div>
         </div>
 
-        <article class="el-post el-post--op" id="op">
-          <a href="profile.html?user=山口貿易士" class="el-avatar" id="opAvatar" style="text-decoration:none;">山</a>
+        <article class="el-post el-post--op" id="op" style="display:none;">
+          <div class="el-avatar" id="opAvatar"></div>
           <div>
-            <div class="el-reply-tag-slot"></div>
-              <div class="el-post-head">
-              <a href="profile.html?user=山口貿易士" class="name" id="opName" style="color:inherit;text-decoration:none;">山口 貿易士</a>
+            <div class="el-post-head">
+              <span class="name" id="opName"></span>
               <span class="role">スレ主</span>
             </div>
-            <div class="el-post-dates" id="opDates">投稿日：-</div>
-            <div class="el-post-body" id="opBody">
-              <p>いつもお世話になっています。FDA施設登録の更新について、直近で更新漏れによる出荷停止を経験したので共有します。</p>
-            </div>
+            <div class="el-post-dates" id="opDate"></div>
+            <div class="el-post-body" id="opBody"></div>
             <div class="el-post-tags" id="opTags"></div>
-            <div class="el-post-actions">
-              <button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14Z"/></svg> 12</button>
-              <button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H4l2.4-3.6A8.5 8.5 0 1 1 21 11.5Z"/></svg> 返信</button>
-              <button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13"/></svg> 共有</button>
-            </div>
           </div>
         </article>
 
-        <div class="el-comments-head">
+        <div id="topicNotFound" class="el-announce-empty" style="background:var(--el-paper);border:1.5px solid var(--el-line-soft);border-radius:var(--el-radius-l);padding:60px 24px;display:none;">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
+          <p style="font-size:14.5px;">このトピックは見つかりませんでした。すでに削除された可能性があります。</p>
+          <a href="board.html" class="el-btn el-btn--ghost el-btn--sm" style="margin-top:6px;">フォーラムへ戻る</a>
+        </div>
+
+        <div class="el-comments-head" id="commentsHead" style="display:none;">
           <h2>コメント</h2>
           <span class="count" id="commentsCount">0件</span>
         </div>
 
-        <div class="el-comments" id="commentsList">
-        </div>
+        <div class="el-comments" id="commentsList"></div>
 
         <div class="el-reply-box" id="replyBox" hidden>
           <div class="el-reply-context" id="replyContext">
@@ -457,18 +190,23 @@
             </button>
           </div>
           <div style="font-size:14px;font-weight:700;margin-bottom:10px;">返信を投稿</div>
-          <div id="replyEditorMount"></div>
+          <textarea id="replyTextarea" placeholder="コメントを入力してください…"></textarea>
           <div class="el-reply-foot">
-            <span style="font-size:12.5px;color:var(--el-ink-faint);"></span>
-            <button class="el-btn el-btn--primary el-btn--sm">返信を送信</button>
+            <span id="replyStatus" style="font-size:12.5px;color:var(--el-ink-faint);">Markdown記法に対応しています</span>
+            <button class="el-btn el-btn--primary el-btn--sm" id="replySubmitBtn" type="button">返信を送信</button>
           </div>
         </div>
 
-        <div class="el-ad-banner-v2" id="adBanner">
-          <span class="el-ad-tag-v2">AD</span>
-          <div class="el-ad-image-v2" id="adImageV2"></div>
-          <a href="#" class="el-btn el-btn--primary el-btn--sm el-ad-cta-v2" id="adCtaV2">詳しく見る</a>
-          <span class="el-ad-sponsor-v2" id="adSponsorV2"></span>
+        <div class="el-ad-banner" id="adBanner">
+          <span class="el-ad-tag">AD</span>
+          <span class="el-ad-icon" id="adIcon">
+            <svg id="adIconSvg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"></svg>
+          </span>
+          <div class="el-ad-body">
+            <strong id="adTitle"></strong>
+            <span id="adDesc"></span>
+          </div>
+          <a href="#" class="el-btn el-btn--ghost el-btn--sm">詳しく見る</a>
         </div>
 
         </div>
@@ -476,7 +214,18 @@
         <aside class="el-thread-side">
           <div class="el-side-panel">
             <h4>関連するトピック</h4>
-            <div id="relatedTopics"></div>
+            <a href="topic.html" class="el-side-panel-row">
+              <span class="badge badge--cat">FDA対応</span>
+              <span class="title">サプリメントのラベル、栄養成分表示のフォーマット変更点</span>
+            </a>
+            <a href="topic.html" class="el-side-panel-row">
+              <span class="badge badge--cat">FDA対応</span>
+              <span class="title">米国代理人（U.S. Agent）の見直し、皆さんどうしてますか</span>
+            </a>
+            <a href="topic.html" class="el-side-panel-row">
+              <span class="badge badge--cat">通関</span>
+              <span class="title">通関書類のインボイス記載、よくある差し戻し理由まとめ</span>
+            </a>
           </div>
 
           <div class="el-side-panel">
@@ -510,33 +259,6 @@
               <span class="txt"><strong>FDA更新リマインドスプレッドシート</strong><span>山口貿易士・¥1,200</span></span>
             </a>
           </div>
-
-          <div class="el-side-panel">
-            <h4>WorldShift Trade Watch</h4>
-            <div class="sub" style="font-size:12px;color:var(--el-ink-faint);margin:-6px 0 12px;">この投稿に関連するNEWS記事</div>
-            <a href="https://news.worldshift-inc.jp/articles/reciprocal-tariff-update" target="_blank" rel="noopener" class="el-side-news-card">
-              <div class="thumb" style="background:linear-gradient(135deg,#2F6FA3,#1B3E5C);">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><path d="M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20Z"/><path d="M2 12h20"/></svg>
-              </div>
-              <span class="txt"><strong>相互関税の運用見直し、実務への影響を解説</strong><span>2026年8月18日</span></span>
-            </a>
-            <a href="https://news.worldshift-inc.jp/articles/fda-facility-renewal-2026" target="_blank" rel="noopener" class="el-side-news-card">
-              <div class="thumb" style="background:linear-gradient(135deg,#3E8E63,#1F5C3E);">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
-              </div>
-              <span class="txt"><strong>FDA施設登録、2026年更新シーズンの注意点</strong><span>2026年8月14日</span></span>
-            </a>
-            <a href="https://news.worldshift-inc.jp/articles/amazon-fba-fee-2026h2" target="_blank" rel="noopener" class="el-side-news-card">
-              <div class="thumb" style="background:linear-gradient(135deg,#B9812A,#8A5E1A);">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-              </div>
-              <span class="txt"><strong>Amazon FBA手数料、2026年下期の改定ポイント</strong><span>2026年8月10日</span></span>
-            </a>
-            <a href="https://news.worldshift-inc.jp/index.html" target="_blank" rel="noopener" class="el-side-tradewatch-more">
-              WorldShift Trade Watchですべて見る
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg>
-            </a>
-          </div>
         </aside>
 
       </div>
@@ -547,7 +269,7 @@
         <div class="el-footer-grid">
           <div>
             <a href="index.html" class="el-logo">Export Lab<span class="dot">.</span></a>
-            <p class="tag">人・モノ・情報がつながる、輸出の共創コミュニティ。<br>運営：WorldShift株式会社</p>
+            <p class="tag">人・モノ・情報がつながる、輸出の共創コミュニティ。運営：WorldShift株式会社</p>
           </div>
           <div class="el-footer-cols">
             <div>
@@ -575,224 +297,18 @@
   </div>
 </div>
 
-<script src="data.js"></script>
 <script src="../shared/global-header.js" defer></script>
-<script>
-  // トピック本文・コメントを ?id= に応じて window.EL_TOPICS から描画する
-  var EL_CURRENT_TOPIC = null;
-  (function () {
-    var params = new URLSearchParams(window.location.search);
-    var id = params.get('id');
-    var extra = [];
-    try { extra = JSON.parse(localStorage.getItem('el-user-topics') || '[]'); } catch (e) {}
-    var all = (window.EL_TOPICS || []).concat(extra);
-    var t = (id ? all.filter(function (x) { return x.id === id; })[0] : null) || all[0];
-    if (!t) return;
-    EL_CURRENT_TOPIC = t;
-
-    var CATEGORY_LABEL = window.EL_CATEGORY_LABEL || {};
-    var catLabel = CATEGORY_LABEL[t.category] || t.category;
-
-    document.title = t.title + '｜Export Lab';
-    var bc = document.getElementById('topicBreadcrumbCat'); if (bc) bc.textContent = catLabel;
-    var titleEl = document.getElementById('topicTitle'); if (titleEl) titleEl.textContent = t.title;
-
-    // ベストアンサー：投稿者だけが設定でき、設定するとトピックが解決済み扱いになる。
-    // 実データベースが無いため、このブラウザ内（localStorage）に保存する。
-    var BEST_ANSWER_KEY = 'el-best-answer-' + t.id;
-    function getBestAnswerIndex() {
-      var v = null;
-      try { v = localStorage.getItem(BEST_ANSWER_KEY); } catch (e) {}
-      return v === null ? null : parseInt(v, 10);
-    }
-    function setBestAnswerIndex(idx) {
-      try {
-        if (idx === null) localStorage.removeItem(BEST_ANSWER_KEY);
-        else localStorage.setItem(BEST_ANSWER_KEY, String(idx));
-      } catch (e) {}
-    }
-    function isEffectivelySolved() {
-      return getBestAnswerIndex() !== null || t.status === 'solved';
-    }
-
-    function renderStatusBadge() {
-      var badges = document.getElementById('topicBadges');
-      if (!badges) return;
-      var visBadge = (t.visibility === 'shift')
-        ? '<a href="board.html?filter=shift&sort=hot" class="badge badge--member">SHiFT限定</a>'
-        : (t.visibility === 'member')
-          ? '<a href="board.html?filter=general&sort=hot" class="badge badge--restricted">メンバー限定</a>'
-          : '<a href="board.html?filter=general&sort=hot" class="badge badge--open">公開</a>';
-      var solved = isEffectivelySolved();
-      var statusBadge = solved ? '<a href="board.html?filter=solved&sort=hot" class="badge badge--solved">解決</a>'
-        : '<a href="board.html?status=unsolved&sort=hot" class="badge badge--unsolved">未解決</a>';
-      badges.innerHTML = visBadge + '<a href="board.html?category=' + t.category + '&sort=hot" class="badge badge--cat">' + catLabel + '</a>' + statusBadge;
-    }
-    renderStatusBadge();
-
-    function fmtDate(d) {
-      var parts = d.split('-');
-      return parts[0] + '年' + parseInt(parts[1], 10) + '月' + parseInt(parts[2], 10) + '日';
-    }
-    function relDate(d) {
-      var dt = new Date(d.indexOf('T') !== -1 ? d : d + 'T00:00:00');
-      var today = new Date('2026-08-12T00:00:00');
-      var diff = Math.round((today - dt) / 86400000);
-      if (diff <= 0) return '今日';
-      if (diff === 1) return '昨日';
-      if (diff < 30) return diff + '日前';
-      return Math.floor(diff / 30) + 'ヶ月前';
-    }
-
-    var comments = t.comments || [];
-    var opAvatarChar = t.author ? t.author.charAt(0) : '?';
-    var opAvatar = document.getElementById('opAvatar'); if (opAvatar) { opAvatar.textContent = opAvatarChar; opAvatar.href = 'profile.html?user=' + encodeURIComponent(t.author || ''); }
-    var opName = document.getElementById('opName'); if (opName) { opName.textContent = t.author; opName.href = 'profile.html?user=' + encodeURIComponent(t.author || ''); }
-    var opDates = document.getElementById('opDates'); if (opDates) opDates.textContent = '投稿日：' + fmtDate(t.date);
-    var opBody = document.getElementById('opBody');
-    if (opBody) opBody.innerHTML = String(t.body).split('\n').filter(Boolean).map(function (p) { return '<p>' + p + '</p>'; }).join('');
-    var opTags = document.getElementById('opTags');
-    if (opTags) opTags.innerHTML = (t.tags || []).map(function (tag) { return '<a href="board.html?tag=' + tag + '&sort=hot">#' + tag + '</a>'; }).join('');
-
-    var avatarsEl = document.getElementById('topicAvatars');
-    if (avatarsEl) {
-      var names = [t.author].concat(comments.map(function (c) { return c.user; }));
-      var uniq = names.filter(function (n, i) { return names.indexOf(n) === i; }).slice(0, 4);
-      avatarsEl.innerHTML = uniq.map(function (n) { return '<div class="el-avatar">' + n.charAt(0) + '</div>'; }).join('');
-    }
-    var replyCountEl = document.getElementById('topicReplyCount'); if (replyCountEl) replyCountEl.textContent = comments.length + '件の返信';
-    var viewCountEl = document.getElementById('topicViewCount'); if (viewCountEl) viewCountEl.textContent = (t.views || 0).toLocaleString() + '回の閲覧';
-    var updatedEl = document.getElementById('topicUpdatedAt');
-    if (updatedEl) updatedEl.textContent = '最終更新：' + (comments.length ? relDate(comments[comments.length - 1].date) : relDate(t.date));
-
-    var commentsCountEl = document.getElementById('commentsCount'); if (commentsCountEl) commentsCountEl.textContent = comments.length + '件';
-
-    var related = document.getElementById('relatedTopics');
-    if (related) {
-      var CATEGORY_LABEL2 = window.EL_CATEGORY_LABEL || {};
-      var others = all.filter(function (x) { return x.id !== t.id && x.category === t.category; });
-      if (others.length < 3) {
-        all.filter(function (x) { return x.id !== t.id && others.indexOf(x) === -1; }).forEach(function (x) {
-          if (others.length < 3) others.push(x);
-        });
-      }
-      related.innerHTML = others.slice(0, 3).map(function (o) {
-        return '<a href="topic.html?id=' + o.id + '" class="el-side-panel-row"><span class="badge badge--cat">' + (CATEGORY_LABEL2[o.category] || o.category) + '</span><span class="title">' + o.title + '</span></a>';
-      }).join('');
-    }
-
-    var list = document.getElementById('commentsList');
-    if (list) {
-      var currentUsername = '';
-      try { currentUsername = localStorage.getItem('el-username') || ''; } catch (e) {}
-      var isOp = !!t.author && currentUsername === t.author;
-      var bestIdx = getBestAnswerIndex();
-
-      function wireReplyTagsForComments() {
-        document.querySelectorAll('.el-post[data-reply-to]').forEach(function (post) {
-          var slot = post.querySelector('.el-reply-tag-slot');
-          var targetId = post.dataset.replyTo;
-          var target = document.getElementById(targetId);
-          if (!slot || !target) return;
-          slot.innerHTML = '';
-          var targetName = target.querySelector('.name');
-          var name = targetName ? targetName.textContent.trim() : '';
-          var tag = document.createElement('a');
-          tag.href = '#' + targetId;
-          tag.className = 'el-reply-tag';
-          tag.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 5 5v6"/></svg>返信 <strong>' + name + '</strong>';
-          tag.addEventListener('click', function (e) {
-            e.preventDefault();
-            target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            target.classList.remove('is-highlighted');
-            void target.offsetWidth;
-            target.classList.add('is-highlighted');
-          });
-          slot.appendChild(tag);
-        });
-      }
-
-      function renderComments() {
-        bestIdx = getBestAnswerIndex();
-        list.innerHTML = comments.map(function (c, i) {
-          var profileUrl = 'profile.html?user=' + encodeURIComponent(c.user);
-          var isBest = bestIdx === i;
-          var bestMark = isBest
-            ? '<div class="el-best-answer-mark"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg> ベストアンサー</div>'
-            : '';
-          var bestBtn = isOp
-            ? '<button class="el-best-answer-btn" data-best-index="' + i + '">' + (isBest ? 'ベストアンサーを取り消す' : 'ベストアンサーにする') + '</button>'
-            : '';
-          return '<article class="el-post' + (isBest ? ' el-post--best' : '') + '" id="c' + (i + 1) + '" data-reply-to="' + (c.replyTo || 'op') + '">' +
-            '<a href="' + profileUrl + '" class="el-avatar" style="text-decoration:none;">' + c.user.charAt(0) + '</a>' +
-            '<div>' +
-              '<div class="el-reply-tag-slot"></div>' +
-              bestMark +
-              '<div class="el-post-head"><a href="' + profileUrl + '" class="name" style="color:inherit;text-decoration:none;">' + c.user + '</a><span class="time">' + fmtDate(c.date) + '</span></div>' +
-              '<div class="el-post-body"><p>' + c.body + '</p></div>' +
-              '<div class="el-post-actions">' +
-                '<button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14Z"/></svg> ' + (2 + i) + '</button>' +
-                '<button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H4l2.4-3.6A8.5 8.5 0 1 1 21 11.5Z"/></svg> 返信</button>' +
-                bestBtn +
-              '</div>' +
-            '</div>' +
-          '</article>';
-        }).join('');
-        wireReplyTagsForComments();
-      }
-
-      list.addEventListener('click', function (e) {
-        var btn = e.target.closest('.el-best-answer-btn');
-        if (!btn) return;
-        var idx = parseInt(btn.dataset.bestIndex, 10);
-        var current = getBestAnswerIndex();
-        setBestAnswerIndex(current === idx ? null : idx);
-        renderComments();
-        renderStatusBadge();
-      });
-
-      renderComments();
-    }
-  })();
-</script>
 <script>
   (function () {
     var appShell = document.getElementById('appShell');
     var STORAGE_KEY = 'el-sidebar-collapsed';
-
-    // サイドメニューが折りたたまれている間、実際に効いている max-width 指定を
-    // （どのクラスが原因かに関わらず）見つけて無効化し、余白が残らないようにする
-    function fixMainWidth() {
-      var main = document.querySelector('main.el-section');
-      if (!main) return;
-      var toggled = appShell.classList.contains('is-toggled');
-      var targets = [main].concat(Array.prototype.slice.call(main.querySelectorAll('*')));
-      targets.forEach(function (el) {
-        if (toggled) {
-          var cs = window.getComputedStyle(el);
-          if (cs.maxWidth && cs.maxWidth !== 'none' && el.offsetWidth > 0) {
-            if (el.dataset.elOrigMaxWidth === undefined) {
-              el.dataset.elOrigMaxWidth = el.style.maxWidth || '';
-            }
-            el.style.setProperty('max-width', 'none', 'important');
-          }
-        } else if (el.dataset.elOrigMaxWidth !== undefined) {
-          el.style.maxWidth = el.dataset.elOrigMaxWidth;
-          delete el.dataset.elOrigMaxWidth;
-        }
-      });
-    }
-
     try {
       if (localStorage.getItem(STORAGE_KEY) === '1') { appShell.classList.add('is-toggled'); }
     } catch (e) {}
     document.getElementById('sidebarToggle').addEventListener('click', function () {
       appShell.classList.toggle('is-toggled');
       try { localStorage.setItem(STORAGE_KEY, appShell.classList.contains('is-toggled') ? '1' : '0'); } catch (e) {}
-      fixMainWidth();
     });
-    // ページ読み込み時点ですでに折りたたみ状態だった場合にも適用する
-    setTimeout(fixMainWidth, 300);
   })();
 
   // フォーラム／コミュニティ／マーケットの見出し：矢印以外をクリックしたらページ遷移、矢印は開閉のみ
@@ -805,663 +321,203 @@
   });
 
   var ADS = [
-    { name: "SLCサービス", desc: "米AmazonFBA納品代行サービス", gradient: "linear-gradient(120deg, var(--el-teal), #1B5A52)" },
-    { name: "FDA Compliance Partner", desc: "FDA規制対応サービス", gradient: "linear-gradient(120deg, var(--el-mustard), #8A5E1A)" },
-    { name: "ProFinder", desc: "米Amazonリサーチツール", gradient: "linear-gradient(120deg, #3E7EA3, #1B3E5C)" },
-    { name: "Allynair", desc: "海外発送代行サービス", gradient: "linear-gradient(120deg, var(--el-sage), #2E5C3E)" },
-    { name: "AmaNavi", desc: "米Amazon進出サポートサービス", gradient: "linear-gradient(120deg, var(--el-coral), #8A3E2E)" }
+    { name: "SLCサービス", desc: "米AmazonFBA納品代行サービス", color: "var(--el-teal)", icon: '<path d="M21 8V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2M3 8v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8M3 8h18"/>' },
+    { name: "FDA Compliance Partner", desc: "FDA規制対応サービス", color: "var(--el-mustard)", icon: '<path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/>' },
+    { name: "ProFinder", desc: "米Amazonリサーチツール", color: "#3E7EA3", icon: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>' },
+    { name: "Allynair", desc: "海外発送代行サービス", color: "var(--el-sage)", icon: '<path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20Z"/><circle cx="12" cy="12" r="10"/>' },
+    { name: "AmaNavi", desc: "米Amazon進出サポートサービス", color: "var(--el-coral)", icon: '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z"/>' }
   ];
   (function () {
     var el = document.getElementById('adBanner');
     if (!el) return;
-    var imageEl = document.getElementById('adImageV2');
-    var ctaEl = document.getElementById('adCtaV2');
-    var sponsorEl = document.getElementById('adSponsorV2');
-
-    function renderMockAd() {
-      var ad = ADS[Math.floor(Math.random() * ADS.length)];
-      imageEl.style.background = ad.gradient;
-      imageEl.style.backgroundImage = 'none';
-      ctaEl.textContent = '詳しく見る';
-      sponsorEl.textContent = 'スポンサー：' + ad.name;
-    }
-
-    var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
-    fetch(API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({ action: 'listContent', type: 'ad' })
-    })
-      .then(function (res) { return res.json(); })
-      .then(function (data) {
-        var ads = ((data.ok && data.items) ? data.items : []).filter(function (a) { return (a.adType || 'banner') === 'banner'; });
-        if (!ads.length) { renderMockAd(); return; }
-        var ad = ads[Math.floor(Math.random() * ads.length)];
-        if (ad.imageUrl) {
-          imageEl.style.backgroundImage = 'url(' + ad.imageUrl + ')';
-        } else {
-          imageEl.style.background = 'var(--el-teal)';
-        }
-        ctaEl.textContent = ad.ctaText || '詳しく見る';
-        if (ad.ctaUrl) ctaEl.href = ad.ctaUrl;
-        sponsorEl.textContent = 'スポンサー：' + (ad.serviceName || '');
-      })
-      .catch(renderMockAd);
+    var ad = ADS[Math.floor(Math.random() * ADS.length)];
+    document.getElementById('adIcon').style.background = ad.color;
+    document.getElementById('adIconSvg').innerHTML = ad.icon;
+    document.getElementById('adTitle').textContent = ad.name;
+    document.getElementById('adDesc').textContent = ad.desc;
   })();
 
-
-  // ------------------------------------------------------------
-  // フォーラム新規投稿と同じ、フル機能のリッチエディター
-  // （太字/斜体/下線/取消線/文字サイズ/文字色/背景色/箇条書き/番号付きリスト/
-  //   引用/区切り線/リンク/画像挿入/書式解除）
-  // 1ページに複数設置できるよう、IDをすべて引数のprefixで一意化している。
-  // ------------------------------------------------------------
-  function createFullRichEditor(mountEl, id) {
-    mountEl.innerHTML =
-      '<div class="el-rich-editor">' +
-        '<div class="el-editor-toolbar" role="toolbar" aria-label="本文の書式">' +
-          '<button type="button" data-command="bold" title="太字"><strong>B</strong></button>' +
-          '<button type="button" data-command="italic" title="斜体"><em>I</em></button>' +
-          '<button type="button" data-command="underline" title="下線"><span style="text-decoration:underline;font-weight:700;">U</span></button>' +
-          '<button type="button" data-command="strikeThrough" title="取り消し線"><span style="text-decoration:line-through;">S</span></button>' +
-          '<span class="sep"></span>' +
-          '<select id="' + id + '_fontSize" class="el-editor-select" title="文字サイズ" aria-label="文字サイズ">' +
-            '<option value="">文字サイズ</option>' +
-            '<option value="12px">小</option><option value="14px">標準</option><option value="18px">大</option>' +
-            '<option value="24px">特大</option><option value="32px">見出し</option>' +
-          '</select>' +
-          '<label class="el-editor-color" title="文字色">A<input type="color" id="' + id + '_textColor" value="#16233f" aria-label="文字色"></label>' +
-          '<label class="el-editor-color el-editor-color--bg" title="背景色"><span>■</span><input type="color" id="' + id + '_bgColor" value="#fff3d8" aria-label="背景色"></label>' +
-          '<span class="sep"></span>' +
-          '<button type="button" data-command="insertUnorderedList" title="箇条書き"><svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg></button>' +
-          '<button type="button" data-command="insertOrderedList" title="番号付きリスト"><svg viewBox="0 0 24 24"><path d="M10 6h11M10 12h11M10 18h11M4 6h1V3M4 3h2M4 12h2l-2 3h2M4 18h2v3H4"/></svg></button>' +
-          '<button type="button" id="' + id + '_quote" title="引用"><svg viewBox="0 0 24 24"><path d="M10 11H6a4 4 0 0 1 4-4V5a6 6 0 0 0-6 6v6h6v-6ZM20 11h-4a4 4 0 0 1 4-4V5a6 6 0 0 0-6 6v6h6v-6Z"/></svg></button>' +
-          '<button type="button" data-command="insertHorizontalRule" title="区切り線"><svg viewBox="0 0 24 24"><path d="M4 12h16"/></svg></button>' +
-          '<span class="sep"></span>' +
-          '<button type="button" id="' + id + '_addLink" title="リンク"><svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></button>' +
-          '<button type="button" id="' + id + '_image" title="画像を挿入"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9" r="1.5"/><path d="m21 15-5-5L5 20"/></svg></button>' +
-          '<input type="file" id="' + id + '_inlineImage" accept="image/*" hidden>' +
-          '<button type="button" id="' + id + '_clearFormat" title="書式を解除"><svg viewBox="0 0 24 24"><path d="m3 3 18 18M9 5h9M13 5l-3 10M6 19h8"/></svg></button>' +
-        '</div>' +
-        '<div class="el-link-popover" id="' + id + '_linkPopover" hidden>' +
-          '<input type="url" id="' + id + '_linkUrl" placeholder="https://example.com" aria-label="リンク先URL">' +
-          '<button type="button" id="' + id + '_applyLink">リンクを設定</button>' +
-          '<button type="button" id="' + id + '_removeLink">解除</button>' +
-        '</div>' +
-        '<div id="' + id + '_area" class="el-editor-area" contenteditable="true" data-placeholder="内容を入力してください…"></div>' +
-      '</div>';
-
-    var editor = mountEl.querySelector('#' + id + '_area');
-    var savedRange = null;
-
-    function selectionIsInsideEditor(sel) {
-      if (!sel || !sel.rangeCount) return false;
-      var node = sel.anchorNode;
-      return !!node && (node === editor || editor.contains(node.nodeType === 1 ? node : node.parentNode));
-    }
-    function saveSelection() {
-      var sel = window.getSelection();
-      if (selectionIsInsideEditor(sel)) savedRange = sel.getRangeAt(0).cloneRange();
-    }
-    function restoreSelection() {
-      editor.focus({ preventScroll: true });
-      if (!savedRange) return false;
-      try {
-        var sel = window.getSelection();
-        sel.removeAllRanges();
-        sel.addRange(savedRange.cloneRange());
-        return true;
-      } catch (e) { return false; }
-    }
-    function runCommand(cmd, value) {
-      insertMarkers();
-      document.execCommand('styleWithCSS', false, true);
-      document.execCommand(cmd, false, value == null ? null : value);
-      restoreFromMarkers();
-    }
-    function clearMarkers() {
-      editor.querySelectorAll('[data-sel-marker]').forEach(function (m) { m.remove(); });
-    }
-    function insertMarkers() {
-      restoreSelection();
-      clearMarkers();
-      var sel = window.getSelection();
-      if (!sel || !sel.rangeCount || !selectionIsInsideEditor(sel)) return false;
-      var range = sel.getRangeAt(0);
-      var startMarker = document.createElement('span');
-      startMarker.setAttribute('data-sel-marker', 'start');
-      var endMarker = document.createElement('span');
-      endMarker.setAttribute('data-sel-marker', 'end');
-      if (range.collapsed) { range.insertNode(startMarker); return true; }
-      var endRange = range.cloneRange();
-      endRange.collapse(false);
-      endRange.insertNode(endMarker);
-      var startRange = range.cloneRange();
-      startRange.collapse(true);
-      startRange.insertNode(startMarker);
-      return true;
-    }
-    function rangeFromMarkers() {
-      var start = editor.querySelector('[data-sel-marker="start"]');
-      var end = editor.querySelector('[data-sel-marker="end"]');
-      if (!start) return null;
-      var range = document.createRange();
-      if (end) { range.setStartAfter(start); range.setEndBefore(end); }
-      else { range.setStartAfter(start); range.collapse(true); }
-      return { range: range, start: start, end: end };
-    }
-    function restoreFromMarkers() {
-      var found = rangeFromMarkers();
-      if (!found) { saveSelection(); return; }
-      var sel = window.getSelection();
-      sel.removeAllRanges();
-      sel.addRange(found.range);
-      found.start.remove();
-      if (found.end) found.end.remove();
-      saveSelection();
-    }
-
-    document.addEventListener('selectionchange', function () {
-      var sel = window.getSelection();
-      if (selectionIsInsideEditor(sel)) saveSelection();
-    });
-    editor.addEventListener('keyup', saveSelection);
-    editor.addEventListener('mouseup', saveSelection);
-    editor.addEventListener('focus', saveSelection);
-    editor.addEventListener('input', saveSelection);
-
-    mountEl.querySelectorAll('.el-editor-toolbar button').forEach(function (btn) {
-      btn.addEventListener('pointerdown', function (e) { saveSelection(); e.preventDefault(); });
-    });
-    mountEl.querySelectorAll('.el-editor-toolbar select, .el-editor-toolbar input[type="color"]').forEach(function (control) {
-      control.addEventListener('pointerdown', saveSelection);
-    });
-    mountEl.querySelectorAll('.el-editor-toolbar [data-command]').forEach(function (btn) {
-      btn.addEventListener('click', function () { runCommand(btn.dataset.command, btn.dataset.value || null); });
-    });
-
-    function placeCaretAfter(node) {
-      var sel = window.getSelection();
-      var r = document.createRange();
-      r.setStartAfter(node);
-      r.collapse(true);
-      sel.removeAllRanges();
-      sel.addRange(r);
-      saveSelection();
-    }
-
-    mountEl.querySelector('#' + id + '_quote').addEventListener('click', function () {
-      insertMarkers();
-      var start = editor.querySelector('[data-sel-marker="start"]');
-      var el = start && start.parentElement;
-      var existing = el && el.closest('blockquote');
-      if (existing && editor.contains(existing)) document.execCommand('formatBlock', false, 'div');
-      else document.execCommand('formatBlock', false, 'blockquote');
-      restoreFromMarkers();
-    });
-
-    editor.addEventListener('keydown', function (e) {
-      if (e.key !== 'Enter' || e.shiftKey) return;
-      var sel = window.getSelection();
-      if (!sel || !sel.rangeCount || !sel.isCollapsed) return;
-      var node = sel.anchorNode;
-      var el = node && (node.nodeType === 1 ? node : node.parentElement);
-      if (!el) return;
-      var quote = el.closest('blockquote');
-      if (!quote || !editor.contains(quote)) return;
-      e.preventDefault();
-      var normal = document.createElement('div');
-      normal.innerHTML = '<br>';
-      quote.parentNode.insertBefore(normal, quote.nextSibling);
-      placeCaretAfter(quote);
-      var r = document.createRange();
-      r.setStart(normal, 0);
-      r.collapse(true);
-      sel.removeAllRanges();
-      sel.addRange(r);
-      saveSelection();
-    });
-
-    var fontSizeSelect = mountEl.querySelector('#' + id + '_fontSize');
-    fontSizeSelect.addEventListener('pointerdown', function () { saveSelection(); });
-    fontSizeSelect.addEventListener('change', function () {
-      var px = this.value;
-      if (!px) return;
-      restoreSelection();
-      document.execCommand('styleWithCSS', false, false);
-      document.execCommand('fontSize', false, '7');
-      editor.querySelectorAll('font[size="7"]').forEach(function (font) {
-        var span = document.createElement('span');
-        span.style.fontSize = px;
-        while (font.firstChild) span.appendChild(font.firstChild);
-        font.replaceWith(span);
-      });
-      document.execCommand('styleWithCSS', false, true);
-      this.value = '';
-      saveSelection();
-    });
-
-    mountEl.querySelector('#' + id + '_textColor').addEventListener('input', function () { runCommand('foreColor', this.value); });
-    mountEl.querySelector('#' + id + '_bgColor').addEventListener('input', function () {
-      insertMarkers();
-      document.execCommand('styleWithCSS', false, true);
-      var ok = document.execCommand('hiliteColor', false, this.value);
-      if (!ok) document.execCommand('backColor', false, this.value);
-      restoreFromMarkers();
-    });
-
-    var linkPopover = mountEl.querySelector('#' + id + '_linkPopover');
-    var linkUrlInput = mountEl.querySelector('#' + id + '_linkUrl');
-    mountEl.querySelector('#' + id + '_addLink').addEventListener('mousedown', function (e) { saveSelection(); e.preventDefault(); });
-    mountEl.querySelector('#' + id + '_addLink').addEventListener('click', function () {
-      insertMarkers();
-      var found = rangeFromMarkers();
-      if (!found || !found.end) {
-        linkPopover.hidden = false;
-        linkPopover.classList.add('is-centered');
-      } else {
-        var rect = found.range.getBoundingClientRect();
-        var editorRect = mountEl.querySelector('.el-rich-editor').getBoundingClientRect();
-        linkPopover.hidden = false;
-        linkPopover.classList.remove('is-centered');
-        linkPopover.style.left = Math.max(10, Math.min(rect.left - editorRect.left, editorRect.width - 340)) + 'px';
-        linkPopover.style.top = (rect.bottom - editorRect.top + 8) + 'px';
-      }
-      linkUrlInput.value = '';
-      linkUrlInput.focus();
-    });
-    mountEl.querySelector('#' + id + '_applyLink').addEventListener('mousedown', function (e) { e.preventDefault(); });
-    mountEl.querySelector('#' + id + '_applyLink').addEventListener('click', function () {
-      var url = linkUrlInput.value.trim();
-      var start = editor.querySelector('[data-sel-marker="start"]');
-      if (!url || !start) { linkPopover.hidden = true; clearMarkers(); return; }
-      if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
-      editor.focus({ preventScroll: true });
-      var end = editor.querySelector('[data-sel-marker="end"]');
-      var a = document.createElement('a');
-      a.href = url;
-      if (!end) {
-        a.textContent = url;
-        start.parentNode.insertBefore(a, start);
-        start.remove();
-      } else {
-        var range = document.createRange();
-        range.setStartAfter(start);
-        range.setEndBefore(end);
-        try { range.surroundContents(a); }
-        catch (err) { var frag = range.extractContents(); a.appendChild(frag); range.insertNode(a); }
-        start.remove();
-        end.remove();
-      }
-      var after = document.createRange();
-      after.setStartAfter(a);
-      after.collapse(true);
-      var sel = window.getSelection();
-      sel.removeAllRanges();
-      sel.addRange(after);
-      saveSelection();
-      linkPopover.hidden = true;
-    });
-    mountEl.querySelector('#' + id + '_removeLink').addEventListener('click', function () {
-      runCommand('unlink'); linkPopover.hidden = true;
-    });
-    document.addEventListener('mousedown', function (e) {
-      if (!linkPopover.hidden && !e.target.closest('#' + id + '_linkPopover') && !e.target.closest('#' + id + '_addLink')) {
-        linkPopover.hidden = true;
-        clearMarkers();
-      }
-    });
-
-    var inlineImageInput = mountEl.querySelector('#' + id + '_inlineImage');
-    mountEl.querySelector('#' + id + '_image').addEventListener('mousedown', function (e) { e.preventDefault(); saveSelection(); });
-    mountEl.querySelector('#' + id + '_image').addEventListener('click', function () { inlineImageInput.click(); });
-    inlineImageInput.addEventListener('change', function () {
-      var file = this.files && this.files[0];
-      if (!file) return;
-      var reader = new FileReader();
-      reader.onload = function () {
-        restoreSelection();
-        var img = document.createElement('img');
-        img.src = reader.result; img.alt = file.name; img.className = 'el-editor-image';
-        var sel = window.getSelection();
-        var r = sel.rangeCount ? sel.getRangeAt(0) : null;
-        if (r) { r.deleteContents(); r.insertNode(img); r.setStartAfter(img); r.collapse(true); sel.removeAllRanges(); sel.addRange(r); }
-        saveSelection();
-      };
-      reader.readAsDataURL(file); this.value = '';
-    });
-
-    mountEl.querySelector('#' + id + '_clearFormat').addEventListener('mousedown', function (e) { e.preventDefault(); });
-    mountEl.querySelector('#' + id + '_clearFormat').addEventListener('click', function () {
-      restoreSelection();
-      document.execCommand('removeFormat', false, null);
-      document.execCommand('unlink', false, null);
-      var sel = window.getSelection();
-      if (sel.rangeCount) {
-        var node = sel.anchorNode;
-        var el = node && (node.nodeType === 1 ? node : node.parentElement);
-        var block = el && el.closest('blockquote,pre,h1,h2,h3,h4,h5,h6');
-        if (block && editor.contains(block)) document.execCommand('formatBlock', false, 'div');
-      }
-      saveSelection();
-    });
-
-    return {
-      getHtml: function () { return editor.innerHTML; },
-      clear: function () { editor.innerHTML = ''; }
-    };
-  }
-
-  // 返信ボタン：誰に返信しているかを自動でメンション表示
+  // トピック本文・コメントの読み込みと表示（スプレッドシート連携）
   (function () {
+    var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
+    var CATEGORY_LABEL = window.EL_CATEGORY_LABEL || {};
+    var topicId = new URLSearchParams(window.location.search).get('id') || '';
+
+    function apiPost(body) {
+      return fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(body)
+      }).then(function (res) { return res.json(); });
+    }
+
+    function escHtml(s) {
+      return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+      });
+    }
+
+    function formatDate(d) {
+      if (!d) return '';
+      var date = new Date(d);
+      if (isNaN(date.getTime())) return String(d);
+      return date.getFullYear() + '年' + (date.getMonth() + 1) + '月' + date.getDate() + '日';
+    }
+
+    // ローカルのデモ投稿データ（data.js）からIDで検索
+    function findLocalTopic(id) {
+      return (window.EL_TOPICS || []).filter(function (t) { return t.id === id; })[0] || null;
+    }
+
     var replyBox = document.getElementById('replyBox');
-    if (!replyBox) return;
-    var replyEditor = createFullRichEditor(document.getElementById('replyEditorMount'), 'replyEd');
-    var editorArea = document.getElementById('replyEd_area');
+    var textarea = document.getElementById('replyTextarea');
     var ctx = document.getElementById('replyContext');
     var ctxLink = document.getElementById('replyContextLink');
     var ctxClear = document.getElementById('replyContextClear');
+    var replyTarget = { name: '' };
 
-    document.querySelectorAll('.el-post').forEach(function (post) {
-      var buttons = post.querySelectorAll('.el-post-actions button');
-      var replyBtn = null;
-      buttons.forEach(function (b) { if (b.textContent.indexOf('返信') !== -1) replyBtn = b; });
-      if (!replyBtn) return;
-      var nameEl = post.querySelector('.name');
-      var name = nameEl ? nameEl.textContent.trim() : '';
-      replyBtn.addEventListener('click', function () {
-        if (window.elRequireAuth && !window.elRequireAuth()) return;
-        editorArea.innerHTML = '<strong>@' + name + '</strong>&nbsp;';
-        ctxLink.textContent = name + 'さんの投稿に返信中';
-        ctxLink.href = '#' + post.id;
-        ctx.classList.add('is-visible');
-        replyBox.hidden = false;
-        replyBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        editorArea.focus();
+    function renderComments(list) {
+      var container = document.getElementById('commentsList');
+      document.getElementById('commentsHead').style.display = 'flex';
+      document.getElementById('commentsCount').textContent = list.length + '件';
+      if (!list.length) {
+        container.innerHTML = '<p style="padding:24px 4px;color:var(--el-ink-faint);font-size:13.5px;">まだコメントはありません。最初のコメントを投稿してみましょう。</p>';
+        return;
+      }
+      container.innerHTML = list.map(function (c) {
+        var name = escHtml(c.name);
+        return '<article class="el-post" id="' + c.id + '">' +
+          '<div class="el-avatar">' + escHtml(name.charAt(0) || '?') + '</div>' +
+          '<div>' +
+            '<div class="el-post-head"><span class="name">' + name + '</span><span class="time">' + escHtml(c.dateLabel) + '</span></div>' +
+            '<div class="el-post-body"><p>' + escHtml(c.body).replace(/\n/g, '<br>') + '</p></div>' +
+            '<div class="el-post-actions"><button type="button" class="el-reply-btn" data-name="' + name.replace(/"/g, '&quot;') + '"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H4l2.4-3.6A8.5 8.5 0 1 1 21 11.5Z"/></svg> 返信</button></div>' +
+          '</div></article>';
+      }).join('');
+
+      container.querySelectorAll('.el-reply-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var name = btn.dataset.name;
+          replyTarget.name = name;
+          textarea.value = '@' + name + ' ';
+          ctxLink.textContent = name + 'さんのコメントに返信中';
+          ctx.classList.add('is-visible');
+          replyBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          textarea.focus();
+        });
       });
-    });
+    }
+
+    function loadComments(id, localComments) {
+      apiPost({ action: 'listComments', topicId: id }).then(function (data) {
+        var live = (data.ok ? data.items : []).map(function (c) {
+          return { id: c.id, name: c.authorName || 'ゲスト', body: c.body, dateLabel: formatDate(c.createdAt), sortKey: c.createdAt || '' };
+        });
+        var local = (localComments || []).map(function (c, idx) {
+          return { id: 'local-' + idx, name: c.user, body: c.body, dateLabel: formatDate(c.date), sortKey: c.date || '' };
+        });
+        var all = local.concat(live).sort(function (a, b) { return String(a.sortKey).localeCompare(String(b.sortKey)); });
+        renderComments(all);
+      }).catch(function () {
+        renderComments((localComments || []).map(function (c, idx) {
+          return { id: 'local-' + idx, name: c.user, body: c.body, dateLabel: formatDate(c.date) };
+        }));
+      });
+    }
+
+    function renderTopic(t, source) {
+      document.getElementById('pageTitle').textContent = t.title + '｜Export Lab';
+      document.getElementById('threadCategoryCrumb').textContent = CATEGORY_LABEL[t.category] || t.category || '';
+      document.getElementById('threadTitle').textContent = t.title;
+
+      var visBadge = t.visibility === 'shift' ? '<span class="badge badge--member">SHiFT限定</span>' : '<span class="badge badge--open">公開</span>';
+      var statusBadge = t.status === 'solved' ? '<span class="badge badge--solved">解決</span>' : '<span class="badge badge--unsolved">未解決</span>';
+      document.getElementById('threadBadges').innerHTML = visBadge + '<span class="badge badge--cat">' + escHtml(CATEGORY_LABEL[t.category] || t.category || '') + '</span>' + statusBadge;
+
+      var commentCount = source === 'local' ? (t.comments || []).length : (t.commentCount || 0);
+      document.getElementById('threadMeta').innerHTML =
+        '<span>' + commentCount + '件の返信</span><span>・</span><span>' + (t.views || 0) + '回の閲覧</span>';
+
+      var opEl = document.getElementById('op');
+      opEl.style.display = 'grid';
+      var authorName = t.author || t.authorName || 'ゲスト';
+      document.getElementById('opAvatar').textContent = authorName.charAt(0);
+      document.getElementById('opName').textContent = authorName;
+      document.getElementById('opDate').textContent = '投稿日：' + formatDate(t.date || t.createdAt);
+      document.getElementById('opBody').innerHTML = (t.body || '').indexOf('<') !== -1 ? t.body : '<p>' + escHtml(t.body || '').replace(/\n/g, '</p><p>') + '</p>';
+      document.getElementById('opTags').innerHTML = (t.tags || []).map(function (tag) {
+        return '<a href="board.html?tag=' + encodeURIComponent(tag) + '">#' + escHtml(tag) + '</a>';
+      }).join('');
+
+      document.getElementById('replyBox').hidden = false;
+      loadComments(topicId, source === 'local' ? t.comments : null);
+    }
+
+    function showNotFound() {
+      document.getElementById('threadHead').hidden = true;
+      document.getElementById('topicNotFound').style.display = 'flex';
+      document.getElementById('pageTitle').textContent = 'トピックが見つかりません｜Export Lab';
+    }
+
+    if (!topicId) {
+      showNotFound();
+    } else {
+      var local = findLocalTopic(topicId);
+      if (local) {
+        renderTopic(local, 'local');
+      } else {
+        apiPost({ action: 'getTopic', id: topicId }).then(function (data) {
+          if (data.ok && data.found) {
+            renderTopic(data.item, 'sheet');
+          } else {
+            showNotFound();
+          }
+        }).catch(showNotFound);
+      }
+    }
 
     ctxClear.addEventListener('click', function () {
       ctx.classList.remove('is-visible');
-      replyEditor.clear();
-      replyBox.hidden = true;
-    });
-  })();
-
-  // ユーザーモード（ゲスト／登録ユーザー／管理者）の切り替えと共通ゲート処理
-  // Googleドライブの共有リンクを、<img>で直接表示できる形式のURLに変換する
-  function elDriveImgUrl(url) {
-    if (!url) return url;
-    var m = url.match(/drive\.google\.com\/file\/d\/([^/]+)/) || url.match(/[?&]id=([^&]+)/);
-    if (m && m[1]) return 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w1000';
-    return url;
-  }
-  window.elDriveImgUrl = elDriveImgUrl;
-
-  document.addEventListener('DOMContentLoaded', function () {
-    var ROLE_KEY = 'el-user-role';
-    function getRole() {
-      try { return localStorage.getItem(ROLE_KEY) || 'guest'; } catch (e) { return 'guest'; }
-    }
-    function setRole(role) {
-      try { localStorage.setItem(ROLE_KEY, role); } catch (e) {}
-    }
-    window.elGetRole = getRole;
-
-    var role = getRole();
-    document.body.setAttribute('data-role', role);
-
-    // ゲストは通知ベルとアイコンを非表示
-    var bell = document.querySelector('.el-header-bell');
-    if (bell && role === 'guest') bell.style.display = 'none';
-    var headerAvatar = document.getElementById('headerAvatar');
-    if (headerAvatar && role === 'guest') headerAvatar.style.display = 'none';
-    else if (headerAvatar) {
-      try {
-        var hp = JSON.parse(localStorage.getItem('el-user-profile') || '{}');
-        var hUsername = localStorage.getItem('el-username') || hp.username || '';
-        if (hp.photoUrl) headerAvatar.innerHTML = '<img src="' + window.elDriveImgUrl(hp.photoUrl) + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
-        else if (hUsername) headerAvatar.textContent = hUsername.charAt(0);
-      } catch (e) {}
-    }
-
-    var authLinksWrap = document.getElementById('headerAuthLinks');
-    var loginLink = document.getElementById('headerLoginLink');
-    var signupLink = document.getElementById('headerSignupLink');
-    if (role !== 'guest' && authLinksWrap) {
-      if (loginLink) loginLink.remove();
-      if (signupLink) {
-        signupLink.textContent = 'ログアウト';
-        signupLink.href = '#';
-        signupLink.addEventListener('click', function (e) {
-          e.preventDefault();
-          setRole('guest');
-          window.location.href = 'index.html';
-        });
-      }
-    }
-
-    // 「ユーザー登録してください」モーダル
-    var modal = document.getElementById('authModal');
-    window.elRequireAuth = function (e) {
-      if (getRole() !== 'guest') return true;
-      if (e) e.preventDefault();
-      if (modal) { modal.classList.add('is-open'); modal.setAttribute('aria-hidden', 'false'); }
-      return false;
-    };
-    if (modal) {
-      modal.querySelectorAll('[data-auth-close]').forEach(function (el) {
-        el.addEventListener('click', function () {
-          modal.classList.remove('is-open');
-          modal.setAttribute('aria-hidden', 'true');
-        });
-      });
-      document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape') { modal.classList.remove('is-open'); modal.setAttribute('aria-hidden', 'true'); }
-      });
-    }
-
-    // SHiFT会員限定コンテンツ用モーダル
-    var shiftModal = document.getElementById('shiftModal');
-    window.elRequireShift = function () {
-      var r = getRole();
-      if (r === 'shift' || r === 'admin') return true;
-      if (shiftModal) { shiftModal.classList.add('is-open'); shiftModal.setAttribute('aria-hidden', 'false'); }
-      return false;
-    };
-    if (shiftModal) {
-      shiftModal.querySelectorAll('[data-shift-close]').forEach(function (el) {
-        el.addEventListener('click', function () {
-          shiftModal.classList.remove('is-open');
-          shiftModal.setAttribute('aria-hidden', 'true');
-        });
-      });
-    }
-
-    // 管理者にはサイドバーに管理者ページへのリンクを追加
-    if (role === 'admin') {
-      var sideNav = document.querySelector('.el-sidebar nav');
-      if (sideNav && !sideNav.querySelector('a[href="admin.html"]')) {
-        var adminLink = document.createElement('a');
-        adminLink.href = 'admin.html';
-        if (window.location.pathname.indexOf('admin.html') !== -1) adminLink.className = 'is-active';
-        adminLink.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 3 7v6c0 5 4 9 9 9s9-4 9-9V7l-9-5Z"/><path d="m9 12 2 2 4-4"/></svg><span class="lbl">管理者ページ</span>';
-        sideNav.appendChild(adminLink);
-      }
-    }
-
-    // ゲストには data-guest-hide の要素を隠す（本文はCSSでも隠すが、動的挿入分もここでカバー）
-    if (role === 'guest') {
-      document.querySelectorAll('[data-guest-block]').forEach(function (el) {
-        el.addEventListener('click', window.elRequireAuth);
-      });
-    }
-  });
-
-  // 本文・コメントの閲覧制限（公開範囲に応じたモザイク表示）
-  (function () {
-    var topicVisibility = (EL_CURRENT_TOPIC && EL_CURRENT_TOPIC.visibility) || 'general';
-    var role = 'guest';
-    try { role = localStorage.getItem('el-user-role') || 'guest'; } catch (e) {}
-
-    var mode = null;
-    if (role === 'guest' && topicVisibility !== 'general') mode = 'guest';
-    else if (role === 'member' && topicVisibility === 'shift') mode = 'shift';
-    if (!mode) return;
-
-    var thread = document.querySelector('.el-thread-main');
-    if (!thread) return;
-    thread.classList.add('el-gated');
-
-    var opBody = document.querySelector('#op .el-post-body');
-    if (opBody) {
-      if (mode === 'guest') {
-        // 本文は最初の段落だけ残し、残りにモザイクをかける
-        var firstP = opBody.querySelector('p');
-        Array.prototype.slice.call(opBody.children).forEach(function (el) {
-          if (el !== firstP) el.classList.add('el-content-mosaic');
-        });
-      } else {
-        opBody.classList.add('el-content-mosaic');
-      }
-    }
-
-    document.querySelectorAll('.el-post').forEach(function (post) {
-      if (post.id === 'op') return;
-      post.querySelectorAll('.el-post-body').forEach(function (b) { b.classList.add('el-content-mosaic'); });
+      replyTarget.name = '';
+      textarea.value = '';
     });
 
-    var replyBox = document.getElementById('replyBox');
-    if (replyBox) replyBox.style.display = 'none';
-    document.querySelectorAll('.el-post-actions button').forEach(function (b) {
-      if (b.textContent.indexOf('返信') !== -1) b.style.display = 'none';
-    });
+    document.getElementById('replySubmitBtn').addEventListener('click', function () {
+      var body = textarea.value.trim();
+      if (!body) { textarea.focus(); return; }
+      var btn = this;
+      var statusEl = document.getElementById('replyStatus');
+      btn.disabled = true;
+      statusEl.textContent = '送信中…';
 
-    var overlay = document.createElement('div');
-    overlay.className = 'el-gate-overlay';
-    overlay.innerHTML = mode === 'guest'
-      ? '<h3>続きを見るには会員登録が必要です</h3><p>本文・コメントの続きは、会員登録（無料）をすると閲覧いただけます。</p><a href="signup.html" class="el-btn el-btn--primary el-btn--sm">新規登録する</a>'
-      : '<h3>SHiFT会員限定のスレッドです</h3><p>この投稿はSHiFT会員だけが閲覧できます。</p><a href="#" class="el-btn el-btn--primary el-btn--sm">SHiFT会員について見る</a>';
-    thread.appendChild(overlay);
-  })();
+      var authorName = localStorage.getItem('el-user-name') || localStorage.getItem('el-username') || 'ゲスト';
+      var authorUsername = localStorage.getItem('el-username') || '';
 
-  // 検索結果からのキーワードをハイライトして該当箇所までスクロールする
-  (function () {
-    var params = new URLSearchParams(window.location.search);
-    var hl = params.get('hl');
-    if (!hl) return;
-    var hlLower = hl.toLowerCase();
-
-    function highlightAndScroll(root) {
-      var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
-      var node;
-      while (node = walker.nextNode()) {
-        if (!node.parentElement || node.parentElement.closest('script,style,mark,.el-breadcrumb,.badge,nav,.el-t-row-meta,.el-post-head')) continue;
-        var text = node.nodeValue;
-        var idx = text.toLowerCase().indexOf(hlLower);
-        if (idx !== -1) {
-          var before = text.slice(0, idx);
-          var match = text.slice(idx, idx + hl.length);
-          var after = text.slice(idx + hl.length);
-          var mark = document.createElement('mark');
-          mark.style.cssText = 'background:#FFE58A;color:inherit;padding:0 2px;border-radius:3px;';
-          mark.textContent = match;
-          var frag = document.createDocumentFragment();
-          frag.appendChild(document.createTextNode(before));
-          frag.appendChild(mark);
-          frag.appendChild(document.createTextNode(after));
-          node.parentNode.replaceChild(frag, node);
-          setTimeout(function () { mark.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 200);
-          return true;
+      apiPost({
+        action: 'createComment',
+        topicId: topicId,
+        parentId: '',
+        authorUsername: authorUsername,
+        authorName: authorName,
+        body: body
+      }).then(function (data) {
+        btn.disabled = false;
+        statusEl.textContent = 'Markdown記法に対応しています';
+        if (data.ok) {
+          textarea.value = '';
+          ctx.classList.remove('is-visible');
+          var local = findLocalTopic(topicId);
+          loadComments(topicId, local ? local.comments : null);
+        } else {
+          alert(data.error || '返信の送信に失敗しました。');
         }
-      }
-      return false;
-    }
-
-    // 1つのゾーン（本文 or 1つのコメント）の中にある一致箇所を「すべて」ハイライトする
-    function highlightAllIn(root) {
-      var count = 0;
-      var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
-      var textNodes = [];
-      var node;
-      while (node = walker.nextNode()) {
-        if (!node.parentElement || node.parentElement.closest('script,style,mark,.el-breadcrumb,.badge,nav,.el-t-row-meta,.el-post-head')) continue;
-        textNodes.push(node);
-      }
-      textNodes.forEach(function (textNode) {
-        var text = textNode.nodeValue;
-        var lower = text.toLowerCase();
-        if (lower.indexOf(hlLower) === -1) return;
-        var frag = document.createDocumentFragment();
-        var cursor = 0;
-        var idx;
-        while ((idx = lower.indexOf(hlLower, cursor)) !== -1) {
-          frag.appendChild(document.createTextNode(text.slice(cursor, idx)));
-          var mark = document.createElement('mark');
-          mark.style.cssText = 'background:#FFE58A;color:inherit;padding:0 2px;border-radius:3px;';
-          mark.textContent = text.slice(idx, idx + hl.length);
-          frag.appendChild(mark);
-          count++;
-          cursor = idx + hl.length;
-        }
-        frag.appendChild(document.createTextNode(text.slice(cursor)));
-        textNode.parentNode.replaceChild(frag, textNode);
+      }).catch(function () {
+        btn.disabled = false;
+        statusEl.textContent = 'Markdown記法に対応しています';
+        alert('通信エラーが発生しました。ネットワーク状況をご確認のうえ、再度お試しください。');
       });
-      return count;
-    }
-
-    // 本文・コメントの動的描画が終わるのを少し待ってから探す
-    setTimeout(function () {
-      // 投稿本文・すべてのコメントを対象に、一致箇所を漏れなくハイライトする
-      // （同じトピック内で本文・コメント両方に一致があれば、両方に印が付く）
-      var priorityZones = document.querySelectorAll('#opBody, .el-post-body');
-      var totalHits = 0;
-      var firstMark = null;
-      priorityZones.forEach(function (zone) {
-        var before = zone.querySelectorAll('mark').length;
-        highlightAllIn(zone);
-        totalHits += zone.querySelectorAll('mark').length - before;
-      });
-      firstMark = document.querySelector('#opBody mark, .el-post-body mark');
-      if (firstMark) {
-        setTimeout(function () { firstMark.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 200);
-        return;
-      }
-      // 本文・コメントに一致が無ければ、ページ全体から1件だけ探す（従来通り）
-      var main = document.querySelector('main') || document.body;
-      highlightAndScroll(main);
-    }, 700);
+    });
   })();
 </script>
-<div class="el-auth-modal" id="authModal" aria-hidden="true">
-  <div class="el-auth-modal-backdrop" data-auth-close></div>
-  <div class="el-auth-modal-panel" role="dialog" aria-modal="true">
-    <button type="button" class="el-auth-modal-close" data-auth-close aria-label="閉じる">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
-    </button>
-    <h3>ユーザー登録してください</h3>
-    <p>この操作を行うには、会員登録（無料）が必要です。登録すると投稿・返信・購入などすべての機能がご利用いただけます。</p>
-    <div class="el-auth-modal-actions">
-      <a href="signup.html" class="el-btn el-btn--primary el-btn--sm">新規登録する</a>
-      <button type="button" class="el-btn el-btn--ghost el-btn--sm" data-auth-close>閉じる</button>
-    </div>
-  </div>
-</div>
-
-<div class="el-auth-modal" id="shiftModal" aria-hidden="true">
-  <div class="el-auth-modal-backdrop" data-shift-close></div>
-  <div class="el-auth-modal-panel" role="dialog" aria-modal="true">
-    <button type="button" class="el-auth-modal-close" data-shift-close aria-label="閉じる">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
-    </button>
-    <h3>SHiFT会員限定です</h3>
-    <p>この内容はSHiFT会員（WorldShiftの各種サービスをご利用中の方）だけが閲覧できます。SHiFT会員の方はサポート窓口までお問い合わせください。</p>
-    <div class="el-auth-modal-actions">
-      <a href="#" class="el-btn el-btn--primary el-btn--sm">SHiFT会員について見る</a>
-      <button type="button" class="el-btn el-btn--ghost el-btn--sm" data-shift-close>閉じる</button>
-    </div>
-  </div>
-</div>
-
 </body>
 </html>

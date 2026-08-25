@@ -331,6 +331,21 @@
 
   var SEARCH_INDEX = FORUM_SEARCH_ITEMS.concat(STATIC_INDEX);
 
+  // スプレッドシートに保存されている新着投稿も取得できたら検索対象に追加する
+  if (window.EL_loadLiveTopics) {
+    window.EL_loadLiveTopics(function () {
+      var liveForumItems = (window.EL_TOPICS || []).map(function (t) {
+        var commentText = (t.comments || []).map(function (c) { return c.body; }).join(' ');
+        return {
+          type: 'フォーラム', title: t.title,
+          search: [t.title, t.body, commentText].join(' '),
+          url: 'topic.html?id=' + t.id
+        };
+      });
+      SEARCH_INDEX = liveForumItems.concat(STATIC_INDEX);
+    });
+  }
+
   var TYPE_COLOR = {
     'フォーラム': 'var(--el-teal-deep)',
     'コミュニティ': 'var(--el-mustard-deep)',

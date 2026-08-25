@@ -144,7 +144,9 @@
           <a href="announcements.html" style="color:var(--el-ink-faint);">公式お知らせ</a>
         </div>
 
-        <div class="el-announce-empty" style="background:var(--el-paper);border:1.5px solid var(--el-line-soft);border-radius:var(--el-radius-l);padding:60px 24px;">
+        <article class="el-notice" id="announceArticle" hidden></article>
+
+        <div class="el-announce-empty" id="announceNotFound" style="background:var(--el-paper);border:1.5px solid var(--el-line-soft);border-radius:var(--el-radius-l);padding:60px 24px;">
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
           <p style="font-size:14.5px;">このお知らせは見つかりませんでした。すでに削除されたか、公開が終了した可能性があります。</p>
           <a href="announcements.html" class="el-btn el-btn--ghost el-btn--sm" style="margin-top:6px;">お知らせ一覧へ戻る</a>
@@ -208,6 +210,46 @@
       window.location.href = summary.dataset.href;
     });
   });
+
+  // お知らせ本文の読み込み（スプレッドシート連携）
+  (function () {
+    var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
+    var id = new URLSearchParams(window.location.search).get('id') || '';
+    var article = document.getElementById('announceArticle');
+    var notFound = document.getElementById('announceNotFound');
+
+    function showNotFound() { notFound.style.display = 'flex'; article.hidden = true; }
+
+    if (!id) { showNotFound(); return; }
+
+    fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'listContent', type: 'announcement' })
+    })
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        var it = (data.ok ? data.items : []).filter(function (a) { return a.id === id; })[0];
+        if (!it) { showNotFound(); return; }
+        document.title = it.title + '｜Export Lab';
+        var dateLabel = it.createdAt ? new Date(it.createdAt).toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' }) : '';
+        var cta = it.ctaText ? '<a href="' + (it.ctaUrl || '#') + '" class="el-btn el-btn--primary el-btn--sm">' + it.ctaText + '</a>' : '';
+        article.innerHTML =
+          '<div class="el-notice-head">' +
+            '<span class="el-notice-icon" style="background:var(--el-coral);"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg></span>' +
+            '<div>' +
+              '<span class="badge badge--announce">' + (it.category || 'お知らせ') + '</span>' +
+              '<h1 style="font-size:22px;margin:8px 0 4px;">' + it.title + '</h1>' +
+              '<div class="el-notice-meta">Export Lab運営チーム・' + dateLabel + '</div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="el-notice-body">' + (it.bodyHtml || '') + '</div>' +
+          (cta ? '<div class="el-notice-foot">' + cta + '</div>' : '');
+        article.hidden = false;
+        notFound.style.display = 'none';
+      })
+      .catch(showNotFound);
+  })();
 </script>
 </body>
 </html>

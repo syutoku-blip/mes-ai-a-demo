@@ -761,6 +761,39 @@
     document.getElementById('adTitle').textContent = ad.name;
     document.getElementById('adDesc').textContent = ad.desc;
   })();
+
+  // 公式お知らせ（最新3件）の読み込み（スプレッドシート連携）
+  (function () {
+    var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
+    var box = document.querySelector('.el-announce-box');
+    if (!box) return;
+    fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'listContent', type: 'announcement' })
+    })
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        if (!data.ok || !data.items.length) return; // 未登録の場合は元の空状態表示のまま
+        var items = data.items.slice(0, 3);
+        box.innerHTML = items.map(function () {
+          return '<a href="announcement-detail.html" class="el-announce-row">' +
+            '<span class="ic" style="background:var(--el-coral);"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg></span>' +
+            '<div class="el-announce-row-main"><span class="title"></span><div class="meta"><span class="badge badge--announce"></span><span></span></div></div>' +
+            '<span class="el-announce-arrow"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></span>' +
+          '</a>';
+        }).join('');
+        box.querySelectorAll('.el-announce-row').forEach(function (row, i) {
+          var it = items[i];
+          row.href = 'announcement-detail.html?id=' + encodeURIComponent(it.id);
+          row.querySelector('.title').textContent = it.title || '';
+          row.querySelector('.badge').textContent = it.category || 'お知らせ';
+          var d = it.createdAt ? new Date(it.createdAt) : new Date();
+          row.querySelectorAll('.meta span')[1].textContent = d.toLocaleDateString('ja-JP');
+        });
+      })
+      .catch(function () {});
+  })();
 </script>
 </body>
 </html>

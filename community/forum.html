@@ -713,7 +713,8 @@
   });
 
   // フォーラムTOP：NEW／HOT／SHiFT会員限定を実際の投稿データから描画する
-  (function () {
+  // （スプレッドシートに保存されている新着投稿も取得してから描画する）
+  window.EL_loadLiveTopics(function () {
     var CATEGORY_LABEL = window.EL_CATEGORY_LABEL || {};
     var topics = window.EL_TOPICS || [];
     if (!topics.length) return;
@@ -775,7 +776,7 @@
           window.EL_getTagLabel(item.tag) + '<span class="count">' + item.count + '</span></a>';
       }).join('');
     }
-  })();
+  });
   var ADS = [
     { name: "SLCサービス", desc: "米AmazonFBA納品代行サービス", gradient: "linear-gradient(120deg, var(--el-teal), #1B5A52)" },
     { name: "FDA Compliance Partner", desc: "FDA規制対応サービス", gradient: "linear-gradient(120deg, var(--el-mustard), #8A5E1A)" },

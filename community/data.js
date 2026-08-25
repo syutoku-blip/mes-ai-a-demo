@@ -4,6 +4,32 @@ window.EL_CATEGORY_LABEL = {"amazon-ops": "Amazon販売・運用", "fba-inventor
 
 window.EL_ACCOUNTS = [];
 
+// スプレッドシート連携：フォーラムに新しく投稿されたトピック（forum-new.html経由）を取得し、
+// window.EL_TOPICS の先頭に差し込む。デモの投稿データはそのまま残し、新しい投稿はここに追加される。
+// 各ページはこの関数のコールバック内でEL_TOPICSを使った描画処理を行うことで、常に最新の投稿を反映できる。
+window.EL_loadLiveTopics = function (callback) {
+  var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
+  fetch(API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({ action: 'listTopics' })
+  })
+    .then(function (res) { return res.json(); })
+    .then(function (data) {
+      var live = (data.ok ? data.items : []).map(function (t) {
+        return {
+          id: t.id, title: t.title, body: t.body, category: t.category, tags: t.tags || [],
+          author: t.authorName || 'ゲスト', date: (t.createdAt || '').slice(0, 10),
+          views: t.views || 0, recency: 1000, status: t.status || 'unsolved',
+          visibility: t.visibility || 'general', comments: []
+        };
+      });
+      window.EL_TOPICS = live.concat(window.EL_TOPICS || []);
+      callback();
+    })
+    .catch(function () { callback(); });
+};
+
 window.EL_TOPICS = [
   {
     "id": "t01",

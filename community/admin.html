@@ -274,8 +274,10 @@
           <a href="#" data-tab="event">イベント登録</a>
           <a href="#" data-tab="content">コンテンツ登録</a>
           <a href="#" data-tab="forms">フォーム管理</a>
+          <a href="#" data-tab="community">コミュニティ管理</a>
           <a href="#" data-tab="ads">広告設定</a>
           <a href="#" data-tab="apply">出品申請の確認</a>
+          <a href="#" data-tab="marketOrders">マーケット申込み一覧</a>
           <a href="#" data-tab="badge">バッジの付与</a>
         </div>
 
@@ -422,6 +424,56 @@
           <div id="contentAdminList" style="margin-top:32px;"></div>
         </div>
 
+        <!-- コミュニティ管理 -->
+        <div class="el-admin-panel" data-panel="community" style="display:none;">
+          <p style="font-size:13px;color:var(--el-ink-faint);margin:0 0 20px;line-height:1.8;">
+            コミュニティページ（groups-list.html）で表示される各コミュニティの概要（説明文・カテゴリ・作成者・投稿数など）を編集できます。編集内容はスプレッドシートに保存され、コミュニティ詳細のモーダルとカードの説明文にすぐ反映されます。
+          </p>
+          <form id="communityForm" style="display:flex;flex-direction:column;gap:16px;max-width:720px;">
+            <label>
+              <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">対象のコミュニティ</span>
+              <select name="id" id="communitySelect" required style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
+                <option value="market-trends">マーケット動向 情報交換会</option>
+                <option value="customs-check">通関書類 相互チェック会</option>
+                <option value="fukuoka-offkai">福岡 輸出事業者オフ会</option>
+                <option value="beginner-room">初めての輸出 相談室</option>
+                <option value="fda-practitioners">FDA対応 実務者の会</option>
+                <option value="sedori-research">せどり便乗リサーチ部</option>
+              </select>
+              <span style="display:block;font-size:12px;color:var(--el-ink-faint);margin-top:6px;">既存の6コミュニティから選択します。名称自体（h4見出し）はサイト側の固定表示のため、ここでは概要情報のみ編集できます。</span>
+            </label>
+            <div style="display:flex;gap:12px;flex-wrap:wrap;">
+              <label style="flex:1;min-width:200px;">
+                <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">カテゴリ</span>
+                <input type="text" name="category" placeholder="情報交換・雑談 など" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
+              </label>
+              <label style="flex:1;min-width:200px;">
+                <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">作成者</span>
+                <input type="text" name="creator" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
+              </label>
+            </div>
+            <label>
+              <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">説明文</span>
+              <textarea name="description" rows="3" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;resize:vertical;"></textarea>
+            </label>
+            <div style="display:flex;gap:12px;flex-wrap:wrap;">
+              <label style="flex:1;min-width:160px;">
+                <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">作成日（表示用テキスト）</span>
+                <input type="text" name="createdAtLabel" placeholder="2026年8月2日" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
+              </label>
+              <label style="flex:1;min-width:160px;">
+                <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">投稿数</span>
+                <input type="number" name="postCount" min="0" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
+              </label>
+            </div>
+            <label>
+              <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">直近の話題（任意）</span>
+              <input type="text" name="recentTopic" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
+            </label>
+            <button type="submit" class="el-btn el-btn--primary" style="align-self:flex-start;">保存する</button>
+          </form>
+        </div>
+
         <!-- フォーム管理 -->
         <div class="el-admin-panel" data-panel="forms" style="display:none;">
           <p style="font-size:13px;color:var(--el-ink-faint);margin:0 0 20px;line-height:1.8;">
@@ -527,6 +579,15 @@
         <!-- 出品申請の確認 -->
         <div class="el-admin-panel" data-panel="apply" style="display:none;">
           <div id="applyList" style="display:flex;flex-direction:column;gap:12px;"></div>
+        </div>
+
+        <!-- マーケット申込み一覧 -->
+        <div class="el-admin-panel" data-panel="marketOrders" style="display:none;">
+          <p style="font-size:13px;color:var(--el-ink-faint);margin:0 0 16px;line-height:1.8;">
+            マーケットの申込み・購入（market-apply.html／market-checkout.html）はすべてスプレッドシートの「マーケット申込み」シートに記録されます。ここから一覧の確認とCSV出力ができます。
+          </p>
+          <button type="button" id="marketOrdersCsvBtn" class="el-btn el-btn--ghost el-btn--sm" style="margin-bottom:16px;">CSVを出力</button>
+          <div id="marketOrdersList" style="display:flex;flex-direction:column;gap:10px;"></div>
         </div>
 
         <!-- バッジの付与 -->
@@ -1078,14 +1139,33 @@
   // ------------------------------------------------------------
   // お知らせ登録
   // ------------------------------------------------------------
-  function renderSimpleList(containerId, items, renderItem) {
+  // contentType・onReload を渡すと、各アイテムに削除ボタンが付き、コンテンツ管理シート
+  // （announcement/event/marketContent/ad/communityGroup）から削除できるようになる。
+  function renderSimpleList(containerId, items, renderItem, contentType, onReload) {
     var el = document.getElementById(containerId);
     if (!items.length) {
       el.innerHTML = '<div style="padding:24px;text-align:center;color:var(--el-ink-faint);font-size:13px;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);">まだ登録がありません。</div>';
       return;
     }
     el.innerHTML = '<h3 style="font-size:14px;margin:0 0 12px;">登録済み一覧</h3>' +
-      '<div style="display:flex;flex-direction:column;gap:10px;">' + items.map(renderItem).join('') + '</div>';
+      '<div style="display:flex;flex-direction:column;gap:10px;">' + items.map(function (it) {
+        if (!contentType) return renderItem(it);
+        return '<div style="position:relative;">' + renderItem(it) +
+          '<button type="button" class="el-content-delete-btn" data-type="' + contentType + '" data-id="' + it.id + '" ' +
+          'style="position:absolute;top:10px;right:10px;background:var(--el-paper);border:1px solid var(--el-line-soft);color:var(--el-coral);cursor:pointer;font-size:11.5px;padding:4px 10px;border-radius:999px;">削除</button></div>';
+      }).join('') + '</div>';
+
+    if (contentType) {
+      el.querySelectorAll('.el-content-delete-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          if (!confirm('この項目を削除しますか？この操作は取り消せません。')) return;
+          apiPost({ action: 'deleteContent', type: btn.dataset.type, id: btn.dataset.id }).then(function (data) {
+            if (data.ok) { if (onReload) onReload(); }
+            else alert(data.error || '削除に失敗しました');
+          }).catch(function () { alert('通信エラーが発生しました。'); });
+        });
+      });
+    }
   }
 
   function loadAnnouncements() {
@@ -1096,7 +1176,7 @@
         return '<div style="padding:14px 16px;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);">' +
           '<span class="badge badge--announce">' + it.category + '</span> <strong>' + it.title + '</strong>' +
           '<div style="font-size:12px;color:var(--el-ink-faint);margin-top:4px;">' + new Date(it.createdAt).toLocaleString('ja-JP') + '</div>' + cta + '</div>';
-      });
+      }, 'announcement', loadAnnouncements);
     });
   }
   loadAnnouncements();
@@ -1164,7 +1244,7 @@
         return '<div style="padding:14px 16px;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);overflow:hidden;">' +
           thumb + '<strong>' + it.title + '</strong>' + formTag +
           '<div style="font-size:12.5px;color:var(--el-ink-faint);margin-top:4px;">' + (it.eventDate ? new Date(it.eventDate).toLocaleString('ja-JP') : '') + (it.place ? '・' + it.place : '') + '</div></div>';
-      });
+      }, 'event', loadEvents);
     });
   }
   loadEvents();
@@ -1216,7 +1296,7 @@
         return '<div style="padding:14px 16px;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);overflow:hidden;">' +
           thumb + '<strong>' + it.title + '</strong> ・ ¥' + Number(it.price || 0).toLocaleString() +
           '<div style="font-size:12px;color:var(--el-ink-faint);margin-top:4px;">' + it.category + '</div></div>';
-      });
+      }, 'marketContent', loadContentAdmin);
     });
   }
   loadContentAdmin();
@@ -1533,7 +1613,7 @@
   function loadAds() {
     apiPost({ action: 'listContent', type: 'ad' }).then(function (data) {
       if (!data.ok) return;
-      renderSimpleList('adList', data.items, function (it) { return renderAdPreview(it); });
+      renderSimpleList('adList', data.items, function (it) { return renderAdPreview(it); }, 'ad', loadAds);
     });
   }
   loadAds();
@@ -1554,6 +1634,94 @@
     }).catch(function () { alert('通信エラーが発生しました。'); });
   });
 
+  // ------------------------------------------------------------
+  // コミュニティ管理：groups-list.html のコミュニティ概要（モーダル・カード説明文）を編集
+  // ------------------------------------------------------------
+  var communityForm = document.getElementById('communityForm');
+  var communitySelect = document.getElementById('communitySelect');
+  var communityDataCache = {};
+
+  function loadCommunityGroups() {
+    apiPost({ action: 'listContent', type: 'communityGroup' }).then(function (data) {
+      if (!data.ok) return;
+      communityDataCache = {};
+      data.items.forEach(function (it) { communityDataCache[it.id] = it; });
+      fillCommunityForm(communitySelect.value);
+    });
+  }
+  function fillCommunityForm(id) {
+    var it = communityDataCache[id] || {};
+    communityForm.category.value = it.category || '';
+    communityForm.creator.value = it.creator || '';
+    communityForm.description.value = it.description || '';
+    communityForm.createdAtLabel.value = it.createdAtLabel || '';
+    communityForm.postCount.value = it.postCount || '';
+    communityForm.recentTopic.value = it.recentTopic || '';
+  }
+  communitySelect.addEventListener('change', function () { fillCommunityForm(communitySelect.value); });
+  loadCommunityGroups();
+
+  communityForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var fd = new FormData(communityForm);
+    var id = fd.get('id');
+    var payload = {
+      type: 'communityGroup', id: id,
+      category: fd.get('category'), creator: fd.get('creator'), description: fd.get('description'),
+      createdAtLabel: fd.get('createdAtLabel'), postCount: fd.get('postCount'), recentTopic: fd.get('recentTopic')
+    };
+    var exists = !!communityDataCache[id];
+    payload.action = exists ? 'updateContent' : 'createContent';
+    apiPost(payload).then(function (data) {
+      if (data.ok) { alert('コミュニティ概要を保存しました。'); loadCommunityGroups(); }
+      else alert(data.error || '保存に失敗しました');
+    }).catch(function () { alert('通信エラーが発生しました。'); });
+  });
+
+  // ------------------------------------------------------------
+  // マーケット申込み一覧（market-apply.html／market-checkout.html からの送信を記録）
+  // ------------------------------------------------------------
+  var marketOrdersCache = [];
+  function loadMarketOrders() {
+    apiPost({ action: 'listMarketOrders' }).then(function (data) {
+      if (!data.ok) return;
+      marketOrdersCache = data.items;
+      var el = document.getElementById('marketOrdersList');
+      if (!data.items.length) {
+        el.innerHTML = '<div style="padding:24px;text-align:center;color:var(--el-ink-faint);font-size:13px;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);">まだ申込みはありません。</div>';
+        return;
+      }
+      el.innerHTML = data.items.map(function (it) {
+        return '<div style="padding:14px 16px;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);">' +
+          '<strong>' + (it.contentTitle || it.contentId || '（内容不明）') + '</strong>' +
+          (it.amount ? ' ・ ¥' + Number(it.amount).toLocaleString() : '') +
+          '<div style="font-size:12.5px;color:var(--el-ink-faint);margin-top:4px;">' +
+          (it.fullname || it.username || 'ゲスト') + (it.email ? '（' + it.email + '）' : '') + ' ・ ' + new Date(it.createdAt).toLocaleString('ja-JP') +
+          '</div></div>';
+      }).join('');
+    });
+  }
+  loadMarketOrders();
+
+  document.getElementById('marketOrdersCsvBtn').addEventListener('click', function () {
+    if (!marketOrdersCache.length) { alert('出力する申込みデータがありません。'); return; }
+    var headers = ['申込日時', 'コンテンツID', 'コンテンツ名', '金額', 'ユーザー名', '氏名', 'メールアドレス', '備考', 'ステータス'];
+    var rows = marketOrdersCache.map(function (it) {
+      return [it.createdAt, it.contentId, it.contentTitle, it.amount, it.username, it.fullname, it.email, it.note, it.status];
+    });
+    function csvEscape(v) { return '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"'; }
+    var csv = [headers].concat(rows).map(function (r) { return r.map(csvEscape).join(','); }).join('\r\n');
+    var blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'マーケット申込み一覧_' + new Date().toISOString().slice(0, 10) + '.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+
   // バッジ付与：対象機能が未実装のためデモ表示のまま
   document.getElementById('badgeForm').addEventListener('submit', function (e) {
     e.preventDefault();
@@ -1561,34 +1729,34 @@
     e.target.reset();
   });
 
-  // 出品申請の確認：モックの申請一覧
-  var APPLICATIONS = [
-    { seller: '田中 フーズ', title: '食品ラベル 英語表記テンプレート', price: '¥2,000', status: 'pending' },
-    { seller: '佐藤 ストア', title: 'Amazon出品タイトル最適化チェックリスト', price: '¥1,800', status: 'pending' }
-  ];
+  // 出品申請の確認（market-apply.html から送信された申請。スプレッドシートに記録される）
   var applyList = document.getElementById('applyList');
-  function renderApplications() {
-    applyList.innerHTML = '';
-    var pending = APPLICATIONS.filter(function (a) { return a.status === 'pending'; });
-    if (!pending.length) {
-      applyList.innerHTML = '<div style="padding:32px;text-align:center;color:var(--el-ink-faint);font-size:14px;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);">保留中の申請はありません。</div>';
-      return;
-    }
-    pending.forEach(function (a, i) {
-      var row = document.createElement('div');
-      row.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:14px;padding:16px 18px;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);';
-      row.innerHTML =
-        '<div><div style="font-weight:700;color:var(--el-navy);">' + a.title + '</div><div style="font-size:12.5px;color:var(--el-ink-faint);margin-top:2px;">出品者：' + a.seller + '・' + a.price + '</div></div>' +
-        '<div style="display:flex;gap:8px;flex:none;"><button type="button" class="el-btn el-btn--primary el-btn--sm" data-approve="' + i + '">承認</button><button type="button" class="el-btn el-btn--ghost el-btn--sm" data-reject="' + i + '">却下</button></div>';
-      applyList.appendChild(row);
+  function loadApplications() {
+    apiPost({ action: 'listContent', type: 'sellerApplication' }).then(function (data) {
+      if (!data.ok) return;
+      var pending = data.items.filter(function (a) { return !a.status || a.status === '審査中'; });
+      if (!pending.length) {
+        applyList.innerHTML = '<div style="padding:32px;text-align:center;color:var(--el-ink-faint);font-size:14px;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);">保留中の申請はありません。</div>';
+        return;
+      }
+      applyList.innerHTML = pending.map(function (a) {
+        return '<div style="display:flex;align-items:center;justify-content:space-between;gap:14px;padding:16px 18px;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);">' +
+          '<div><div style="font-weight:700;color:var(--el-navy);">' + a.title + '</div><div style="font-size:12.5px;color:var(--el-ink-faint);margin-top:2px;">出品者：' + a.name + '（' + a.email + '）・' + a.price + '・' + a.category + '</div>' +
+          '<div style="font-size:12.5px;color:var(--el-ink-faint);margin-top:4px;">' + (a.overview || '') + '</div></div>' +
+          '<div style="display:flex;gap:8px;flex:none;"><button type="button" class="el-btn el-btn--primary el-btn--sm" data-approve="' + a.id + '">承認</button><button type="button" class="el-btn el-btn--ghost el-btn--sm" data-reject="' + a.id + '">却下</button></div></div>';
+      }).join('');
     });
   }
-  renderApplications();
+  loadApplications();
   applyList.addEventListener('click', function (e) {
     var appBtn = e.target.closest('[data-approve]');
     var rejBtn = e.target.closest('[data-reject]');
-    if (appBtn) { APPLICATIONS[+appBtn.dataset.approve].status = 'approved'; renderApplications(); }
-    if (rejBtn) { APPLICATIONS[+rejBtn.dataset.reject].status = 'rejected'; renderApplications(); }
+    var id = appBtn ? appBtn.dataset.approve : (rejBtn ? rejBtn.dataset.reject : null);
+    if (!id) return;
+    apiPost({ action: 'updateContent', type: 'sellerApplication', id: id, status: appBtn ? '承認' : '却下' }).then(function (data) {
+      if (data.ok) loadApplications();
+      else alert(data.error || '更新に失敗しました');
+    }).catch(function () { alert('通信エラーが発生しました。'); });
   });
 
   // タブ切り替え

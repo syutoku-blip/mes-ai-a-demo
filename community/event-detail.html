@@ -290,17 +290,13 @@
     }
   };
 
-  (function () {
-    var params = new URLSearchParams(window.location.search);
-    var id = params.get('id') || 'fda-consult';
-    var ev = EVENTS[id] || EVENTS['fda-consult'];
+  function renderEvent(id, ev) {
     var article = document.getElementById('eventArticle');
-
     document.title = ev.title + '｜Export Lab';
 
     var pastTag = ev.past ? '<div class="el-event-past-tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>開催終了</div>' : '';
 
-    var bodyHtml = ev.body.map(function (p) { return '<p>' + p + '</p>'; }).join('');
+    var bodyHtml = Array.isArray(ev.body) ? ev.body.map(function (p) { return '<p>' + p + '</p>'; }).join('') : (ev.body || '');
 
     var footHtml;
     if (ev.past) {
@@ -319,9 +315,9 @@
     article.innerHTML =
       pastTag +
       '<div class="el-notice-head">' +
-        '<span class="el-notice-icon" style="background:' + ev.color + ';"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' + ev.icon + '</svg></span>' +
+        '<span class="el-notice-icon" style="background:' + (ev.color || 'var(--el-teal)') + ';"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' + (ev.icon || '<rect x="3" y="4" width="18" height="14" rx="2"/>') + '</svg></span>' +
         '<div>' +
-          '<span class="badge ' + ev.badgeClass + '">' + ev.badge + '</span>' +
+          '<span class="badge ' + (ev.badgeClass || 'badge--open') + '">' + (ev.badge || '公開') + '</span>' +
           '<h1>' + ev.title + '</h1>' +
           '<div class="el-notice-meta">Export Lab運営チーム・' + ev.dateLabel + '</div>' +
         '</div>' +
@@ -330,11 +326,54 @@
         bodyHtml +
         '<div class="el-notice-fact">' +
           '<div><span>日時</span>' + ev.dateLabel + '</div>' +
-          '<div><span>会場</span>' + ev.place + '</div>' +
-          '<div><span>対象</span>' + ev.target + '</div>' +
+          '<div><span>会場</span>' + (ev.place || '') + '</div>' +
+          '<div><span>対象</span>' + (ev.target || 'Export Lab 登録会員') + '</div>' +
         '</div>' +
       '</div>' +
       '<div class="el-notice-foot">' + footHtml + '</div>';
+  }
+
+  function showEventNotFound() {
+    var article = document.getElementById('eventArticle');
+    document.title = 'イベントが見つかりません｜Export Lab';
+    article.innerHTML =
+      '<div class="el-announce-empty" style="background:var(--el-paper);border:1.5px solid var(--el-line-soft);border-radius:var(--el-radius-l);padding:60px 24px;">' +
+      '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="14" rx="2"/></svg>' +
+      '<p style="font-size:14.5px;">このイベントは見つかりませんでした。すでに終了・削除された可能性があります。</p>' +
+      '<a href="events.html" class="el-btn el-btn--ghost el-btn--sm" style="margin-top:6px;">イベント一覧へ戻る</a></div>';
+  }
+
+  (function () {
+    var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
+    var params = new URLSearchParams(window.location.search);
+    var id = params.get('id') || '';
+
+    if (!id) { id = 'fda-consult'; }
+
+    if (EVENTS[id]) {
+      renderEvent(id, EVENTS[id]);
+      return;
+    }
+
+    // ローカル（デモ）のイベントに無ければ、スプレッドシート（管理者画面で登録したイベント）から取得する
+    fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'listContent', type: 'event' })
+    })
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        var it = (data.ok ? data.items : []).filter(function (e) { return e.id === id; })[0];
+        if (!it) { showEventNotFound(); return; }
+        renderEvent(id, {
+          badge: '公開', badgeClass: 'badge--open', color: 'var(--el-teal)',
+          icon: '<rect x="3" y="4" width="18" height="14" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
+          title: it.title, dateLabel: it.eventDate ? new Date(it.eventDate).toLocaleString('ja-JP') : '',
+          place: it.place, target: 'Export Lab 登録会員', body: it.bodyHtml,
+          formId: it.formId, past: false
+        });
+      })
+      .catch(showEventNotFound);
   })();
 </script>
 </body>
