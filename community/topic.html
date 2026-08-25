@@ -8,6 +8,43 @@
 <link href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&family=Noto+Sans+JP:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="../shared/global-header.css">
+<style>
+  /* 検索ボックス：input要素の初期スタイル（黒枠など）を消して馴染ませる */
+  .el-search input[type="search"]{
+    border:none !important;
+    outline:none !important;
+    background:transparent !important;
+    box-shadow:none !important;
+    -webkit-appearance:none !important;
+    appearance:none !important;
+    font:inherit !important;
+    color:inherit !important;
+    padding:0 !important;
+    margin:0 !important;
+    width:100%;
+  }
+  .el-search input[type="search"]::-webkit-search-cancel-button{
+    -webkit-appearance:none;
+    display:none;
+  }
+  [data-guest-hide]{ display:none !important; }
+  #headerAuthLinks .el-btn, #headerSignupLink.el-btn, #headerLoginLink.el-btn{
+    color:#fff !important;
+    background:var(--el-navy, #16233F) !important;
+    border:1px solid var(--el-navy, #16233F) !important;
+  }
+  #headerAuthLinks .el-btn:hover, #headerSignupLink.el-btn:hover, #headerLoginLink.el-btn:hover{
+    background:var(--el-teal-deep, #1E6F63) !important;
+    border-color:var(--el-teal-deep, #1E6F63) !important;
+  }
+  .el-footer{ background:#EDE4D0 !important; border-top:1px solid var(--el-line-soft, #E5DFD2) !important; }
+  .el-footer .tag{ color:var(--el-ink-faint, #8A8478) !important; }
+  .el-footer .el-logo{ color:var(--el-navy, #16233F) !important; }
+  .el-footer .el-logo .dot{ color:var(--el-mustard-deep, #B9812A) !important; }
+  .el-footer-cols a{ color:var(--el-ink-faint, #8A8478) !important; }
+  .el-footer-cols h6{ color:var(--el-navy, #16233F) !important; }
+  .el-footer-bottom{ color:var(--el-ink-faint, #8A8478) !important; border-top-color:var(--el-line-soft, #E5DFD2) !important; }
+</style>
 </head>
 <body data-site="community" data-root="..">
 
@@ -18,15 +55,16 @@
     </button>
     <a href="index.html" class="el-logo">Export Lab<span class="dot">.</span></a>
     <div class="el-header-actions">
-      <div class="el-search">
+      <form class="el-search" action="search.html" method="get">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-        検索
-      </div>
+        <input type="search" name="q" placeholder="検索" aria-label="検索" autocomplete="off">
+      </form>
+      <span id="headerAuthLinks" style="display:flex;gap:6px;white-space:nowrap;"><a href="signup.html" class="el-btn el-btn--ghost el-btn--sm" id="headerSignupLink">新規登録</a><a href="login.html" class="el-btn el-btn--ghost el-btn--sm" id="headerLoginLink">ログイン</a></span>
       <a href="mypage.html" class="el-header-bell" aria-label="通知">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
         <span class="count">3</span>
       </a>
-      <a href="mypage.html" class="el-avatar" aria-label="マイページ">り</a>
+      <a href="mypage.html" class="el-avatar" id="headerAvatar" aria-label="マイページ">り</a>
     </div>
   </div>
 </header>
@@ -47,43 +85,18 @@
           <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
         </summary>
         <div class="el-side-sub">
-          <a href="board.html" class="el-side-cta">
+          <a href="forum-new.html" class="el-side-cta" data-guest-block>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
             新規投稿をする
           </a>
+          <a href="board.html">すべて</a>
           <a href="board.html?sort=new">新着</a>
           <a href="board.html?sort=hot">人気</a>
-          <a href="board.html?filter=shift">SHiFT member only</a>
-          <a href="board.html?filter=unsolved">未解決</a>
+          <a href="board.html?filter=shift&sort=hot">SHiFT member only</a>
+          <a href="board.html?filter=unsolved&sort=hot">未解決</a>
 
-          <div class="el-side-sub-label">カテゴリで探す</div>
-          <a href="board.html?category=fda">FDA対応</a>
-          <a href="board.html?category=customs">通関</a>
-          <a href="board.html?category=tariff">関税</a>
-          <a href="board.html?category=amazon">Amazon出品</a>
-          <a href="board.html?category=logistics">物流</a>
-          <a href="board.html?category=chat">雑談・自己紹介</a>
-
-          <div class="el-side-sub-label">ハッシュタグで探す</div>
-          <a href="board.html?tag=fba">#FBA</a>
-          <a href="board.html?tag=facility-registration">#施設登録・更新</a>
-          <a href="board.html?tag=label">#ラベル</a>
-          <a href="board.html?tag=us-agent">#米国代理人</a>
-          <a href="board.html?tag=prior-notice">#事前申告</a>
-          <a href="board.html?tag=warning-letter">#警告書</a>
-          <a href="board.html?tag=cpsc">#CPSC</a>
-          <a href="board.html?tag=invoice-hs">#インボイス・HSコード</a>
-          <a href="board.html?tag=section201">#Section201</a>
-          <a href="board.html?tag=section301">#対中追加関税</a>
-          <a href="board.html?tag=account-create">#アカウント作成</a>
-          <a href="board.html?tag=account-suspend">#アカウント停止</a>
-          <a href="board.html?tag=listing-restriction">#出品制限</a>
-          <a href="board.html?tag=ocean-freight">#海上輸送</a>
-          <a href="board.html?tag=air-freight">#航空輸送</a>
-          <a href="board.html?tag=warehouse">#倉庫選定</a>
-          <a href="board.html?tag=customs-docs">#通関書類</a>
-          <a href="board.html?tag=research">#リサーチ</a>
-          <a href="board.html?tag=tariff-general">#関税</a>
+          <a href="forum-categories.html">カテゴリで探す</a>
+          <a href="forum-tags.html">ハッシュタグで探す</a>
         </div>
       </details>
 
@@ -94,14 +107,15 @@
           <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
         </summary>
         <div class="el-side-sub">
-          <a href="groups.html" class="el-side-cta">
+          <a href="groups.html" class="el-side-cta" data-guest-block>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
             新規コミュニティを作成する
           </a>
-          <a href="groups.html">新着</a>
-          <a href="groups.html">人気</a>
-          <a href="groups.html">参加中のコミュニティ</a>
-          <a href="groups.html">申請中のコミュニティ</a>
+          <a href="groups-list.html">すべて</a>
+          <a href="groups-list.html?sort=new">新着</a>
+          <a href="groups-list.html?sort=hot">人気</a>
+          <a href="groups-list.html?filter=joined&sort=hot">参加中のコミュニティ</a>
+          <a href="groups-list.html?filter=pending&sort=hot">申請中のコミュニティ</a>
         </div>
       </details>
 
@@ -122,11 +136,16 @@
           <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
         </summary>
         <div class="el-side-sub">
-          <a href="market-list.html">コンテンツ一覧</a>
+          <a href="market-list.html">すべて</a>
           <a href="market-official.html">ワールドシフト提供</a>
           <a href="market-apply.html">出品申請</a>
         </div>
       </details>
+
+      <a href="members.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M6 16c.5-1.6 1.7-2.5 3-2.5s2.5.9 3 2.5"/><path d="M14 9h4M14 13h4"/></svg>
+        <span class="lbl">メンバー</span>
+      </a>
 
       <a href="mypage.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
@@ -148,7 +167,7 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
             <a href="board.html">フォーラム</a>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
-            <span>FDA対応</span>
+            <span>FDA施設登録、2年更新のタイミングと注意点</span>
           </nav>
           <div class="el-t-row-badges" style="margin-bottom:12px;">
             <span class="badge badge--pin">固定</span>
@@ -163,7 +182,7 @@
           </div>
         </div>
 
-        <article class="el-post el-post--op" id="op">
+        <article class="el-post el-post--op" id="op" data-author-username="yamaguchi-boeki">
           <div class="el-avatar">山</div>
           <div>
             <div class="el-reply-tag-slot"></div>
@@ -316,9 +335,53 @@
             </button>
           </div>
           <div style="font-size:14px;font-weight:700;margin-bottom:10px;">返信を投稿</div>
-          <textarea id="replyTextarea" placeholder="コメントを入力してください…"></textarea>
+          <div class="el-rich-editor">
+            <div class="el-editor-toolbar" role="toolbar" aria-label="返信の書式">
+              <button type="button" data-command="bold" title="太字"><strong>B</strong></button>
+              <button type="button" data-command="italic" title="斜体"><em>I</em></button>
+              <button type="button" data-command="underline" title="下線"><span style="text-decoration:underline;font-weight:700;">U</span></button>
+              <button type="button" data-command="strikeThrough" title="取り消し線"><span style="text-decoration:line-through;">S</span></button>
+              <span class="sep"></span>
+              <select id="replyFontSizeSelect" class="el-editor-select" title="文字サイズ" aria-label="文字サイズ">
+                <option value="">文字サイズ</option>
+                <option value="12px">小</option>
+                <option value="14px">標準</option>
+                <option value="18px">大</option>
+                <option value="24px">特大</option>
+                <option value="32px">見出し</option>
+              </select>
+              <label class="el-editor-color" title="文字色">A<input type="color" id="replyTextColorPicker" value="#16233f" aria-label="文字色"></label>
+              <label class="el-editor-color el-editor-color--bg" title="背景色"><span>■</span><input type="color" id="replyBgColorPicker" value="#fff3d8" aria-label="背景色"></label>
+              <span class="sep"></span>
+              <button type="button" data-command="insertUnorderedList" title="箇条書き">
+                <svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+              </button>
+              <button type="button" data-command="insertOrderedList" title="番号付きリスト">
+                <svg viewBox="0 0 24 24"><path d="M10 6h11M10 12h11M10 18h11M4 6h1V3M4 3h2M4 12h2l-2 3h2M4 18h2v3H4"/></svg>
+              </button>
+              <button type="button" id="replyQuoteBtn" title="引用">
+                <svg viewBox="0 0 24 24"><path d="M10 11H6a4 4 0 0 1 4-4V5a6 6 0 0 0-6 6v6h6v-6ZM20 11h-4a4 4 0 0 1 4-4V5a6 6 0 0 0-6 6v6h6v-6Z"/></svg>
+              </button>
+              <button type="button" data-command="insertHorizontalRule" title="区切り線">
+                <svg viewBox="0 0 24 24"><path d="M4 12h16"/></svg>
+              </button>
+              <span class="sep"></span>
+              <button type="button" id="replyAddLinkBtn" title="リンク">
+                <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+              </button>
+              <button type="button" id="replyClearFormatBtn" title="書式を解除">
+                <svg viewBox="0 0 24 24"><path d="m3 3 18 18M9 5h9M13 5l-3 10M6 19h8"/></svg>
+              </button>
+            </div>
+            <div class="el-link-popover" id="replyLinkPopover" hidden>
+              <input type="url" id="replyLinkUrlInput" placeholder="https://example.com" aria-label="リンク先URL">
+              <button type="button" id="replyApplyLinkBtn">リンクを設定</button>
+              <button type="button" id="replyRemoveLinkBtn">解除</button>
+            </div>
+            <div id="replyEditor" class="el-editor-area" contenteditable="true" data-placeholder="コメントを入力してください…"></div>
+          </div>
           <div class="el-reply-foot">
-            <span style="font-size:12.5px;color:var(--el-ink-faint);">Markdown記法に対応しています</span>
+            <span style="font-size:12.5px;color:var(--el-ink-faint);">リッチテキストで入力できます</span>
             <button class="el-btn el-btn--primary el-btn--sm">返信を送信</button>
           </div>
         </div>
@@ -367,6 +430,25 @@
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20Z"/></svg>
               </span>
               <span class="txt"><strong>初めての輸出 相談室</strong><span>誰でも参加可・203人</span></span>
+            </a>
+          </div>
+
+          <div class="el-side-panel">
+            <h4>WorldShift Trade Watch</h4>
+            <a href="https://news.worldshift-inc.jp/articles/reciprocal-tariff-update" target="_blank" rel="noopener" class="el-side-mini-card">
+              <span class="ic" style="background:linear-gradient(135deg,#2F6FA3,#1B3E5C);">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><path d="M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20Z"/><path d="M2 12h20"/></svg>
+              </span>
+              <span class="txt"><strong>相互関税の運用見直し、実務への影響を解説</strong><span>2026年8月18日・外部サイト</span></span>
+            </a>
+            <a href="https://news.worldshift-inc.jp/articles/fda-facility-renewal-2026" target="_blank" rel="noopener" class="el-side-mini-card">
+              <span class="ic" style="background:linear-gradient(135deg,#3E8E63,#1F5C3E);">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+              </span>
+              <span class="txt"><strong>FDA施設登録、2026年更新シーズンの注意点</strong><span>2026年8月14日・外部サイト</span></span>
+            </a>
+            <a href="https://news.worldshift-inc.jp/index.html" target="_blank" rel="noopener" class="el-side-panel-row">
+              <span class="title">サイトで見る →</span>
             </a>
           </div>
 
@@ -463,13 +545,274 @@
     document.getElementById('adDesc').textContent = ad.desc;
   })();
 
-  // 返信ボタン：誰に返信しているかを自動でメンション表示
+  // 返信リッチエディター（forum-new.htmlの投稿エディターと同じ仕組みをスコープを絞って移植）
   var replyBox = document.getElementById('replyBox');
-  var replyTextarea = document.getElementById('replyTextarea');
+  var replyEditor = document.getElementById('replyEditor');
   var replyCtx = document.getElementById('replyContext');
   var replyCtxLink = document.getElementById('replyContextLink');
   var replyCtxClear = document.getElementById('replyContextClear');
   var currentReplyToId = 'op';
+
+  function setReplyMention(name) {
+    if (!replyEditor) return;
+    replyEditor.innerHTML = '';
+    replyEditor.appendChild(document.createTextNode('@' + name + ' '));
+    var r = document.createRange();
+    r.selectNodeContents(replyEditor);
+    r.collapse(false);
+    var sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(r);
+  }
+
+  function clearReplyEditor() {
+    if (replyEditor) replyEditor.innerHTML = '';
+  }
+
+  if (replyEditor) {
+    (function () {
+      var editor = replyEditor;
+      var savedRange = null;
+
+      function selectionIsInsideEditor(sel) {
+        if (!sel || !sel.rangeCount) return false;
+        var node = sel.anchorNode;
+        return !!node && (node === editor || editor.contains(node.nodeType === 1 ? node : node.parentNode));
+      }
+      function saveSelection() {
+        var sel = window.getSelection();
+        if (selectionIsInsideEditor(sel)) { savedRange = sel.getRangeAt(0).cloneRange(); }
+      }
+      function restoreSelection() {
+        editor.focus({ preventScroll: true });
+        if (!savedRange) return false;
+        try {
+          var sel = window.getSelection();
+          sel.removeAllRanges();
+          sel.addRange(savedRange.cloneRange());
+          return true;
+        } catch (e) { return false; }
+      }
+      function runCommand(cmd, value) {
+        insertMarkers();
+        document.execCommand('styleWithCSS', false, true);
+        document.execCommand(cmd, false, value == null ? null : value);
+        restoreFromMarkers();
+      }
+      function clearMarkers() {
+        editor.querySelectorAll('[data-sel-marker]').forEach(function (m) { m.remove(); });
+      }
+      function insertMarkers() {
+        restoreSelection();
+        clearMarkers();
+        var sel = window.getSelection();
+        if (!sel || !sel.rangeCount || !selectionIsInsideEditor(sel)) return false;
+        var range = sel.getRangeAt(0);
+        var startMarker = document.createElement('span');
+        startMarker.setAttribute('data-sel-marker', 'start');
+        var endMarker = document.createElement('span');
+        endMarker.setAttribute('data-sel-marker', 'end');
+        if (range.collapsed) { range.insertNode(startMarker); return true; }
+        var endRange = range.cloneRange();
+        endRange.collapse(false);
+        endRange.insertNode(endMarker);
+        var startRange = range.cloneRange();
+        startRange.collapse(true);
+        startRange.insertNode(startMarker);
+        return true;
+      }
+      function rangeFromMarkers() {
+        var start = editor.querySelector('[data-sel-marker="start"]');
+        var end = editor.querySelector('[data-sel-marker="end"]');
+        if (!start) return null;
+        var range = document.createRange();
+        if (end) { range.setStartAfter(start); range.setEndBefore(end); }
+        else { range.setStartAfter(start); range.collapse(true); }
+        return { range: range, start: start, end: end };
+      }
+      function restoreFromMarkers() {
+        var found = rangeFromMarkers();
+        if (!found) { saveSelection(); return; }
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(found.range);
+        found.start.remove();
+        if (found.end) found.end.remove();
+        saveSelection();
+      }
+
+      document.addEventListener('selectionchange', function () {
+        var sel = window.getSelection();
+        if (selectionIsInsideEditor(sel)) saveSelection();
+      });
+      editor.addEventListener('keyup', saveSelection);
+      editor.addEventListener('mouseup', saveSelection);
+      editor.addEventListener('focus', saveSelection);
+      editor.addEventListener('input', saveSelection);
+
+      document.querySelectorAll('#replyBox .el-editor-toolbar button').forEach(function (btn) {
+        btn.addEventListener('pointerdown', function (e) { saveSelection(); e.preventDefault(); });
+      });
+      document.querySelectorAll('#replyBox .el-editor-toolbar select, #replyBox .el-editor-toolbar input[type="color"]').forEach(function (control) {
+        control.addEventListener('pointerdown', saveSelection);
+      });
+      document.querySelectorAll('#replyBox .el-editor-toolbar [data-command]').forEach(function (btn) {
+        btn.addEventListener('click', function () { runCommand(btn.dataset.command, btn.dataset.value || null); });
+      });
+
+      var quoteBtn = document.getElementById('replyQuoteBtn');
+      if (quoteBtn) {
+        quoteBtn.addEventListener('click', function () {
+          insertMarkers();
+          var start = editor.querySelector('[data-sel-marker="start"]');
+          var el = start && start.parentElement;
+          var existing = el && el.closest('blockquote');
+          if (existing && editor.contains(existing)) { document.execCommand('formatBlock', false, 'div'); }
+          else { document.execCommand('formatBlock', false, 'blockquote'); }
+          restoreFromMarkers();
+        });
+      }
+
+      editor.addEventListener('keydown', function (e) {
+        if (e.key !== 'Enter' || e.shiftKey) return;
+        var sel = window.getSelection();
+        if (!sel || !sel.rangeCount || !sel.isCollapsed) return;
+        var node = sel.anchorNode;
+        var el = node && (node.nodeType === 1 ? node : node.parentElement);
+        if (!el) return;
+        var quote = el.closest('blockquote');
+        if (!quote || !editor.contains(quote)) return;
+        e.preventDefault();
+        var normal = document.createElement('div');
+        normal.innerHTML = '<br>';
+        quote.parentNode.insertBefore(normal, quote.nextSibling);
+        var r = document.createRange();
+        r.setStart(normal, 0);
+        r.collapse(true);
+        sel.removeAllRanges();
+        sel.addRange(r);
+        saveSelection();
+      });
+
+      var fontSizeSelect = document.getElementById('replyFontSizeSelect');
+      if (fontSizeSelect) {
+        fontSizeSelect.addEventListener('pointerdown', function () { saveSelection(); });
+        fontSizeSelect.addEventListener('change', function () {
+          var px = this.value;
+          if (!px) return;
+          restoreSelection();
+          document.execCommand('styleWithCSS', false, false);
+          document.execCommand('fontSize', false, '7');
+          editor.querySelectorAll('font[size="7"]').forEach(function (font) {
+            var span = document.createElement('span');
+            span.style.fontSize = px;
+            while (font.firstChild) span.appendChild(font.firstChild);
+            font.replaceWith(span);
+          });
+          document.execCommand('styleWithCSS', false, true);
+          this.value = '';
+          saveSelection();
+        });
+      }
+
+      var textColorPicker = document.getElementById('replyTextColorPicker');
+      if (textColorPicker) textColorPicker.addEventListener('input', function () { runCommand('foreColor', this.value); });
+      var bgColorPicker = document.getElementById('replyBgColorPicker');
+      if (bgColorPicker) {
+        bgColorPicker.addEventListener('input', function () {
+          insertMarkers();
+          document.execCommand('styleWithCSS', false, true);
+          var ok = document.execCommand('hiliteColor', false, this.value);
+          if (!ok) document.execCommand('backColor', false, this.value);
+          restoreFromMarkers();
+        });
+      }
+
+      var linkPopover = document.getElementById('replyLinkPopover');
+      var linkUrlInput = document.getElementById('replyLinkUrlInput');
+      var addLinkBtn = document.getElementById('replyAddLinkBtn');
+      if (addLinkBtn && linkPopover && linkUrlInput) {
+        addLinkBtn.addEventListener('mousedown', function (e) { saveSelection(); e.preventDefault(); });
+        addLinkBtn.addEventListener('click', function () {
+          insertMarkers();
+          var found = rangeFromMarkers();
+          if (!found || !found.end) {
+            linkPopover.hidden = false;
+            linkPopover.classList.add('is-centered');
+          } else {
+            var rect = found.range.getBoundingClientRect();
+            var editorRect = document.querySelector('#replyBox .el-rich-editor').getBoundingClientRect();
+            linkPopover.hidden = false;
+            linkPopover.classList.remove('is-centered');
+            linkPopover.style.left = Math.max(10, Math.min(rect.left - editorRect.left, editorRect.width - 340)) + 'px';
+            linkPopover.style.top = (rect.bottom - editorRect.top + 8) + 'px';
+          }
+          linkUrlInput.value = '';
+          linkUrlInput.focus();
+        });
+        var applyLinkBtn = document.getElementById('replyApplyLinkBtn');
+        applyLinkBtn.addEventListener('mousedown', function (e) { e.preventDefault(); });
+        applyLinkBtn.addEventListener('click', function () {
+          var url = linkUrlInput.value.trim();
+          var start = editor.querySelector('[data-sel-marker="start"]');
+          if (!url || !start) { linkPopover.hidden = true; clearMarkers(); return; }
+          if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+          editor.focus({ preventScroll: true });
+          var end = editor.querySelector('[data-sel-marker="end"]');
+          var a = document.createElement('a');
+          a.href = url;
+          if (!end) {
+            a.textContent = url;
+            start.parentNode.insertBefore(a, start);
+            start.remove();
+          } else {
+            var range = document.createRange();
+            range.setStartAfter(start);
+            range.setEndBefore(end);
+            try { range.surroundContents(a); }
+            catch (err) { var frag = range.extractContents(); a.appendChild(frag); range.insertNode(a); }
+            start.remove();
+            end.remove();
+          }
+          var after = document.createRange();
+          after.setStartAfter(a);
+          after.collapse(true);
+          var sel = window.getSelection();
+          sel.removeAllRanges();
+          sel.addRange(after);
+          saveSelection();
+          linkPopover.hidden = true;
+        });
+        document.getElementById('replyRemoveLinkBtn').addEventListener('click', function () {
+          runCommand('unlink'); linkPopover.hidden = true;
+        });
+        document.addEventListener('mousedown', function (e) {
+          if (!linkPopover.hidden && !e.target.closest('#replyLinkPopover') && !e.target.closest('#replyAddLinkBtn')) {
+            linkPopover.hidden = true;
+            clearMarkers();
+          }
+        });
+      }
+
+      var clearFormatBtn = document.getElementById('replyClearFormatBtn');
+      if (clearFormatBtn) {
+        clearFormatBtn.addEventListener('mousedown', function (e) { e.preventDefault(); });
+        clearFormatBtn.addEventListener('click', function () {
+          restoreSelection();
+          document.execCommand('removeFormat', false, null);
+          document.execCommand('unlink', false, null);
+          var sel = window.getSelection();
+          if (sel.rangeCount) {
+            var node = sel.anchorNode;
+            var el = node && (node.nodeType === 1 ? node : node.parentElement);
+            var block = el && el.closest('blockquote,pre,h1,h2,h3,h4,h5,h6');
+            if (block && editor.contains(block)) document.execCommand('formatBlock', false, 'div');
+          }
+          saveSelection();
+        });
+      }
+    })();
+  }
 
   function wireReplyButtons() {
     if (!replyBox) return;
@@ -482,12 +825,12 @@
       var name = nameEl ? nameEl.textContent.trim() : '';
       replyBtn.addEventListener('click', function () {
         currentReplyToId = post.id;
-        replyTextarea.value = '@' + name + ' ';
+        setReplyMention(name);
         replyCtxLink.textContent = name + 'さんの投稿に返信中';
         replyCtxLink.href = '#' + post.id;
         replyCtx.classList.add('is-visible');
         replyBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        replyTextarea.focus();
+        if (replyEditor) replyEditor.focus();
       });
     });
   }
@@ -495,10 +838,79 @@
     replyCtxClear.addEventListener('click', function () {
       currentReplyToId = 'op';
       replyCtx.classList.remove('is-visible');
-      replyTextarea.value = '';
+      clearReplyEditor();
     });
   }
   wireReplyButtons();
+
+  // ベストアンサー機能：スレ主のみコメントに「ベストアンサーに選ぶ」ボタンを押せる（ローカル保存）
+  function elCurrentUsername() {
+    try { return localStorage.getItem('el-username') || ''; } catch (e) { return ''; }
+  }
+  function bestAnswerKey(topicId) { return 'el-best-answer-' + (topicId || 'demo'); }
+  function getBestAnswerId(topicId) {
+    try { return localStorage.getItem(bestAnswerKey(topicId)); } catch (e) { return null; }
+  }
+  function setBestAnswerId(topicId, commentId) {
+    try { localStorage.setItem(bestAnswerKey(topicId), commentId); } catch (e) {}
+  }
+  function clearBestAnswerId(topicId) {
+    try { localStorage.removeItem(bestAnswerKey(topicId)); } catch (e) {}
+  }
+  function markThreadSolvedUI(solved) {
+    var badgesEl = document.querySelector('.el-t-row-badges');
+    if (!badgesEl) return;
+    var existing = badgesEl.querySelector('.badge--solved, .badge--unsolved');
+    if (existing) existing.remove();
+    var span = document.createElement('span');
+    span.className = 'badge ' + (solved ? 'badge--solved' : 'badge--unsolved');
+    span.textContent = solved ? '解決' : '未解決';
+    badgesEl.appendChild(span);
+  }
+  function refreshBestAnswerUI(topicId, isAuthor) {
+    var savedBestId = getBestAnswerId(topicId);
+    document.querySelectorAll('#commentsList .el-post').forEach(function (post) {
+      var head = post.querySelector('.el-post-head');
+      var actions = post.querySelector('.el-post-actions');
+      if (head) {
+        var oldBadge = head.querySelector('.el-best-answer-badge');
+        if (oldBadge) oldBadge.remove();
+      }
+      if (actions) {
+        var oldBtn = actions.querySelector('.el-best-answer-btn');
+        if (oldBtn) oldBtn.remove();
+      }
+      var isBest = !!(savedBestId && post.id === savedBestId);
+      if (isBest && head) {
+        var badge = document.createElement('span');
+        badge.className = 'badge badge--solved el-best-answer-badge';
+        badge.style.marginLeft = '6px';
+        badge.textContent = 'ベストアンサー';
+        head.appendChild(badge);
+      }
+      if (isAuthor && actions) {
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'el-best-answer-btn';
+        btn.innerHTML = isBest
+          ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg> 選択を解除'
+          : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg> ベストアンサーに選ぶ';
+        btn.addEventListener('click', function () {
+          if (isBest) { clearBestAnswerId(topicId); }
+          else { setBestAnswerId(topicId, post.id); }
+          markThreadSolvedUI(!!getBestAnswerId(topicId));
+          refreshBestAnswerUI(topicId, isAuthor);
+        });
+        actions.appendChild(btn);
+      }
+    });
+  }
+  (function () {
+    var opEl = document.getElementById('op');
+    var authorUsername = opEl ? (opEl.dataset.authorUsername || '') : '';
+    var isAuthor = !!(elCurrentUsername() && authorUsername && elCurrentUsername() === authorUsername);
+    refreshBestAnswerUI('demo', isAuthor);
+  })();
 
   // 各コメントに「誰への返信か」を常時表示する矢印タグ
   function wireReplyTags() {
@@ -530,6 +942,7 @@
     var params = new URLSearchParams(window.location.search);
     var topicId = params.get('id');
     if (!topicId) return; // 指定が無ければサンプル表示のまま
+    var currentItem = null;
 
     var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
     function apiPost(payload) {
@@ -569,7 +982,7 @@
           '<div>' +
           '<div class="el-reply-tag-slot"></div>' +
           '<div class="el-post-head"><span class="name">' + esc(c.authorName || '匿名') + '</span><span class="time">' + esc(relativeTime(c.createdAt)) + '</span></div>' +
-          '<div class="el-post-body"><p>' + esc(c.body) + '</p></div>' +
+          '<div class="el-post-body">' + (c.body || '') + '</div>' +
           '<div class="el-post-actions">' +
           '<button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14Z"/></svg> 0</button>' +
           '<button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H4l2.4-3.6A8.5 8.5 0 1 1 21 11.5Z"/></svg> 返信</button>' +
@@ -582,15 +995,18 @@
       if (metaSpans[0]) metaSpans[0].textContent = items.length + '件の返信';
       wireReplyButtons();
       wireReplyTags();
+      var isAuthorNow = !!(currentItem && elCurrentUsername() && elCurrentUsername() === currentItem.authorUsername);
+      refreshBestAnswerUI(topicId, isAuthorNow);
     }
 
     apiPost({ action: 'getTopic', id: topicId }).then(function (data) {
       if (!data.ok || !data.found) return; // 見つからない場合はサンプル表示のまま
       var item = data.item;
+      currentItem = item;
       document.title = item.title + '｜Export Lab';
       var catLabel = (window.EL_CATEGORY_LABEL || {})[item.category] || item.category || '';
-      var breadcrumbCat = document.querySelector('.el-breadcrumb span');
-      if (breadcrumbCat) breadcrumbCat.textContent = catLabel;
+      var breadcrumbLast = document.querySelector('.el-breadcrumb span');
+      if (breadcrumbLast) breadcrumbLast.textContent = item.title;
 
       var visBadge = (item.visibility === 'shift')
         ? '<span class="badge badge--member">SHiFT限定</span>'
@@ -608,6 +1024,7 @@
 
       var op = document.getElementById('op');
       if (op) {
+        op.dataset.authorUsername = item.authorUsername || '';
         var opAvatar = op.querySelector('.el-avatar');
         if (opAvatar) opAvatar.textContent = (item.authorName || '?').charAt(0);
         var opName = op.querySelector('.name');
@@ -635,8 +1052,9 @@
     var sendBtn = replyBox ? replyBox.querySelector('.el-reply-foot button') : null;
     if (sendBtn) {
       sendBtn.addEventListener('click', function () {
-        var body = (replyTextarea.value || '').trim();
-        if (!body) return;
+        var plainText = replyEditor ? (replyEditor.textContent || '').trim() : '';
+        if (!plainText) return;
+        var body = replyEditor ? replyEditor.innerHTML.trim() : '';
         var profile = {};
         try { profile = JSON.parse(localStorage.getItem('el-user-profile') || '{}'); } catch (e) {}
         var authorUsername = localStorage.getItem('el-username') || profile.username || '';
@@ -652,7 +1070,7 @@
         }).then(function (data) {
           sendBtn.disabled = false;
           if (!data.ok) { alert('送信に失敗しました。時間をおいて再度お試しください。'); return; }
-          replyTextarea.value = '';
+          clearReplyEditor();
           currentReplyToId = 'op';
           if (replyCtx) replyCtx.classList.remove('is-visible');
           apiPost({ action: 'listComments', topicId: topicId }).then(function (cdata) {
