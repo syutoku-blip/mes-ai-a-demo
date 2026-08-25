@@ -8,6 +8,250 @@
 <link href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&family=Noto+Sans+JP:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&family=Zen+Kurenaido&family=Yomogi&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="../shared/global-header.css">
+<style>
+  /* 検索ボックス：input要素の初期スタイル（黒枠など）を消して馴染ませる */
+  .el-search input[type="search"]{
+    border:none !important;
+    outline:none !important;
+    background:transparent !important;
+    box-shadow:none !important;
+    -webkit-appearance:none !important;
+    appearance:none !important;
+    font:inherit !important;
+    color:inherit !important;
+    padding:0 !important;
+    margin:0 !important;
+    width:100%;
+  }
+  .el-search input[type="search"]::-webkit-search-cancel-button{
+    -webkit-appearance:none;
+    display:none;
+  }
+  /* 広告バナー：スポンサー枠だとひと目でわかるよう、破線の縁取りとADタグ・アイコンで装飾 */
+  .el-ad-banner{
+    position:relative !important;
+    display:flex !important;
+    align-items:center !important;
+    gap:16px !important;
+    background:var(--el-cream-deep, #FBF3E3) !important;
+    border:1.5px dashed var(--el-mustard-deep, #B9812A) !important;
+    border-radius:var(--el-radius-m, 14px) !important;
+    padding:22px 20px 18px !important;
+    overflow:visible !important;
+  }
+  .el-ad-banner::before{
+    content:"AD" !important;
+    position:absolute !important;
+    top:-10px !important;
+    left:18px !important;
+    display:inline-block !important;
+    background:var(--el-mustard-deep, #B9812A) !important;
+    color:#fff !important;
+    font-size:10px !important;
+    font-weight:700 !important;
+    letter-spacing:.08em !important;
+    padding:3px 10px !important;
+    border-radius:999px !important;
+    line-height:1.6 !important;
+  }
+  .el-ad-banner .el-ad-tag{
+    display:none !important;
+  }
+  .el-ad-banner .el-ad-icon{
+    width:48px !important;
+    height:48px !important;
+    min-width:48px !important;
+    border-radius:14px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    flex:none !important;
+    font-size:19px !important;
+    box-shadow:0 3px 8px rgba(0,0,0,.15) !important;
+  }
+  .el-ad-banner .el-ad-body{
+    flex:1 !important;
+    min-width:0 !important;
+  }
+  .el-ad-banner .el-ad-body strong{
+    display:block !important;
+    color:var(--el-navy, #16233F) !important;
+    font-size:14px !important;
+  }
+  .el-ad-banner .el-ad-body span{
+    display:block !important;
+    color:var(--el-ink-faint, #8A8478) !important;
+    font-size:12.5px !important;
+    margin-top:2px !important;
+  }
+  .el-ad-banner > a.el-btn{
+    flex:none !important;
+  }
+  .el-auth-modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    z-index:900;
+    align-items:center;
+    justify-content:center;
+  }
+  .el-auth-modal.is-open{ display:flex; }
+  .el-auth-modal-backdrop{
+    position:absolute;
+    inset:0;
+    background:rgba(22,35,63,.45);
+  }
+  .el-auth-modal-panel{
+    position:relative;
+    background:#fff;
+    border-radius:var(--el-radius-m, 14px);
+    padding:28px 26px;
+    max-width:340px;
+    width:90%;
+    text-align:center;
+    box-shadow:0 12px 40px rgba(22,35,63,.25);
+  }
+  .el-auth-modal-panel h3{
+    margin:0 0 10px;
+    font-size:17px;
+    color:var(--el-navy, #16233F);
+  }
+  .el-auth-modal-panel p{
+    margin:0 0 20px;
+    font-size:13px;
+    color:var(--el-ink-faint, #8A8478);
+    line-height:1.7;
+  }
+  .el-auth-modal-actions{
+    display:flex;
+    gap:8px;
+    justify-content:center;
+  }
+  .el-auth-modal-close{
+    position:absolute;
+    top:10px;
+    right:10px;
+    border:none;
+    background:transparent;
+    cursor:pointer;
+    color:var(--el-ink-faint, #8A8478);
+    padding:4px;
+  }
+  [data-guest-hide]{ display:none !important; }
+  .el-fav-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:32px;
+    height:32px;
+    border-radius:999px;
+    border:1px solid var(--el-line-soft);
+    background:var(--el-paper);
+    color:var(--el-ink-faint);
+    cursor:pointer;
+    flex:none;
+  }
+  .el-fav-btn.is-active{
+    color:var(--el-coral, #C85A3E);
+    border-color:var(--el-coral, #C85A3E);
+  }
+  /* 商品モーダル：画面に収まるサイズにし、はみ出す分はスクロールできるようにする */
+  .el-product-modal .el-modal-panel{
+    max-width:560px !important;
+    width:92% !important;
+    max-height:88vh !important;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+    box-sizing:border-box !important;
+    border-radius:var(--el-radius-m, 14px) !important;
+  }
+  .el-product-modal .el-pm-banner{
+    border-top-left-radius:var(--el-radius-m, 14px) !important;
+    border-top-right-radius:var(--el-radius-m, 14px) !important;
+  }
+  @media (max-width:600px){
+    .el-product-modal .el-modal-panel{
+      width:94% !important;
+      max-height:90vh !important;
+    }
+  }
+  /* 絞り込みバー：他ページと同じデザインに統一 */
+  #marketControls.el-list-tools-compact{
+    display:flex !important;
+    align-items:center !important;
+    flex-wrap:wrap !important;
+    gap:8px 10px !important;
+    background:var(--el-paper) !important;
+    border:1px solid var(--el-line-soft) !important;
+    border-radius:var(--el-radius-m) !important;
+    padding:14px 18px !important;
+    box-shadow:0 2px 10px rgba(22,35,63,.05) !important;
+    margin-bottom:20px !important;
+  }
+  #marketControls .el-filter-select-label,
+  #marketControls .el-filter-menu > summary{
+    display:inline-flex !important;
+    align-items:center !important;
+    gap:5px !important;
+    background:var(--el-cream-deep) !important;
+    border:1px solid var(--el-line-soft) !important;
+    border-radius:999px !important;
+    padding:0 12px !important;
+    height:34px !important;
+    box-sizing:border-box !important;
+    font-size:12.5px !important;
+    font-weight:600 !important;
+    color:var(--el-ink-faint) !important;
+    line-height:1 !important;
+    white-space:nowrap !important;
+    cursor:pointer !important;
+    list-style:none !important;
+    max-width:max-content !important;
+  }
+  #marketControls .el-chip-chevron{ width:12px !important; height:12px !important; flex:none !important; color:var(--el-ink-faint) !important; }
+  #marketControls select{
+    border:none !important;
+    background:transparent !important;
+    font:inherit !important;
+    font-weight:700 !important;
+    color:var(--el-navy) !important;
+    padding:0 !important;
+    margin:0 !important;
+    appearance:none !important;
+    -webkit-appearance:none !important;
+    -moz-appearance:none !important;
+    cursor:pointer !important;
+    max-width:120px !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+  }
+  #marketControls .el-result-count--plain{
+    margin-left:auto !important;
+    color:var(--el-ink-faint) !important;
+    font-weight:600 !important;
+    font-size:13px !important;
+    white-space:nowrap !important;
+  }
+  /* ヘッダーの新規登録／ログイン／ログアウトボタン：背景色に関わらず文字が見えるよう、
+     透過ではなく塗りのボタンにする */
+  #headerAuthLinks .el-btn, #headerSignupLink.el-btn, #headerLoginLink.el-btn{
+    color:#fff !important;
+    background:var(--el-navy, #16233F) !important;
+    border:1px solid var(--el-navy, #16233F) !important;
+  }
+  #headerAuthLinks .el-btn:hover, #headerSignupLink.el-btn:hover, #headerLoginLink.el-btn:hover{
+    background:var(--el-teal-deep, #1E6F63) !important;
+    border-color:var(--el-teal-deep, #1E6F63) !important;
+  }
+  /* フッターの背景色が正しく当たらない場合の保険（文字が背景と同化して見えなくなるのを防ぐ） */
+  .el-footer{ background:#EDE4D0 !important; border-top:1px solid var(--el-line-soft, #E5DFD2) !important; }
+  .el-footer .tag{ color:var(--el-ink-faint, #8A8478) !important; }
+  .el-footer .el-logo{ color:var(--el-navy, #16233F) !important; }
+  .el-footer .el-logo .dot{ color:var(--el-mustard-deep, #B9812A) !important; }
+  .el-footer-cols a{ color:var(--el-ink-faint, #8A8478) !important; }
+  .el-footer-cols h6{ color:var(--el-navy, #16233F) !important; }
+  .el-footer-bottom{ color:var(--el-ink-faint, #8A8478) !important; border-top-color:var(--el-line-soft, #E5DFD2) !important; }
+</style>
 </head>
 <body data-site="community" data-root="..">
 
@@ -18,10 +262,11 @@
     </button>
     <a href="index.html" class="el-logo">Export Lab<span class="dot">.</span></a>
     <div class="el-header-actions">
-      <div class="el-search">
+      <form class="el-search" action="search.html" method="get">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-        検索
-      </div>
+        <input type="search" name="q" placeholder="検索" aria-label="検索" autocomplete="off">
+      </form>
+      <span id="headerAuthLinks" style="display:flex;gap:6px;white-space:nowrap;"><a href="signup.html" class="el-btn el-btn--ghost el-btn--sm" id="headerSignupLink">新規登録</a><a href="login.html" class="el-btn el-btn--ghost el-btn--sm" id="headerLoginLink">ログイン</a></span>
       <button type="button" class="el-header-cart" id="headerCartBtn" aria-label="カート">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
         <span class="count" id="headerCartCount">0</span>
@@ -30,7 +275,7 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
         <span class="count">3</span>
       </a>
-      <a href="mypage.html" class="el-avatar" aria-label="マイページ">り</a>
+      <a href="mypage.html" class="el-avatar" id="headerAvatar" aria-label="マイページ">り</a>
     </div>
   </div>
 </header>
@@ -45,49 +290,24 @@
       </a>
 
       <details class="el-side-forum">
-        <summary data-href="board.html">
+        <summary data-href="forum.html">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
           <span class="lbl">フォーラム</span>
           <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
         </summary>
         <div class="el-side-sub">
-          <a href="board.html" class="el-side-cta">
+          <a href="forum-new.html" class="el-side-cta" data-guest-block>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
             新規投稿をする
           </a>
+          <a href="board.html">すべて</a>
           <a href="board.html?sort=new">新着</a>
           <a href="board.html?sort=hot">人気</a>
-          <a href="board.html?filter=shift">SHiFT member only</a>
-          <a href="board.html?filter=unsolved">未解決</a>
+          <a href="board.html?filter=shift&sort=hot">SHiFT member only</a>
+          <a href="board.html?filter=unsolved&sort=hot">未解決</a>
 
-          <div class="el-side-sub-label">カテゴリで探す</div>
-          <a href="board.html?category=fda">FDA対応</a>
-          <a href="board.html?category=customs">通関</a>
-          <a href="board.html?category=tariff">関税</a>
-          <a href="board.html?category=amazon">Amazon出品</a>
-          <a href="board.html?category=logistics">物流</a>
-          <a href="board.html?category=chat">雑談・自己紹介</a>
-
-          <div class="el-side-sub-label">ハッシュタグで探す</div>
-          <a href="board.html?tag=fba">#FBA</a>
-          <a href="board.html?tag=facility-registration">#施設登録・更新</a>
-          <a href="board.html?tag=label">#ラベル</a>
-          <a href="board.html?tag=us-agent">#米国代理人</a>
-          <a href="board.html?tag=prior-notice">#事前申告</a>
-          <a href="board.html?tag=warning-letter">#警告書</a>
-          <a href="board.html?tag=cpsc">#CPSC</a>
-          <a href="board.html?tag=invoice-hs">#インボイス・HSコード</a>
-          <a href="board.html?tag=section201">#Section201</a>
-          <a href="board.html?tag=section301">#対中追加関税</a>
-          <a href="board.html?tag=account-create">#アカウント作成</a>
-          <a href="board.html?tag=account-suspend">#アカウント停止</a>
-          <a href="board.html?tag=listing-restriction">#出品制限</a>
-          <a href="board.html?tag=ocean-freight">#海上輸送</a>
-          <a href="board.html?tag=air-freight">#航空輸送</a>
-          <a href="board.html?tag=warehouse">#倉庫選定</a>
-          <a href="board.html?tag=customs-docs">#通関書類</a>
-          <a href="board.html?tag=research">#リサーチ</a>
-          <a href="board.html?tag=tariff-general">#関税</a>
+          <a href="forum-categories.html">カテゴリで探す</a>
+          <a href="forum-tags.html">ハッシュタグで探す</a>
         </div>
       </details>
 
@@ -98,14 +318,15 @@
           <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
         </summary>
         <div class="el-side-sub">
-          <a href="groups.html" class="el-side-cta">
+          <a href="groups.html" class="el-side-cta" data-guest-block>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
             新規コミュニティを作成する
           </a>
-          <a href="groups.html">新着</a>
-          <a href="groups.html">人気</a>
-          <a href="groups.html">参加中のコミュニティ</a>
-          <a href="groups.html">申請中のコミュニティ</a>
+          <a href="groups-list.html">すべて</a>
+          <a href="groups-list.html?sort=new">新着</a>
+          <a href="groups-list.html?sort=hot">人気</a>
+          <a href="groups-list.html?filter=joined&sort=hot">参加中のコミュニティ</a>
+          <a href="groups-list.html?filter=pending&sort=hot">申請中のコミュニティ</a>
         </div>
       </details>
 
@@ -126,11 +347,16 @@
           <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
         </summary>
         <div class="el-side-sub">
-          <a href="market-list.html">コンテンツ一覧</a>
+          <a href="market-list.html">すべて</a>
           <a href="market-official.html" class="is-active">ワールドシフト提供</a>
           <a href="market-apply.html">出品申請</a>
         </div>
       </details>
+
+      <a href="members.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M6 16c.5-1.6 1.7-2.5 3-2.5s2.5.9 3 2.5"/><path d="M14 9h4M14 13h4"/></svg>
+        <span class="lbl">メンバー</span>
+      </a>
 
       <a href="mypage.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
@@ -148,6 +374,7 @@
     </div>
 
       <div class="wrap">
+        <nav class="el-breadcrumb el-page-breadcrumb" aria-label="パンくず"><a href="index.html">ホーム</a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg><a href="market.html">マーケットTOP</a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg><a href="market-list.html">すべてのコンテンツ</a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg><span>ワールドシフト提供</span></nav>
 
         <div class="el-section-head" style="margin-bottom:0;">
           <div>
@@ -156,35 +383,45 @@
           </div>
         </div>
 
-        <div class="el-market-toolbar-list">
-          <div class="el-market-search">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-            <input type="text" placeholder="コンテンツを検索">
-          </div>
-          <div class="el-market-toolbar-row">
-            <div class="el-market-filters">
-              <button class="is-active">すべて</button>
-              <button>FDA</button>
-              <button>Amazon</button>
-              <button>通関・物流</button>
-              <button>テンプレート</button>
-            </div>
-            <div class="el-market-controls">
-              <div class="el-market-select">
-                並び替え：
-                <select>
-                  <option>人気順</option>
-                  <option>新着順</option>
-                  <option>価格が安い順</option>
-                  <option>価格が高い順</option>
-                </select>
-              </div>
-            </div>
-          </div>
+        <div class="el-market-search" style="margin-bottom:14px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input type="text" id="marketSearchInput" placeholder="コンテンツを検索">
         </div>
 
-        <div class="el-market-grid" id="officialMarketGrid">
-          <div class="el-market-card" data-product="official-amazon-allsupport">
+        <div class="el-list-tools-compact" id="marketControls">
+          <details class="el-filter-menu" id="marketCategoryMenu">
+            <summary>カテゴリ <span class="el-filter-summary-value" id="marketCategorySummary">すべて</span></summary>
+            <div class="el-filter-popover">
+              <label><input type="checkbox" name="marketCategory" value="fda"> FDA</label>
+              <label><input type="checkbox" name="marketCategory" value="amazon"> Amazon</label>
+              <label><input type="checkbox" name="marketCategory" value="logistics"> 通関・物流</label>
+              <label><input type="checkbox" name="marketCategory" value="template"> テンプレート</label>
+              <button type="button" class="el-filter-clear" data-clear="marketCategory">すべて解除</button>
+            </div>
+          </details>
+
+          <details class="el-filter-menu" id="marketSortMenu">
+            <summary>並び順 <span class="el-filter-summary-value" id="marketSortSummary">人気順</span></summary>
+            <div class="el-filter-popover">
+              <label><input type="checkbox" name="marketSortOpt" value="hot" checked> 人気順</label>
+              <label><input type="checkbox" name="marketSortOpt" value="new"> 新着順</label>
+              <label><input type="checkbox" name="marketSortOpt" value="price-asc"> 価格が安い順</label>
+              <label><input type="checkbox" name="marketSortOpt" value="price-desc"> 価格が高い順</label>
+            </div>
+          </details>
+
+          <details class="el-filter-menu" id="marketSellerMenu">
+            <summary>出品者 <span class="el-filter-summary-value" id="marketSellerSummary">WorldShift公式</span></summary>
+            <div class="el-filter-popover">
+              <label><input type="checkbox" name="marketSellerOpt" value=""> すべて</label>
+              <label><input type="checkbox" name="marketSellerOpt" value="WorldShift公式" checked> WorldShift公式</label>
+            </div>
+          </details>
+          <span class="el-result-count el-result-count--plain" id="marketResultCount">8件</span>
+        </div>
+
+        <div class="el-market-grid" id="marketGrid">
+          <div class="el-market-card" data-product="official-amazon-allsupport" data-category="amazon" data-seller="WorldShift公式" data-price="12000" data-recency="90">
             <div class="el-market-thumb" style="background:var(--el-teal);color:#fff;">
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z"/></svg>
             </div>
@@ -196,7 +433,7 @@
               <div class="el-market-foot"><strong>¥12,000</strong><div class="el-market-btns"><button type="button" class="el-cart-btn" aria-label="カートに追加" data-cart><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button><button type="button" class="el-btn el-btn--primary el-btn--sm" data-buy>今すぐ購入</button></div></div>
             </div>
           </div>
-          <div class="el-market-card" data-product="official-fda-guide">
+          <div class="el-market-card" data-product="official-fda-guide" data-category="fda" data-seller="WorldShift公式" data-price="3000" data-recency="88">
             <div class="el-market-thumb" style="background:var(--el-teal-tint);color:var(--el-teal-deep);">
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
             </div>
@@ -208,7 +445,7 @@
               <div class="el-market-foot"><strong>¥3,000</strong><div class="el-market-btns"><button type="button" class="el-cart-btn" aria-label="カートに追加" data-cart><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button><button type="button" class="el-btn el-btn--primary el-btn--sm" data-buy>今すぐ購入</button></div></div>
             </div>
           </div>
-          <div class="el-market-card" data-product="official-slc-seminar">
+          <div class="el-market-card" data-product="official-slc-seminar" data-category="amazon" data-seller="WorldShift公式" data-price="2000" data-recency="85">
             <div class="el-market-thumb" style="background:var(--el-mustard-tint);color:var(--el-mustard-deep);">
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="m9 10 3 2-3 2z"/></svg>
             </div>
@@ -220,7 +457,7 @@
               <div class="el-market-foot"><strong>¥2,000</strong><div class="el-market-btns"><button type="button" class="el-cart-btn" aria-label="カートに追加" data-cart><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button><button type="button" class="el-btn el-btn--primary el-btn--sm" data-buy>今すぐ購入</button></div></div>
             </div>
           </div>
-          <div class="el-market-card" data-product="official-profinder">
+          <div class="el-market-card" data-product="official-profinder" data-category="amazon" data-seller="WorldShift公式" data-price="8000" data-recency="80">
             <div class="el-market-thumb" style="background:#E8F1F6;color:#3E7EA3;">
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
             </div>
@@ -232,7 +469,7 @@
               <div class="el-market-foot"><strong>¥8,000</strong><div class="el-market-btns"><button type="button" class="el-cart-btn" aria-label="カートに追加" data-cart><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button><button type="button" class="el-btn el-btn--primary el-btn--sm" data-buy>今すぐ購入</button></div></div>
             </div>
           </div>
-          <div class="el-market-card" data-product="official-startup-template">
+          <div class="el-market-card" data-product="official-startup-template" data-category="template" data-seller="WorldShift公式" data-price="5000" data-recency="75">
             <div class="el-market-thumb" style="background:var(--el-sage);color:#fff;">
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.6.6 1 1.4 1 2.5h6c0-1.1.4-1.9 1-2.5A6 6 0 0 0 12 3Z"/></svg>
             </div>
@@ -244,7 +481,7 @@
               <div class="el-market-foot"><strong>¥5,000</strong><div class="el-market-btns"><button type="button" class="el-cart-btn" aria-label="カートに追加" data-cart><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button><button type="button" class="el-btn el-btn--primary el-btn--sm" data-buy>今すぐ購入</button></div></div>
             </div>
           </div>
-          <div class="el-market-card" data-product="official-customs-checklist">
+          <div class="el-market-card" data-product="official-customs-checklist" data-category="logistics" data-seller="WorldShift公式" data-price="1500" data-recency="70">
             <div class="el-market-thumb" style="background:var(--el-sky);color:#fff;">
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M3 9h6"/></svg>
             </div>
@@ -256,7 +493,7 @@
               <div class="el-market-foot"><strong>¥1,500</strong><div class="el-market-btns"><button type="button" class="el-cart-btn" aria-label="カートに追加" data-cart><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button><button type="button" class="el-btn el-btn--primary el-btn--sm" data-buy>今すぐ購入</button></div></div>
             </div>
           </div>
-          <div class="el-market-card" data-product="official-fba-trouble">
+          <div class="el-market-card" data-product="official-fba-trouble" data-category="amazon" data-seller="WorldShift公式" data-price="4000" data-recency="65">
             <div class="el-market-thumb" style="background:var(--el-coral);color:#fff;">
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 8V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2M3 8v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8M3 8h18"/></svg>
             </div>
@@ -268,7 +505,7 @@
               <div class="el-market-foot"><strong>¥4,000</strong><div class="el-market-btns"><button type="button" class="el-cart-btn" aria-label="カートに追加" data-cart><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button><button type="button" class="el-btn el-btn--primary el-btn--sm" data-buy>今すぐ購入</button></div></div>
             </div>
           </div>
-          <div class="el-market-card" data-product="official-amazon-turnover">
+          <div class="el-market-card" data-product="official-amazon-turnover" data-category="amazon" data-seller="WorldShift公式" data-price="6000" data-recency="60">
             <div class="el-market-thumb" style="background:var(--el-mustard);color:#fff;">
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M23 6l-9.5 9.5-5-5L1 18"/><path d="M17 6h6v6"/></svg>
             </div>
@@ -284,13 +521,29 @@
 
       </div>
     </main>
+    <section class="el-section" style="padding-top:0;padding-bottom:24px;">
+      <div class="wrap">
+
+        <div class="el-ad-banner el-page-bottom-ad">
+          <span class="el-ad-tag">AD</span>
+          <span class="el-ad-icon" style="background:#3E7EA3;color:#fff;font-weight:800;">⌕</span>
+          <div class="el-ad-body">
+            <strong>ProFinder</strong>
+            <span>米Amazonの商品リサーチを効率化</span>
+          </div>
+          <a href="#" class="el-btn el-btn--ghost el-btn--sm">詳しく見る</a>
+        </div>
+
+      </div>
+    </section>
+
 
     <footer class="el-footer">
       <div class="wrap">
         <div class="el-footer-grid">
           <div>
             <a href="index.html" class="el-logo">Export Lab<span class="dot">.</span></a>
-            <p class="tag">人・モノ・情報がつながる、輸出の共創コミュニティ。運営：WorldShift株式会社</p>
+            <p class="tag">人・モノ・情報がつながる、輸出の共創コミュニティ。<br>運営：WorldShift株式会社</p>
           </div>
           <div class="el-footer-cols">
             <div>
@@ -336,6 +589,110 @@
   document.querySelectorAll('.el-side-label-link').forEach(function (el) {
     el.addEventListener('click', function (e) { e.stopPropagation(); });
   });
+
+  // マーケット一覧：カテゴリ／並び順／出品者／検索での絞り込み
+  (function () {
+    var grid = document.getElementById('marketGrid');
+    if (!grid) return;
+    var cards = Array.prototype.slice.call(grid.querySelectorAll('.el-market-card[data-product]'));
+    var categoryNames = { fda: 'FDA', amazon: 'Amazon', logistics: '通関・物流', template: 'テンプレート' };
+    var sortNames = { hot: '人気順', new: '新着順', 'price-asc': '価格が安い順', 'price-desc': '価格が高い順' };
+    var sellerNames = { '': 'すべて', 'WorldShift公式': 'WorldShift公式' };
+
+    var searchInput = document.getElementById('marketSearchInput');
+    var resultCount = document.getElementById('marketResultCount');
+    var categorySummary = document.getElementById('marketCategorySummary');
+    var sortSummary = document.getElementById('marketSortSummary');
+    var sellerSummary = document.getElementById('marketSellerSummary');
+    var sortMenu = document.getElementById('marketSortMenu');
+    var sellerMenu = document.getElementById('marketSellerMenu');
+
+    var sort = 'hot';
+    var seller = 'WorldShift公式';
+
+    function getCategories() {
+      return Array.prototype.slice.call(document.querySelectorAll('input[name="marketCategory"]:checked')).map(function (x) { return x.value; });
+    }
+
+    function render() {
+      var categories = getCategories();
+      var q = (searchInput.value || '').trim().toLowerCase();
+
+      var visible = cards.filter(function (card) {
+        if (categories.length && categories.indexOf(card.dataset.category) === -1) return false;
+        if (seller && card.dataset.seller !== seller) return false;
+        if (q) {
+          var title = (card.querySelector('h3') && card.querySelector('h3').textContent || '').toLowerCase();
+          if (title.indexOf(q) === -1) return false;
+        }
+        return true;
+      });
+
+      visible.sort(function (a, b) {
+        if (sort === 'price-asc') return (+a.dataset.price) - (+b.dataset.price);
+        if (sort === 'price-desc') return (+b.dataset.price) - (+a.dataset.price);
+        if (sort === 'new') return (+b.dataset.recency) - (+a.dataset.recency);
+        return (+b.dataset.recency) - (+a.dataset.recency);
+      });
+
+      cards.forEach(function (c) { c.style.display = 'none'; });
+      visible.forEach(function (c) { grid.appendChild(c); c.style.display = ''; });
+
+      if (resultCount) resultCount.textContent = visible.length + '件';
+      if (categorySummary) {
+        if (!categories.length) categorySummary.textContent = 'すべて';
+        else if (categories.length === 1) categorySummary.textContent = categoryNames[categories[0]] || categories[0];
+        else categorySummary.textContent = categories.length + '件選択';
+      }
+      if (sortSummary) sortSummary.textContent = sortNames[sort] || '人気順';
+      if (sellerSummary) sellerSummary.textContent = sellerNames[seller] || 'すべて';
+    }
+
+    document.querySelectorAll('input[name="marketCategory"]').forEach(function (cb) {
+      cb.addEventListener('change', render);
+    });
+    document.querySelectorAll('.el-filter-clear[data-clear="marketCategory"]').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelectorAll('input[name="marketCategory"]').forEach(function (cb) { cb.checked = false; });
+        render();
+      });
+    });
+
+    function wireSingleSelectGroup(name, onPick, closeMenu) {
+      document.querySelectorAll('input[name="' + name + '"]').forEach(function (cb) {
+        cb.addEventListener('change', function () {
+          if (!this.checked) { this.checked = true; return; }
+          document.querySelectorAll('input[name="' + name + '"]').forEach(function (other) {
+            if (other !== cb) other.checked = false;
+          });
+          onPick(cb.value);
+          render();
+          if (closeMenu) closeMenu.removeAttribute('open');
+        });
+      });
+    }
+    wireSingleSelectGroup('marketSortOpt', function (v) { sort = v; }, sortMenu);
+    wireSingleSelectGroup('marketSellerOpt', function (v) { seller = v; }, sellerMenu);
+
+    searchInput.addEventListener('input', render);
+
+    render();
+  })();
+
+  // 絞り込みメニューの開閉：別の項目を操作したら他は閉じる、枠外クリックでも閉じる
+  (function () {
+    var menus = Array.prototype.slice.call(document.querySelectorAll('.el-filter-menu'));
+    if (!menus.length) return;
+    function closeAll(except) {
+      menus.forEach(function (menu) { if (menu !== except) menu.removeAttribute('open'); });
+    }
+    document.addEventListener('pointerdown', function (e) {
+      var clickedMenu = e.target.closest('.el-filter-menu');
+      if (clickedMenu) { closeAll(clickedMenu); return; }
+      closeAll();
+    }, true);
+  })();
 </script>
 
 
@@ -366,6 +723,9 @@
         <div class="el-pm-features" id="pmFeatures"></div>
       </div>
       <div class="el-product-modal-foot">
+        <button type="button" class="el-fav-btn" id="pmFavBtn" data-fav aria-label="お気に入り">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z"/></svg>
+        </button>
         <button type="button" class="el-cart-btn" id="pmCartBtn" aria-label="カートに追加" style="width:44px;height:44px;">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
         </button>
@@ -397,6 +757,7 @@
     el.classList.toggle('is-visible', cart.length > 0);
   }
   function addToCart(id) {
+    if (window.elRequireAuth && !window.elRequireAuth()) return;
     cart.push(id);
     saveCart();
     showToast('カートに追加しました');
@@ -410,6 +771,7 @@
     window._elToastTimer = setTimeout(function () { toast.classList.remove('is-visible'); }, 2200);
   }
   function goToCheckout(id) {
+    if (window.elRequireAuth && !window.elRequireAuth()) return;
     window.location.href = 'market-checkout.html?item=' + encodeURIComponent(id);
   }
 
@@ -444,6 +806,13 @@
       }
       document.getElementById('pmCartBtn').dataset.id = id;
       document.getElementById('pmBuyBtn').dataset.id = id;
+      var favBtn = document.getElementById('pmFavBtn');
+      favBtn.dataset.id = id;
+      var favList = [];
+      try { favList = JSON.parse(localStorage.getItem('el-market-favorites') || '[]'); } catch (e) {}
+      var isFav = favList.indexOf(id) !== -1;
+      favBtn.classList.toggle('is-active', isFav);
+      favBtn.querySelector('svg').setAttribute('fill', isFav ? 'currentColor' : 'none');
       modal.classList.add('is-open');
       modal.setAttribute('aria-hidden', 'false');
     }
@@ -465,6 +834,22 @@
     });
     document.getElementById('pmBuyBtn').addEventListener('click', function () {
       goToCheckout(this.dataset.id);
+    });
+    document.getElementById('pmFavBtn').addEventListener('click', function () {
+      var id = this.dataset.id;
+      var list = [];
+      try { list = JSON.parse(localStorage.getItem('el-market-favorites') || '[]'); } catch (e) {}
+      var i = list.indexOf(id);
+      var nowFav = i === -1;
+      if (nowFav) list.push(id); else list.splice(i, 1);
+      try { localStorage.setItem('el-market-favorites', JSON.stringify(list)); } catch (e) {}
+      this.classList.toggle('is-active', nowFav);
+      this.querySelector('svg').setAttribute('fill', nowFav ? 'currentColor' : 'none');
+      var cardBtn = document.querySelector('.el-market-card[data-product="' + id + '"] [data-fav]');
+      if (cardBtn) {
+        cardBtn.classList.toggle('is-active', nowFav);
+        cardBtn.querySelector('svg').setAttribute('fill', nowFav ? 'currentColor' : 'none');
+      }
     });
   })();
 
@@ -493,12 +878,150 @@
   }
 
   updateCartBadge();
-
-  // 管理者画面で登録したWorldShift公式コンテンツ（スプレッドシート）をグリッドの先頭に追加表示する
+  // お気に入り機能（マイページと連動）
   (function () {
-    var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
-    var grid = document.getElementById('officialMarketGrid');
+    var FAV_KEY = 'el-market-favorites';
+    function getFavorites() {
+      try { return JSON.parse(localStorage.getItem(FAV_KEY) || '[]'); } catch (e) { return []; }
+    }
+    function setFavorites(list) {
+      try { localStorage.setItem(FAV_KEY, JSON.stringify(list)); } catch (e) {}
+    }
+    function isFavorited(id) { return getFavorites().indexOf(id) !== -1; }
+    function toggleFavorite(id) {
+      var list = getFavorites();
+      var i = list.indexOf(id);
+      if (i === -1) list.push(id); else list.splice(i, 1);
+      setFavorites(list);
+      return i === -1;
+    }
+    document.querySelectorAll('.el-market-card[data-product]').forEach(function (card) {
+      var btns = card.querySelector('.el-market-btns');
+      if (!btns || btns.querySelector('[data-fav]')) return;
+      var id = card.dataset.product;
+      var favBtn = document.createElement('button');
+      favBtn.type = 'button';
+      favBtn.className = 'el-fav-btn' + (isFavorited(id) ? ' is-active' : '');
+      favBtn.setAttribute('data-fav', '');
+      favBtn.setAttribute('aria-label', 'お気に入り');
+      favBtn.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="' + (isFavorited(id) ? 'currentColor' : 'none') + '" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z"/></svg>';
+      favBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var nowFav = toggleFavorite(id);
+        favBtn.classList.toggle('is-active', nowFav);
+        favBtn.querySelector('svg').setAttribute('fill', nowFav ? 'currentColor' : 'none');
+      });
+      btns.insertBefore(favBtn, btns.firstChild);
+    });
+  })();
+  // ユーザーモード（ゲスト／登録ユーザー／管理者）の切り替えと共通ゲート処理
+  document.addEventListener('DOMContentLoaded', function () {
+    var ROLE_KEY = 'el-user-role';
+    function getRole() {
+      try { return localStorage.getItem(ROLE_KEY) || 'guest'; } catch (e) { return 'guest'; }
+    }
+    function setRole(role) {
+      try { localStorage.setItem(ROLE_KEY, role); } catch (e) {}
+    }
+    window.elGetRole = getRole;
+
+    var role = getRole();
+    document.body.setAttribute('data-role', role);
+
+    // ゲストは通知ベルとアイコンを非表示
+    var bell = document.querySelector('.el-header-bell');
+    if (bell && role === 'guest') bell.style.display = 'none';
+    var headerAvatar = document.getElementById('headerAvatar');
+    if (headerAvatar && role === 'guest') headerAvatar.style.display = 'none';
+    else if (headerAvatar) {
+      try {
+        var hp = JSON.parse(localStorage.getItem('el-user-profile') || '{}');
+        var hUsername = localStorage.getItem('el-username') || hp.username || '';
+        if (hp.photoUrl) headerAvatar.innerHTML = '<img src="' + hp.photoUrl + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
+        else if (hUsername) headerAvatar.textContent = hUsername.charAt(0);
+      } catch (e) {}
+    }
+
+    // ヘッダーの認証リンク：ゲストは「新規登録」「ログイン」、それ以外は「ログアウト」のみ
+    var authLinksWrap = document.getElementById('headerAuthLinks');
+    var loginLink = document.getElementById('headerLoginLink');
+    var signupLink = document.getElementById('headerSignupLink');
+    if (role !== 'guest' && authLinksWrap) {
+      if (loginLink) loginLink.remove();
+      if (signupLink) {
+        signupLink.textContent = 'ログアウト';
+        signupLink.href = '#';
+        signupLink.addEventListener('click', function (e) {
+          e.preventDefault();
+          setRole('guest');
+          window.location.href = 'index.html';
+        });
+      }
+    }
+
+    // 「ユーザー登録してください」モーダル
+    var modal = document.getElementById('authModal');
+    window.elRequireAuth = function (e) {
+      if (getRole() !== 'guest') return true;
+      if (e) e.preventDefault();
+      if (modal) { modal.classList.add('is-open'); modal.setAttribute('aria-hidden', 'false'); }
+      return false;
+    };
+    if (modal) {
+      modal.querySelectorAll('[data-auth-close]').forEach(function (el) {
+        el.addEventListener('click', function () {
+          modal.classList.remove('is-open');
+          modal.setAttribute('aria-hidden', 'true');
+        });
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') { modal.classList.remove('is-open'); modal.setAttribute('aria-hidden', 'true'); }
+      });
+    }
+
+    // SHiFT会員限定コンテンツ用モーダル
+    var shiftModal = document.getElementById('shiftModal');
+    window.elRequireShift = function () {
+      var r = getRole();
+      if (r === 'shift' || r === 'admin') return true;
+      if (shiftModal) { shiftModal.classList.add('is-open'); shiftModal.setAttribute('aria-hidden', 'false'); }
+      return false;
+    };
+    if (shiftModal) {
+      shiftModal.querySelectorAll('[data-shift-close]').forEach(function (el) {
+        el.addEventListener('click', function () {
+          shiftModal.classList.remove('is-open');
+          shiftModal.setAttribute('aria-hidden', 'true');
+        });
+      });
+    }
+
+    // 管理者にはサイドバーに管理者ページへのリンクを追加
+    if (role === 'admin') {
+      var sideNav = document.querySelector('.el-sidebar nav');
+      if (sideNav && !sideNav.querySelector('a[href="admin.html"]')) {
+        var adminLink = document.createElement('a');
+        adminLink.href = 'admin.html';
+        if (window.location.pathname.indexOf('admin.html') !== -1) adminLink.className = 'is-active';
+        adminLink.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 3 7v6c0 5 4 9 9 9s9-4 9-9V7l-9-5Z"/><path d="m9 12 2 2 4-4"/></svg><span class="lbl">管理者ページ</span>';
+        sideNav.appendChild(adminLink);
+      }
+    }
+
+    // ゲストには data-guest-hide の要素を隠す（本文はCSSでも隠すが、動的挿入分もここでカバー）
+    if (role === 'guest') {
+      document.querySelectorAll('[data-guest-block]').forEach(function (el) {
+        el.addEventListener('click', window.elRequireAuth);
+      });
+    }
+  });
+
+  // 管理者ページで登録された実際のコンテンツを先頭に追加する
+  // （カート・絞り込み機能は既存のPRODUCTS連携が前提のため、ライブ項目は直接購入リンクのみ表示する）
+  (function () {
+    var grid = document.getElementById('marketGrid');
     if (!grid) return;
+    var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
     fetch(API_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -506,30 +1029,58 @@
     })
       .then(function (res) { return res.json(); })
       .then(function (data) {
-        if (!data.ok || !data.items.length) return;
-        var frag = document.createDocumentFragment();
-        data.items.forEach(function (it) {
-          var card = document.createElement('div');
-          card.className = 'el-market-card';
-          card.innerHTML =
-            '<div class="el-market-thumb" style="background:var(--el-cream-deep);color:var(--el-navy-soft);">' +
-              (it.thumbnailUrl ? '<img src="' + it.thumbnailUrl + '" style="width:100%;height:100%;object-fit:cover;">' :
-                '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>') +
-            '</div>' +
+        var items = (data.ok && data.items) ? data.items : [];
+        if (!items.length) return;
+        var html = items.map(function (it) {
+          var plain = (it.recommendHtml || '').replace(/<[^>]*>/g, '').slice(0, 60);
+          var thumbInner = it.thumbnailUrl
+            ? '<img src="' + it.thumbnailUrl + '" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;">'
+            : '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>';
+          return '<div class="el-market-card">' +
+            '<div class="el-market-thumb" style="background:linear-gradient(135deg, var(--el-teal), #1F6E63);color:#fff;position:relative;overflow:hidden;">' + thumbInner + '</div>' +
             '<div class="el-market-body">' +
-              '<span class="badge badge--open">WorldShift公式</span>' +
-              '<h3></h3><p></p>' +
-              '<div class="el-market-foot"><strong></strong><a href="market-checkout.html?item=' + encodeURIComponent(it.id) + '" class="el-btn el-btn--primary el-btn--sm">今すぐ購入</a></div>' +
-            '</div>';
-          card.querySelector('h3').textContent = it.title || '';
-          card.querySelector('p').textContent = (it.recommendHtml || '').replace(/<[^>]+>/g, '').slice(0, 60);
-          card.querySelector('strong').textContent = '¥' + Number(it.price || 0).toLocaleString();
-          frag.appendChild(card);
-        });
-        grid.insertBefore(frag, grid.firstChild);
+            '<span class="badge badge--announce">WorldShift公式</span>' +
+            '<h3>' + (it.title || '') + '</h3>' +
+            '<p>' + plain + '</p>' +
+            '<div class="el-market-foot"><strong>¥' + (it.price || 0) + '</strong><div class="el-market-btns">' +
+            '<a href="market-checkout.html?item=' + encodeURIComponent(it.id) + '" class="el-btn el-btn--primary el-btn--sm">今すぐ購入</a>' +
+            '</div></div>' +
+            '</div></div>';
+        }).join('');
+        grid.insertAdjacentHTML('afterbegin', html);
       })
       .catch(function () {});
   })();
 </script>
+<div class="el-auth-modal" id="authModal" aria-hidden="true">
+  <div class="el-auth-modal-backdrop" data-auth-close></div>
+  <div class="el-auth-modal-panel" role="dialog" aria-modal="true">
+    <button type="button" class="el-auth-modal-close" data-auth-close aria-label="閉じる">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <h3>ユーザー登録してください</h3>
+    <p>この操作を行うには、会員登録（無料）が必要です。登録すると投稿・返信・購入などすべての機能がご利用いただけます。</p>
+    <div class="el-auth-modal-actions">
+      <a href="signup.html" class="el-btn el-btn--primary el-btn--sm">新規登録する</a>
+      <button type="button" class="el-btn el-btn--ghost el-btn--sm" data-auth-close>閉じる</button>
+    </div>
+  </div>
+</div>
+
+<div class="el-auth-modal" id="shiftModal" aria-hidden="true">
+  <div class="el-auth-modal-backdrop" data-shift-close></div>
+  <div class="el-auth-modal-panel" role="dialog" aria-modal="true">
+    <button type="button" class="el-auth-modal-close" data-shift-close aria-label="閉じる">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <h3>SHiFT会員限定です</h3>
+    <p>この内容はSHiFT会員（WorldShiftの各種サービスをご利用中の方）だけが閲覧できます。SHiFT会員の方はサポート窓口までお問い合わせください。</p>
+    <div class="el-auth-modal-actions">
+      <a href="#" class="el-btn el-btn--primary el-btn--sm">SHiFT会員について見る</a>
+      <button type="button" class="el-btn el-btn--ghost el-btn--sm" data-shift-close>閉じる</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

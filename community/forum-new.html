@@ -152,53 +152,6 @@
     padding:2px 9px !important;
     border-radius:999px !important;
   }
-  /* 添付ファイルのドラッグ＆ドロップ枠 */
-  .el-file-drop{
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    gap:8px;
-    padding:28px 16px;
-    text-align:center;
-    cursor:pointer;
-    border:1.5px dashed var(--el-line-soft, #ECE5D4);
-    border-radius:var(--el-radius-m, 14px);
-    background:var(--el-paper, #FFFFFF);
-    transition:border-color .15s, background .15s;
-  }
-  .el-file-drop:hover{
-    border-color:var(--el-teal, #2F8F82);
-    background:var(--el-teal-tint, #E4F1EE);
-  }
-  .el-file-drop input[type="file"]{
-    position:absolute;
-    width:1px; height:1px;
-    padding:0; margin:-1px;
-    overflow:hidden;
-    clip:rect(0,0,0,0);
-    white-space:nowrap;
-    border:0;
-  }
-  .el-file-drop svg{
-    width:26px;
-    height:26px;
-    flex-shrink:0;
-    color:var(--el-ink-faint, #8892A6);
-    fill:none;
-    stroke:currentColor;
-    stroke-width:2;
-    stroke-linecap:round;
-    stroke-linejoin:round;
-  }
-  .el-file-drop span{
-    font-size:13.5px;
-    color:var(--el-ink-faint, #8892A6);
-  }
-  .el-file-drop span strong{
-    color:var(--el-navy, #16233F);
-    font-weight:600;
-  }
 </style>
 </head>
 <body data-site="community" data-root="..">
@@ -1254,21 +1207,19 @@
       }
       editor.classList.remove('is-error');
 
-      var checkedCategories = categoryPicker.querySelectorAll('input:checked');
+      var checkedCategories = Array.prototype.map.call(categoryPicker.querySelectorAll('input:checked'), function(i){ return i.value; });
       if (!checkedCategories.length) {
         alert('カテゴリを1つ以上選択してください。');
         categoryPicker.scrollIntoView({behavior:'smooth', block:'center'});
         return;
       }
 
-      var submitBtn = form.querySelector('.el-submit-topic');
-      var submitBtnLabel = submitBtn ? submitBtn.textContent : '';
-      if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = '投稿中…'; }
+      var submitBtn = document.getElementById('publishBtn') || form.querySelector('button[type="submit"]');
+      if (submitBtn) { submitBtn.disabled = true; }
 
       var authorName = localStorage.getItem('el-user-name') || localStorage.getItem('el-username') || 'ゲスト';
       var authorUsername = localStorage.getItem('el-username') || '';
       var visibility = (form.querySelector('[name="visibility"]:checked') || {}).value || 'general';
-      var tags = selectedTags.map(function (v) { return getTagLabel(v); });
 
       var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
       fetch(API_URL, {
@@ -1277,9 +1228,9 @@
         body: JSON.stringify({
           action: 'createTopic',
           title: title.value.trim(),
-          body: editor.innerHTML,
-          category: checkedCategories[0].value,
-          tags: tags,
+          body: bodyValue.value,
+          category: checkedCategories[0],
+          tags: selectedTags.map(function (v) { return getTagLabel(v); }),
           authorUsername: authorUsername,
           authorName: authorName,
           visibility: visibility
@@ -1291,13 +1242,13 @@
             try { localStorage.removeItem('el-topic-draft'); } catch (err) {}
             window.location.href = 'topic.html?id=' + encodeURIComponent(data.id);
           } else {
-            alert(data.error || '投稿に失敗しました。時間をおいて再度お試しください。');
-            if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = submitBtnLabel; }
+            if (submitBtn) { submitBtn.disabled = false; }
+            alert('投稿に失敗しました。時間をおいて再度お試しください。');
           }
         })
         .catch(function () {
-          alert('通信エラーが発生しました。ネットワーク状況をご確認のうえ、再度お試しください。');
-          if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = submitBtnLabel; }
+          if (submitBtn) { submitBtn.disabled = false; }
+          alert('投稿に失敗しました。通信環境をご確認の上、再度お試しください。');
         });
     });
 

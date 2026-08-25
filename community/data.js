@@ -5,7 +5,7 @@ window.EL_CATEGORY_LABEL = {"amazon-ops": "Amazon販売・運用", "fba-inventor
 window.EL_ACCOUNTS = [];
 
 // スプレッドシート連携：フォーラムの投稿データはすべて「フォーラム投稿」シートが唯一のソースです
-// （旧デモ投稿46件もシート側へ移行済み）。ここでは毎回シートから最新の一覧を取得し、
+// （デモ投稿46件もシート側へ移行済み）。ここでは毎回シートから最新の一覧を取得し、
 // window.EL_TOPICS をまるごと差し替えます。各ページはこの関数のコールバック内でEL_TOPICSを
 // 使った描画処理を行うことで、常に最新の投稿（デモ分＋新規投稿分）を反映できます。
 window.EL_loadLiveTopics = function (callback) {
