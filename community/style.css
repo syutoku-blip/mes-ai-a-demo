@@ -581,7 +581,9 @@ button{ font-family:inherit; cursor:pointer; }
   border-radius:var(--el-radius-m);
   padding:22px 24px 8px;
 }
-.el-pinned-head{ display:flex; gap:14px; align-items:flex-start; margin-bottom:14px; }
+.el-pinned-head{ display:flex; gap:14px; align-items:flex-start; margin-bottom:14px; cursor:pointer; list-style:none; }
+.el-pinned-head::-webkit-details-marker{ display:none; }
+.el-pinned-head::marker{ content:''; }
 .el-pinned-box .ic{
   width:34px; height:34px; border-radius:50%; flex-shrink:0;
   background:var(--el-mustard); color:#fff;
@@ -589,7 +591,12 @@ button{ font-family:inherit; cursor:pointer; }
   transform:rotate(-8deg);
   box-shadow:0 2px 4px rgba(200,138,36,.35);
 }
-.el-pinned-head h2{ font-family:var(--font-display); font-size:17px; font-weight:600; margin:6px 0 0; color:var(--el-navy); }
+.el-pinned-head h2{ font-family:var(--font-display); font-size:17px; font-weight:600; margin:6px 0 0; color:var(--el-navy); flex:1; }
+.el-pinned-chev{
+  width:14px; height:14px; flex-shrink:0; margin-top:11px;
+  color:var(--el-ink-faint); transition:transform .15s;
+}
+.el-pinned-box[open] .el-pinned-chev{ transform:rotate(90deg); }
 .el-pinned-list{ border-top:1px dashed #E3C68A; }
 .el-pinned-item{
   display:flex; align-items:center; gap:10px;

@@ -380,6 +380,8 @@
       var container = document.getElementById('commentsList');
       document.getElementById('commentsHead').style.display = 'flex';
       document.getElementById('commentsCount').textContent = list.length + '件';
+      var replyCountEl = document.getElementById('threadMeta').querySelector('span');
+      if (replyCountEl) replyCountEl.textContent = list.length + '件の返信';
       if (!list.length) {
         container.innerHTML = '<p style="padding:24px 4px;color:var(--el-ink-faint);font-size:13.5px;">まだコメントはありません。最初のコメントを投稿してみましょう。</p>';
         return;

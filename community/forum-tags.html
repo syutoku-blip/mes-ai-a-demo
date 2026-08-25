@@ -512,18 +512,27 @@
   });
 
   // ハッシュタグ一覧：使われているタグをすべて表示する
+  // タグの元データ（投稿一覧）はスプレッドシートから非同期取得するため、取得完了後に描画する。
   (function () {
     var grid = document.getElementById('tagDirectoryGrid');
     var empty = document.getElementById('tagDirectoryEmpty');
     if (!grid || !window.EL_getVisibleTags) return;
-    var visibleTags = window.EL_getVisibleTags();
-    if (!visibleTags.length) { empty.hidden = false; return; }
-    grid.innerHTML = visibleTags.map(function (item) {
-      var label = window.EL_getTagLabel(item.tag);
-      return '<a class="el-directory-card" href="board.html?tag=' + encodeURIComponent(item.tag) + '&sort=hot">' +
-        '<span class="mark">#</span><div><h3>' + label + '</h3><p>' + item.count + '件の投稿</p></div>' +
-        '<span class="go">→</span></a>';
-    }).join('');
+    function render() {
+      var visibleTags = window.EL_getVisibleTags();
+      empty.hidden = true;
+      if (!visibleTags.length) { empty.hidden = false; grid.innerHTML = ''; return; }
+      grid.innerHTML = visibleTags.map(function (item) {
+        var label = window.EL_getTagLabel(item.tag);
+        return '<a class="el-directory-card" href="board.html?tag=' + encodeURIComponent(item.tag) + '&sort=hot">' +
+          '<span class="mark">#</span><div><h3>' + label + '</h3><p>' + item.count + '件の投稿</p></div>' +
+          '<span class="go">→</span></a>';
+      }).join('');
+    }
+    if (window.EL_loadLiveTopics) {
+      window.EL_loadLiveTopics(render);
+    } else {
+      render();
+    }
   })();
   var ADS = [
     { name: "SLCサービス", desc: "米AmazonFBA納品代行サービス", gradient: "linear-gradient(120deg, var(--el-teal), #1B5A52)" },
