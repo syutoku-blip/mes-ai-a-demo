@@ -327,10 +327,10 @@
 
         </div>
 
-        <div class="el-reply-box" id="replyBox">
+        <div class="el-reply-box" id="replyBox" style="display:none;">
           <div class="el-reply-context" id="replyContext">
             <a href="#" id="replyContextLink"></a>
-            <button type="button" id="replyContextClear" aria-label="返信対象を解除">
+            <button type="button" id="replyContextClear" aria-label="返信を閉じる">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg>
             </button>
           </div>
@@ -829,16 +829,20 @@
         replyCtxLink.textContent = name + 'さんの投稿に返信中';
         replyCtxLink.href = '#' + post.id;
         replyCtx.classList.add('is-visible');
+        replyBox.style.display = '';
         replyBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
         if (replyEditor) replyEditor.focus();
       });
     });
   }
   if (replyBox) {
+    // コメントは必ずトピック本文かいずれかの返信を対象に投稿するため、返信枠は常時表示せず
+    // 各投稿の「返信」ボタンを押したときだけ、その対象を選んだ状態で開く。
     replyCtxClear.addEventListener('click', function () {
       currentReplyToId = 'op';
       replyCtx.classList.remove('is-visible');
       clearReplyEditor();
+      replyBox.style.display = 'none';
     });
   }
   wireReplyButtons();
@@ -1073,6 +1077,7 @@
           clearReplyEditor();
           currentReplyToId = 'op';
           if (replyCtx) replyCtx.classList.remove('is-visible');
+          if (replyBox) replyBox.style.display = 'none';
           apiPost({ action: 'listComments', topicId: topicId }).then(function (cdata) {
             var items = (cdata.ok && cdata.items) ? cdata.items : [];
             renderComments(items);

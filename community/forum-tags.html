@@ -325,7 +325,13 @@
         <nav class="el-breadcrumb el-page-breadcrumb" aria-label="パンくず"><a href="index.html">ホーム</a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg><a href="forum.html">フォーラムTOP</a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg><span>ハッシュタグ一覧</span></nav>
 
         <div class="el-section-head"><div><h2>ハッシュタグで探す</h2><div class="sub">選ぶとフォーラム一覧を人気順で表示します</div></div></div>
+        <div style="position:relative;max-width:420px;margin:0 0 22px;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--el-ink-faint)" stroke-width="2" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);pointer-events:none;"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input type="search" id="tagSearchInput" placeholder="ハッシュタグを検索…" aria-label="ハッシュタグを検索" autocomplete="off"
+            style="width:100%;box-sizing:border-box;padding:11px 14px 11px 38px;border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m,14px);font:inherit;font-size:13.5px;color:var(--el-navy);background:var(--el-paper);">
+        </div>
         <div id="tagDirectoryEmpty" style="padding:44px 20px;text-align:center;color:var(--el-ink-faint);font-size:14px;" hidden>まだ使われているハッシュタグがありません。</div>
+        <div id="tagDirectoryNoMatch" style="padding:44px 20px;text-align:center;color:var(--el-ink-faint);font-size:14px;" hidden>一致するハッシュタグが見つかりませんでした。</div>
         <div class="el-directory-grid" id="tagDirectoryGrid"></div>
       </div>
     </main>
@@ -516,17 +522,40 @@
   (function () {
     var grid = document.getElementById('tagDirectoryGrid');
     var empty = document.getElementById('tagDirectoryEmpty');
+    var noMatch = document.getElementById('tagDirectoryNoMatch');
+    var searchInput = document.getElementById('tagSearchInput');
     if (!grid || !window.EL_getVisibleTags) return;
-    function render() {
-      var visibleTags = window.EL_getVisibleTags();
+    var allTags = [];
+
+    function applyFilter() {
+      var q = (searchInput && searchInput.value || '').trim().toLowerCase();
+      if (!allTags.length) {
+        empty.hidden = false;
+        noMatch.hidden = true;
+        grid.innerHTML = '';
+        return;
+      }
       empty.hidden = true;
-      if (!visibleTags.length) { empty.hidden = false; grid.innerHTML = ''; return; }
-      grid.innerHTML = visibleTags.map(function (item) {
-        var label = window.EL_getTagLabel(item.tag);
+      var filtered = !q ? allTags : allTags.filter(function (item) {
+        return item.label.toLowerCase().indexOf(q) !== -1 || item.tag.toLowerCase().indexOf(q) !== -1;
+      });
+      noMatch.hidden = filtered.length !== 0;
+      grid.innerHTML = filtered.map(function (item) {
         return '<a class="el-directory-card" href="board.html?tag=' + encodeURIComponent(item.tag) + '&sort=hot">' +
-          '<span class="mark">#</span><div><h3>' + label + '</h3><p>' + item.count + '件の投稿</p></div>' +
+          '<span class="mark">#</span><div><h3>' + item.label + '</h3><p>' + item.count + '件の投稿</p></div>' +
           '<span class="go">→</span></a>';
       }).join('');
+    }
+
+    function render() {
+      var visibleTags = window.EL_getVisibleTags();
+      allTags = visibleTags.map(function (item) {
+        return { tag: item.tag, count: item.count, label: window.EL_getTagLabel(item.tag) };
+      });
+      applyFilter();
+    }
+    if (searchInput) {
+      searchInput.addEventListener('input', applyFilter);
     }
     if (window.EL_loadLiveTopics) {
       window.EL_loadLiveTopics(render);

@@ -477,70 +477,8 @@
             </div>
             <a href="groups.html" class="el-btn el-btn--ghost el-btn--sm">グループ一覧</a>
           </div>
-          <div class="el-group-grid">
-            <div class="el-group-card">
-              <div class="el-group-top">
-                <div class="el-group-icon" style="background:var(--el-teal);">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z"/></svg>
-                </div>
-                <div>
-                  <h4>FDA対応 実務者の会</h4>
-                  <div class="visibility">
-                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                    メンバー限定
-                  </div>
-                </div>
-              </div>
-              <p class="desc">食品・化粧品の米国輸出を手がける実務者限定。規制対応の一次情報を共有します。</p>
-              <div class="el-group-foot">
-                <div class="el-group-members">
-                  <div class="el-avatar">山</div><div class="el-avatar">佐</div><div class="el-avatar">田</div>
-                  <span class="more">+126人</span>
-                </div>
-                <button class="el-btn el-btn--ghost el-btn--sm">参加申請</button>
-              </div>
-            </div>
-            <div class="el-group-card">
-              <div class="el-group-top">
-                <div class="el-group-icon" style="background:var(--el-mustard);">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2M3 8v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8M3 8h18"/></svg>
-                </div>
-                <div>
-                  <h4>せどり便乗リサーチ部</h4>
-                  <div class="visibility">
-                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                    メンバー限定
-                  </div>
-                </div>
-              </div>
-              <p class="desc">SHiFT塾の受講生を中心に、便乗リサーチの成果と失敗を持ち寄る非公開グループ。</p>
-              <div class="el-group-foot">
-                <div class="el-group-members">
-                  <div class="el-avatar">鈴</div><div class="el-avatar">中</div><div class="el-avatar">木</div>
-                  <span class="more">+84人</span>
-                </div>
-                <button class="el-btn el-btn--ghost el-btn--sm">参加申請</button>
-              </div>
-            </div>
-            <div class="el-group-card">
-              <div class="el-group-top">
-                <div class="el-group-icon" style="background:var(--el-sky);">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20Z"/></svg>
-                </div>
-                <div>
-                  <h4>初めての輸出 相談室</h4>
-                  <div class="visibility">誰でも参加可</div>
-                </div>
-              </div>
-              <p class="desc">これから輸出を始める方向け。初歩的な質問こそ歓迎する、オープンなグループです。</p>
-              <div class="el-group-foot">
-                <div class="el-group-members">
-                  <div class="el-avatar">高</div><div class="el-avatar">小</div><div class="el-avatar">林</div>
-                  <span class="more">+203人</span>
-                </div>
-                <button class="el-btn el-btn--primary el-btn--sm">参加する</button>
-              </div>
-            </div>
+          <div class="el-group-grid" id="homeGroupList">
+            <div style="padding:40px 4px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">読み込み中…</div>
           </div>
         </div>
       </section>
@@ -806,6 +744,51 @@
         box.insertAdjacentHTML('afterbegin', html);
       })
       .catch(function () {});
+  })();
+
+  // コミュニティに参加する：デモは使わず、シート（コミュニティ）から新着3件のみ取得して表示する
+  (function () {
+    var list = document.getElementById('homeGroupList');
+    if (!list) return;
+    var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
+    function esc(s) {
+      var d = document.createElement('div');
+      d.textContent = s == null ? '' : String(s);
+      return d.innerHTML;
+    }
+    fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'listContent', type: 'communityGroup' })
+    })
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        var items = (data.ok && data.items) ? data.items.slice() : [];
+        items.sort(function (a, b) { return (Date.parse(b.createdAt || '') || 0) - (Date.parse(a.createdAt || '') || 0); });
+        items = items.slice(0, 3);
+        if (!items.length) {
+          list.innerHTML = '<div style="padding:40px 4px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">まだコミュニティがありません。</div>';
+          return;
+        }
+        list.innerHTML = items.map(function (it) {
+          var iconColor = it.color || 'var(--el-teal)';
+          var moreLabel = it.postCount ? (it.postCount + '件の投稿') : '新規';
+          return '<a href="groups.html" class="el-group-card" style="display:block;text-decoration:none;">' +
+            '<div class="el-group-top">' +
+            '<div class="el-group-icon" style="background:' + iconColor + ';">' +
+            '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20Z"/></svg>' +
+            '</div>' +
+            '<div><h4>' + esc(it.title || '') + '</h4><div class="visibility">誰でも参加可</div></div>' +
+            '</div>' +
+            '<p class="desc">' + esc(it.description || '') + '</p>' +
+            '<div class="el-group-foot"><div class="el-group-members"><span class="more">' + esc(moreLabel) + '</span></div>' +
+            '<span class="el-btn el-btn--primary el-btn--sm">詳しく見る</span></div>' +
+            '</a>';
+        }).join('');
+      })
+      .catch(function () {
+        list.innerHTML = '<div style="padding:40px 4px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">読み込みに失敗しました。</div>';
+      });
   })();
 
   // ユーザーモード（ゲスト／登録ユーザー／管理者）の切り替えと共通ゲート処理

@@ -248,6 +248,26 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
         <span class="lbl">マイページ</span>
       </a>
+
+      <details class="el-side-forum" id="sideAdminSection" open>
+        <summary class="is-active" data-href="admin.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 3 7v6c0 5 4 9 9 9s9-4 9-9V7l-9-5Z"/><path d="m9 12 2 2 4-4"/></svg>
+          <span class="lbl">管理者ページ</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
+        </summary>
+        <div class="el-side-sub" id="adminSideTabs">
+          <a href="#" data-tab="users" class="is-active">登録ユーザー一覧</a>
+          <a href="#" data-tab="announce">お知らせ登録</a>
+          <a href="#" data-tab="event">イベント登録</a>
+          <a href="#" data-tab="content">コンテンツ登録</a>
+          <a href="#" data-tab="forms">フォーム管理</a>
+          <a href="#" data-tab="community">コミュニティ登録</a>
+          <a href="#" data-tab="ads">広告設定</a>
+          <a href="#" data-tab="apply">出品申請の確認</a>
+          <a href="#" data-tab="marketOrders">マーケット申込み一覧</a>
+          <a href="#" data-tab="badge">バッジの付与</a>
+        </div>
+      </details>
     </nav>
   </aside>
   </div>
@@ -266,19 +286,6 @@
           <div>
             <h2>管理者ページ</h2>
           </div>
-        </div>
-
-        <div class="el-tabs" id="adminTabs" style="margin-bottom:22px;">
-          <a href="#" data-tab="users" class="is-active">登録ユーザー一覧</a>
-          <a href="#" data-tab="announce">お知らせ登録</a>
-          <a href="#" data-tab="event">イベント登録</a>
-          <a href="#" data-tab="content">コンテンツ登録</a>
-          <a href="#" data-tab="forms">フォーム管理</a>
-          <a href="#" data-tab="community">コミュニティ登録</a>
-          <a href="#" data-tab="ads">広告設定</a>
-          <a href="#" data-tab="apply">出品申請の確認</a>
-          <a href="#" data-tab="marketOrders">マーケット申込み一覧</a>
-          <a href="#" data-tab="badge">バッジの付与</a>
         </div>
 
         <!-- 登録ユーザー一覧 -->
@@ -1739,11 +1746,11 @@
     }).catch(function () { alert('通信エラーが発生しました。'); });
   });
 
-  // タブ切り替え
-  document.querySelectorAll('#adminTabs a[data-tab]').forEach(function (tab) {
+  // タブ切り替え（サイドメニューの「管理者ページ」展開内から切り替える）
+  document.querySelectorAll('#adminSideTabs a[data-tab]').forEach(function (tab) {
     tab.addEventListener('click', function (e) {
       e.preventDefault();
-      document.querySelectorAll('#adminTabs a[data-tab]').forEach(function (t) { t.classList.remove('is-active'); });
+      document.querySelectorAll('#adminSideTabs a[data-tab]').forEach(function (t) { t.classList.remove('is-active'); });
       tab.classList.add('is-active');
       document.querySelectorAll('.el-admin-panel').forEach(function (p) {
         p.style.display = p.dataset.panel === tab.dataset.tab ? '' : 'none';
@@ -1837,7 +1844,7 @@
       });
     }
 
-    if (role === 'admin') {
+    if (role === 'admin' && !document.getElementById('sideAdminSection')) {
       var sideNav = document.querySelector('.el-sidebar nav');
       if (sideNav && !sideNav.querySelector('a[href="admin.html"]')) {
         var adminLink = document.createElement('a');
