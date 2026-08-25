@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>お知らせ詳細｜Export Lab</title>
+<title>イベント詳細｜Export Lab</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&family=Noto+Sans+JP:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&family=Zen+Kurenaido&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
@@ -105,12 +105,12 @@
         </div>
       </details>
 
-      <a href="announcements.html" class="is-active">
+      <a href="announcements.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
         <span class="lbl">公式お知らせ</span>
       </a>
 
-      <a href="events.html">
+      <a href="events.html" class="is-active">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
         <span class="lbl">イベント</span>
       </a>
@@ -141,13 +141,18 @@
       <div class="wrap" style="max-width:720px;">
 
         <div style="font-size:13.5px;color:var(--el-ink-faint);margin-bottom:20px;">
-          <a href="announcements.html" style="color:var(--el-ink-faint);">公式お知らせ</a>
+          <a href="events.html" style="color:var(--el-ink-faint);">イベント</a>
         </div>
 
-        <div class="el-announce-empty" style="background:var(--el-paper);border:1.5px solid var(--el-line-soft);border-radius:var(--el-radius-l);padding:60px 24px;">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
-          <p style="font-size:14.5px;">このお知らせは見つかりませんでした。すでに削除されたか、公開が終了した可能性があります。</p>
-          <a href="announcements.html" class="el-btn el-btn--ghost el-btn--sm" style="margin-top:6px;">お知らせ一覧へ戻る</a>
+        <article class="el-event-notice" id="eventArticle">
+          <!-- JSにより動的に描画されます -->
+        </article>
+
+        <div class="el-section-head" style="margin-top:48px;margin-bottom:14px;">
+          <div><h2 style="font-size:17px;">他のイベント</h2></div>
+        </div>
+        <div style="text-align:center;">
+          <a href="events.html" class="el-btn el-btn--ghost el-btn--sm">イベント一覧へ戻る</a>
         </div>
 
       </div>
@@ -208,6 +213,129 @@
       window.location.href = summary.dataset.href;
     });
   });
+
+  // ------------------------------------------------------------
+  // イベント詳細データ（デモ）。管理者ページから登録したイベントは、
+  // 将来的にはここではなくサーバー（GAS／スプレッドシート）から取得する想定です。
+  // formId が設定されているイベントは「申し込む」ボタンから対応するフォームへ遷移します。
+  // ------------------------------------------------------------
+  var EVENTS = {
+    'fda-consult': {
+      badge: 'SHiFT限定', badgeClass: 'badge--member', color: 'var(--el-teal)',
+      icon: '<path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/>',
+      title: 'FDA施設登録に関するオンライン相談会',
+      dateLabel: '2026年8月20日（木）19:00〜20:00', place: 'オンライン（Zoom）',
+      target: 'FDA対応 実務者の会 グループメンバー',
+      body: [
+        'いつもExport Labをご利用いただきありがとうございます。',
+        '「FDA対応 実務者の会」グループのメンバーを対象に、FDA施設登録の更新手続きに関するオンライン相談会を開催いたします。更新期限の考え方や、よくある差し戻し事例への対処法について、運営チームより直接ご案内します。',
+        '個別の状況に応じたご質問にもその場でお答えしますので、施設登録の更新を控えている方はぜひご参加ください。'
+      ],
+      formId: 'demo-fda-consult', past: false
+    },
+    'intro-seminar': {
+      badge: '公開', badgeClass: 'badge--open', color: 'var(--el-mustard-deep)',
+      icon: '<path d="M12 2 3 7l9 5 9-5-9-5Z"/><path d="M3 12l9 5 9-5M3 17l9 5 9-5"/>',
+      title: '初めての輸出セミナー（初心者向け）',
+      dateLabel: '2026年9月5日（土）10:00〜11:30', place: 'オンライン（Zoom）',
+      target: 'どなたでもご参加いただけます',
+      body: [
+        'これから輸出を始める方向けの入門セミナーです。輸出の基本的な流れと、最初につまずきやすいポイントをまとめてお伝えします。',
+        'FBA納品・海外配送・関税など、初めて聞く言葉が多くて不安な方も、この回で全体像をつかんでいただけます。',
+        '質疑応答の時間も設けていますので、疑問点はその場で解消してください。'
+      ],
+      formId: 'demo-intro-seminar', past: false
+    },
+    'slc-seminar': {
+      badge: 'メンバー限定', badgeClass: 'badge--restricted', color: 'var(--el-sky)',
+      icon: '<rect x="3" y="4" width="18" height="14" rx="2"/><path d="m9 10 3 2-3 2z"/>',
+      title: 'SLC活用セミナー：FBA納品費用の内訳を読み解く',
+      dateLabel: '2026年9月18日（金）19:00〜20:00', place: 'オンライン（Zoom）',
+      target: 'Export Lab 登録会員',
+      body: [
+        '実データを見ながら、FBA納品費用の内訳と削減余地の見つけ方を解説します。',
+        '実際のSLC画面を見ながら、入庫配置手数料や国際送料の内訳をどう確認するかを具体的にご紹介します。'
+      ],
+      formId: 'demo-slc-seminar', past: false
+    },
+    'fukuoka-offline': {
+      badge: '公開', badgeClass: 'badge--open', color: 'var(--el-coral)',
+      icon: '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z"/>',
+      title: '福岡オフ会：輸出事業者の集い',
+      dateLabel: '2026年10月10日（土）14:00〜16:00', place: '福岡市内（現地開催・会場は申込後にご案内）',
+      target: '輸出事業に関わる方ならどなたでも',
+      body: [
+        'Export Lab発、初めてのリアルイベントです。オンラインではなかなか話せない、現場のリアルな話を持ち寄る会にしたいと思っています。',
+        '定員に限りがございますので、お早めにお申し込みください。'
+      ],
+      formId: 'demo-fukuoka-offline', past: false
+    },
+    'slc-seminar-jul': {
+      badge: '公式', badgeClass: 'badge--announce', color: '#5C6784',
+      icon: '<rect x="3" y="4" width="18" height="14" rx="2"/><path d="m9 10 3 2-3 2z"/>',
+      title: 'SLC活用セミナー（2026年7月開催分）',
+      dateLabel: '2026年7月22日（水）開催', place: 'オンライン（Zoom）',
+      target: '録画をマーケットで販売中',
+      body: [ 'FBA納品費用の内訳の見方を解説した回です。当日ご参加いただけなかった方は、マーケットの録画版をご覧いただけます。' ],
+      past: true, pastCtaText: '録画を見る', pastCtaUrl: 'market.html'
+    },
+    'kickoff': {
+      badge: '公式', badgeClass: 'badge--announce', color: '#5C6784',
+      icon: '<path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/>',
+      title: 'Export Lab オープン記念キックオフ',
+      dateLabel: '2026年7月1日（水）開催', place: 'オンライン（Zoom）',
+      target: 'コミュニティのオープンを記念して開催した初回イベントです',
+      body: [ 'Export Labのオープンを記念して開催したキックオフイベントです。運営チームからコミュニティの活用方法をご紹介しました。' ],
+      past: true, pastCtaText: 'お知らせを見る', pastCtaUrl: 'announcements.html'
+    }
+  };
+
+  (function () {
+    var params = new URLSearchParams(window.location.search);
+    var id = params.get('id') || 'fda-consult';
+    var ev = EVENTS[id] || EVENTS['fda-consult'];
+    var article = document.getElementById('eventArticle');
+
+    document.title = ev.title + '｜Export Lab';
+
+    var pastTag = ev.past ? '<div class="el-event-past-tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>開催終了</div>' : '';
+
+    var bodyHtml = ev.body.map(function (p) { return '<p>' + p + '</p>'; }).join('');
+
+    var footHtml;
+    if (ev.past) {
+      footHtml =
+        '<a href="' + (ev.pastCtaUrl || '#') + '" class="el-btn el-btn--primary el-btn--sm">' + (ev.pastCtaText || '詳しく見る') + '</a>' +
+        '<a href="events.html" class="el-btn el-btn--ghost el-btn--sm">イベント一覧へ戻る</a>';
+    } else if (ev.formId) {
+      var formUrl = 'form.html?formId=' + encodeURIComponent(ev.formId) + '&eventId=' + encodeURIComponent(id) + '&eventTitle=' + encodeURIComponent(ev.title);
+      footHtml =
+        '<a href="' + formUrl + '" class="el-btn el-btn--primary el-btn--sm">申し込む</a>' +
+        '<a href="events.html" class="el-btn el-btn--ghost el-btn--sm">イベント一覧へ戻る</a>';
+    } else {
+      footHtml = '<a href="events.html" class="el-btn el-btn--ghost el-btn--sm">イベント一覧へ戻る</a>';
+    }
+
+    article.innerHTML =
+      pastTag +
+      '<div class="el-notice-head">' +
+        '<span class="el-notice-icon" style="background:' + ev.color + ';"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' + ev.icon + '</svg></span>' +
+        '<div>' +
+          '<span class="badge ' + ev.badgeClass + '">' + ev.badge + '</span>' +
+          '<h1>' + ev.title + '</h1>' +
+          '<div class="el-notice-meta">Export Lab運営チーム・' + ev.dateLabel + '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="el-notice-body">' +
+        bodyHtml +
+        '<div class="el-notice-fact">' +
+          '<div><span>日時</span>' + ev.dateLabel + '</div>' +
+          '<div><span>会場</span>' + ev.place + '</div>' +
+          '<div><span>対象</span>' + ev.target + '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="el-notice-foot">' + footHtml + '</div>';
+  })();
 </script>
 </body>
 </html>

@@ -8,193 +8,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&family=Noto+Sans+JP:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&family=Zen+Kurenaido&family=Yomogi&family=Klee+One:wght@400;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="../shared/global-header.css">
-<style>
-  /* 検索ボックス：input要素の初期スタイル（黒枠など）を消して馴染ませる */
-  .el-search input[type="search"]{
-    border:none !important;
-    outline:none !important;
-    background:transparent !important;
-    box-shadow:none !important;
-    -webkit-appearance:none !important;
-    appearance:none !important;
-    font:inherit !important;
-    color:inherit !important;
-    padding:0 !important;
-    margin:0 !important;
-    width:100%;
-  }
-  .el-search input[type="search"]::-webkit-search-cancel-button{
-    -webkit-appearance:none;
-    display:none;
-  }
-  /* 広告バナー：横長の画像1枚を全面に表示し、CTAボタンとスポンサー表記を重ねる */
-  .el-ad-banner-v2{
-    position:relative !important;
-    display:block !important;
-    width:100% !important;
-    border-radius:var(--el-radius-m, 14px) !important;
-    overflow:hidden !important;
-    background:var(--el-cream-deep, #FBF3E3) !important;
-    aspect-ratio:960 / 220;
-    max-height:200px !important;
-  }
-  .el-ad-tag-v2{
-    position:absolute !important;
-    top:12px !important;
-    left:12px !important;
-    z-index:2 !important;
-    background:rgba(0,0,0,.55) !important;
-    color:#fff !important;
-    font-size:10px !important;
-    font-weight:700 !important;
-    letter-spacing:.08em !important;
-    padding:3px 10px !important;
-    border-radius:999px !important;
-    line-height:1.6 !important;
-  }
-  .el-ad-image-v2{
-    position:absolute !important;
-    inset:0 !important;
-    background-size:cover !important;
-    background-position:center !important;
-    background-color:var(--el-teal, #2F8F82) !important;
-  }
-  .el-ad-cta-v2{
-    position:absolute !important;
-    right:16px !important;
-    bottom:16px !important;
-    z-index:2 !important;
-    box-shadow:0 3px 10px rgba(0,0,0,.25) !important;
-  }
-  .el-ad-sponsor-v2{
-    position:absolute !important;
-    left:12px !important;
-    bottom:10px !important;
-    z-index:2 !important;
-    font-size:11px !important;
-    color:rgba(255,255,255,.85) !important;
-    background:rgba(0,0,0,.35) !important;
-    padding:2px 9px !important;
-    border-radius:999px !important;
-  }
-  .el-auth-modal{
-    display:none;
-    position:fixed;
-    inset:0;
-    z-index:900;
-    align-items:center;
-    justify-content:center;
-  }
-  .el-auth-modal.is-open{ display:flex; }
-  .el-auth-modal-backdrop{
-    position:absolute;
-    inset:0;
-    background:rgba(22,35,63,.45);
-  }
-  .el-auth-modal-panel{
-    position:relative;
-    background:#fff;
-    border-radius:var(--el-radius-m, 14px);
-    padding:28px 26px;
-    max-width:340px;
-    width:90%;
-    text-align:center;
-    box-shadow:0 12px 40px rgba(22,35,63,.25);
-  }
-  .el-auth-modal-panel h3{
-    margin:0 0 10px;
-    font-size:17px;
-    color:var(--el-navy, #16233F);
-  }
-  .el-auth-modal-panel p{
-    margin:0 0 20px;
-    font-size:13px;
-    color:var(--el-ink-faint, #8A8478);
-    line-height:1.7;
-  }
-  .el-auth-modal-actions{
-    display:flex;
-    gap:8px;
-    justify-content:center;
-  }
-  .el-auth-modal-close{
-    position:absolute;
-    top:10px;
-    right:10px;
-    border:none;
-    background:transparent;
-    cursor:pointer;
-    color:var(--el-ink-faint, #8A8478);
-    padding:4px;
-  }
-  [data-guest-hide]{ display:none !important; }
-  /* ヘッダーの新規登録／ログイン／ログアウトボタン：背景色に関わらず文字が見えるよう、
-     透過ではなく塗りのボタンにする */
-  #headerAuthLinks .el-btn, #headerSignupLink.el-btn, #headerLoginLink.el-btn{
-    color:#fff !important;
-    background:var(--el-navy, #16233F) !important;
-    border:1px solid var(--el-navy, #16233F) !important;
-  }
-  #headerAuthLinks .el-btn:hover, #headerSignupLink.el-btn:hover, #headerLoginLink.el-btn:hover{
-    background:var(--el-teal-deep, #1E6F63) !important;
-    border-color:var(--el-teal-deep, #1E6F63) !important;
-  }
-  /* フッターの背景色が正しく当たらない場合の保険（文字が背景と同化して見えなくなるのを防ぐ） */
-  .el-footer{ background:#EDE4D0 !important; border-top:1px solid var(--el-line-soft, #E5DFD2) !important; }
-  .el-footer .tag{ color:var(--el-ink-faint, #8A8478) !important; }
-  .el-footer .el-logo{ color:var(--el-navy, #16233F) !important; }
-  .el-footer .el-logo .dot{ color:var(--el-mustard-deep, #B9812A) !important; }
-  .el-footer-cols a{ color:var(--el-ink-faint, #8A8478) !important; }
-  .el-footer-cols h6{ color:var(--el-navy, #16233F) !important; }
-  .el-footer-bottom{ color:var(--el-ink-faint, #8A8478) !important; border-top-color:var(--el-line-soft, #E5DFD2) !important; }
-
-  /* WorldShift Trade Watch ニュースカード（ホーム画面） */
-  .el-news-grid{
-    display:grid;
-    grid-template-columns:repeat(3, 1fr);
-    gap:18px;
-  }
-  @media (max-width:820px){
-    .el-news-grid{ grid-template-columns:1fr; }
-  }
-  .el-news-card{
-    display:block;
-    background:var(--el-paper, #fff);
-    border:1px solid var(--el-line-soft, #E5DFD2);
-    border-radius:var(--el-radius-m, 14px);
-    overflow:hidden;
-    text-decoration:none;
-  }
-  .el-news-card .thumb{
-    height:120px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-  }
-  .el-news-card .body{
-    padding:14px 16px;
-  }
-  .el-news-card .date{
-    display:block;
-    font-size:11.5px;
-    color:var(--el-ink-faint, #8A8478);
-    margin-bottom:4px;
-  }
-  .el-news-card h4{
-    margin:0 0 8px;
-    font-size:14.5px;
-    line-height:1.5;
-    color:var(--el-navy, #16233F);
-  }
-  .el-news-card .ext{
-    display:inline-flex;
-    align-items:center;
-    gap:4px;
-    font-size:11.5px;
-    font-weight:700;
-    color:var(--el-teal-deep, #1E6F63);
-  }
-</style>
 </head>
 <body data-site="community" data-root="..">
 
@@ -205,16 +18,15 @@
     </button>
     <a href="index.html" class="el-logo">Export Lab<span class="dot">.</span></a>
     <div class="el-header-actions">
-      <form class="el-search" action="search.html" method="get">
+      <div class="el-search">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-        <input type="search" name="q" placeholder="検索" aria-label="検索" autocomplete="off">
-      </form>
-      <span id="headerAuthLinks" style="display:flex;gap:6px;white-space:nowrap;"><a href="signup.html" class="el-btn el-btn--ghost el-btn--sm" id="headerSignupLink">新規登録</a><a href="login.html" class="el-btn el-btn--ghost el-btn--sm" id="headerLoginLink">ログイン</a></span>
+        検索
+      </div>
       <a href="mypage.html" class="el-header-bell" aria-label="通知">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
         <span class="count">3</span>
       </a>
-      <a href="mypage.html" class="el-avatar" id="headerAvatar" aria-label="マイページ">り</a>
+      <a href="mypage.html" class="el-avatar" aria-label="マイページ">り</a>
     </div>
   </div>
 </header>
@@ -229,24 +41,49 @@
       </a>
 
       <details class="el-side-forum">
-        <summary data-href="forum.html">
+        <summary data-href="board.html">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
           <span class="lbl">フォーラム</span>
           <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
         </summary>
         <div class="el-side-sub">
-          <a href="forum-new.html" class="el-side-cta" data-guest-block>
+          <a href="board.html" class="el-side-cta">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
             新規投稿をする
           </a>
-          <a href="board.html">すべて</a>
           <a href="board.html?sort=new">新着</a>
           <a href="board.html?sort=hot">人気</a>
-          <a href="board.html?filter=shift&sort=hot">SHiFT member only</a>
-          <a href="board.html?filter=unsolved&sort=hot">未解決</a>
+          <a href="board.html?filter=shift">SHiFT member only</a>
+          <a href="board.html?filter=unsolved">未解決</a>
 
-          <a href="forum-categories.html">カテゴリで探す</a>
-          <a href="forum-tags.html">ハッシュタグで探す</a>
+          <div class="el-side-sub-label">カテゴリで探す</div>
+          <a href="board.html?category=fda">FDA対応</a>
+          <a href="board.html?category=customs">通関</a>
+          <a href="board.html?category=tariff">関税</a>
+          <a href="board.html?category=amazon">Amazon出品</a>
+          <a href="board.html?category=logistics">物流</a>
+          <a href="board.html?category=chat">雑談・自己紹介</a>
+
+          <div class="el-side-sub-label">ハッシュタグで探す</div>
+          <a href="board.html?tag=fba">#FBA</a>
+          <a href="board.html?tag=facility-registration">#施設登録・更新</a>
+          <a href="board.html?tag=label">#ラベル</a>
+          <a href="board.html?tag=us-agent">#米国代理人</a>
+          <a href="board.html?tag=prior-notice">#事前申告</a>
+          <a href="board.html?tag=warning-letter">#警告書</a>
+          <a href="board.html?tag=cpsc">#CPSC</a>
+          <a href="board.html?tag=invoice-hs">#インボイス・HSコード</a>
+          <a href="board.html?tag=section201">#Section201</a>
+          <a href="board.html?tag=section301">#対中追加関税</a>
+          <a href="board.html?tag=account-create">#アカウント作成</a>
+          <a href="board.html?tag=account-suspend">#アカウント停止</a>
+          <a href="board.html?tag=listing-restriction">#出品制限</a>
+          <a href="board.html?tag=ocean-freight">#海上輸送</a>
+          <a href="board.html?tag=air-freight">#航空輸送</a>
+          <a href="board.html?tag=warehouse">#倉庫選定</a>
+          <a href="board.html?tag=customs-docs">#通関書類</a>
+          <a href="board.html?tag=research">#リサーチ</a>
+          <a href="board.html?tag=tariff-general">#関税</a>
         </div>
       </details>
 
@@ -257,15 +94,14 @@
           <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
         </summary>
         <div class="el-side-sub">
-          <a href="groups.html" class="el-side-cta" data-guest-block>
+          <a href="groups.html" class="el-side-cta">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
             新規コミュニティを作成する
           </a>
-          <a href="groups-list.html">すべて</a>
-          <a href="groups-list.html?sort=new">新着</a>
-          <a href="groups-list.html?sort=hot">人気</a>
-          <a href="groups-list.html?filter=joined&sort=hot">参加中のコミュニティ</a>
-          <a href="groups-list.html?filter=pending&sort=hot">申請中のコミュニティ</a>
+          <a href="groups.html">新着</a>
+          <a href="groups.html">人気</a>
+          <a href="groups.html">参加中のコミュニティ</a>
+          <a href="groups.html">申請中のコミュニティ</a>
         </div>
       </details>
 
@@ -286,16 +122,11 @@
           <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
         </summary>
         <div class="el-side-sub">
-          <a href="market-list.html">すべて</a>
+          <a href="market-list.html">コンテンツ一覧</a>
           <a href="market-official.html">ワールドシフト提供</a>
           <a href="market-apply.html">出品申請</a>
         </div>
       </details>
-
-      <a href="members.html">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M6 16c.5-1.6 1.7-2.5 3-2.5s2.5.9 3 2.5"/><path d="M14 9h4M14 13h4"/></svg>
-        <span class="lbl">メンバー</span>
-      </a>
 
       <a href="mypage.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
@@ -357,64 +188,17 @@
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
             </span>
             <h2>公式お知らせ</h2>
+            <a href="announcements.html" class="el-btn el-btn--ghost el-btn--sm" style="margin-left:auto;">すべて見る</a>
           </div>
           <div class="el-announce-box">
-            <a href="announcement-detail.html" class="el-announce-row">
-              <span class="ic" style="background:var(--el-coral);">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
-              </span>
-              <span class="el-announce-row-main">
-                <span class="title">Export Lab、正式オープンしました</span>
-                <span class="meta"><span class="badge badge--announce">公式</span>運営チーム・3時間前</span>
-              </span>
-              <span class="el-announce-arrow"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></span>
-            </a>
-            <a href="announcement-detail.html" class="el-announce-row">
-              <span class="ic" style="background:var(--el-coral);">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
-              </span>
-              <span class="el-announce-row-main">
-                <span class="title">FDA施設登録に関するオンライン相談会を開催します</span>
-                <span class="meta"><span class="badge badge--announce">公式</span>運営チーム・1日前</span>
-              </span>
-              <span class="el-announce-arrow"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></span>
-            </a>
-            <a href="announcement-detail.html" class="el-announce-row">
-              <span class="ic" style="background:var(--el-sage);">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
-              </span>
-              <span class="el-announce-row-main">
-                <span class="title">8月上旬、システムメンテナンスのお知らせ</span>
-                <span class="meta"><span class="badge badge--cat">メンテナンス</span>運営チーム・2026年8月1日</span>
-              </span>
-              <span class="el-announce-arrow"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></span>
-            </a>
-            <a href="announcement-detail.html" class="el-announce-row">
-              <span class="ic" style="background:var(--el-sage);">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
-              </span>
-              <span class="el-announce-row-main">
-                <span class="title">投稿ガイドラインを公開しました</span>
-                <span class="meta"><span class="badge badge--cat">ガイドライン</span>運営チーム・2026年7月16日</span>
-              </span>
-              <span class="el-announce-arrow"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></span>
-            </a>
-            <a href="announcement-detail.html" class="el-announce-row">
-              <span class="ic" style="background:var(--el-coral);">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
-              </span>
-              <span class="el-announce-row-main">
-                <span class="title">SHiFT会員限定カテゴリを追加しました</span>
-                <span class="meta"><span class="badge badge--announce">公式</span>運営チーム・2026年7月7日</span>
-              </span>
-              <span class="el-announce-arrow"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></span>
-            </a>
-          </div>
-          <div style="text-align:center;margin-top:18px;">
-            <a href="announcements.html" class="el-btn el-btn--ghost el-btn--sm">すべて見る</a>
+            <div class="el-announce-empty">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
+              <p>現在、公式からのお知らせはありません。</p>
+            </div>
           </div>
         </div>
       </section>
+
       <section class="el-section" style="border-top:1px solid var(--el-line); padding-top:48px;">
         <div class="wrap">
           <div class="el-section-head">
@@ -427,10 +211,119 @@
             <span class="feed-ic" style="background:var(--el-teal-tint);">
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8Z"/></svg>
             </span>
-            <h3>NEW</h3>
+            <h3>NEW（新着）</h3>
           </div>
           <div class="el-board">
-          <div id="topNewList" style="padding:28px 4px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">まだ投稿がありません。</div>
+          <a href="topic.html" class="el-t-row">
+            <div class="el-t-row-main">
+              <div class="el-t-row-badges"><span class="badge badge--open">公開</span><span class="badge badge--cat">Amazon出品</span><span class="badge badge--unsolved">未解決</span></div>
+              <span class="el-t-row-title">米国倉庫でのラベル不備、差し戻しを防ぐチェック手順</span>
+              <div class="el-t-row-meta">佐藤ストア・12分前</div>
+            </div>
+            <div class="el-t-row-stats">
+              <div><strong>34</strong><span>閲覧</span></div>
+              <div><strong>1</strong><span>返信</span></div>
+            </div>
+          </a>
+          <a href="topic.html" class="el-t-row">
+            <div class="el-t-row-main">
+              <div class="el-t-row-badges"><span class="badge badge--open">公開</span><span class="badge badge--cat">雑談・自己紹介</span><span class="badge badge--unsolved">未解決</span></div>
+              <span class="el-t-row-title">初めまして、雑貨を輸出しています</span>
+              <div class="el-t-row-meta">石井雑貨店・38分前</div>
+            </div>
+            <div class="el-t-row-stats">
+              <div><strong>12</strong><span>閲覧</span></div>
+              <div><strong>0</strong><span>返信</span></div>
+            </div>
+          </a>
+          <a href="topic.html" class="el-t-row">
+            <div class="el-t-row-main">
+              <div class="el-t-row-badges"><span class="badge badge--open">公開</span><span class="badge badge--cat">物流・輸送</span><span class="badge badge--unsolved">未解決</span></div>
+              <span class="el-t-row-title">海上輸送の遅延、リードタイムはどう見積もってますか</span>
+              <div class="el-t-row-meta">田中フーズ・1時間前</div>
+            </div>
+            <div class="el-t-row-stats">
+              <div><strong>58</strong><span>閲覧</span></div>
+              <div><strong>2</strong><span>返信</span></div>
+            </div>
+          </a>
+          <a href="topic.html" class="el-t-row">
+            <div class="el-t-row-main">
+              <div class="el-t-row-badges"><span class="badge badge--open">公開</span><span class="badge badge--cat">FDA対応</span><span class="badge badge--unsolved">未解決</span></div>
+              <span class="el-t-row-title">サプリメントのラベル、栄養成分表示のフォーマット変更点</span>
+              <div class="el-t-row-meta">鈴木ラボ・2時間前</div>
+            </div>
+            <div class="el-t-row-stats">
+              <div><strong>97</strong><span>閲覧</span></div>
+              <div><strong>4</strong><span>返信</span></div>
+            </div>
+          </a>
+          <a href="topic.html" class="el-t-row">
+            <div class="el-t-row-main">
+              <div class="el-t-row-badges"><span class="badge badge--open">公開</span><span class="badge badge--cat">マーケット動向</span><span class="badge badge--solved">解決</span></div>
+              <span class="el-t-row-title">米国の関税改定、価格転嫁のタイミングをどう決めた？</span>
+              <div class="el-t-row-meta">小林商店・3時間前</div>
+            </div>
+            <div class="el-t-row-stats">
+              <div><strong>142</strong><span>閲覧</span></div>
+              <div><strong>6</strong><span>返信</span></div>
+            </div>
+          </a>
+          <a href="topic.html" class="el-t-row">
+            <div class="el-t-row-main">
+              <div class="el-t-row-badges"><span class="badge badge--restricted">メンバー限定</span><span class="badge badge--cat">Amazon出品</span><span class="badge badge--solved">解決</span></div>
+              <span class="el-t-row-title">せどり便乗リサーチ、初月の粗利率どのくらいでしたか</span>
+              <div class="el-t-row-meta">高橋物産・5時間前</div>
+            </div>
+            <div class="el-t-row-stats">
+              <div><strong>489</strong><span>閲覧</span></div>
+              <div><strong>21</strong><span>返信</span></div>
+            </div>
+          </a>
+          <a href="topic.html" class="el-t-row">
+            <div class="el-t-row-main">
+              <div class="el-t-row-badges"><span class="badge badge--open">公開</span><span class="badge badge--cat">雑談・自己紹介</span><span class="badge badge--unsolved">未解決</span></div>
+              <span class="el-t-row-title">化粧品OEMを輸出している者です、情報交換希望</span>
+              <div class="el-t-row-meta">中村コスメ・7時間前</div>
+            </div>
+            <div class="el-t-row-stats">
+              <div><strong>88</strong><span>閲覧</span></div>
+              <div><strong>4</strong><span>返信</span></div>
+            </div>
+          </a>
+          <a href="topic.html" class="el-t-row">
+            <div class="el-t-row-main">
+              <div class="el-t-row-badges"><span class="badge badge--open">公開</span><span class="badge badge--cat">FDA対応</span><span class="badge badge--solved">解決</span></div>
+              <span class="el-t-row-title">FDA施設登録、2年更新のタイミングと注意点</span>
+              <div class="el-t-row-meta">山口貿易士・昨日</div>
+            </div>
+            <div class="el-t-row-stats">
+              <div><strong>980</strong><span>閲覧</span></div>
+              <div><strong>32</strong><span>返信</span></div>
+            </div>
+          </a>
+          <a href="topic.html" class="el-t-row">
+            <div class="el-t-row-main">
+              <div class="el-t-row-badges"><span class="badge badge--open">公開</span><span class="badge badge--cat">Amazon出品</span><span class="badge badge--unsolved">未解決</span></div>
+              <span class="el-t-row-title">現地倉庫のピッキングミス、返金対応どうしてますか</span>
+              <div class="el-t-row-meta">高橋物産・昨日</div>
+            </div>
+            <div class="el-t-row-stats">
+              <div><strong>155</strong><span>閲覧</span></div>
+              <div><strong>7</strong><span>返信</span></div>
+            </div>
+          </a>
+          <a href="topic.html" class="el-t-row">
+            <div class="el-t-row-main">
+              <div class="el-t-row-badges"><span class="badge badge--restricted">メンバー限定</span><span class="badge badge--cat">物流・輸送</span><span class="badge badge--solved">解決</span></div>
+              <span class="el-t-row-title">通関書類のインボイス記載、よくある差し戻し理由まとめ</span>
+              <div class="el-t-row-meta">田中フーズ・2日前</div>
+            </div>
+            <div class="el-t-row-stats">
+              <div><strong>298</strong><span>閲覧</span></div>
+              <div><strong>15</strong><span>返信</span></div>
+            </div>
+          </a>
           </div>
           <div style="text-align:center;margin:18px 0 44px;">
             <a href="board.html?sort=new" class="el-btn el-btn--ghost el-btn--sm">もっと見る</a>
@@ -440,10 +333,119 @@
             <span class="feed-ic" style="background:var(--el-mustard-tint);">
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
             </span>
-            <h3>HOT</h3>
+            <h3>HOT（人気）</h3>
           </div>
           <div class="el-board">
-          <div id="topHotList" style="padding:28px 4px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">まだ投稿がありません。</div>
+          <a href="topic.html" class="el-t-row">
+            <div class="el-t-row-main">
+              <div class="el-t-row-badges"><span class="badge badge--pin">固定</span><span class="badge badge--open">公開</span><span class="badge badge--cat">FDA対応</span><span class="badge badge--solved">解決</span></div>
+              <span class="el-t-row-title">FDA施設登録、2年更新のタイミングと注意点</span>
+              <div class="el-t-row-meta">山口貿易士・昨日</div>
+            </div>
+            <div class="el-t-row-stats">
+              <div><strong>1.2k</strong><span>閲覧</span></div>
+              <div><strong>32</strong><span>返信</span></div>
+            </div>
+          </a>
+          <a href="topic.html" class="el-t-row">
+            <div class="el-t-row-main">
+              <div class="el-t-row-badges"><span class="badge badge--restricted">メンバー限定</span><span class="badge badge--cat">Amazon出品</span><span class="badge badge--solved">解決</span></div>
+              <span class="el-t-row-title">せどり便乗リサーチ、初月の粗利率どのくらいでしたか</span>
+              <div class="el-t-row-meta">高橋物産・5時間前</div>
+            </div>
+            <div class="el-t-row-stats">
+              <div><strong>578</strong><span>閲覧</span></div>
+              <div><strong>21</strong><span>返信</span></div>
+            </div>
+          </a>
+          <a href="topic.html" class="el-t-row">
+            <div class="el-t-row-main">
+              <div class="el-t-row-badges"><span class="badge badge--announce">公式</span><span class="badge badge--open">公開</span><span class="badge badge--cat">お知らせ</span><span class="badge badge--solved">解決</span></div>
+              <span class="el-t-row-title">Export Lab、正式オープンしました</span>
+              <div class="el-t-row-meta">運営チーム・3時間前</div>
+            </div>
+            <div class="el-t-row-stats">
+              <div><strong>642</strong><span>閲覧</span></div>
+              <div><strong>18</strong><span>返信</span></div>
+            </div>
+          </a>
+          <a href="topic.html" class="el-t-row">
+            <div class="el-t-row-main">
+              <div class="el-t-row-badges"><span class="badge badge--open">公開</span><span class="badge badge--cat">物流・輸送</span><span class="badge badge--solved">解決</span></div>
+              <span class="el-t-row-title">海上輸送の遅延、リードタイムはどう見積もってますか</span>
+              <div class="el-t-row-meta">田中フーズ・2026年8月2日</div>
+            </div>
+            <div class="el-t-row-stats">
+              <div><strong>488</strong><span>閲覧</span></div>
+              <div><strong>14</strong><span>返信</span></div>
+            </div>
+          </a>
+          <a href="topic.html" class="el-t-row">
+            <div class="el-t-row-main">
+              <div class="el-t-row-badges"><span class="badge badge--restricted">メンバー限定</span><span class="badge badge--cat">物流・輸送</span><span class="badge badge--solved">解決</span></div>
+              <span class="el-t-row-title">通関書類のインボイス記載、よくある差し戻し理由まとめ</span>
+              <div class="el-t-row-meta">田中フーズ・2日前</div>
+            </div>
+            <div class="el-t-row-stats">
+              <div><strong>402</strong><span>閲覧</span></div>
+              <div><strong>15</strong><span>返信</span></div>
+            </div>
+          </a>
+          <a href="topic.html" class="el-t-row">
+            <div class="el-t-row-main">
+              <div class="el-t-row-badges"><span class="badge badge--open">公開</span><span class="badge badge--cat">FDA対応</span><span class="badge badge--solved">解決</span></div>
+              <span class="el-t-row-title">サプリメントのラベル、栄養成分表示のフォーマット変更点</span>
+              <div class="el-t-row-meta">鈴木ラボ・2026年7月30日</div>
+            </div>
+            <div class="el-t-row-stats">
+              <div><strong>356</strong><span>閲覧</span></div>
+              <div><strong>11</strong><span>返信</span></div>
+            </div>
+          </a>
+          <a href="topic.html" class="el-t-row">
+            <div class="el-t-row-main">
+              <div class="el-t-row-badges"><span class="badge badge--open">公開</span><span class="badge badge--cat">Amazon出品</span><span class="badge badge--unsolved">未解決</span></div>
+              <span class="el-t-row-title">米国倉庫でのラベル不備、差し戻しを防ぐチェック手順</span>
+              <div class="el-t-row-meta">佐藤ストア・2日前</div>
+            </div>
+            <div class="el-t-row-stats">
+              <div><strong>310</strong><span>閲覧</span></div>
+              <div><strong>9</strong><span>返信</span></div>
+            </div>
+          </a>
+          <a href="topic.html" class="el-t-row">
+            <div class="el-t-row-main">
+              <div class="el-t-row-badges"><span class="badge badge--open">公開</span><span class="badge badge--cat">マーケット動向</span><span class="badge badge--solved">解決</span></div>
+              <span class="el-t-row-title">米国の関税改定、価格転嫁のタイミングをどう決めた？</span>
+              <div class="el-t-row-meta">小林商店・2026年8月1日</div>
+            </div>
+            <div class="el-t-row-stats">
+              <div><strong>201</strong><span>閲覧</span></div>
+              <div><strong>6</strong><span>返信</span></div>
+            </div>
+          </a>
+          <a href="topic.html" class="el-t-row">
+            <div class="el-t-row-main">
+              <div class="el-t-row-badges"><span class="badge badge--open">公開</span><span class="badge badge--cat">Amazon出品</span><span class="badge badge--unsolved">未解決</span></div>
+              <span class="el-t-row-title">現地倉庫のピッキングミス、返金対応どうしてますか</span>
+              <div class="el-t-row-meta">高橋物産・2026年7月31日</div>
+            </div>
+            <div class="el-t-row-stats">
+              <div><strong>168</strong><span>閲覧</span></div>
+              <div><strong>7</strong><span>返信</span></div>
+            </div>
+          </a>
+          <a href="topic.html" class="el-t-row">
+            <div class="el-t-row-main">
+              <div class="el-t-row-badges"><span class="badge badge--open">公開</span><span class="badge badge--cat">雑談・自己紹介</span><span class="badge badge--unsolved">未解決</span></div>
+              <span class="el-t-row-title">はじめまして、化粧品OEMを輸出している者です</span>
+              <div class="el-t-row-meta">中村コスメ・2026年7月31日</div>
+            </div>
+            <div class="el-t-row-stats">
+              <div><strong>96</strong><span>閲覧</span></div>
+              <div><strong>4</strong><span>返信</span></div>
+            </div>
+          </a>
           </div>
           <div style="text-align:center;margin:18px 0 44px;">
             <a href="board.html?sort=hot" class="el-btn el-btn--ghost el-btn--sm">もっと見る</a>
@@ -460,15 +462,84 @@
             SHiFT会員のみ閲覧できます。<button type="button" class="el-note-link" id="shiftAboutBtn">SHiFT会員とは</button>
           </div>
           <div class="el-board">
-          <div id="topShiftList" style="padding:28px 4px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">まだ投稿がありません。</div>
+          <div class="el-hub-row">
+            <div class="el-hub-row-main">
+              <a href="groups.html" class="el-hub-row-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                FDA施設登録、実際にかかった費用を公開します
+              </a>
+              <div class="el-hub-row-meta">
+                <span class="badge badge--member">SHiFT限定</span><span class="badge badge--cat">FDA対応</span><span class="badge badge--solved">解決</span>
+                <span>山口貿易士・2時間前</span>
+              </div>
+              <div class="el-hub-row-excerpt"><span class="el-blur-preview">今回の更新では総額で約18万円</span><span class="el-blur-tail">かかりました。内訳は代行手数料と書類翻訳費が中心です。</span></div>
+            </div>
+            <div class="el-hub-row-stats"><div><strong>210</strong>閲覧</div></div>
+          </div>
+          <div class="el-hub-row">
+            <div class="el-hub-row-main">
+              <a href="groups.html" class="el-hub-row-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                代行契約書のこの条項、削除依頼への対応
+              </a>
+              <div class="el-hub-row-meta">
+                <span class="badge badge--member">SHiFT限定</span><span class="badge badge--cat">通関</span><span class="badge badge--unsolved">未解決</span>
+                <span>鈴木ラボ・5時間前</span>
+              </div>
+              <div class="el-hub-row-excerpt"><span class="el-blur-preview">契約書のこの条項、先方から削除</span><span class="el-blur-tail">依頼が来た場合はどう対応するのが安全でしょうか。</span></div>
+            </div>
+            <div class="el-hub-row-stats"><div><strong>95</strong>閲覧</div></div>
+          </div>
+          <div class="el-hub-row">
+            <div class="el-hub-row-main">
+              <a href="groups.html" class="el-hub-row-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                せどり便乗リサーチ、実際の粗利率を公開します
+              </a>
+              <div class="el-hub-row-meta">
+                <span class="badge badge--member">SHiFT限定</span><span class="badge badge--cat">Amazon出品</span><span class="badge badge--solved">解決</span>
+                <span>高橋物産・昨日</span>
+              </div>
+              <div class="el-hub-row-excerpt"><span class="el-blur-preview">実際の粗利率を公開します。想定</span><span class="el-blur-tail">より低く、仕入れ単価の見直しが必要でした。</span></div>
+            </div>
+            <div class="el-hub-row-stats"><div><strong>340</strong>閲覧</div></div>
+          </div>
+          <div class="el-hub-row">
+            <div class="el-hub-row-main">
+              <a href="groups.html" class="el-hub-row-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                税関で止められた実例と解決までの流れ
+              </a>
+              <div class="el-hub-row-meta">
+                <span class="badge badge--member">SHiFT限定</span><span class="badge badge--cat">通関</span><span class="badge badge--solved">解決</span>
+                <span>田中フーズ・2日前</span>
+              </div>
+              <div class="el-hub-row-excerpt"><span class="el-blur-preview">税関で止められた実例です。書類</span><span class="el-blur-tail">の記載順を変えたら翌月から通るようになりました。</span></div>
+            </div>
+            <div class="el-hub-row-stats"><div><strong>180</strong>閲覧</div></div>
+          </div>
+          <div class="el-hub-row">
+            <div class="el-hub-row-main">
+              <a href="groups.html" class="el-hub-row-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                広告費の適正比率、実数ベースで共有します
+              </a>
+              <div class="el-hub-row-meta">
+                <span class="badge badge--member">SHiFT限定</span><span class="badge badge--cat">Amazon出品</span><span class="badge badge--solved">解決</span>
+                <span>小林商店・3日前</span>
+              </div>
+              <div class="el-hub-row-excerpt"><span class="el-blur-preview">月商ベースで見た広告費の適正比</span><span class="el-blur-tail">率、うちは売上の12%前後に落ち着いています。</span></div>
+            </div>
+            <div class="el-hub-row-stats"><div><strong>260</strong>閲覧</div></div>
+          </div>
           </div>
           <div style="text-align:center;margin:18px 0 44px;">
-            <a href="board.html?filter=shift&sort=hot" class="el-btn el-btn--ghost el-btn--sm">もっと見る</a>
+            <a href="groups.html" class="el-btn el-btn--ghost el-btn--sm">もっと見る</a>
           </div>
         </div>
       </section>
 
-      <section class="el-section" style="border-top:1px solid var(--el-line); padding-top:48px;">
+      <section class="el-section">
         <div class="wrap">
           <div class="el-section-head">
             <div>
@@ -545,60 +616,18 @@
         </div>
       </section>
 
-      <section class="el-section" style="border-top:1px solid var(--el-line); padding-top:48px;">
-        <div class="wrap">
-          <div class="el-section-head">
-            <div>
-              <h2>WorldShift Trade Watch</h2>
-              <div class="sub">米国輸出の最新ニュースをまとめてお届け</div>
-            </div>
-            <a href="https://news.worldshift-inc.jp/index.html" target="_blank" rel="noopener" class="el-btn el-btn--ghost el-btn--sm">
-              サイトで見る
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:4px;vertical-align:-1px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg>
-            </a>
-          </div>
-          <div class="el-news-grid" id="homeNewsGrid">
-            <a href="https://news.worldshift-inc.jp/articles/reciprocal-tariff-update" target="_blank" rel="noopener" class="el-news-card">
-              <div class="thumb" style="background:linear-gradient(135deg,#2F6FA3,#1B3E5C);">
-                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><path d="M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20Z"/><path d="M2 12h20"/></svg>
-              </div>
-              <div class="body">
-                <span class="date">2026年8月18日</span>
-                <h4>相互関税の運用見直し、実務への影響を解説</h4>
-                <span class="ext">外部サイトへ <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg></span>
-              </div>
-            </a>
-            <a href="https://news.worldshift-inc.jp/articles/fda-facility-renewal-2026" target="_blank" rel="noopener" class="el-news-card">
-              <div class="thumb" style="background:linear-gradient(135deg,#3E8E63,#1F5C3E);">
-                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
-              </div>
-              <div class="body">
-                <span class="date">2026年8月14日</span>
-                <h4>FDA施設登録、2026年更新シーズンの注意点</h4>
-                <span class="ext">外部サイトへ <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg></span>
-              </div>
-            </a>
-            <a href="https://news.worldshift-inc.jp/articles/amazon-fba-fee-2026h2" target="_blank" rel="noopener" class="el-news-card">
-              <div class="thumb" style="background:linear-gradient(135deg,#B9812A,#8A5E1A);">
-                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-              </div>
-              <div class="body">
-                <span class="date">2026年8月10日</span>
-                <h4>Amazon FBA手数料、2026年下期の改定ポイント</h4>
-                <span class="ext">外部サイトへ <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg></span>
-              </div>
-            </a>
-          </div>
-        </div>
-      </section>
-
       <section class="el-section" style="padding-top:0;">
         <div class="wrap">
-<div class="el-ad-banner-v2" id="adBanner">
-            <span class="el-ad-tag-v2">AD</span>
-            <div class="el-ad-image-v2" id="adImageV2"></div>
-            <a href="#" class="el-btn el-btn--primary el-btn--sm el-ad-cta-v2" id="adCtaV2">詳しく見る</a>
-            <span class="el-ad-sponsor-v2" id="adSponsorV2"></span>
+          <div class="el-ad-banner" id="adBanner">
+            <span class="el-ad-tag">AD</span>
+            <span class="el-ad-icon" id="adIcon">
+              <svg id="adIconSvg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"></svg>
+            </span>
+            <div class="el-ad-body">
+              <strong id="adTitle"></strong>
+              <span id="adDesc"></span>
+            </div>
+            <a href="#" class="el-btn el-btn--ghost el-btn--sm">詳しく見る</a>
           </div>
         </div>
       </section>
@@ -609,7 +638,7 @@
         <div class="el-footer-grid">
           <div>
             <a href="index.html" class="el-logo">Export Lab<span class="dot">.</span></a>
-            <p class="tag">人・モノ・情報がつながる、輸出の共創コミュニティ。<br>運営：WorldShift株式会社</p>
+            <p class="tag">人・モノ・情報がつながる、輸出の共創コミュニティ。運営：WorldShift株式会社</p>
           </div>
           <div class="el-footer-cols">
             <div>
@@ -681,7 +710,6 @@
   </div>
 </div>
 
-<script src="data.js"></script>
 <script src="../shared/global-header.js" defer></script>
 <script>
   (function () {
@@ -718,241 +746,21 @@
   })();
 
   var ADS = [
-    { name: "SLCサービス", desc: "米AmazonFBA納品代行サービス", gradient: "linear-gradient(120deg, var(--el-teal), #1B5A52)" },
-    { name: "FDA Compliance Partner", desc: "FDA規制対応サービス", gradient: "linear-gradient(120deg, var(--el-mustard), #8A5E1A)" },
-    { name: "ProFinder", desc: "米Amazonリサーチツール", gradient: "linear-gradient(120deg, #3E7EA3, #1B3E5C)" },
-    { name: "Allynair", desc: "海外発送代行サービス", gradient: "linear-gradient(120deg, var(--el-sage), #2E5C3E)" },
-    { name: "AmaNavi", desc: "米Amazon進出サポートサービス", gradient: "linear-gradient(120deg, var(--el-coral), #8A3E2E)" }
+    { name: "SLCサービス", desc: "米AmazonFBA納品代行サービス", color: "var(--el-teal)", icon: '<path d="M21 8V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2M3 8v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8M3 8h18"/>' },
+    { name: "FDA Compliance Partner", desc: "FDA規制対応サービス", color: "var(--el-mustard)", icon: '<path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/>' },
+    { name: "ProFinder", desc: "米Amazonリサーチツール", color: "#3E7EA3", icon: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>' },
+    { name: "Allynair", desc: "海外発送代行サービス", color: "var(--el-sage)", icon: '<path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20Z"/><circle cx="12" cy="12" r="10"/>' },
+    { name: "AmaNavi", desc: "米Amazon進出サポートサービス", color: "var(--el-coral)", icon: '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z"/>' }
   ];
   (function () {
     var el = document.getElementById('adBanner');
     if (!el) return;
-    var imageEl = document.getElementById('adImageV2');
-    var ctaEl = document.getElementById('adCtaV2');
-    var sponsorEl = document.getElementById('adSponsorV2');
-
-    function renderMockAd() {
-      var ad = ADS[Math.floor(Math.random() * ADS.length)];
-      imageEl.style.background = ad.gradient;
-      imageEl.style.backgroundImage = 'none';
-      ctaEl.textContent = '詳しく見る';
-      sponsorEl.textContent = 'スポンサー：' + ad.name;
-    }
-
-    // 管理者ページで登録された広告があれば、そちらを優先して表示する
-    var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
-    fetch(API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({ action: 'listContent', type: 'ad' })
-    })
-      .then(function (res) { return res.json(); })
-      .then(function (data) {
-        var ads = ((data.ok && data.items) ? data.items : []).filter(function (a) { return (a.adType || 'banner') === 'banner'; });
-        if (!ads.length) { renderMockAd(); return; }
-        var ad = ads[Math.floor(Math.random() * ads.length)];
-        if (ad.imageUrl) {
-          imageEl.style.backgroundImage = 'url(' + ad.imageUrl + ')';
-        } else {
-          imageEl.style.background = 'var(--el-teal)';
-        }
-        ctaEl.textContent = ad.ctaText || '詳しく見る';
-        if (ad.ctaUrl) ctaEl.href = ad.ctaUrl;
-        sponsorEl.textContent = 'スポンサー：' + (ad.serviceName || '');
-      })
-      .catch(renderMockAd);
-  })();
-  // ユーザーモード（ゲスト／登録ユーザー／管理者）の切り替えと共通ゲート処理
-  // Googleドライブの共有リンクを、<img>で直接表示できる形式のURLに変換する
-  function elDriveImgUrl(url) {
-    if (!url) return url;
-    var m = url.match(/drive\.google\.com\/file\/d\/([^/]+)/) || url.match(/[?&]id=([^&]+)/);
-    if (m && m[1]) return 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w1000';
-    return url;
-  }
-  window.elDriveImgUrl = elDriveImgUrl;
-
-  document.addEventListener('DOMContentLoaded', function () {
-    var ROLE_KEY = 'el-user-role';
-    function getRole() {
-      try { return localStorage.getItem(ROLE_KEY) || 'guest'; } catch (e) { return 'guest'; }
-    }
-    function setRole(role) {
-      try { localStorage.setItem(ROLE_KEY, role); } catch (e) {}
-    }
-    window.elGetRole = getRole;
-
-    var role = getRole();
-    document.body.setAttribute('data-role', role);
-
-    // ゲストは通知ベルとアイコンを非表示
-    var bell = document.querySelector('.el-header-bell');
-    if (bell && role === 'guest') bell.style.display = 'none';
-    var headerAvatar = document.getElementById('headerAvatar');
-    if (headerAvatar && role === 'guest') headerAvatar.style.display = 'none';
-    else if (headerAvatar) {
-      try {
-        var hp = JSON.parse(localStorage.getItem('el-user-profile') || '{}');
-        var hUsername = localStorage.getItem('el-username') || hp.username || '';
-        if (hp.photoUrl) headerAvatar.innerHTML = '<img src="' + window.elDriveImgUrl(hp.photoUrl) + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
-        else if (hUsername) headerAvatar.textContent = hUsername.charAt(0);
-      } catch (e) {}
-    }
-
-    // ヘッダーの認証リンク：ゲストは「新規登録」「ログイン」、それ以外は「ログアウト」のみ
-    var authLinksWrap = document.getElementById('headerAuthLinks');
-    var loginLink = document.getElementById('headerLoginLink');
-    var signupLink = document.getElementById('headerSignupLink');
-    if (role !== 'guest' && authLinksWrap) {
-      if (loginLink) loginLink.remove();
-      if (signupLink) {
-        signupLink.textContent = 'ログアウト';
-        signupLink.href = '#';
-        signupLink.addEventListener('click', function (e) {
-          e.preventDefault();
-          setRole('guest');
-          window.location.href = 'index.html';
-        });
-      }
-    }
-
-    // 「ユーザー登録してください」モーダル
-    var modal = document.getElementById('authModal');
-    window.elRequireAuth = function (e) {
-      if (getRole() !== 'guest') return true;
-      if (e) e.preventDefault();
-      if (modal) { modal.classList.add('is-open'); modal.setAttribute('aria-hidden', 'false'); }
-      return false;
-    };
-    if (modal) {
-      modal.querySelectorAll('[data-auth-close]').forEach(function (el) {
-        el.addEventListener('click', function () {
-          modal.classList.remove('is-open');
-          modal.setAttribute('aria-hidden', 'true');
-        });
-      });
-      document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape') { modal.classList.remove('is-open'); modal.setAttribute('aria-hidden', 'true'); }
-      });
-    }
-
-    // SHiFT会員限定コンテンツ用モーダル
-    var shiftModal = document.getElementById('shiftModal');
-    window.elRequireShift = function () {
-      var r = getRole();
-      if (r === 'shift' || r === 'admin') return true;
-      if (shiftModal) { shiftModal.classList.add('is-open'); shiftModal.setAttribute('aria-hidden', 'false'); }
-      return false;
-    };
-    if (shiftModal) {
-      shiftModal.querySelectorAll('[data-shift-close]').forEach(function (el) {
-        el.addEventListener('click', function () {
-          shiftModal.classList.remove('is-open');
-          shiftModal.setAttribute('aria-hidden', 'true');
-        });
-      });
-    }
-
-    // 管理者にはサイドバーに管理者ページへのリンクを追加
-    if (role === 'admin') {
-      var sideNav = document.querySelector('.el-sidebar nav');
-      if (sideNav && !sideNav.querySelector('a[href="admin.html"]')) {
-        var adminLink = document.createElement('a');
-        adminLink.href = 'admin.html';
-        if (window.location.pathname.indexOf('admin.html') !== -1) adminLink.className = 'is-active';
-        adminLink.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 3 7v6c0 5 4 9 9 9s9-4 9-9V7l-9-5Z"/><path d="m9 12 2 2 4-4"/></svg><span class="lbl">管理者ページ</span>';
-        sideNav.appendChild(adminLink);
-      }
-    }
-
-    // ゲストには data-guest-hide の要素を隠す（本文はCSSでも隠すが、動的挿入分もここでカバー）
-    if (role === 'guest') {
-      document.querySelectorAll('[data-guest-block]').forEach(function (el) {
-        el.addEventListener('click', window.elRequireAuth);
-      });
-    }
-  });
-
-  // サイトTOP：NEW／HOTを実際の投稿データから描画する
-  (function () {
-    var CATEGORY_LABEL = window.EL_CATEGORY_LABEL || {};
-    var topics = window.EL_TOPICS || [];
-    if (!topics.length) return;
-
-    function relativeTime(dateStr){
-      var d = new Date(dateStr.indexOf('T') !== -1 ? dateStr : dateStr + 'T00:00:00');
-      var today = new Date();
-      var diffDays = Math.round((today - d) / 86400000);
-      if (diffDays <= 0) return '今日';
-      if (diffDays === 1) return '昨日';
-      if (diffDays < 30) return diffDays + '日前';
-      var months = Math.floor(diffDays / 30);
-      return months + 'ヶ月前';
-    }
-
-    function buildRowHtml(t){
-      var visBadge = (t.visibility === 'shift')
-        ? '<span class="badge badge--member">SHiFT限定</span>'
-        : (t.visibility === 'member')
-          ? '<span class="badge badge--restricted">メンバー限定</span>'
-          : '<span class="badge badge--open">公開</span>';
-      var statusBadge = t.status === 'solved' ? '<span class="badge badge--solved">解決</span>'
-        : t.status === 'unsolved' ? '<span class="badge badge--unsolved">未解決</span>' : '';
-      var catLabel = CATEGORY_LABEL[t.category] || t.category;
-      return '<a href="topic.html?id=' + t.id + '" class="el-t-row">' +
-        '<div class="el-t-row-main">' +
-          '<div class="el-t-row-badges">' + visBadge + '<span class="badge badge--cat">' + catLabel + '</span>' + statusBadge + '</div>' +
-          '<span class="el-t-row-title">' + t.title + '</span>' +
-          '<div class="el-t-row-meta">' + t.author + '・' + relativeTime(t.date) + '</div>' +
-        '</div>' +
-        '<div class="el-t-row-stats">' +
-          '<div><strong>' + (t.views || 0) + '</strong><span>閲覧</span></div>' +
-          '<div><strong>' + (t.comments ? t.comments.length : 0) + '</strong><span>返信</span></div>' +
-        '</div></a>';
-    }
-
-    var byNew = topics.slice().sort(function(a,b){ return (b.recency||0) - (a.recency||0); }).slice(0, 4);
-    var byHot = topics.slice().sort(function(a,b){ return (b.views||0) - (a.views||0); }).slice(0, 4);
-    var shiftOnly = topics.filter(function(t){ return t.visibility === 'shift'; })
-      .sort(function(a,b){ return (b.views||0) - (a.views||0); }).slice(0, 4);
-
-    var newEl = document.getElementById('topNewList');
-    if (newEl && byNew.length) { newEl.parentElement.innerHTML = byNew.map(buildRowHtml).join(''); }
-    var hotEl = document.getElementById('topHotList');
-    if (hotEl && byHot.length) { hotEl.parentElement.innerHTML = byHot.map(buildRowHtml).join(''); }
-    var shiftEl = document.getElementById('topShiftList');
-    if (shiftEl && shiftOnly.length) { shiftEl.parentElement.innerHTML = shiftOnly.map(buildRowHtml).join(''); }
+    var ad = ADS[Math.floor(Math.random() * ADS.length)];
+    document.getElementById('adIcon').style.background = ad.color;
+    document.getElementById('adIconSvg').innerHTML = ad.icon;
+    document.getElementById('adTitle').textContent = ad.name;
+    document.getElementById('adDesc').textContent = ad.desc;
   })();
 </script>
-<div class="el-auth-modal" id="authModal" aria-hidden="true">
-  <div class="el-auth-modal-backdrop" data-auth-close></div>
-  <div class="el-auth-modal-panel" role="dialog" aria-modal="true">
-    <button type="button" class="el-auth-modal-close" data-auth-close aria-label="閉じる">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
-    </button>
-    <h3>ユーザー登録してください</h3>
-    <p>この操作を行うには、会員登録（無料）が必要です。登録すると投稿・返信・購入などすべての機能がご利用いただけます。</p>
-    <div class="el-auth-modal-actions">
-      <a href="signup.html" class="el-btn el-btn--primary el-btn--sm">新規登録する</a>
-      <button type="button" class="el-btn el-btn--ghost el-btn--sm" data-auth-close>閉じる</button>
-    </div>
-  </div>
-</div>
-
-<div class="el-auth-modal" id="shiftModal" aria-hidden="true">
-  <div class="el-auth-modal-backdrop" data-shift-close></div>
-  <div class="el-auth-modal-panel" role="dialog" aria-modal="true">
-    <button type="button" class="el-auth-modal-close" data-shift-close aria-label="閉じる">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
-    </button>
-    <h3>SHiFT会員限定です</h3>
-    <p>この内容はSHiFT会員（WorldShiftの各種サービスをご利用中の方）だけが閲覧できます。SHiFT会員の方はサポート窓口までお問い合わせください。</p>
-    <div class="el-auth-modal-actions">
-      <a href="#" class="el-btn el-btn--primary el-btn--sm">SHiFT会員について見る</a>
-      <button type="button" class="el-btn el-btn--ghost el-btn--sm" data-shift-close>閉じる</button>
-    </div>
-  </div>
-</div>
-
 </body>
 </html>

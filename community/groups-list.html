@@ -752,26 +752,32 @@
     var GROUP_DETAILS = {
       'マーケット動向 情報交換会': {
         creator: '小林 恵子', category: '情報交換・雑談', color: 'var(--el-sky)',
+        createdAt: '2026年8月2日', postCount: 14, recentTopic: '「米国の関税改定、価格転嫁のタイミング」が話題になっています',
         members: ['小林 恵子', '田中 亮', '山口 美咲', '佐々木 誠', '中村 由紀', '高橋 悠', '伊藤 麻衣', '渡辺 健太', '加藤 真由美', '吉田 大輔', '山本 沙織']
       },
       '通関書類 相互チェック会': {
         creator: '田中 一郎', category: '国際物流・通関', color: 'var(--el-teal)',
+        createdAt: '2026年7月28日', postCount: 22, recentTopic: '「インボイスの記載順」に関する差し戻し事例が共有されました',
         members: ['田中 一郎', '高橋 saki', '鈴木 陽介', '斉藤 美穂', '松本 拓也', '井上 香織', '木村 隆', '林 明日香', '清水 亮太', '山下 千尋']
       },
       '福岡 輸出事業者オフ会': {
         creator: '山口 貴博', category: '情報交換・雑談', color: 'var(--el-navy-soft)',
+        createdAt: '2026年7月10日', postCount: 9, recentTopic: '10月10日開催のオフ会について、参加者を募集中です',
         members: ['山口 貴博', '石井 美和', '橋本 翔太', '松田 恵美', '大塚 健一', '西村 香菜', '小川 拓真', '福田 由美子']
       },
       '初めての輸出 相談室': {
         creator: '高橋 直子', category: '経営・事業相談', color: 'var(--el-sky)',
+        createdAt: '2026年7月1日', postCount: 58, recentTopic: '「最初のFBA納品、何から始めた？」に多くの回答が集まっています',
         members: ['高橋 直子', '小林 潤', '林 彩', '中島 大輝', '岡田 美咲', '藤田 健二', '長谷川 誠', '村上 智子']
       },
       'FDA対応 実務者の会': {
         creator: '山口 貿易士', category: 'FDA・食品規制', color: 'var(--el-teal)',
+        createdAt: '2026年7月1日', postCount: 41, recentTopic: 'FDA施設登録の実費用を公開する投稿が反響を呼んでいます',
         members: ['山口 貿易士', '佐藤 ストア', '田中 フーズ', '鈴木 ラボ', '高橋 物産', '中村 明美', '井上 恵', '木下 亮']
       },
       'せどり便乗リサーチ部': {
         creator: '高橋 物産', category: 'Amazon仕入れ・商品選定', color: 'var(--el-mustard)',
+        createdAt: '2026年7月5日', postCount: 27, recentTopic: '便乗リサーチの粗利率を公開する投稿に質問が集まっています',
         members: ['高橋 物産', '鈴木 ラボ', '中村 拓', '木村 彩香', '斎藤 大地', '山田 恵', '林 なつき']
       }
     };
@@ -789,16 +795,37 @@
       var iconColor = (card.querySelector('.el-group-icon') || {}).style.background || 'var(--el-teal)';
       var iconSvg = (card.querySelector('.el-group-icon svg') || {}).outerHTML || '';
       var state = card.dataset.state || '';
-      var detail = GROUP_DETAILS[title] || { creator: '運営メンバー', category: '未分類', members: [] };
+      var detail = GROUP_DETAILS[title] || { creator: '運営メンバー', category: '未分類', members: [], color: iconColor };
 
-      document.getElementById('gdmIcon').style.background = iconColor;
+      var panel = modal.querySelector('.el-modal-panel');
+      panel.style.setProperty('--gdm-color', detail.color || iconColor);
+      document.getElementById('gdmIcon').style.background = 'rgba(255,255,255,.22)';
       document.getElementById('gdmIcon').innerHTML = iconSvg;
       document.getElementById('gdmTitle').textContent = title;
       document.getElementById('gdmVisibility').textContent = visibility;
       document.getElementById('gdmDesc').textContent = desc;
       document.getElementById('gdmCreator').textContent = detail.creator;
       document.getElementById('gdmCategory').textContent = detail.category;
-      document.getElementById('gdmMemberCount').textContent = memberCount + '人（クリックで一覧を見る）';
+      document.getElementById('gdmCreatedAt').textContent = detail.createdAt || '-';
+      document.getElementById('gdmPostCount').textContent = (detail.postCount != null ? detail.postCount : '-');
+      document.getElementById('gdmMemberCountStat').textContent = memberCount;
+
+      var recentWrap = document.getElementById('gdmRecentWrap');
+      if (detail.recentTopic) {
+        document.getElementById('gdmRecentTopic').textContent = detail.recentTopic;
+        recentWrap.hidden = false;
+      } else {
+        recentWrap.hidden = true;
+      }
+
+      // メンバーアバターのプレビュー（先頭6人分）
+      var avatarPreview = document.getElementById('gdmAvatarPreview');
+      var previewMembers = (detail.members || []).slice(0, 6);
+      avatarPreview.innerHTML = previewMembers.map(function (m) {
+        return '<div class="el-avatar" style="background:' + (detail.color || iconColor) + ';color:#fff;">' + m.charAt(0) + '</div>';
+      }).join('');
+      var remainingCount = Math.max(0, (+memberCount) - previewMembers.length);
+      document.getElementById('gdmAvatarMore').textContent = remainingCount > 0 ? '+' + remainingCount : '';
 
       var joinBtn = document.getElementById('gdmJoinBtn');
       if (state === 'joined') { joinBtn.textContent = '参加中'; joinBtn.disabled = true; }
@@ -926,33 +953,51 @@
 
 <div class="el-auth-modal" id="groupDetailModal" aria-hidden="true">
   <div class="el-auth-modal-backdrop" data-group-close></div>
-  <div class="el-auth-modal-panel" role="dialog" aria-modal="true" style="max-width:480px;text-align:left;">
+  <div class="el-modal-panel el-group-modal-panel" role="dialog" aria-modal="true">
     <button type="button" class="el-auth-modal-close" data-group-close aria-label="閉じる">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
     </button>
     <div id="gdmView">
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px;">
-        <div id="gdmIcon" style="width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex:none;color:#fff;"></div>
-        <div>
-          <h3 id="gdmTitle" style="margin:0;font-size:17px;"></h3>
-          <div id="gdmVisibility" style="font-size:12px;color:var(--el-ink-faint);margin-top:2px;"></div>
+      <div class="el-group-modal-banner">
+        <div id="gdmIcon" class="el-group-modal-icon"></div>
+        <div class="el-group-modal-heading">
+          <h3 id="gdmTitle"></h3>
+          <div id="gdmVisibility" class="el-group-modal-visibility"></div>
         </div>
       </div>
-      <p id="gdmDesc" style="font-size:14px;color:var(--el-navy);line-height:1.8;margin:14px 0;"></p>
-      <div style="display:flex;flex-direction:column;gap:8px;font-size:13.5px;color:var(--el-navy);margin-bottom:16px;">
-        <div><strong style="color:var(--el-ink-faint);font-weight:600;">作成者：</strong><span id="gdmCreator"></span></div>
-        <div><strong style="color:var(--el-ink-faint);font-weight:600;">カテゴリ：</strong><span id="gdmCategory"></span></div>
-        <button type="button" id="gdmMemberBtn" style="text-align:left;background:none;border:none;padding:0;cursor:pointer;color:inherit;font:inherit;">
-          <strong style="color:var(--el-ink-faint);font-weight:600;">メンバー：</strong><span id="gdmMemberCount" style="text-decoration:underline;color:var(--el-teal-deep);"></span>
+      <div class="el-group-modal-body">
+        <p id="gdmDesc" class="el-group-modal-desc"></p>
+
+        <div class="el-group-modal-stats">
+          <div><strong id="gdmMemberCountStat"></strong><span>メンバー</span></div>
+          <div><strong id="gdmPostCount"></strong><span>投稿数</span></div>
+          <div><strong id="gdmCreatedAt" style="font-size:13px;"></strong><span>作成日</span></div>
+        </div>
+
+        <div class="el-group-modal-recent" id="gdmRecentWrap" hidden>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8Z"/></svg>
+          <span id="gdmRecentTopic"></span>
+        </div>
+
+        <div class="el-group-modal-meta">
+          <div><strong>作成者</strong><span id="gdmCreator"></span></div>
+          <div><strong>カテゴリ</strong><span id="gdmCategory"></span></div>
+        </div>
+
+        <button type="button" id="gdmMemberBtn" class="el-group-modal-members">
+          <div id="gdmAvatarPreview" class="el-group-modal-avatars"></div>
+          <span id="gdmAvatarMore" class="more"></span>
+          <span class="link">メンバー一覧を見る<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></span>
         </button>
-      </div>
-      <div class="el-auth-modal-actions">
-        <button type="button" class="el-btn el-btn--primary el-btn--sm" id="gdmJoinBtn">参加する</button>
-        <button type="button" class="el-btn el-btn--ghost el-btn--sm" data-group-close>閉じる</button>
+
+        <div class="el-auth-modal-actions">
+          <button type="button" class="el-btn el-btn--primary el-btn--sm" id="gdmJoinBtn">参加する</button>
+          <button type="button" class="el-btn el-btn--ghost el-btn--sm" data-group-close>閉じる</button>
+        </div>
       </div>
     </div>
-    <div id="gdmMemberView" hidden>
-      <h3 style="margin:0 0 4px;font-size:16px;">メンバー一覧</h3>
+    <div id="gdmMemberView" class="el-group-modal-body" hidden>
+      <h3 style="margin:0 0 4px;font-size:16px;color:var(--el-navy);">メンバー一覧</h3>
       <div style="font-size:12.5px;color:var(--el-ink-faint);margin-bottom:14px;" id="gdmMemberViewCount"></div>
       <div id="gdmMemberList" style="max-height:320px;overflow-y:auto;display:flex;flex-direction:column;gap:2px;"></div>
       <div class="el-auth-modal-actions">
