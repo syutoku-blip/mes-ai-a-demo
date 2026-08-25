@@ -78,6 +78,50 @@
     padding:4px;
   }
   [data-guest-hide]{ display:none !important; }
+  /* フォーム管理タブ：項目パレット・項目編集カード */
+  .el-form-palette{ display:flex; flex-wrap:wrap; gap:8px; }
+  .el-form-palette button{
+    font-size:12.5px; font-weight:600; padding:7px 12px; border-radius:999px;
+    border:1.5px solid var(--el-line-soft, #ECE5D4); background:var(--el-paper, #fff);
+    color:var(--el-navy, #16233F); cursor:pointer; transition:border-color .15s, background .15s;
+  }
+  .el-form-palette button:hover{ border-color:var(--el-teal, #2F8F82); background:var(--el-teal-tint, #E4F1EE); }
+  .el-form-fields-list{ display:flex; flex-direction:column; gap:12px; }
+  .el-form-field-editor{
+    border:1px solid var(--el-line-soft, #ECE5D4); border-radius:12px; padding:14px 16px;
+    background:var(--el-paper, #fff); display:flex; flex-direction:column; gap:10px;
+  }
+  .el-form-field-editor-head{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  .el-form-field-editor-head .type-tag{
+    font-size:11.5px; font-weight:700; color:var(--el-teal-deep, #226B62);
+    background:var(--el-teal-tint, #E4F1EE); padding:3px 10px; border-radius:999px;
+  }
+  .el-form-field-editor-actions{ display:flex; gap:4px; }
+  .el-form-field-editor-actions button{
+    width:26px; height:26px; border-radius:7px; border:1px solid var(--el-line-soft, #ECE5D4);
+    background:var(--el-paper, #fff); color:var(--el-ink-faint, #8A8478); cursor:pointer; font-size:12px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .el-form-field-editor-actions button:hover{ border-color:var(--el-navy, #16233F); color:var(--el-navy, #16233F); }
+  .el-form-field-editor-actions button[data-remove]:hover{ border-color:#B9541F; color:#B9541F; }
+  .el-form-field-editor label{ display:block; font-size:12px; }
+  .el-form-field-editor label span{ display:block; font-weight:600; color:var(--el-ink-faint, #8A8478); margin-bottom:4px; }
+  .el-form-field-editor input[type="text"], .el-form-field-editor textarea{
+    width:100%; box-sizing:border-box; padding:8px 10px; border:1px solid var(--el-line-soft, #ECE5D4);
+    border-radius:8px; font:inherit; font-size:13px; resize:vertical;
+  }
+  .el-form-field-editor .checkbox-row{
+    display:flex; align-items:center; gap:6px; font-size:12.5px; font-weight:600; color:var(--el-navy, #16233F);
+  }
+  .el-form-field-editor .checkbox-row span{ display:inline; margin:0; font-weight:600; color:var(--el-navy, #16233F); }
+  .el-form-template-card{
+    padding:14px 16px; background:var(--el-paper, #fff); border:1px solid var(--el-line-soft, #ECE5D4);
+    border-radius:var(--el-radius-m, 14px); margin-bottom:10px;
+  }
+  .el-form-template-card .name{ font-weight:700; color:var(--el-navy, #16233F); font-size:14px; }
+  .el-form-template-card .desc{ font-size:12.5px; color:var(--el-ink-faint, #8A8478); margin-top:3px; }
+  .el-form-template-card .meta{ font-size:11.5px; color:var(--el-ink-faint, #8A8478); margin-top:6px; }
+  .el-form-template-card .actions{ display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
   /* ヘッダーの新規登録／ログイン／ログアウトボタン：背景色に関わらず文字が見えるよう、
      透過ではなく塗りのボタンにする */
   #headerAuthLinks .el-btn, #headerSignupLink.el-btn, #headerLoginLink.el-btn{
@@ -229,8 +273,11 @@
           <a href="#" data-tab="announce">お知らせ登録</a>
           <a href="#" data-tab="event">イベント登録</a>
           <a href="#" data-tab="content">コンテンツ登録</a>
+          <a href="#" data-tab="forms">フォーム管理</a>
+          <a href="#" data-tab="community">コミュニティ登録</a>
           <a href="#" data-tab="ads">広告設定</a>
           <a href="#" data-tab="apply">出品申請の確認</a>
+          <a href="#" data-tab="marketOrders">マーケット申込み一覧</a>
           <a href="#" data-tab="badge">バッジの付与</a>
         </div>
 
@@ -325,6 +372,13 @@
                 <input type="file" id="eventThumbInput" accept="image/*" style="font-size:13px;">
               </div>
             </label>
+            <label>
+              <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">申込フォーム（任意）</span>
+              <select name="formId" id="eventFormSelect" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
+                <option value="">なし（申し込みボタンを表示しない）</option>
+              </select>
+              <span style="display:block;font-size:12px;color:var(--el-ink-faint);margin-top:6px;">「フォーム管理」タブで作成したフォームを選ぶと、イベント詳細ページの「申し込む」ボタンからこのフォームに遷移します。</span>
+            </label>
             <button type="submit" class="el-btn el-btn--primary" style="align-self:flex-start;">イベントを登録する</button>
           </form>
           <div id="eventList" style="margin-top:32px;"></div>
@@ -368,6 +422,107 @@
             <button type="submit" class="el-btn el-btn--primary" style="align-self:flex-start;">コンテンツを登録する（WorldShift公式として掲載）</button>
           </form>
           <div id="contentAdminList" style="margin-top:32px;"></div>
+        </div>
+
+        <!-- コミュニティ登録 -->
+        <div class="el-admin-panel" data-panel="community" style="display:none;">
+          <p style="font-size:13px;color:var(--el-ink-faint);margin:0 0 20px;line-height:1.8;">
+            新しいコミュニティを登録します。登録した内容はスプレッドシートに保存され、コミュニティ一覧（groups-list.html）のカードと詳細モーダルにすぐ反映されます。
+          </p>
+          <form id="communityForm" style="display:flex;flex-direction:column;gap:16px;max-width:640px;">
+            <label>
+              <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">コミュニティ名</span>
+              <input type="text" name="title" required style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
+            </label>
+            <div style="display:flex;gap:12px;flex-wrap:wrap;">
+              <label style="flex:1;min-width:200px;">
+                <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">カテゴリ</span>
+                <input type="text" name="category" placeholder="情報交換・雑談 など" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
+              </label>
+              <label style="flex:1;min-width:200px;">
+                <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">運営者</span>
+                <input type="text" name="creator" placeholder="運営メンバー" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
+              </label>
+            </div>
+            <label>
+              <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">アイコンの色</span>
+              <select name="color" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
+                <option value="var(--el-teal)">ティール</option>
+                <option value="var(--el-sky)">スカイ</option>
+                <option value="var(--el-navy-soft)">ネイビー</option>
+                <option value="var(--el-mustard)">マスタード</option>
+                <option value="var(--el-coral)">コーラル</option>
+                <option value="var(--el-sage)">セージ</option>
+              </select>
+            </label>
+            <label>
+              <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">紹介文（一覧カードに表示されます）</span>
+              <textarea name="description" required rows="3" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;resize:vertical;"></textarea>
+            </label>
+            <label>
+              <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">詳細説明（任意）</span>
+              <textarea name="longDescription" rows="4" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;resize:vertical;"></textarea>
+            </label>
+            <button type="submit" class="el-btn el-btn--primary" style="align-self:flex-start;">コミュニティを登録する</button>
+          </form>
+          <div id="communityAdminList" style="margin-top:32px;"></div>
+        </div>
+
+        <!-- フォーム管理 -->
+        <div class="el-admin-panel" data-panel="forms" style="display:none;">
+          <p style="font-size:13px;color:var(--el-ink-faint);margin:0 0 20px;line-height:1.8;">
+            イベントの申し込みフォームなど、用途に合わせたフォームをいくつでも作成できます。作成したフォームは「イベント登録」タブでイベントに紐づけると、イベント詳細ページの「申し込む」ボタンから開けるようになります。回答はスプレッドシート内に自動で作成される専用シートに記録され、CSVでも出力できます。
+          </p>
+          <div style="display:flex;gap:28px;flex-wrap:wrap;align-items:flex-start;">
+            <div style="flex:1 1 380px;min-width:320px;">
+              <h3 id="formBuilderHeading" style="font-size:14.5px;margin:0 0 14px;">新しいフォームテンプレートを作成</h3>
+              <form id="formBuilderForm" style="display:flex;flex-direction:column;gap:14px;">
+                <input type="hidden" id="formBuilderEditingId" value="">
+                <label>
+                  <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">フォーム名</span>
+                  <input type="text" id="formNameInput" required placeholder="例）オンラインセミナー申込フォーム" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
+                </label>
+                <label>
+                  <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">説明・案内文（任意）</span>
+                  <textarea id="formDescriptionInput" rows="2" placeholder="フォームの上部に表示される案内文です" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;resize:vertical;"></textarea>
+                </label>
+
+                <div>
+                  <span style="display:block;font-weight:700;font-size:13px;margin-bottom:8px;">項目を追加</span>
+                  <div class="el-form-palette" id="formPalette">
+                    <button type="button" data-add-field="text">＋ 一行テキスト</button>
+                    <button type="button" data-add-field="textarea">＋ 複数行テキスト</button>
+                    <button type="button" data-add-field="email">＋ メールアドレス</button>
+                    <button type="button" data-add-field="tel">＋ 電話番号</button>
+                    <button type="button" data-add-field="number">＋ 数値</button>
+                    <button type="button" data-add-field="date">＋ 日付</button>
+                    <button type="button" data-add-field="datetime">＋ 日時</button>
+                    <button type="button" data-add-field="url">＋ URL</button>
+                    <button type="button" data-add-field="select">＋ プルダウン選択</button>
+                    <button type="button" data-add-field="radio">＋ ラジオボタン</button>
+                    <button type="button" data-add-field="checkbox">＋ チェックボックス（複数選択）</button>
+                    <button type="button" data-add-field="agree">＋ 同意チェックボックス</button>
+                    <button type="button" data-add-field="heading">＋ 見出し・説明文</button>
+                  </div>
+                </div>
+
+                <div id="formFieldsList" class="el-form-fields-list"></div>
+                <div id="formFieldsEmpty" style="padding:20px;text-align:center;color:var(--el-ink-faint);font-size:12.5px;background:var(--el-cream-deep);border-radius:10px;">
+                  上のボタンから、フォームに必要な項目を追加してください。
+                </div>
+
+                <div style="display:flex;gap:10px;">
+                  <button type="submit" class="el-btn el-btn--primary" id="formBuilderSubmitBtn">テンプレートを保存する</button>
+                  <button type="button" class="el-btn el-btn--ghost" id="formBuilderCancelBtn" style="display:none;">新規作成に戻る</button>
+                </div>
+              </form>
+            </div>
+
+            <div style="flex:1 1 300px;min-width:280px;">
+              <h3 style="font-size:14.5px;margin:0 0 14px;">登録済みテンプレート</h3>
+              <div id="formTemplateList"></div>
+            </div>
+          </div>
         </div>
 
         <!-- 広告設定 -->
@@ -418,6 +573,15 @@
         <!-- 出品申請の確認 -->
         <div class="el-admin-panel" data-panel="apply" style="display:none;">
           <div id="applyList" style="display:flex;flex-direction:column;gap:12px;"></div>
+        </div>
+
+        <!-- マーケット申込み一覧 -->
+        <div class="el-admin-panel" data-panel="marketOrders" style="display:none;">
+          <p style="font-size:13px;color:var(--el-ink-faint);margin:0 0 16px;line-height:1.8;">
+            マーケットの申込み・購入（market-apply.html／market-checkout.html）はすべてスプレッドシートの「マーケット申込み」シートに記録されます。ここから一覧の確認とCSV出力ができます。
+          </p>
+          <button type="button" id="marketOrdersCsvBtn" class="el-btn el-btn--ghost el-btn--sm" style="margin-bottom:16px;">CSVを出力</button>
+          <div id="marketOrdersList" style="display:flex;flex-direction:column;gap:10px;"></div>
         </div>
 
         <!-- バッジの付与 -->
@@ -969,14 +1133,33 @@
   // ------------------------------------------------------------
   // お知らせ登録
   // ------------------------------------------------------------
-  function renderSimpleList(containerId, items, renderItem) {
+  // contentType・onReload を渡すと、各アイテムに削除ボタンが付き、コンテンツ管理シート
+  // （announcement/event/marketContent/ad/communityGroup）から削除できるようになる。
+  function renderSimpleList(containerId, items, renderItem, contentType, onReload) {
     var el = document.getElementById(containerId);
     if (!items.length) {
       el.innerHTML = '<div style="padding:24px;text-align:center;color:var(--el-ink-faint);font-size:13px;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);">まだ登録がありません。</div>';
       return;
     }
     el.innerHTML = '<h3 style="font-size:14px;margin:0 0 12px;">登録済み一覧</h3>' +
-      '<div style="display:flex;flex-direction:column;gap:10px;">' + items.map(renderItem).join('') + '</div>';
+      '<div style="display:flex;flex-direction:column;gap:10px;">' + items.map(function (it) {
+        if (!contentType) return renderItem(it);
+        return '<div style="position:relative;">' + renderItem(it) +
+          '<button type="button" class="el-content-delete-btn" data-type="' + contentType + '" data-id="' + it.id + '" ' +
+          'style="position:absolute;top:10px;right:10px;background:var(--el-paper);border:1px solid var(--el-line-soft);color:var(--el-coral);cursor:pointer;font-size:11.5px;padding:4px 10px;border-radius:999px;">削除</button></div>';
+      }).join('') + '</div>';
+
+    if (contentType) {
+      el.querySelectorAll('.el-content-delete-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          if (!confirm('この項目を削除しますか？この操作は取り消せません。')) return;
+          apiPost({ action: 'deleteContent', type: btn.dataset.type, id: btn.dataset.id }).then(function (data) {
+            if (data.ok) { if (onReload) onReload(); }
+            else alert(data.error || '削除に失敗しました');
+          }).catch(function () { alert('通信エラーが発生しました。'); });
+        });
+      });
+    }
   }
 
   function loadAnnouncements() {
@@ -987,7 +1170,7 @@
         return '<div style="padding:14px 16px;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);">' +
           '<span class="badge badge--announce">' + it.category + '</span> <strong>' + it.title + '</strong>' +
           '<div style="font-size:12px;color:var(--el-ink-faint);margin-top:4px;">' + new Date(it.createdAt).toLocaleString('ja-JP') + '</div>' + cta + '</div>';
-      });
+      }, 'announcement', loadAnnouncements);
     });
   }
   loadAnnouncements();
@@ -1051,10 +1234,11 @@
       if (!data.ok) return;
       renderSimpleList('eventList', data.items, function (it) {
         var thumb = it.thumbnailUrl ? '<img src="' + it.thumbnailUrl + '" style="width:56px;height:38px;object-fit:cover;border-radius:6px;float:left;margin-right:10px;">' : '';
+        var formTag = it.formId ? '<span class="badge badge--open" style="margin-left:8px;">申込フォーム設定済み</span>' : '';
         return '<div style="padding:14px 16px;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);overflow:hidden;">' +
-          thumb + '<strong>' + it.title + '</strong>' +
+          thumb + '<strong>' + it.title + '</strong>' + formTag +
           '<div style="font-size:12.5px;color:var(--el-ink-faint);margin-top:4px;">' + (it.eventDate ? new Date(it.eventDate).toLocaleString('ja-JP') : '') + (it.place ? '・' + it.place : '') + '</div></div>';
-      });
+      }, 'event', loadEvents);
     });
   }
   loadEvents();
@@ -1065,7 +1249,7 @@
     apiPost({
       action: 'createContent', type: 'event',
       title: fd.get('title'), eventDate: fd.get('eventDate'), place: fd.get('place'), bodyHtml: eventEditor.getHtml(),
-      thumbnailUrl: eventThumbUrl
+      thumbnailUrl: eventThumbUrl, formId: fd.get('formId') || ''
     }).then(function (data) {
       if (data.ok) {
         alert('イベントを登録しました。'); e.target.reset(); eventEditor.clear(); loadEvents();
@@ -1073,6 +1257,24 @@
       } else alert(data.error || '登録に失敗しました');
     }).catch(function () { alert('通信エラーが発生しました。'); });
   });
+
+  // イベント登録フォームの「申込フォーム」選択肢を、登録済みのフォームテンプレートから読み込む
+  function loadEventFormOptions() {
+    var select = document.getElementById('eventFormSelect');
+    if (!select) return;
+    apiPost({ action: 'listFormTemplates' }).then(function (data) {
+      if (!data.ok) return;
+      var keep = select.value;
+      while (select.options.length > 1) select.remove(1);
+      (data.items || []).forEach(function (t) {
+        var opt = document.createElement('option');
+        opt.value = t.id; opt.textContent = t.name;
+        select.appendChild(opt);
+      });
+      select.value = keep;
+    });
+  }
+  loadEventFormOptions();
 
   // ------------------------------------------------------------
   // マーケットコンテンツ登録
@@ -1088,7 +1290,7 @@
         return '<div style="padding:14px 16px;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);overflow:hidden;">' +
           thumb + '<strong>' + it.title + '</strong> ・ ¥' + Number(it.price || 0).toLocaleString() +
           '<div style="font-size:12px;color:var(--el-ink-faint);margin-top:4px;">' + it.category + '</div></div>';
-      });
+      }, 'marketContent', loadContentAdmin);
     });
   }
   loadContentAdmin();
@@ -1108,6 +1310,244 @@
         contentThumbUrl = ''; document.getElementById('contentThumbPreview').innerHTML = '未設定';
       } else alert(data.error || '登録に失敗しました');
     }).catch(function () { alert('通信エラーが発生しました。'); });
+  });
+
+  // ------------------------------------------------------------
+  // フォーム管理：項目パレットから項目を組み合わせてフォームテンプレートを作成する
+  // ------------------------------------------------------------
+  var FIELD_TYPES = {
+    text:     { label: '一行テキスト',                 hasPlaceholder: true },
+    textarea: { label: '複数行テキスト',                hasPlaceholder: true },
+    email:    { label: 'メールアドレス',                hasPlaceholder: true },
+    tel:      { label: '電話番号',                      hasPlaceholder: true },
+    number:   { label: '数値',                          hasPlaceholder: true },
+    date:     { label: '日付',                          hasPlaceholder: false },
+    datetime: { label: '日時',                          hasPlaceholder: false },
+    url:      { label: 'URL',                           hasPlaceholder: true },
+    select:   { label: 'プルダウン選択（単一）',        hasOptions: true },
+    radio:    { label: 'ラジオボタン（単一選択）',      hasOptions: true },
+    checkbox: { label: 'チェックボックス（複数選択）',  hasOptions: true },
+    agree:    { label: '同意チェックボックス',          hasPlaceholder: false },
+    heading:  { label: '見出し・説明文',                isHeading: true }
+  };
+  var formFieldSeq = 0;
+  var currentFormFields = [];
+  var editingFormId = '';
+
+  function newFieldId() { formFieldSeq++; return 'f' + Date.now().toString(36) + formFieldSeq; }
+
+  function defaultLabelFor(type) {
+    if (type === 'agree') return '利用規約に同意する';
+    if (type === 'heading') return '見出しテキスト';
+    return FIELD_TYPES[type].label;
+  }
+
+  function addFormField(type) {
+    currentFormFields.push({
+      id: newFieldId(), type: type, label: defaultLabelFor(type),
+      required: type === 'agree', placeholder: '', helpText: '',
+      options: (FIELD_TYPES[type].hasOptions ? ['選択肢1', '選択肢2'] : [])
+    });
+    renderFormFieldsList();
+  }
+
+  document.querySelectorAll('#formPalette [data-add-field]').forEach(function (btn) {
+    btn.addEventListener('click', function () { addFormField(btn.dataset.addField); });
+  });
+
+  function renderFormFieldsList() {
+    var list = document.getElementById('formFieldsList');
+    var empty = document.getElementById('formFieldsEmpty');
+    list.innerHTML = '';
+    empty.style.display = currentFormFields.length ? 'none' : '';
+
+    currentFormFields.forEach(function (field, idx) {
+      var meta = FIELD_TYPES[field.type] || {};
+      var card = document.createElement('div');
+      card.className = 'el-form-field-editor';
+
+      var headHtml =
+        '<div class="el-form-field-editor-head">' +
+          '<span class="type-tag">' + meta.label + '</span>' +
+          '<div class="el-form-field-editor-actions">' +
+            '<button type="button" data-move-up title="上へ" ' + (idx === 0 ? 'disabled' : '') + '>↑</button>' +
+            '<button type="button" data-move-down title="下へ" ' + (idx === currentFormFields.length - 1 ? 'disabled' : '') + '>↓</button>' +
+            '<button type="button" data-remove title="削除">✕</button>' +
+          '</div>' +
+        '</div>';
+
+      var labelCaption = meta.isHeading ? '見出しテキスト' : (field.type === 'agree' ? '同意文言' : 'ラベル（質問文）');
+      var bodyHtml = '<label><span>' + labelCaption + '</span><input type="text" class="f-label" value="' + escAttr(field.label) + '"></label>';
+
+      if (meta.isHeading) {
+        bodyHtml += '<label><span>説明文（任意）</span><textarea class="f-helptext" rows="2">' + escHtml(field.helpText) + '</textarea></label>';
+      } else {
+        if (meta.hasPlaceholder) {
+          bodyHtml += '<label><span>プレースホルダー（任意）</span><input type="text" class="f-placeholder" value="' + escAttr(field.placeholder) + '"></label>';
+        }
+        if (meta.hasOptions) {
+          bodyHtml += '<label><span>選択肢（1行に1つ）</span><textarea class="f-options" rows="3">' + escHtml((field.options || []).join('\n')) + '</textarea></label>';
+        }
+        bodyHtml += '<label><span>ヘルプテキスト（任意）</span><input type="text" class="f-helptext" value="' + escAttr(field.helpText) + '"></label>';
+        bodyHtml += '<label class="checkbox-row"><input type="checkbox" class="f-required" ' + (field.required ? 'checked' : '') + '><span>必須項目にする</span></label>';
+      }
+
+      card.innerHTML = headHtml + bodyHtml;
+      list.appendChild(card);
+
+      // 入力内容をその場で currentFormFields[idx] に反映（再描画はしない＝入力中にフォーカスが飛ばない）
+      var labelInput = card.querySelector('.f-label');
+      if (labelInput) labelInput.addEventListener('input', function () { field.label = this.value; });
+      var placeholderInput = card.querySelector('.f-placeholder');
+      if (placeholderInput) placeholderInput.addEventListener('input', function () { field.placeholder = this.value; });
+      var helpInput = card.querySelector('.f-helptext');
+      if (helpInput) helpInput.addEventListener('input', function () { field.helpText = this.value; });
+      var optionsInput = card.querySelector('.f-options');
+      if (optionsInput) optionsInput.addEventListener('input', function () {
+        field.options = this.value.split('\n').map(function (s) { return s.trim(); }).filter(Boolean);
+      });
+      var requiredInput = card.querySelector('.f-required');
+      if (requiredInput) requiredInput.addEventListener('change', function () { field.required = this.checked; });
+
+      card.querySelector('[data-move-up]').addEventListener('click', function () {
+        if (idx === 0) return;
+        var tmp = currentFormFields[idx - 1]; currentFormFields[idx - 1] = currentFormFields[idx]; currentFormFields[idx] = tmp;
+        renderFormFieldsList();
+      });
+      card.querySelector('[data-move-down]').addEventListener('click', function () {
+        if (idx === currentFormFields.length - 1) return;
+        var tmp = currentFormFields[idx + 1]; currentFormFields[idx + 1] = currentFormFields[idx]; currentFormFields[idx] = tmp;
+        renderFormFieldsList();
+      });
+      card.querySelector('[data-remove]').addEventListener('click', function () {
+        currentFormFields.splice(idx, 1);
+        renderFormFieldsList();
+      });
+    });
+  }
+
+  function escHtml(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+  function escAttr(s) { return escHtml(s).replace(/"/g, '&quot;'); }
+
+  function resetFormBuilder() {
+    editingFormId = '';
+    currentFormFields = [];
+    document.getElementById('formBuilderEditingId').value = '';
+    document.getElementById('formNameInput').value = '';
+    document.getElementById('formDescriptionInput').value = '';
+    document.getElementById('formBuilderHeading').textContent = '新しいフォームテンプレートを作成';
+    document.getElementById('formBuilderSubmitBtn').textContent = 'テンプレートを保存する';
+    document.getElementById('formBuilderCancelBtn').style.display = 'none';
+    renderFormFieldsList();
+  }
+  document.getElementById('formBuilderCancelBtn').addEventListener('click', resetFormBuilder);
+  renderFormFieldsList();
+
+  function loadFormTemplateIntoBuilder(item, asCopy) {
+    editingFormId = asCopy ? '' : item.id;
+    currentFormFields = (item.fields || []).map(function (f) {
+      return { id: f.id || newFieldId(), type: f.type, label: f.label, required: !!f.required, placeholder: f.placeholder || '', helpText: f.helpText || '', options: (f.options || []).slice() };
+    });
+    document.getElementById('formBuilderEditingId').value = editingFormId;
+    document.getElementById('formNameInput').value = asCopy ? (item.name + 'のコピー') : item.name;
+    document.getElementById('formDescriptionInput').value = item.description || '';
+    document.getElementById('formBuilderHeading').textContent = asCopy ? '複製してテンプレートを作成' : ('「' + item.name + '」を編集');
+    document.getElementById('formBuilderSubmitBtn').textContent = asCopy ? 'コピーとして保存する' : '変更を保存する';
+    document.getElementById('formBuilderCancelBtn').style.display = '';
+    renderFormFieldsList();
+    document.getElementById('formBuilderForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  document.getElementById('formBuilderForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var name = document.getElementById('formNameInput').value.trim();
+    if (!name) { alert('フォーム名を入力してください。'); return; }
+    if (!currentFormFields.length) { alert('項目を1つ以上追加してください。'); return; }
+    var payload = {
+      name: name,
+      description: document.getElementById('formDescriptionInput').value,
+      fieldsJson: JSON.stringify(currentFormFields)
+    };
+    var isEditing = !!editingFormId;
+    if (isEditing) payload.formId = editingFormId;
+    apiPost({ action: isEditing ? 'updateFormTemplate' : 'createFormTemplate', name: payload.name, description: payload.description, fieldsJson: payload.fieldsJson, formId: payload.formId }).then(function (data) {
+      if (data.ok) {
+        alert(isEditing ? 'テンプレートを更新しました。' : 'テンプレートを作成しました。');
+        resetFormBuilder();
+        loadFormTemplates();
+        loadEventFormOptions();
+      } else alert(data.error || '保存に失敗しました');
+    }).catch(function () { alert('通信エラーが発生しました。'); });
+  });
+
+  function csvEscapeGeneric(v) { return '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"'; }
+
+  function downloadFormCsv(formId, formName) {
+    apiPost({ action: 'getFormSubmissions', formId: formId }).then(function (data) {
+      if (!data.ok) { alert(data.error || '回答の取得に失敗しました'); return; }
+      if (!data.headers || !data.headers.length) { alert('まだ回答がありません。'); return; }
+      var csv = [data.headers].concat(data.rows).map(function (r) { return r.map(csvEscapeGeneric).join(','); }).join('\r\n');
+      var blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = (formName || formId) + '_回答_' + new Date().toISOString().slice(0, 10) + '.csv';
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }).catch(function () { alert('通信エラーが発生しました。'); });
+  }
+
+  var formTemplateCache = {};
+  function loadFormTemplates() {
+    var listEl = document.getElementById('formTemplateList');
+    apiPost({ action: 'listFormTemplates' }).then(function (data) {
+      if (!data.ok) { listEl.innerHTML = '<div style="padding:20px;text-align:center;color:var(--el-ink-faint);font-size:12.5px;">取得に失敗しました。</div>'; return; }
+      var items = data.items || [];
+      formTemplateCache = {};
+      items.forEach(function (it) { formTemplateCache[it.id] = it; });
+      if (!items.length) {
+        listEl.innerHTML = '<div style="padding:24px;text-align:center;color:var(--el-ink-faint);font-size:12.5px;background:var(--el-cream-deep);border-radius:10px;">まだテンプレートがありません。左のフォームから作成してください。</div>';
+        return;
+      }
+      listEl.innerHTML = items.map(function (it) {
+        var fieldCount = (it.fields || []).length;
+        var createdLabel = it.createdAt ? new Date(it.createdAt).toLocaleDateString('ja-JP') : '';
+        return '<div class="el-form-template-card" data-form-id="' + it.id + '">' +
+          '<div class="name">' + escHtml(it.name) + '</div>' +
+          (it.description ? '<div class="desc">' + escHtml(it.description) + '</div>' : '') +
+          '<div class="meta">項目数：' + fieldCount + '・作成日：' + createdLabel + '</div>' +
+          '<div class="actions">' +
+            '<button type="button" class="el-btn el-btn--ghost el-btn--sm" data-form-action="preview">プレビュー</button>' +
+            '<button type="button" class="el-btn el-btn--ghost el-btn--sm" data-form-action="edit">編集</button>' +
+            '<button type="button" class="el-btn el-btn--ghost el-btn--sm" data-form-action="duplicate">複製</button>' +
+            '<button type="button" class="el-btn el-btn--ghost el-btn--sm" data-form-action="csv">回答をCSV出力</button>' +
+            '<button type="button" class="el-btn el-btn--ghost el-btn--sm" data-form-action="delete">削除</button>' +
+          '</div>' +
+        '</div>';
+      }).join('');
+    }).catch(function () { listEl.innerHTML = '<div style="padding:20px;text-align:center;color:var(--el-ink-faint);font-size:12.5px;">サーバーへの接続に失敗しました。</div>'; });
+  }
+  loadFormTemplates();
+
+  document.getElementById('formTemplateList').addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-form-action]');
+    if (!btn) return;
+    var card = btn.closest('[data-form-id]');
+    var id = card.dataset.formId;
+    var item = formTemplateCache[id];
+    if (!item) return;
+    var action = btn.dataset.formAction;
+    if (action === 'edit') loadFormTemplateIntoBuilder(item, false);
+    else if (action === 'duplicate') loadFormTemplateIntoBuilder(item, true);
+    else if (action === 'preview') window.open('form.html?formId=' + encodeURIComponent(id) + '&preview=1', '_blank');
+    else if (action === 'csv') downloadFormCsv(id, item.name);
+    else if (action === 'delete') {
+      if (!confirm('「' + item.name + '」を削除しますか？（回答データ自体は削除されません）')) return;
+      apiPost({ action: 'deleteFormTemplate', formId: id }).then(function (data) {
+        if (data.ok) { loadFormTemplates(); loadEventFormOptions(); }
+        else alert(data.error || '削除に失敗しました');
+      }).catch(function () { alert('通信エラーが発生しました。'); });
+    }
   });
 
   // ------------------------------------------------------------
@@ -1167,7 +1607,7 @@
   function loadAds() {
     apiPost({ action: 'listContent', type: 'ad' }).then(function (data) {
       if (!data.ok) return;
-      renderSimpleList('adList', data.items, function (it) { return renderAdPreview(it); });
+      renderSimpleList('adList', data.items, function (it) { return renderAdPreview(it); }, 'ad', loadAds);
     });
   }
   loadAds();
@@ -1188,6 +1628,80 @@
     }).catch(function () { alert('通信エラーが発生しました。'); });
   });
 
+  // ------------------------------------------------------------
+  // コミュニティ登録：登録すると groups-list.html の一覧にシート経由で反映される
+  // （コミュニティ一覧はデモを持たず、ここで登録したものだけが表示される）
+  // ------------------------------------------------------------
+  function loadCommunities() {
+    apiPost({ action: 'listContent', type: 'communityGroup' }).then(function (data) {
+      if (!data.ok) return;
+      renderSimpleList('communityAdminList', data.items, function (it) {
+        return '<div style="padding:14px 16px;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);">' +
+          '<span class="badge badge--cat">' + (it.category || '未分類') + '</span> <strong>' + it.title + '</strong>' +
+          '<div style="font-size:12.5px;color:var(--el-ink-faint);margin-top:4px;">運営：' + (it.creator || '運営メンバー') + '・' + new Date(it.createdAt).toLocaleString('ja-JP') + '</div>' +
+          '<div style="font-size:13px;color:var(--el-navy);margin-top:6px;">' + (it.description || '') + '</div></div>';
+      }, 'communityGroup', loadCommunities);
+    });
+  }
+  loadCommunities();
+
+  document.getElementById('communityForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var fd = new FormData(e.target);
+    apiPost({
+      action: 'createContent', type: 'communityGroup',
+      title: fd.get('title'), category: fd.get('category'), creator: fd.get('creator'),
+      color: fd.get('color'), description: fd.get('description'), longDescription: fd.get('longDescription')
+    }).then(function (data) {
+      if (data.ok) { alert('コミュニティを登録しました。'); e.target.reset(); loadCommunities(); }
+      else alert(data.error || '登録に失敗しました');
+    }).catch(function () { alert('通信エラーが発生しました。'); });
+  });
+
+  // ------------------------------------------------------------
+  // マーケット申込み一覧（market-apply.html／market-checkout.html からの送信を記録）
+  // ------------------------------------------------------------
+  var marketOrdersCache = [];
+  function loadMarketOrders() {
+    apiPost({ action: 'listMarketOrders' }).then(function (data) {
+      if (!data.ok) return;
+      marketOrdersCache = data.items;
+      var el = document.getElementById('marketOrdersList');
+      if (!data.items.length) {
+        el.innerHTML = '<div style="padding:24px;text-align:center;color:var(--el-ink-faint);font-size:13px;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);">まだ申込みはありません。</div>';
+        return;
+      }
+      el.innerHTML = data.items.map(function (it) {
+        return '<div style="padding:14px 16px;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);">' +
+          '<strong>' + (it.contentTitle || it.contentId || '（内容不明）') + '</strong>' +
+          (it.amount ? ' ・ ¥' + Number(it.amount).toLocaleString() : '') +
+          '<div style="font-size:12.5px;color:var(--el-ink-faint);margin-top:4px;">' +
+          (it.fullname || it.username || 'ゲスト') + (it.email ? '（' + it.email + '）' : '') + ' ・ ' + new Date(it.createdAt).toLocaleString('ja-JP') +
+          '</div></div>';
+      }).join('');
+    });
+  }
+  loadMarketOrders();
+
+  document.getElementById('marketOrdersCsvBtn').addEventListener('click', function () {
+    if (!marketOrdersCache.length) { alert('出力する申込みデータがありません。'); return; }
+    var headers = ['申込日時', 'コンテンツID', 'コンテンツ名', '金額', 'ユーザー名', '氏名', 'メールアドレス', '備考', 'ステータス'];
+    var rows = marketOrdersCache.map(function (it) {
+      return [it.createdAt, it.contentId, it.contentTitle, it.amount, it.username, it.fullname, it.email, it.note, it.status];
+    });
+    function csvEscape(v) { return '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"'; }
+    var csv = [headers].concat(rows).map(function (r) { return r.map(csvEscape).join(','); }).join('\r\n');
+    var blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'マーケット申込み一覧_' + new Date().toISOString().slice(0, 10) + '.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+
   // バッジ付与：対象機能が未実装のためデモ表示のまま
   document.getElementById('badgeForm').addEventListener('submit', function (e) {
     e.preventDefault();
@@ -1195,30 +1709,23 @@
     e.target.reset();
   });
 
-  // 出品申請の確認：スプレッドシート（出品申請）と連携
-  var APPLICATIONS = [];
+  // 出品申請の確認（market-apply.html から送信された申請。スプレッドシートに記録される）
   var applyList = document.getElementById('applyList');
-  function renderApplications() {
-    applyList.innerHTML = '';
-    var pending = APPLICATIONS.filter(function (a) { return a.status === '審査中'; });
-    if (!pending.length) {
-      applyList.innerHTML = '<div style="padding:32px;text-align:center;color:var(--el-ink-faint);font-size:14px;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);">保留中の申請はありません。</div>';
-      return;
-    }
-    pending.forEach(function (a) {
-      var row = document.createElement('div');
-      row.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:14px;padding:16px 18px;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);';
-      row.innerHTML =
-        '<div><div style="font-weight:700;color:var(--el-navy);">' + (a.title || '') + '</div><div style="font-size:12.5px;color:var(--el-ink-faint);margin-top:2px;">出品者：' + (a.name || '') + '・' + (a.email || '') + '・¥' + (a.price || '') + '</div></div>' +
-        '<div style="display:flex;gap:8px;flex:none;"><button type="button" class="el-btn el-btn--primary el-btn--sm" data-approve="' + a.id + '">承認</button><button type="button" class="el-btn el-btn--ghost el-btn--sm" data-reject="' + a.id + '">却下</button></div>';
-      applyList.appendChild(row);
-    });
-  }
   function loadApplications() {
     apiPost({ action: 'listContent', type: 'sellerApplication' }).then(function (data) {
-      APPLICATIONS = (data.ok && data.items) ? data.items : [];
-      renderApplications();
-    }).catch(function () {});
+      if (!data.ok) return;
+      var pending = data.items.filter(function (a) { return !a.status || a.status === '審査中'; });
+      if (!pending.length) {
+        applyList.innerHTML = '<div style="padding:32px;text-align:center;color:var(--el-ink-faint);font-size:14px;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);">保留中の申請はありません。</div>';
+        return;
+      }
+      applyList.innerHTML = pending.map(function (a) {
+        return '<div style="display:flex;align-items:center;justify-content:space-between;gap:14px;padding:16px 18px;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);">' +
+          '<div><div style="font-weight:700;color:var(--el-navy);">' + a.title + '</div><div style="font-size:12.5px;color:var(--el-ink-faint);margin-top:2px;">出品者：' + a.name + '（' + a.email + '）・' + a.price + '・' + a.category + '</div>' +
+          '<div style="font-size:12.5px;color:var(--el-ink-faint);margin-top:4px;">' + (a.overview || '') + '</div></div>' +
+          '<div style="display:flex;gap:8px;flex:none;"><button type="button" class="el-btn el-btn--primary el-btn--sm" data-approve="' + a.id + '">承認</button><button type="button" class="el-btn el-btn--ghost el-btn--sm" data-reject="' + a.id + '">却下</button></div></div>';
+      }).join('');
+    });
   }
   loadApplications();
   applyList.addEventListener('click', function (e) {
@@ -1226,10 +1733,9 @@
     var rejBtn = e.target.closest('[data-reject]');
     var id = appBtn ? appBtn.dataset.approve : (rejBtn ? rejBtn.dataset.reject : null);
     if (!id) return;
-    var newStatus = appBtn ? '承認' : '却下';
-    apiPost({ action: 'updateContent', type: 'sellerApplication', id: id, status: newStatus }).then(function (data) {
+    apiPost({ action: 'updateContent', type: 'sellerApplication', id: id, status: appBtn ? '承認' : '却下' }).then(function (data) {
       if (data.ok) loadApplications();
-      else alert('更新に失敗しました：' + (data.error || ''));
+      else alert(data.error || '更新に失敗しました');
     }).catch(function () { alert('通信エラーが発生しました。'); });
   });
 

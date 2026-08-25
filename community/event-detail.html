@@ -8,6 +8,98 @@
 <link href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&family=Noto+Sans+JP:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&family=Zen+Kurenaido&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="../shared/global-header.css">
+<style>
+  /* 検索ボックス：input要素の初期スタイル（黒枠など）を消して馴染ませる */
+  .el-search input[type="search"]{
+    border:none !important;
+    outline:none !important;
+    background:transparent !important;
+    box-shadow:none !important;
+    -webkit-appearance:none !important;
+    appearance:none !important;
+    font:inherit !important;
+    color:inherit !important;
+    padding:0 !important;
+    margin:0 !important;
+    width:100%;
+  }
+  .el-search input[type="search"]::-webkit-search-cancel-button{
+    -webkit-appearance:none;
+    display:none;
+  }
+  .el-auth-modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    z-index:900;
+    align-items:center;
+    justify-content:center;
+  }
+  .el-auth-modal.is-open{ display:flex; }
+  .el-auth-modal-backdrop{
+    position:absolute;
+    inset:0;
+    background:rgba(22,35,63,.45);
+  }
+  .el-auth-modal-panel{
+    position:relative;
+    background:#fff;
+    border-radius:var(--el-radius-m, 14px);
+    padding:28px 26px;
+    max-width:340px;
+    width:90%;
+    text-align:center;
+    box-shadow:0 12px 40px rgba(22,35,63,.25);
+  }
+  .el-auth-modal-panel h3{
+    margin:0 0 10px;
+    font-size:17px;
+    color:var(--el-navy, #16233F);
+  }
+  .el-auth-modal-panel p{
+    margin:0 0 20px;
+    font-size:13px;
+    color:var(--el-ink-faint, #8A8478);
+    line-height:1.7;
+  }
+  .el-auth-modal-actions{
+    display:flex;
+    gap:8px;
+    justify-content:center;
+  }
+  .el-auth-modal-close{
+    position:absolute;
+    top:10px;
+    right:10px;
+    border:none;
+    background:transparent;
+    cursor:pointer;
+    color:var(--el-ink-faint, #8A8478);
+    padding:4px;
+  }
+  [data-guest-hide]{ display:none !important; }
+  #headerAuthLinks .el-btn, #headerSignupLink.el-btn, #headerLoginLink.el-btn{
+    color:#fff !important;
+    background:var(--el-navy, #16233F) !important;
+    border:1px solid var(--el-navy, #16233F) !important;
+  }
+  #headerAuthLinks .el-btn:hover, #headerSignupLink.el-btn:hover, #headerLoginLink.el-btn:hover{
+    background:var(--el-teal-deep, #1E6F63) !important;
+    border-color:var(--el-teal-deep, #1E6F63) !important;
+  }
+  .el-footer{ background:#EDE4D0 !important; border-top:1px solid var(--el-line-soft, #E5DFD2) !important; }
+  .el-footer .tag{ color:var(--el-ink-faint, #8A8478) !important; }
+  .el-footer .el-logo{ color:var(--el-navy, #16233F) !important; }
+  .el-footer .el-logo .dot{ color:var(--el-mustard-deep, #B9812A) !important; }
+  .el-footer-cols a{ color:var(--el-ink-faint, #8A8478) !important; }
+  .el-footer-cols h6{ color:var(--el-navy, #16233F) !important; }
+  .el-footer-bottom{ color:var(--el-ink-faint, #8A8478) !important; border-top-color:var(--el-line-soft, #E5DFD2) !important; }
+  /* イベント詳細ページ独自：開催終了タグ */
+  .el-event-past-tag{
+    display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:700;
+    color:var(--el-ink-faint); background:var(--el-cream-deep); padding:4px 11px; border-radius:999px; margin-bottom:14px;
+  }
+</style>
 </head>
 <body data-site="community" data-root="..">
 
@@ -18,15 +110,16 @@
     </button>
     <a href="index.html" class="el-logo">Export Lab<span class="dot">.</span></a>
     <div class="el-header-actions">
-      <div class="el-search">
+      <form class="el-search" action="search.html" method="get">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-        検索
-      </div>
+        <input type="search" name="q" placeholder="検索" aria-label="検索" autocomplete="off">
+      </form>
+      <span id="headerAuthLinks" style="display:flex;gap:6px;white-space:nowrap;"><a href="signup.html" class="el-btn el-btn--ghost el-btn--sm" id="headerSignupLink">新規登録</a><a href="login.html" class="el-btn el-btn--ghost el-btn--sm" id="headerLoginLink">ログイン</a></span>
       <a href="mypage.html" class="el-header-bell" aria-label="通知">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
         <span class="count">3</span>
       </a>
-      <a href="mypage.html" class="el-avatar" aria-label="マイページ">り</a>
+      <a href="mypage.html" class="el-avatar" id="headerAvatar" aria-label="マイページ">り</a>
     </div>
   </div>
 </header>
@@ -41,49 +134,24 @@
       </a>
 
       <details class="el-side-forum">
-        <summary data-href="board.html">
+        <summary data-href="forum.html">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
           <span class="lbl">フォーラム</span>
           <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
         </summary>
         <div class="el-side-sub">
-          <a href="board.html" class="el-side-cta">
+          <a href="forum-new.html" class="el-side-cta" data-guest-block>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
             新規投稿をする
           </a>
+          <a href="board.html">すべて</a>
           <a href="board.html?sort=new">新着</a>
           <a href="board.html?sort=hot">人気</a>
-          <a href="board.html?filter=shift">SHiFT member only</a>
-          <a href="board.html?filter=unsolved">未解決</a>
+          <a href="board.html?filter=shift&sort=hot">SHiFT member only</a>
+          <a href="board.html?filter=unsolved&sort=hot">未解決</a>
 
-          <div class="el-side-sub-label">カテゴリで探す</div>
-          <a href="board.html?category=fda">FDA対応</a>
-          <a href="board.html?category=customs">通関</a>
-          <a href="board.html?category=tariff">関税</a>
-          <a href="board.html?category=amazon">Amazon出品</a>
-          <a href="board.html?category=logistics">物流</a>
-          <a href="board.html?category=chat">雑談・自己紹介</a>
-
-          <div class="el-side-sub-label">ハッシュタグで探す</div>
-          <a href="board.html?tag=fba">#FBA</a>
-          <a href="board.html?tag=facility-registration">#施設登録・更新</a>
-          <a href="board.html?tag=label">#ラベル</a>
-          <a href="board.html?tag=us-agent">#米国代理人</a>
-          <a href="board.html?tag=prior-notice">#事前申告</a>
-          <a href="board.html?tag=warning-letter">#警告書</a>
-          <a href="board.html?tag=cpsc">#CPSC</a>
-          <a href="board.html?tag=invoice-hs">#インボイス・HSコード</a>
-          <a href="board.html?tag=section201">#Section201</a>
-          <a href="board.html?tag=section301">#対中追加関税</a>
-          <a href="board.html?tag=account-create">#アカウント作成</a>
-          <a href="board.html?tag=account-suspend">#アカウント停止</a>
-          <a href="board.html?tag=listing-restriction">#出品制限</a>
-          <a href="board.html?tag=ocean-freight">#海上輸送</a>
-          <a href="board.html?tag=air-freight">#航空輸送</a>
-          <a href="board.html?tag=warehouse">#倉庫選定</a>
-          <a href="board.html?tag=customs-docs">#通関書類</a>
-          <a href="board.html?tag=research">#リサーチ</a>
-          <a href="board.html?tag=tariff-general">#関税</a>
+          <a href="forum-categories.html">カテゴリで探す</a>
+          <a href="forum-tags.html">ハッシュタグで探す</a>
         </div>
       </details>
 
@@ -94,14 +162,15 @@
           <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
         </summary>
         <div class="el-side-sub">
-          <a href="groups.html" class="el-side-cta">
+          <a href="groups.html" class="el-side-cta" data-guest-block>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
             新規コミュニティを作成する
           </a>
-          <a href="groups.html">新着</a>
-          <a href="groups.html">人気</a>
-          <a href="groups.html">参加中のコミュニティ</a>
-          <a href="groups.html">申請中のコミュニティ</a>
+          <a href="groups-list.html">すべて</a>
+          <a href="groups-list.html?sort=new">新着</a>
+          <a href="groups-list.html?sort=hot">人気</a>
+          <a href="groups-list.html?filter=joined&sort=hot">参加中のコミュニティ</a>
+          <a href="groups-list.html?filter=pending&sort=hot">申請中のコミュニティ</a>
         </div>
       </details>
 
@@ -122,11 +191,16 @@
           <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
         </summary>
         <div class="el-side-sub">
-          <a href="market-list.html">コンテンツ一覧</a>
+          <a href="market-list.html">すべて</a>
           <a href="market-official.html">ワールドシフト提供</a>
           <a href="market-apply.html">出品申請</a>
         </div>
       </details>
+
+      <a href="members.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M6 16c.5-1.6 1.7-2.5 3-2.5s2.5.9 3 2.5"/><path d="M14 9h4M14 13h4"/></svg>
+        <span class="lbl">メンバー</span>
+      </a>
 
       <a href="mypage.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
@@ -144,7 +218,7 @@
           <a href="events.html" style="color:var(--el-ink-faint);">イベント</a>
         </div>
 
-        <article class="el-event-notice" id="eventArticle">
+        <article class="el-notice" id="eventArticle">
           <!-- JSにより動的に描画されます -->
         </article>
 
@@ -163,7 +237,7 @@
         <div class="el-footer-grid">
           <div>
             <a href="index.html" class="el-logo">Export Lab<span class="dot">.</span></a>
-            <p class="tag">人・モノ・情報がつながる、輸出の共創コミュニティ。運営：WorldShift株式会社</p>
+            <p class="tag">人・モノ・情報がつながる、輸出の共創コミュニティ。<br>運営：WorldShift株式会社</p>
           </div>
           <div class="el-footer-cols">
             <div>
@@ -213,11 +287,115 @@
       window.location.href = summary.dataset.href;
     });
   });
+  // ユーザーモード（ゲスト／登録ユーザー／管理者）の切り替えと共通ゲート処理
+  // Googleドライブの共有リンクを、<img>で直接表示できる形式のURLに変換する
+  function elDriveImgUrl(url) {
+    if (!url) return url;
+    var m = url.match(/drive\.google\.com\/file\/d\/([^/]+)/) || url.match(/[?&]id=([^&]+)/);
+    if (m && m[1]) return 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w1000';
+    return url;
+  }
+  window.elDriveImgUrl = elDriveImgUrl;
+
+  document.addEventListener('DOMContentLoaded', function () {
+    var ROLE_KEY = 'el-user-role';
+    function getRole() {
+      try { return localStorage.getItem(ROLE_KEY) || 'guest'; } catch (e) { return 'guest'; }
+    }
+    function setRole(role) {
+      try { localStorage.setItem(ROLE_KEY, role); } catch (e) {}
+    }
+    window.elGetRole = getRole;
+
+    var role = getRole();
+    document.body.setAttribute('data-role', role);
+
+    var bell = document.querySelector('.el-header-bell');
+    if (bell && role === 'guest') bell.style.display = 'none';
+    var headerAvatar = document.getElementById('headerAvatar');
+    if (headerAvatar && role === 'guest') headerAvatar.style.display = 'none';
+    else if (headerAvatar) {
+      try {
+        var hp = JSON.parse(localStorage.getItem('el-user-profile') || '{}');
+        var hUsername = localStorage.getItem('el-username') || hp.username || '';
+        if (hp.photoUrl) headerAvatar.innerHTML = '<img src="' + window.elDriveImgUrl(hp.photoUrl) + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
+        else if (hUsername) headerAvatar.textContent = hUsername.charAt(0);
+      } catch (e) {}
+    }
+
+    var authLinksWrap = document.getElementById('headerAuthLinks');
+    var loginLink = document.getElementById('headerLoginLink');
+    var signupLink = document.getElementById('headerSignupLink');
+    if (role !== 'guest' && authLinksWrap) {
+      if (loginLink) loginLink.remove();
+      if (signupLink) {
+        signupLink.textContent = 'ログアウト';
+        signupLink.href = '#';
+        signupLink.addEventListener('click', function (e) {
+          e.preventDefault();
+          setRole('guest');
+          window.location.href = 'index.html';
+        });
+      }
+    }
+
+    var modal = document.getElementById('authModal');
+    window.elRequireAuth = function (e) {
+      if (getRole() !== 'guest') return true;
+      if (e) e.preventDefault();
+      if (modal) { modal.classList.add('is-open'); modal.setAttribute('aria-hidden', 'false'); }
+      return false;
+    };
+    if (modal) {
+      modal.querySelectorAll('[data-auth-close]').forEach(function (el) {
+        el.addEventListener('click', function () {
+          modal.classList.remove('is-open');
+          modal.setAttribute('aria-hidden', 'true');
+        });
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') { modal.classList.remove('is-open'); modal.setAttribute('aria-hidden', 'true'); }
+      });
+    }
+
+    var shiftModal = document.getElementById('shiftModal');
+    window.elRequireShift = function () {
+      var r = getRole();
+      if (r === 'shift' || r === 'admin') return true;
+      if (shiftModal) { shiftModal.classList.add('is-open'); shiftModal.setAttribute('aria-hidden', 'false'); }
+      return false;
+    };
+    if (shiftModal) {
+      shiftModal.querySelectorAll('[data-shift-close]').forEach(function (el) {
+        el.addEventListener('click', function () {
+          shiftModal.classList.remove('is-open');
+          shiftModal.setAttribute('aria-hidden', 'true');
+        });
+      });
+    }
+
+    if (role === 'admin') {
+      var sideNav = document.querySelector('.el-sidebar nav');
+      if (sideNav && !sideNav.querySelector('a[href="admin.html"]')) {
+        var adminLink = document.createElement('a');
+        adminLink.href = 'admin.html';
+        if (window.location.pathname.indexOf('admin.html') !== -1) adminLink.className = 'is-active';
+        adminLink.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 3 7v6c0 5 4 9 9 9s9-4 9-9V7l-9-5Z"/><path d="m9 12 2 2 4-4"/></svg><span class="lbl">管理者ページ</span>';
+        sideNav.appendChild(adminLink);
+      }
+    }
+
+    if (role === 'guest') {
+      document.querySelectorAll('[data-guest-block]').forEach(function (el) {
+        el.addEventListener('click', window.elRequireAuth);
+      });
+    }
+  });
 
   // ------------------------------------------------------------
-  // イベント詳細データ（デモ）。管理者ページから登録したイベントは、
-  // 将来的にはここではなくサーバー（GAS／スプレッドシート）から取得する想定です。
+  // イベント詳細データ（デモ）。events.html の6件の予定・過去イベントに対応します。
   // formId が設定されているイベントは「申し込む」ボタンから対応するフォームへ遷移します。
+  // 管理者ページで登録したイベント（デモに無いID）はスプレッドシートから取得します。
   // ------------------------------------------------------------
   var EVENTS = {
     'fda-consult': {
@@ -231,7 +409,7 @@
         '「FDA対応 実務者の会」グループのメンバーを対象に、FDA施設登録の更新手続きに関するオンライン相談会を開催いたします。更新期限の考え方や、よくある差し戻し事例への対処法について、運営チームより直接ご案内します。',
         '個別の状況に応じたご質問にもその場でお答えしますので、施設登録の更新を控えている方はぜひご参加ください。'
       ],
-      formId: 'demo-fda-consult', past: false
+      formId: '', past: false
     },
     'intro-seminar': {
       badge: '公開', badgeClass: 'badge--open', color: 'var(--el-mustard-deep)',
@@ -244,7 +422,7 @@
         'FBA納品・海外配送・関税など、初めて聞く言葉が多くて不安な方も、この回で全体像をつかんでいただけます。',
         '質疑応答の時間も設けていますので、疑問点はその場で解消してください。'
       ],
-      formId: 'demo-intro-seminar', past: false
+      formId: '', past: false
     },
     'slc-seminar': {
       badge: 'メンバー限定', badgeClass: 'badge--restricted', color: 'var(--el-sky)',
@@ -256,7 +434,7 @@
         '実データを見ながら、FBA納品費用の内訳と削減余地の見つけ方を解説します。',
         '実際のSLC画面を見ながら、入庫配置手数料や国際送料の内訳をどう確認するかを具体的にご紹介します。'
       ],
-      formId: 'demo-slc-seminar', past: false
+      formId: '', past: false
     },
     'fukuoka-offline': {
       badge: '公開', badgeClass: 'badge--open', color: 'var(--el-coral)',
@@ -268,7 +446,7 @@
         'Export Lab発、初めてのリアルイベントです。オンラインではなかなか話せない、現場のリアルな話を持ち寄る会にしたいと思っています。',
         '定員に限りがございますので、お早めにお申し込みください。'
       ],
-      formId: 'demo-fukuoka-offline', past: false
+      formId: '', past: false
     },
     'slc-seminar-jul': {
       badge: '公式', badgeClass: 'badge--announce', color: '#5C6784',
@@ -337,10 +515,10 @@
     var article = document.getElementById('eventArticle');
     document.title = 'イベントが見つかりません｜Export Lab';
     article.innerHTML =
-      '<div class="el-announce-empty" style="background:var(--el-paper);border:1.5px solid var(--el-line-soft);border-radius:var(--el-radius-l);padding:60px 24px;">' +
+      '<div style="background:var(--el-paper);border:1.5px solid var(--el-line-soft);border-radius:var(--el-radius-l);padding:60px 24px;text-align:center;color:var(--el-ink-faint);">' +
       '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="14" rx="2"/></svg>' +
-      '<p style="font-size:14.5px;">このイベントは見つかりませんでした。すでに終了・削除された可能性があります。</p>' +
-      '<a href="events.html" class="el-btn el-btn--ghost el-btn--sm" style="margin-top:6px;">イベント一覧へ戻る</a></div>';
+      '<p style="font-size:14.5px;margin:14px 0 18px;">このイベントは見つかりませんでした。すでに終了・削除された可能性があります。</p>' +
+      '<a href="events.html" class="el-btn el-btn--ghost el-btn--sm">イベント一覧へ戻る</a></div>';
   }
 
   (function () {
@@ -348,14 +526,14 @@
     var params = new URLSearchParams(window.location.search);
     var id = params.get('id') || '';
 
-    if (!id) { id = 'fda-consult'; }
-
-    if (EVENTS[id]) {
+    if (id && EVENTS[id]) {
       renderEvent(id, EVENTS[id]);
       return;
     }
 
-    // ローカル（デモ）のイベントに無ければ、スプレッドシート（管理者画面で登録したイベント）から取得する
+    if (!id) { showEventNotFound(); return; }
+
+    // デモに無ければ、スプレッドシート（管理者ページで登録したイベント）から取得する
     fetch(API_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -376,5 +554,35 @@
       .catch(showEventNotFound);
   })();
 </script>
+<div class="el-auth-modal" id="authModal" aria-hidden="true">
+  <div class="el-auth-modal-backdrop" data-auth-close></div>
+  <div class="el-auth-modal-panel" role="dialog" aria-modal="true">
+    <button type="button" class="el-auth-modal-close" data-auth-close aria-label="閉じる">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <h3>ユーザー登録してください</h3>
+    <p>この操作を行うには、会員登録（無料）が必要です。登録すると投稿・返信・購入などすべての機能がご利用いただけます。</p>
+    <div class="el-auth-modal-actions">
+      <a href="signup.html" class="el-btn el-btn--primary el-btn--sm">新規登録する</a>
+      <button type="button" class="el-btn el-btn--ghost el-btn--sm" data-auth-close>閉じる</button>
+    </div>
+  </div>
+</div>
+
+<div class="el-auth-modal" id="shiftModal" aria-hidden="true">
+  <div class="el-auth-modal-backdrop" data-shift-close></div>
+  <div class="el-auth-modal-panel" role="dialog" aria-modal="true">
+    <button type="button" class="el-auth-modal-close" data-shift-close aria-label="閉じる">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <h3>SHiFT会員限定です</h3>
+    <p>この内容はSHiFT会員（WorldShiftの各種サービスをご利用中の方）だけが閲覧できます。SHiFT会員の方はサポート窓口までお問い合わせください。</p>
+    <div class="el-auth-modal-actions">
+      <a href="#" class="el-btn el-btn--primary el-btn--sm">SHiFT会員について見る</a>
+      <button type="button" class="el-btn el-btn--ghost el-btn--sm" data-shift-close>閉じる</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

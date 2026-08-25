@@ -920,7 +920,8 @@
   });
 
   // サイトTOP：NEW／HOTを実際の投稿データから描画する
-  (function () {
+  // （window.EL_TOPICS はスプレッドシートから非同期取得するため、取得完了後に描画する）
+  function renderTopForumLists() {
     var CATEGORY_LABEL = window.EL_CATEGORY_LABEL || {};
     var topics = window.EL_TOPICS || [];
     if (!topics.length) return;
@@ -968,7 +969,12 @@
     if (hotEl && byHot.length) { hotEl.parentElement.innerHTML = byHot.map(buildRowHtml).join(''); }
     var shiftEl = document.getElementById('topShiftList');
     if (shiftEl && shiftOnly.length) { shiftEl.parentElement.innerHTML = shiftOnly.map(buildRowHtml).join(''); }
-  })();
+  }
+  if (window.EL_loadLiveTopics) {
+    window.EL_loadLiveTopics(renderTopForumLists);
+  } else {
+    renderTopForumLists();
+  }
 </script>
 <div class="el-auth-modal" id="authModal" aria-hidden="true">
   <div class="el-auth-modal-backdrop" data-auth-close></div>

@@ -296,7 +296,7 @@
         </div>
 
         <div class="el-event-grid" id="eventGrid">
-          <a href="#" class="el-event-card">
+          <a href="event-detail.html?id=fda-consult" class="el-event-card">
             <div class="el-event-thumb" style="background:linear-gradient(135deg,#2F8F82,#1B5A52);">
               <span class="el-event-date-tag"><span class="d">20</span><span class="m">AUG</span></span>
               <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
@@ -310,7 +310,7 @@
             </div>
           </a>
 
-          <a href="#" class="el-event-card">
+          <a href="event-detail.html?id=intro-seminar" class="el-event-card">
             <div class="el-event-thumb" style="background:linear-gradient(135deg,#EAAA3C,#C88A24);">
               <span class="el-event-date-tag"><span class="d">05</span><span class="m">SEP</span></span>
               <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><path d="M12 2 3 7l9 5 9-5-9-5Z"/><path d="M3 12l9 5 9-5M3 17l9 5 9-5"/></svg>
@@ -324,7 +324,7 @@
             </div>
           </a>
 
-          <a href="#" class="el-event-card">
+          <a href="event-detail.html?id=slc-seminar" class="el-event-card">
             <div class="el-event-thumb" style="background:linear-gradient(135deg,#6FA3C7,#3E7EA3);">
               <span class="el-event-date-tag"><span class="d">18</span><span class="m">SEP</span></span>
               <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="m9 10 3 2-3 2z"/></svg>
@@ -338,7 +338,7 @@
             </div>
           </a>
 
-          <a href="#" class="el-event-card">
+          <a href="event-detail.html?id=fukuoka-offline" class="el-event-card">
             <div class="el-event-thumb" style="background:linear-gradient(135deg,#D8785A,#B85C3E);">
               <span class="el-event-date-tag"><span class="d">10</span><span class="m">OCT</span></span>
               <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z"/></svg>
@@ -360,7 +360,7 @@
           </div>
         </div>
         <div class="el-event-grid is-past">
-          <a href="market.html" class="el-event-card">
+          <a href="event-detail.html?id=slc-seminar-jul" class="el-event-card">
             <div class="el-event-thumb" style="background:linear-gradient(135deg,#8A94A8,#5C6784);">
               <span class="el-event-date-tag"><span class="d">22</span><span class="m">JUL</span></span>
               <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="m9 10 3 2-3 2z"/></svg>
@@ -373,7 +373,7 @@
               <span class="el-event-cta">録画を見る <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></span>
             </div>
           </a>
-          <a href="#" class="el-event-card">
+          <a href="event-detail.html?id=kickoff" class="el-event-card">
             <div class="el-event-thumb" style="background:linear-gradient(135deg,#8A94A8,#5C6784);">
               <span class="el-event-date-tag"><span class="d">01</span><span class="m">JUL</span></span>
               <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
@@ -597,7 +597,7 @@
           var thumbInner = it.thumbnailUrl
             ? '<img src="' + it.thumbnailUrl + '" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;">'
             : '<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
-          return '<a href="#" class="el-event-card">' +
+          return '<a href="event-detail.html?id=' + encodeURIComponent(it.id) + '" class="el-event-card">' +
             '<div class="el-event-thumb" style="background:linear-gradient(135deg,#2F8F82,#1B5A52);position:relative;overflow:hidden;">' +
             '<span class="el-event-date-tag" style="position:relative;z-index:1;"><span class="d">' + d + '</span><span class="m">' + m + '</span></span>' +
             thumbInner +
@@ -613,53 +613,7 @@
       .catch(function () {});
   })();
 
-  // イベント詳細モーダル：カードをクリックすると開く（href="#"のカードのみ対象。実リンクは通常通り遷移）
-  document.addEventListener('DOMContentLoaded', function () {
-    var modal = document.getElementById('eventDetailModal');
-    if (!modal) return;
-
-    function closeModal() {
-      modal.classList.remove('is-open');
-      modal.setAttribute('aria-hidden', 'true');
-    }
-
-    document.addEventListener('click', function (e) {
-      var card = e.target.closest('.el-event-card');
-      if (!card) return;
-      if (card.getAttribute('href') !== '#') return; // 実際のリンク先があるカードはそのまま遷移させる
-      e.preventDefault();
-
-      var title = (card.querySelector('h3') || {}).textContent || '';
-      var meta = (card.querySelector('.meta') || {}).textContent || '';
-      var desc = (card.querySelector('p') || {}).textContent || '';
-      var badgeEl = card.querySelector('.badge');
-      var thumbEl = card.querySelector('.el-event-thumb');
-
-      document.getElementById('edmTitle').textContent = title;
-      document.getElementById('edmMeta').textContent = meta;
-      document.getElementById('edmDesc').textContent = desc;
-      var badgeOut = document.getElementById('edmBadge');
-      badgeOut.className = badgeEl ? badgeEl.className : 'badge badge--open';
-      badgeOut.textContent = badgeEl ? badgeEl.textContent : '公開';
-
-      var thumbOut = document.getElementById('edmThumb');
-      thumbOut.innerHTML = '';
-      thumbOut.style.background = thumbEl ? thumbEl.style.background : 'var(--el-teal)';
-      var img = thumbEl && thumbEl.querySelector('img');
-      if (img) {
-        var clone = img.cloneNode(true);
-        clone.style.cssText = 'width:100%;height:100%;object-fit:cover;position:absolute;inset:0;';
-        thumbOut.appendChild(clone);
-      }
-
-      modal.classList.add('is-open');
-      modal.setAttribute('aria-hidden', 'false');
-    });
-
-    modal.querySelectorAll('[data-event-close]').forEach(function (el) {
-      el.addEventListener('click', closeModal);
-    });
-  });
+  // イベントカードは event-detail.html?id=... へ直接遷移する（モーダルは使用しない）
 
   // 検索結果からのキーワードをハイライトして該当箇所までスクロールする
   (function () {
@@ -728,26 +682,6 @@
     <div class="el-auth-modal-actions">
       <a href="#" class="el-btn el-btn--primary el-btn--sm">SHiFT会員について見る</a>
       <button type="button" class="el-btn el-btn--ghost el-btn--sm" data-shift-close>閉じる</button>
-    </div>
-  </div>
-</div>
-
-<div class="el-auth-modal" id="eventDetailModal" aria-hidden="true">
-  <div class="el-auth-modal-backdrop" data-event-close></div>
-  <div class="el-auth-modal-panel" role="dialog" aria-modal="true" style="max-width:480px;text-align:left;padding:0;overflow:hidden;">
-    <button type="button" class="el-auth-modal-close" data-event-close aria-label="閉じる" style="z-index:2;">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
-    </button>
-    <div id="edmThumb" style="height:150px;position:relative;background:var(--el-teal);"></div>
-    <div style="padding:24px;">
-      <span id="edmBadge" class="badge badge--open" style="margin-bottom:8px;display:inline-block;"></span>
-      <h3 id="edmTitle" style="margin:0 0 8px;font-size:18px;"></h3>
-      <div id="edmMeta" style="font-size:13px;color:var(--el-ink-faint);margin-bottom:16px;"></div>
-      <p id="edmDesc" style="font-size:14px;color:var(--el-navy);line-height:1.8;margin:0 0 20px;"></p>
-      <div class="el-auth-modal-actions">
-        <a href="#" id="edmApplyBtn" class="el-btn el-btn--primary el-btn--sm">詳細・申込</a>
-        <button type="button" class="el-btn el-btn--ghost el-btn--sm" data-event-close>閉じる</button>
-      </div>
     </div>
   </div>
 </div>

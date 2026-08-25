@@ -5,9 +5,161 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>フォーム｜Export Lab</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&family=Noto+Sans+JP:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&family=Noto+Sans+JP:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&family=Zen+Kurenaido&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="../shared/global-header.css">
+<style>
+  /* 検索ボックス：input要素の初期スタイル（黒枠など）を消して馴染ませる */
+  .el-search input[type="search"]{
+    border:none !important;
+    outline:none !important;
+    background:transparent !important;
+    box-shadow:none !important;
+    -webkit-appearance:none !important;
+    appearance:none !important;
+    font:inherit !important;
+    color:inherit !important;
+    padding:0 !important;
+    margin:0 !important;
+    width:100%;
+  }
+  .el-search input[type="search"]::-webkit-search-cancel-button{
+    -webkit-appearance:none;
+    display:none;
+  }
+  .el-auth-modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    z-index:900;
+    align-items:center;
+    justify-content:center;
+  }
+  .el-auth-modal.is-open{ display:flex; }
+  .el-auth-modal-backdrop{
+    position:absolute;
+    inset:0;
+    background:rgba(22,35,63,.45);
+  }
+  .el-auth-modal-panel{
+    position:relative;
+    background:#fff;
+    border-radius:var(--el-radius-m, 14px);
+    padding:28px 26px;
+    max-width:340px;
+    width:90%;
+    text-align:center;
+    box-shadow:0 12px 40px rgba(22,35,63,.25);
+  }
+  .el-auth-modal-panel h3{
+    margin:0 0 10px;
+    font-size:17px;
+    color:var(--el-navy, #16233F);
+  }
+  .el-auth-modal-panel p{
+    margin:0 0 20px;
+    font-size:13px;
+    color:var(--el-ink-faint, #8A8478);
+    line-height:1.7;
+  }
+  .el-auth-modal-actions{
+    display:flex;
+    gap:8px;
+    justify-content:center;
+  }
+  .el-auth-modal-close{
+    position:absolute;
+    top:10px;
+    right:10px;
+    border:none;
+    background:transparent;
+    cursor:pointer;
+    color:var(--el-ink-faint, #8A8478);
+    padding:4px;
+  }
+  [data-guest-hide]{ display:none !important; }
+  #headerAuthLinks .el-btn, #headerSignupLink.el-btn, #headerLoginLink.el-btn{
+    color:#fff !important;
+    background:var(--el-navy, #16233F) !important;
+    border:1px solid var(--el-navy, #16233F) !important;
+  }
+  #headerAuthLinks .el-btn:hover, #headerSignupLink.el-btn:hover, #headerLoginLink.el-btn:hover{
+    background:var(--el-teal-deep, #1E6F63) !important;
+    border-color:var(--el-teal-deep, #1E6F63) !important;
+  }
+  .el-footer{ background:#EDE4D0 !important; border-top:1px solid var(--el-line-soft, #E5DFD2) !important; }
+  .el-footer .tag{ color:var(--el-ink-faint, #8A8478) !important; }
+  .el-footer .el-logo{ color:var(--el-navy, #16233F) !important; }
+  .el-footer .el-logo .dot{ color:var(--el-mustard-deep, #B9812A) !important; }
+  .el-footer-cols a{ color:var(--el-ink-faint, #8A8478) !important; }
+  .el-footer-cols h6{ color:var(--el-navy, #16233F) !important; }
+  .el-footer-bottom{ color:var(--el-ink-faint, #8A8478) !important; border-top-color:var(--el-line-soft, #E5DFD2) !important; }
+
+  /* ---------- フォーム回答ページ（form.html）独自スタイル ---------- */
+  .el-public-form-card{
+    background:var(--el-paper); border:1.5px solid var(--el-line-soft);
+    border-radius:var(--el-radius-l); padding:36px; box-shadow:var(--el-shadow);
+  }
+  .el-public-form-head{ margin-bottom:26px; padding-bottom:22px; border-bottom:1px solid var(--el-line-soft); }
+  .el-public-form-context{
+    display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:700;
+    color:var(--el-teal-deep); background:var(--el-teal-tint); padding:4px 11px; border-radius:999px; margin-bottom:10px;
+  }
+  .el-public-form-head h1{ font-family:var(--font-display); font-size:22px; margin:0 0 8px; line-height:1.5; }
+  .el-public-form-head p{ font-size:14px; color:var(--el-navy-soft); line-height:1.8; margin:0; white-space:pre-wrap; }
+  .el-public-form-field{ margin-bottom:22px; }
+  .el-public-form-field.is-heading{ margin-bottom:16px; padding-top:6px; }
+  .el-public-form-field.is-heading:not(:first-child){ padding-top:26px; border-top:1px solid var(--el-line-soft); }
+  .el-public-form-field.is-heading h3{ font-family:var(--font-display); font-size:16.5px; margin:0 0 6px; color:var(--el-navy); }
+  .el-public-form-field.is-heading p{ font-size:13px; color:var(--el-ink-faint); margin:0; line-height:1.7; }
+  .el-public-form-label{
+    display:flex; align-items:center; gap:8px; font-size:13.5px; font-weight:700; color:var(--el-navy); margin-bottom:8px;
+  }
+  .el-public-form-label .req{
+    font-size:10.5px; font-weight:700; color:#fff; background:var(--el-coral);
+    padding:1px 7px; border-radius:999px; letter-spacing:.02em;
+  }
+  .el-public-form-help{ font-size:12px; color:var(--el-ink-faint); margin-top:6px; line-height:1.6; }
+  .el-public-form-field input[type="text"],
+  .el-public-form-field input[type="email"],
+  .el-public-form-field input[type="tel"],
+  .el-public-form-field input[type="number"],
+  .el-public-form-field input[type="url"],
+  .el-public-form-field input[type="date"],
+  .el-public-form-field input[type="datetime-local"],
+  .el-public-form-field textarea,
+  .el-public-form-field select{
+    width:100%; box-sizing:border-box; padding:11px 14px; border:1px solid var(--el-line);
+    border-radius:10px; font:inherit; font-size:14.5px; color:var(--el-navy); background:var(--el-cream);
+  }
+  .el-public-form-field textarea{ min-height:96px; resize:vertical; }
+  .el-public-form-field input:focus, .el-public-form-field textarea:focus, .el-public-form-field select:focus{
+    outline:2px solid var(--el-teal); outline-offset:1px; border-color:transparent; background:var(--el-paper);
+  }
+  .el-public-form-choice-list{ display:flex; flex-direction:column; gap:9px; }
+  .el-public-form-choice{
+    display:flex; align-items:center; gap:9px; font-size:14px; color:var(--el-navy);
+    padding:10px 13px; border:1px solid var(--el-line-soft); border-radius:10px; cursor:pointer;
+    transition:border-color .15s, background .15s;
+  }
+  .el-public-form-choice:hover{ border-color:var(--el-teal); background:var(--el-teal-tint); }
+  .el-public-form-choice input{ flex-shrink:0; accent-color:var(--el-teal); width:16px; height:16px; }
+  .el-public-form-agree{
+    display:flex; align-items:flex-start; gap:10px; font-size:13.5px; color:var(--el-navy);
+    background:var(--el-cream-deep); padding:14px 16px; border-radius:10px; line-height:1.7;
+  }
+  .el-public-form-agree input{ flex-shrink:0; margin-top:3px; accent-color:var(--el-teal); width:16px; height:16px; }
+  .el-public-form-foot{ margin-top:30px; padding-top:22px; border-top:1px solid var(--el-line-soft); }
+  .el-public-form-foot .el-btn{ width:100%; padding:13px; font-size:15px; }
+  .el-public-form-status{
+    text-align:center; padding:60px 24px; color:var(--el-ink-faint); font-size:13.5px;
+  }
+  .el-public-form-status svg{ margin-bottom:12px; }
+  .el-public-form-success{ text-align:center; padding:50px 24px; }
+  .el-public-form-success svg{ color:var(--el-teal); margin-bottom:16px; }
+  .el-public-form-success h2{ font-family:var(--font-display); font-size:20px; margin:0 0 10px; color:var(--el-navy); }
+  .el-public-form-success p{ font-size:14px; color:var(--el-navy-soft); line-height:1.8; margin:0 0 22px; }
+</style>
 </head>
 <body data-site="community" data-root="..">
 
@@ -18,15 +170,16 @@
     </button>
     <a href="index.html" class="el-logo">Export Lab<span class="dot">.</span></a>
     <div class="el-header-actions">
-      <div class="el-search">
+      <form class="el-search" action="search.html" method="get">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-        検索
-      </div>
+        <input type="search" name="q" placeholder="検索" aria-label="検索" autocomplete="off">
+      </form>
+      <span id="headerAuthLinks" style="display:flex;gap:6px;white-space:nowrap;"><a href="signup.html" class="el-btn el-btn--ghost el-btn--sm" id="headerSignupLink">新規登録</a><a href="login.html" class="el-btn el-btn--ghost el-btn--sm" id="headerLoginLink">ログイン</a></span>
       <a href="mypage.html" class="el-header-bell" aria-label="通知">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
         <span class="count">3</span>
       </a>
-      <a href="mypage.html" class="el-avatar" aria-label="マイページ">り</a>
+      <a href="mypage.html" class="el-avatar" id="headerAvatar" aria-label="マイページ">り</a>
     </div>
   </div>
 </header>
@@ -41,20 +194,24 @@
       </a>
 
       <details class="el-side-forum">
-        <summary data-href="board.html">
+        <summary data-href="forum.html">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
           <span class="lbl">フォーラム</span>
           <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
         </summary>
         <div class="el-side-sub">
-          <a href="board.html" class="el-side-cta">
+          <a href="forum-new.html" class="el-side-cta" data-guest-block>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
             新規投稿をする
           </a>
+          <a href="board.html">すべて</a>
           <a href="board.html?sort=new">新着</a>
           <a href="board.html?sort=hot">人気</a>
-          <a href="board.html?filter=shift">SHiFT member only</a>
-          <a href="board.html?filter=unsolved">未解決</a>
+          <a href="board.html?filter=shift&sort=hot">SHiFT member only</a>
+          <a href="board.html?filter=unsolved&sort=hot">未解決</a>
+
+          <a href="forum-categories.html">カテゴリで探す</a>
+          <a href="forum-tags.html">ハッシュタグで探す</a>
         </div>
       </details>
 
@@ -65,8 +222,15 @@
           <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
         </summary>
         <div class="el-side-sub">
-          <a href="groups.html">新着</a>
-          <a href="groups.html">人気</a>
+          <a href="groups.html" class="el-side-cta" data-guest-block>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+            新規コミュニティを作成する
+          </a>
+          <a href="groups-list.html">すべて</a>
+          <a href="groups-list.html?sort=new">新着</a>
+          <a href="groups-list.html?sort=hot">人気</a>
+          <a href="groups-list.html?filter=joined&sort=hot">参加中のコミュニティ</a>
+          <a href="groups-list.html?filter=pending&sort=hot">申請中のコミュニティ</a>
         </div>
       </details>
 
@@ -87,11 +251,16 @@
           <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
         </summary>
         <div class="el-side-sub">
-          <a href="market-list.html">コンテンツ一覧</a>
+          <a href="market-list.html">すべて</a>
           <a href="market-official.html">ワールドシフト提供</a>
           <a href="market-apply.html">出品申請</a>
         </div>
       </details>
+
+      <a href="members.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M6 16c.5-1.6 1.7-2.5 3-2.5s2.5.9 3 2.5"/><path d="M14 9h4M14 13h4"/></svg>
+        <span class="lbl">メンバー</span>
+      </a>
 
       <a href="mypage.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
@@ -134,7 +303,7 @@
         <div class="el-footer-grid">
           <div>
             <a href="index.html" class="el-logo">Export Lab<span class="dot">.</span></a>
-            <p class="tag">人・モノ・情報がつながる、輸出の共創コミュニティ。運営：WorldShift株式会社</p>
+            <p class="tag">人・モノ・情報がつながる、輸出の共創コミュニティ。<br>運営：WorldShift株式会社</p>
           </div>
           <div class="el-footer-cols">
             <div>
