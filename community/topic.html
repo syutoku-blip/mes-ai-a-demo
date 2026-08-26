@@ -243,7 +243,7 @@
         </div>
 
         <article class="el-post el-post--op" id="op" data-author-username="yamaguchi-boeki">
-          <div class="el-avatar">山</div>
+          <a class="el-avatar" id="opAvatar" href="#" style="text-decoration:none;">山</a>
           <div>
             <div class="el-reply-tag-slot"></div>
               <div class="el-post-head">
@@ -256,15 +256,25 @@
               <p>登録は2年に一度、偶数年の10月1日〜12月31日の間に更新が必要です。この期間を過ぎると登録が失効し、通関時に差し止めを受けるケースがありました。</p>
               <p>社内でカレンダーリマインドを二重に設定するようにしてから、失念はなくなりました。同じように更新のタイミングで困った方、他に注意点があれば教えてください。</p>
             </div>
+            <div id="opEditForm" style="display:none;">
+              <input type="text" id="opEditTitle" class="el-form-input el-form-input--title" style="margin-bottom:10px;">
+              <div id="opEditBody" class="el-post-body" contenteditable="true" style="border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);padding:14px;min-height:120px;"></div>
+              <div style="display:flex;gap:8px;margin-top:12px;">
+                <button type="button" class="el-btn el-btn--primary el-btn--sm" id="opEditSaveBtn">保存</button>
+                <button type="button" class="el-btn el-btn--ghost el-btn--sm" id="opEditCancelBtn">キャンセル</button>
+              </div>
+            </div>
             <div class="el-post-tags">
               <a href="board.html">#FDA施設登録</a>
               <a href="board.html">#更新期限</a>
               <a href="board.html">#通関</a>
             </div>
             <div class="el-post-actions">
-              <button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14Z"/></svg> 12</button>
+              <button class="el-like-btn" id="opLikeBtn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14Z"/></svg> <span class="el-like-count">12</span></button>
               <button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H4l2.4-3.6A8.5 8.5 0 1 1 21 11.5Z"/></svg> 返信</button>
               <button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13"/></svg> 共有</button>
+              <button id="opEditBtn" style="display:none;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg> 編集</button>
+              <button id="opDeleteBtn" style="display:none;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6"/></svg> 削除</button>
             </div>
           </div>
         </article>
@@ -954,16 +964,9 @@
     var myUsername = elCurrentUsername();
     return !!(myUsername && authorUsername && myUsername === authorUsername);
   }
-  function bestAnswerKey(topicId) { return 'el-best-answer-' + (topicId || 'demo'); }
-  function getBestAnswerId(topicId) {
-    try { return localStorage.getItem(bestAnswerKey(topicId)); } catch (e) { return null; }
-  }
-  function setBestAnswerId(topicId, commentId) {
-    try { localStorage.setItem(bestAnswerKey(topicId), commentId); } catch (e) {}
-  }
-  function clearBestAnswerId(topicId) {
-    try { localStorage.removeItem(bestAnswerKey(topicId)); } catch (e) {}
-  }
+  // ベストアンサーの選定は、以前はブラウザのlocalStorageだけに保存していて他の人からは
+  // 見えなかったが、スプレッドシート（フォーラム投稿シートのbestAnswerCommentId列）に
+  // 保存するよう変更した。onToggle が渡されたときだけ「選ぶ／解除する」ボタンを表示する。
   function markThreadSolvedUI(solved) {
     var badgesEl = document.querySelector('.el-t-row-badges');
     if (!badgesEl) return;
@@ -974,8 +977,7 @@
     span.textContent = solved ? '解決' : '未解決';
     badgesEl.appendChild(span);
   }
-  function refreshBestAnswerUI(topicId, isAuthor) {
-    var savedBestId = getBestAnswerId(topicId);
+  function refreshBestAnswerUI(bestAnswerCommentId, isAuthor, onToggle) {
     document.querySelectorAll('#commentsList .el-post').forEach(function (post) {
       var head = post.querySelector('.el-post-head');
       var actions = post.querySelector('.el-post-actions');
@@ -987,7 +989,7 @@
         var oldBtn = actions.querySelector('.el-best-answer-btn');
         if (oldBtn) oldBtn.remove();
       }
-      var isBest = !!(savedBestId && post.id === savedBestId);
+      var isBest = !!(bestAnswerCommentId && post.id === bestAnswerCommentId);
       if (isBest && head) {
         var badge = document.createElement('span');
         badge.className = 'badge badge--solved el-best-answer-badge';
@@ -995,30 +997,18 @@
         badge.textContent = 'ベストアンサー';
         head.appendChild(badge);
       }
-      if (isAuthor && actions) {
+      if (isAuthor && actions && onToggle) {
         var btn = document.createElement('button');
         btn.type = 'button';
         btn.className = 'el-best-answer-btn';
         btn.innerHTML = isBest
           ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg> 選択を解除'
           : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg> ベストアンサーに選ぶ';
-        btn.addEventListener('click', function () {
-          if (isBest) { clearBestAnswerId(topicId); }
-          else { setBestAnswerId(topicId, post.id); }
-          markThreadSolvedUI(!!getBestAnswerId(topicId));
-          refreshBestAnswerUI(topicId, isAuthor);
-        });
+        btn.addEventListener('click', function () { onToggle(isBest ? '' : post.id); });
         actions.appendChild(btn);
       }
     });
   }
-  (function () {
-    var opEl = document.getElementById('op');
-    var authorUsername = opEl ? (opEl.dataset.authorUsername || '') : '';
-    var authorUserId = opEl ? (opEl.dataset.authorUserId || '') : '';
-    var isAuthor = elIsSameAuthor(authorUserId, authorUsername);
-    refreshBestAnswerUI('demo', isAuthor);
-  })();
 
   // 各コメントに「誰への返信か」を常時表示する矢印タグ
   function wireReplyTags() {
@@ -1073,6 +1063,33 @@
         a.rel = 'noopener noreferrer';
       });
     }
+    // 投稿者・コメント者のアイコンから、その人のプロフィールページへのリンクを作る
+    function elProfileUrl(username) {
+      return 'profile.html?user=' + encodeURIComponent(username || '');
+    }
+    // いいねボタンの表示更新（押した状態の色分けと件数）
+    function applyLikeButtonState(btn, liked, count) {
+      if (!btn) return;
+      btn.dataset.liked = liked ? '1' : '0';
+      btn.style.color = liked ? 'var(--el-coral)' : '';
+      var countEl = btn.querySelector('.el-like-count');
+      if (countEl) countEl.textContent = count;
+    }
+    function wireLikeButton(btn, targetType, targetId, initialLiked, initialCount) {
+      if (!btn) return;
+      applyLikeButtonState(btn, initialLiked, initialCount);
+      btn.addEventListener('click', function () {
+        var uid = elCurrentUserId(), uname = elCurrentUsername();
+        if (!uid && !uname) { alert('いいねをするにはログイン（会員登録）してください。'); return; }
+        btn.disabled = true;
+        apiPost({ action: 'toggleLike', targetType: targetType, targetId: targetId, userId: uid, username: uname })
+          .then(function (res) {
+            btn.disabled = false;
+            if (!res.ok) return;
+            applyLikeButtonState(btn, res.liked, res.count);
+          }).catch(function () { btn.disabled = false; });
+      });
+    }
     function relativeTime(dateStr) {
       var d = new Date(dateStr);
       if (isNaN(d.getTime())) return '';
@@ -1084,6 +1101,75 @@
       return d.toLocaleDateString('ja-JP');
     }
 
+    function applyBestAnswerUI() {
+      var isAuthorNow = !!(currentItem && elIsSameAuthor(currentItem.authorUserId, currentItem.authorUsername));
+      refreshBestAnswerUI(currentItem ? currentItem.bestAnswerCommentId : '', isAuthorNow, function (newBestId) {
+        apiPost({
+          action: 'updateTopic', id: topicId, bestAnswerCommentId: newBestId,
+          requesterUserId: elCurrentUserId(), requesterUsername: elCurrentUsername()
+        }).then(function (res) {
+          if (!res.ok) { alert(res.error || 'ベストアンサーの更新に失敗しました。'); return; }
+          if (currentItem) currentItem.bestAnswerCommentId = newBestId;
+          markThreadSolvedUI(!!newBestId);
+          applyBestAnswerUI();
+        }).catch(function () { alert('通信エラーが発生しました。'); });
+      });
+    }
+
+    function reloadComments() {
+      apiPost({ action: 'listComments', topicId: topicId, userId: elCurrentUserId(), username: elCurrentUsername() }).then(function (cdata) {
+        var items = (cdata.ok && cdata.items) ? cdata.items : [];
+        renderComments(items);
+      });
+    }
+
+    function wireCommentEditDelete(article, c) {
+      var actions = article.querySelector('.el-post-actions');
+      if (!actions || !elIsSameAuthor(c.authorUserId, c.authorUsername)) return;
+      var bodyEl = article.querySelector('.el-post-body');
+      var editForm = article.querySelector('.el-comment-edit-form');
+      var editBody = article.querySelector('.el-comment-edit-body');
+      var editBtn = document.createElement('button');
+      editBtn.type = 'button';
+      editBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg> 編集';
+      var deleteBtn = document.createElement('button');
+      deleteBtn.type = 'button';
+      deleteBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6"/></svg> 削除';
+      editBtn.addEventListener('click', function () {
+        bodyEl.style.display = 'none';
+        editForm.style.display = '';
+        editBody.innerHTML = bodyEl.innerHTML;
+        editBody.focus();
+      });
+      deleteBtn.addEventListener('click', function () {
+        if (!confirm('このコメントを削除しますか？この操作は取り消せません。')) return;
+        apiPost({ action: 'deleteComment', id: c.id, requesterUserId: elCurrentUserId(), requesterUsername: elCurrentUsername() })
+          .then(function (res) {
+            if (!res.ok) { alert(res.error || '削除に失敗しました。'); return; }
+            reloadComments();
+          }).catch(function () { alert('通信エラーが発生しました。'); });
+      });
+      actions.appendChild(editBtn);
+      actions.appendChild(deleteBtn);
+      var saveBtn = article.querySelector('.el-comment-edit-save');
+      var cancelBtn = article.querySelector('.el-comment-edit-cancel');
+      if (cancelBtn) cancelBtn.addEventListener('click', function () {
+        editForm.style.display = 'none';
+        bodyEl.style.display = '';
+      });
+      if (saveBtn) saveBtn.addEventListener('click', function () {
+        var newBody = editBody.innerHTML.trim();
+        if (!editBody.textContent.trim()) { alert('本文を入力してください。'); return; }
+        apiPost({
+          action: 'updateComment', id: c.id, body: newBody,
+          requesterUserId: elCurrentUserId(), requesterUsername: elCurrentUsername()
+        }).then(function (res) {
+          if (!res.ok) { alert(res.error || '更新に失敗しました。'); return; }
+          reloadComments();
+        }).catch(function () { alert('通信エラーが発生しました。'); });
+      });
+    }
+
     function renderComments(items) {
       var list = document.getElementById('commentsList');
       list.innerHTML = '';
@@ -1093,18 +1179,27 @@
         article.id = c.id;
         article.dataset.replyTo = c.parentId || 'op';
         var initial = (c.authorName || '?').charAt(0);
+        var profileUrl = elProfileUrl(c.authorUsername || c.authorName);
         article.innerHTML =
-          '<div class="el-avatar">' + esc(initial) + '</div>' +
+          '<a class="el-avatar" href="' + esc(profileUrl) + '" style="text-decoration:none;">' + esc(initial) + '</a>' +
           '<div>' +
           '<div class="el-reply-tag-slot"></div>' +
           '<div class="el-post-head"><span class="name">' + esc(c.authorName || '匿名') + '</span><span class="time">' + esc(relativeTime(c.createdAt)) + '</span></div>' +
           '<div class="el-post-body">' + (c.body || '') + '</div>' +
+          '<div class="el-comment-edit-form" style="display:none;">' +
+          '<div class="el-comment-edit-body el-post-body" contenteditable="true" style="border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);padding:12px;min-height:70px;"></div>' +
+          '<div style="display:flex;gap:8px;margin-top:10px;">' +
+          '<button type="button" class="el-btn el-btn--primary el-btn--sm el-comment-edit-save">保存</button>' +
+          '<button type="button" class="el-btn el-btn--ghost el-btn--sm el-comment-edit-cancel">キャンセル</button>' +
+          '</div></div>' +
           '<div class="el-post-actions">' +
-          '<button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14Z"/></svg> 0</button>' +
+          '<button class="el-like-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14Z"/></svg> <span class="el-like-count">0</span></button>' +
           '<button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H4l2.4-3.6A8.5 8.5 0 1 1 21 11.5Z"/></svg> 返信</button>' +
           '</div></div>';
         list.appendChild(article);
         elOpenLinksInNewTab(article.querySelector('.el-post-body'));
+        wireLikeButton(article.querySelector('.el-like-btn'), 'comment', c.id, !!c.likedByMe, c.likeCount || 0);
+        wireCommentEditDelete(article, c);
       });
       var countEl = document.querySelector('.el-comments-head .count');
       if (countEl) countEl.textContent = items.length + '件の返信';
@@ -1112,11 +1207,10 @@
       if (metaSpans[0]) metaSpans[0].textContent = items.length + '件の返信';
       wireReplyButtons();
       wireReplyTags();
-      var isAuthorNow = !!(currentItem && elIsSameAuthor(currentItem.authorUserId, currentItem.authorUsername));
-      refreshBestAnswerUI(topicId, isAuthorNow);
+      applyBestAnswerUI();
     }
 
-    apiPost({ action: 'getTopic', id: topicId }).then(function (data) {
+    apiPost({ action: 'getTopic', id: topicId, userId: elCurrentUserId(), username: elCurrentUsername() }).then(function (data) {
       if (!data.ok || !data.found) return; // 見つからない場合はサンプル表示のまま
       var item = data.item;
       currentItem = item;
@@ -1143,8 +1237,11 @@
       if (op) {
         op.dataset.authorUsername = item.authorUsername || '';
         op.dataset.authorUserId = item.authorUserId || '';
-        var opAvatar = op.querySelector('.el-avatar');
-        if (opAvatar) opAvatar.textContent = (item.authorName || '?').charAt(0);
+        var opAvatar = document.getElementById('opAvatar');
+        if (opAvatar) {
+          opAvatar.textContent = (item.authorName || '?').charAt(0);
+          opAvatar.href = elProfileUrl(item.authorUsername || item.authorName);
+        }
         var opName = op.querySelector('.name');
         if (opName) opName.textContent = item.authorName || '匿名';
         var opDates = op.querySelector('.el-post-dates');
@@ -1158,12 +1255,55 @@
             return '<a href="board.html?tag=' + encodeURIComponent(t) + '">' + esc(tagLabelFn(t)) + '</a>';
           }).join('');
         }
+
+        wireLikeButton(document.getElementById('opLikeBtn'), 'topic', item.id, !!item.likedByMe, item.likeCount || 0);
+        markThreadSolvedUI(!!item.bestAnswerCommentId);
+
+        var isOwnTopic = elIsSameAuthor(item.authorUserId, item.authorUsername);
+        var opEditBtn = document.getElementById('opEditBtn');
+        var opDeleteBtn = document.getElementById('opDeleteBtn');
+        var opEditForm = document.getElementById('opEditForm');
+        var opEditTitle = document.getElementById('opEditTitle');
+        var opEditBody = document.getElementById('opEditBody');
+        if (isOwnTopic && opEditBtn && opDeleteBtn) {
+          opEditBtn.style.display = '';
+          opDeleteBtn.style.display = '';
+          opEditBtn.addEventListener('click', function () {
+            opEditTitle.value = item.title || '';
+            opEditBody.innerHTML = opBody ? opBody.innerHTML : '';
+            opBody.style.display = 'none';
+            if (h1) h1.style.display = 'none';
+            opEditForm.style.display = '';
+          });
+          document.getElementById('opEditCancelBtn').addEventListener('click', function () {
+            opEditForm.style.display = 'none';
+            opBody.style.display = '';
+            if (h1) h1.style.display = '';
+          });
+          document.getElementById('opEditSaveBtn').addEventListener('click', function () {
+            var newTitle = opEditTitle.value.trim();
+            var newBody = opEditBody.innerHTML.trim();
+            if (!newTitle || !opEditBody.textContent.trim()) { alert('タイトルと本文を入力してください。'); return; }
+            apiPost({
+              action: 'updateTopic', id: topicId, title: newTitle, body: newBody,
+              requesterUserId: elCurrentUserId(), requesterUsername: elCurrentUsername()
+            }).then(function (res) {
+              if (!res.ok) { alert(res.error || '更新に失敗しました。'); return; }
+              location.reload();
+            }).catch(function () { alert('通信エラーが発生しました。'); });
+          });
+          opDeleteBtn.addEventListener('click', function () {
+            if (!confirm('このトピックを削除しますか？この操作は取り消せません。')) return;
+            apiPost({ action: 'deleteTopic', id: topicId, requesterUserId: elCurrentUserId(), requesterUsername: elCurrentUsername() })
+              .then(function (res) {
+                if (!res.ok) { alert(res.error || '削除に失敗しました。'); return; }
+                window.location.href = 'board.html';
+              }).catch(function () { alert('通信エラーが発生しました。'); });
+          });
+        }
       }
 
-      apiPost({ action: 'listComments', topicId: topicId }).then(function (cdata) {
-        var items = (cdata.ok && cdata.items) ? cdata.items : [];
-        renderComments(items);
-      });
+      reloadComments();
     });
 
     // 返信の送信：スプレッドシート（フォーラムコメント）に保存する
@@ -1194,10 +1334,7 @@
           currentReplyToId = 'op';
           if (replyCtx) replyCtx.classList.remove('is-visible');
           if (replyBox) replyBox.style.display = 'none';
-          apiPost({ action: 'listComments', topicId: topicId }).then(function (cdata) {
-            var items = (cdata.ok && cdata.items) ? cdata.items : [];
-            renderComments(items);
-          });
+          reloadComments();
         }).catch(function () {
           sendBtn.disabled = false;
           alert('通信エラーが発生しました。');

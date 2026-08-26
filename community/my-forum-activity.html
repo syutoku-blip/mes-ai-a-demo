@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>コミュニティ掲示板｜Export Lab</title>
+<title>マイ活動｜Export Lab</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&family=Noto+Sans+JP:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&family=Noto+Sans+JP:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&family=Zen+Kurenaido&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="../shared/global-header.css">
 <style>
@@ -35,9 +35,6 @@
     border-radius:var(--el-radius-m, 14px) !important;
     overflow:hidden !important;
     background:var(--el-cream-deep, #FBF3E3) !important;
-    /* 高さはアスペクト比（1200:200＝6:1）で決める。以前は960:220（4.4:1）にしていたが、
-       表示エリアの実際の横幅（最大1116px程度）だと縦幅が256px程度まで伸びてしまい、
-       バナーとして縦に大きすぎたため、より横長の比率に変更した。 */
     aspect-ratio:1200 / 200;
   }
   .el-ad-banner-v2.is-square{
@@ -84,60 +81,6 @@
     background:rgba(0,0,0,.35) !important;
     padding:2px 9px !important;
     border-radius:999px !important;
-  }
-  /* ガイドラインモーダル：「ご利用の前にご確認ください」の各項目をクリックすると、本文をここに表示する */
-  .el-guide-modal{
-    display:none;
-    position:fixed;
-    inset:0;
-    z-index:900;
-    align-items:center;
-    justify-content:center;
-    padding:20px;
-  }
-  .el-guide-modal.is-open{ display:flex; }
-  .el-guide-modal-backdrop{
-    position:absolute;
-    inset:0;
-    background:rgba(22,35,63,.45);
-  }
-  .el-guide-modal-panel{
-    position:relative;
-    background:#fff;
-    border-radius:var(--el-radius-m, 14px);
-    padding:28px 26px;
-    max-width:520px;
-    width:100%;
-    max-height:80vh;
-    overflow-y:auto;
-    box-shadow:0 12px 40px rgba(22,35,63,.25);
-  }
-  .el-guide-modal-panel h3{
-    margin:0 0 14px;
-    font-family:var(--font-display);
-    font-weight:600;
-    font-size:17px;
-    color:var(--el-navy, #16233F);
-    padding-right:26px;
-  }
-  .el-guide-modal-body{
-    font-size:13.5px;
-    color:var(--el-ink-faint, #8A8478);
-    line-height:1.8;
-    font-family:inherit;
-  }
-  .el-guide-modal-body *{
-    font-family:inherit !important;
-  }
-  .el-guide-modal-close{
-    position:absolute;
-    top:10px;
-    right:10px;
-    border:none;
-    background:transparent;
-    cursor:pointer;
-    color:var(--el-ink-faint, #8A8478);
-    padding:4px;
   }
   .el-auth-modal{
     display:none;
@@ -206,106 +149,6 @@
   .el-footer-cols a{ color:var(--el-ink-faint, #8A8478) !important; }
   .el-footer-cols h6{ color:var(--el-navy, #16233F) !important; }
   .el-footer-bottom{ color:var(--el-ink-faint, #8A8478) !important; border-top-color:var(--el-line-soft, #E5DFD2) !important; }
-  /* コミュニティ見出しカード：groups.htmlのカードデザインを流用し、掲示板の先頭に固定表示する */
-  .el-community-head-card{
-    cursor:default !important;
-    margin-bottom:22px;
-  }
-  .el-community-head-card .desc{ margin-bottom:14px; }
-  /* コミュニティ内のトピック表示：フォーラムの一覧（表形式）とは違い、
-     SNSのタイムラインのような、カード単位で気軽に読める見せ方にする */
-  .el-sns-feed{
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-  }
-  a.el-sns-post{
-    display:block;
-    background:#fff;
-    border:1px solid var(--el-line-soft, #ECE5D4);
-    border-radius:var(--el-radius-m, 14px);
-    padding:14px 16px;
-    text-decoration:none !important;
-    color:inherit;
-    transition:box-shadow .15s ease, transform .15s ease;
-  }
-  a.el-sns-post:hover{
-    box-shadow:var(--el-shadow-lift, 0 6px 12px rgba(22,35,63,.06), 0 20px 40px rgba(22,35,63,.10));
-    transform:translateY(-1px);
-  }
-  .el-sns-post-top{
-    display:flex;
-    align-items:center;
-    gap:9px;
-    margin-bottom:8px;
-  }
-  .el-sns-avatar{
-    width:30px;
-    height:30px;
-    font-size:12.5px;
-    flex:none;
-  }
-  .el-sns-post-who{
-    display:flex;
-    flex-direction:column;
-    line-height:1.3;
-    min-width:0;
-  }
-  .el-sns-post-who .name{
-    font-size:13px;
-    font-weight:700;
-    color:var(--el-navy, #16233F);
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-  }
-  .el-sns-post-who .time{
-    font-size:11.5px;
-    color:var(--el-ink-faint, #8892A6);
-  }
-  .el-sns-pill{
-    margin-left:auto;
-    flex:none;
-    font-size:11px;
-    font-weight:700;
-    padding:3px 10px;
-    border-radius:999px;
-  }
-  .el-sns-pill.is-unsolved{ background:#FBEAE3; color:#B0603A; }
-  .el-sns-pill.is-solved{ background:#E7F0E0; color:#4F7A38; }
-  .el-sns-post-title{
-    font-size:14.5px;
-    font-weight:700;
-    color:var(--el-navy, #16233F);
-    margin-bottom:4px;
-    line-height:1.5;
-  }
-  .el-sns-post-excerpt{
-    font-size:13px;
-    color:var(--el-navy-soft, #40506E);
-    line-height:1.7;
-    margin-bottom:10px;
-    display:-webkit-box;
-    -webkit-line-clamp:3;
-    -webkit-box-orient:vertical;
-    overflow:hidden;
-  }
-  .el-sns-post-foot{
-    display:flex;
-    align-items:center;
-    gap:16px;
-  }
-  .el-sns-post-foot span{
-    display:inline-flex;
-    align-items:center;
-    gap:4px;
-    font-size:12px;
-    color:var(--el-ink-faint, #8892A6);
-  }
-  .el-sns-post-foot svg{
-    width:14px;
-    height:14px;
-  }
 </style>
 </head>
 <body data-site="community" data-root="..">
@@ -340,7 +183,7 @@
         <span class="lbl">ホーム</span>
       </a>
 
-      <details class="el-side-forum">
+      <details class="el-side-forum" open>
         <summary data-href="forum.html">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
           <span class="lbl">フォーラム</span>
@@ -362,8 +205,8 @@
         </div>
       </details>
 
-      <details class="el-side-forum" open>
-        <summary class="is-active" data-href="groups.html">
+      <details class="el-side-forum">
+        <summary data-href="groups.html">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
           <span class="lbl">コミュニティ</span>
           <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
@@ -418,35 +261,28 @@
   </div>
 
   <div class="el-content">
-    <main class="el-section" style="padding-top:0;">
+    <main class="el-section" style="padding-top:36px;">
+      <div class="wrap" style="max-width:760px;">
+
+        <div style="font-size:13.5px;color:var(--el-ink-faint);margin-bottom:20px;">
+          <a href="mypage.html" style="color:var(--el-ink-faint);">マイページ</a>
+        </div>
+
+        <div class="el-section-head" style="margin-bottom:20px;">
+          <div><h1 id="pageTitle" style="font-family:var(--font-display);font-size:22px;margin:0;">投稿したトピック</h1></div>
+        </div>
+
+        <div id="activityList" style="display:flex;flex-direction:column;gap:10px;"></div>
+        <div id="activityEmpty" style="padding:60px 20px;text-align:center;color:var(--el-ink-faint);font-size:14px;" hidden>
+          <p id="activityEmptyText">まだ対象の投稿がありません。</p>
+        </div>
+
+      </div>
+    </main>
+    <section class="el-section" style="padding-top:0;padding-bottom:24px;">
       <div class="wrap">
 
-        <nav class="el-breadcrumb el-page-breadcrumb" id="cbBreadcrumb" aria-label="パンくず"><a href="index.html">ホーム</a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg><a href="groups.html">コミュニティ</a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg><span>読み込み中…</span></nav>
-
-        <div class="el-group-card el-community-head-card" id="communityHeaderCard">
-          <div style="padding:24px 4px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">読み込み中...</div>
-        </div>
-
-        <details class="el-pinned-box" style="margin-top:0;" id="guideBox" open>
-          <summary class="el-pinned-head">
-            <span class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 17v5M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16h14v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z"/></svg></span>
-            <h2>ご利用の前にご確認ください</h2>
-            <svg class="el-pinned-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
-          </summary>
-          <div class="el-pinned-list" id="guideList"></div>
-        </details>
-
-        <div class="el-section-head" style="margin-top:26px;margin-bottom:12px;">
-          <div>
-            <h2 style="font-size:16px;">このコミュニティの投稿</h2>
-          </div>
-        </div>
-
-        <div id="topicList" class="el-sns-feed">
-          <div style="padding:40px 4px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">読み込み中...</div>
-        </div>
-
-        <div class="el-ad-banner-v2" id="adBanner" style="margin-top:32px;">
+        <div class="el-ad-banner-v2" id="adBanner">
           <span class="el-ad-tag-v2">AD</span>
           <div class="el-ad-image-v2" id="adImageV2"></div>
           <a href="#" class="el-btn el-btn--primary el-btn--sm el-ad-cta-v2" id="adCtaV2">詳しく見る</a>
@@ -454,7 +290,8 @@
         </div>
 
       </div>
-    </main>
+    </section>
+
 
     <footer class="el-footer">
       <div class="wrap">
@@ -489,32 +326,6 @@
   </div>
 </div>
 
-<div class="el-auth-modal" id="authModal" aria-hidden="true">
-  <div class="el-auth-modal-backdrop" data-auth-close></div>
-  <div class="el-auth-modal-panel" role="dialog" aria-modal="true">
-    <button type="button" class="el-auth-modal-close" data-auth-close aria-label="閉じる">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
-    </button>
-    <h3>ユーザー登録してください</h3>
-    <p>この操作を行うには、会員登録（無料）が必要です。登録すると投稿・返信・購入などすべての機能がご利用いただけます。</p>
-    <div class="el-auth-modal-actions">
-      <a href="signup.html" class="el-btn el-btn--primary el-btn--sm">新規登録する</a>
-      <button type="button" class="el-btn el-btn--ghost el-btn--sm" data-auth-close>閉じる</button>
-    </div>
-  </div>
-</div>
-
-<div class="el-guide-modal" id="guideModal" aria-hidden="true">
-  <div class="el-guide-modal-backdrop" data-guide-close></div>
-  <div class="el-guide-modal-panel" role="dialog" aria-modal="true">
-    <button type="button" class="el-guide-modal-close" data-guide-close aria-label="閉じる">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
-    </button>
-    <h3 id="guideModalTitle"></h3>
-    <div class="el-guide-modal-body" id="guideModalBody"></div>
-  </div>
-</div>
-
 <script src="../shared/global-header.js" defer></script>
 <script>
   (function () {
@@ -529,7 +340,6 @@
     });
   })();
 
-  // フォーラム／コミュニティ／マーケットの見出し：矢印以外をクリックしたらページ遷移、矢印は開閉のみ
   document.querySelectorAll('.el-side-forum > summary[data-href]').forEach(function (summary) {
     summary.addEventListener('click', function (e) {
       if (e.target.closest('svg.chev')) return;
@@ -537,8 +347,6 @@
       window.location.href = summary.dataset.href;
     });
   });
-
-  // ユーザーモード（ゲスト／登録ユーザー／管理者）の切り替えと共通ゲート処理
   function elDriveImgUrl(url) {
     if (!url) return url;
     var m = url.match(/drive\.google\.com\/file\/d\/([^/]+)/) || url.match(/[?&]id=([^&]+)/);
@@ -608,6 +416,22 @@
       });
     }
 
+    var shiftModal = document.getElementById('shiftModal');
+    window.elRequireShift = function () {
+      var r = getRole();
+      if (r === 'shift' || r === 'admin') return true;
+      if (shiftModal) { shiftModal.classList.add('is-open'); shiftModal.setAttribute('aria-hidden', 'false'); }
+      return false;
+    };
+    if (shiftModal) {
+      shiftModal.querySelectorAll('[data-shift-close]').forEach(function (el) {
+        el.addEventListener('click', function () {
+          shiftModal.classList.remove('is-open');
+          shiftModal.setAttribute('aria-hidden', 'true');
+        });
+      });
+    }
+
     if (role === 'admin') {
       var sideNav = document.querySelector('.el-sidebar nav');
       if (sideNav && !sideNav.querySelector('a[href="admin.html"]')) {
@@ -624,6 +448,178 @@
       });
     }
   });
+
+  // マイページの「フォーラム」活動一覧（投稿した／返信した／いいねした／ベストアンサーに選ばれた）
+  (function () {
+    var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
+    function apiPost(payload) {
+      return fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      }).then(function (res) { return res.json(); });
+    }
+    function esc(s) {
+      var d = document.createElement('div');
+      d.textContent = s == null ? '' : String(s);
+      return d.innerHTML;
+    }
+    function relativeTime(dateStr) {
+      var d = new Date(dateStr);
+      if (isNaN(d.getTime())) return '';
+      var diffMs = Date.now() - d.getTime();
+      var diffDays = Math.floor(diffMs / 86400000);
+      if (diffDays <= 0) return '今日';
+      if (diffDays === 1) return '昨日';
+      if (diffDays < 30) return diffDays + '日前';
+      return d.toLocaleDateString('ja-JP');
+    }
+
+    var VIEW_TITLES = {
+      posted: '投稿したトピック',
+      replied: '返信したトピック',
+      liked: 'いいねした投稿（トピック・コメント）',
+      bestAnswer: 'ベストアンサーに選ばれたトピック'
+    };
+    var VIEW_EMPTY = {
+      posted: 'まだ投稿したトピックがありません。',
+      replied: 'まだ返信したトピックがありません。',
+      liked: 'まだいいねした投稿がありません。',
+      bestAnswer: 'まだベストアンサーに選ばれたトピックがありません。'
+    };
+
+    var params = new URLSearchParams(window.location.search);
+    var view = params.get('view') || 'posted';
+    document.title = (VIEW_TITLES[view] || 'マイ活動') + '｜Export Lab';
+    var titleEl = document.getElementById('pageTitle');
+    if (titleEl) titleEl.textContent = VIEW_TITLES[view] || 'マイ活動';
+
+    var listEl = document.getElementById('activityList');
+    var emptyEl = document.getElementById('activityEmpty');
+    var emptyTextEl = document.getElementById('activityEmptyText');
+
+    var uid = '', uname = '';
+    try {
+      uid = localStorage.getItem('el-user-id') || '';
+      uname = localStorage.getItem('el-username') || localStorage.getItem('el-user-name') || '';
+    } catch (e) {}
+
+    if (!uid && !uname) {
+      emptyTextEl.textContent = 'ログイン（会員登録）すると、あなたの活動が表示されます。';
+      emptyEl.hidden = false;
+      return;
+    }
+
+    function isMine(authorUserId, authorUsername) {
+      if (uid && authorUserId) return String(authorUserId) === String(uid);
+      return !!(uname && authorUsername && String(authorUsername) === String(uname));
+    }
+
+    function renderRows(topics, noteMap) {
+      if (!topics.length) {
+        emptyTextEl.textContent = VIEW_EMPTY[view] || 'データがありません。';
+        emptyEl.hidden = false;
+        return;
+      }
+      listEl.innerHTML = topics.map(function (t) {
+        var catLabel = (window.EL_CATEGORY_LABEL || {})[t.category] || t.category || '';
+        var statusBadge = t.status === 'solved' ? '<span class="badge badge--solved">解決</span>' : '<span class="badge badge--unsolved">未解決</span>';
+        var note = (noteMap && noteMap[t.id]) ? '<span class="badge badge--cat">' + esc(noteMap[t.id]) + '</span>' : '';
+        return '<a href="topic.html?id=' + encodeURIComponent(t.id) + '" class="el-t-row">' +
+          '<div class="el-t-row-main">' +
+          '<div class="el-t-row-badges">' + statusBadge + (catLabel ? '<span class="badge badge--cat">' + esc(catLabel) + '</span>' : '') + note + '</div>' +
+          '<span class="el-t-row-title">' + esc(t.title) + '</span>' +
+          '<div class="el-t-row-meta">' + esc(t.authorName || '匿名') + '・' + esc(relativeTime(t.createdAt)) + '</div>' +
+          '</div>' +
+          '<div class="el-t-row-stats">' +
+          '<div><strong>' + (t.views || 0) + '</strong><span>閲覧</span></div>' +
+          '<div><strong>' + (t.commentCount || 0) + '</strong><span>返信</span></div>' +
+          '</div></a>';
+      }).join('');
+    }
+
+    apiPost({ action: 'listTopics' }).then(function (topicsRes) {
+      var topics = (topicsRes.ok && topicsRes.items) ? topicsRes.items : [];
+      var topicById = {};
+      topics.forEach(function (t) { topicById[String(t.id)] = t; });
+
+      if (view === 'posted') {
+        var mine = topics.filter(function (t) { return isMine(t.authorUserId, t.authorUsername); });
+        renderRows(mine);
+        return;
+      }
+
+      if (view === 'replied' || view === 'bestAnswer') {
+        apiPost({ action: 'listComments', authorUserId: uid, authorUsername: uname }).then(function (cRes) {
+          var myComments = (cRes.ok && cRes.items) ? cRes.items : [];
+          if (view === 'replied') {
+            var seen = {};
+            var repliedTopics = [];
+            myComments.forEach(function (c) {
+              var t = topicById[String(c.topicId)];
+              if (t && !seen[t.id]) { seen[t.id] = true; repliedTopics.push(t); }
+            });
+            repliedTopics.sort(function (a, b) { return new Date(b.createdAt) - new Date(a.createdAt); });
+            renderRows(repliedTopics);
+          } else {
+            var myCommentIdSet = {};
+            myComments.forEach(function (c) { myCommentIdSet[String(c.id)] = true; });
+            var bestTopics = topics.filter(function (t) { return t.bestAnswerCommentId && myCommentIdSet[String(t.bestAnswerCommentId)]; });
+            renderRows(bestTopics);
+          }
+        }).catch(function () {
+          emptyTextEl.textContent = '読み込みに失敗しました。';
+          emptyEl.hidden = false;
+        });
+        return;
+      }
+
+      if (view === 'liked') {
+        apiPost({ action: 'listMyLikes', userId: uid, username: uname }).then(function (lRes) {
+          var likes = (lRes.ok && lRes.items) ? lRes.items.filter(function (l) { return l.targetType === 'topic' || l.targetType === 'comment'; }) : [];
+          var topicLikeIds = likes.filter(function (l) { return l.targetType === 'topic'; }).map(function (l) { return l.targetId; });
+          var commentLikeIds = likes.filter(function (l) { return l.targetType === 'comment'; }).map(function (l) { return l.targetId; });
+
+          var resultTopics = [];
+          var noteMap = {};
+          var seen = {};
+          topicLikeIds.forEach(function (id) {
+            var t = topicById[String(id)];
+            if (t && !seen[t.id]) { seen[t.id] = true; resultTopics.push(t); }
+          });
+
+          if (!commentLikeIds.length) {
+            renderRows(resultTopics, noteMap);
+            return;
+          }
+          // コメントへのいいねは、そのコメントがどのトピックに属するかを全コメントから調べる
+          apiPost({ action: 'listComments' }).then(function (allCRes) {
+            var allComments = (allCRes.ok && allCRes.items) ? allCRes.items : [];
+            var commentById = {};
+            allComments.forEach(function (c) { commentById[String(c.id)] = c; });
+            commentLikeIds.forEach(function (cid) {
+              var c = commentById[String(cid)];
+              if (!c) return;
+              var t = topicById[String(c.topicId)];
+              if (!t) return;
+              if (!seen[t.id]) { seen[t.id] = true; resultTopics.push(t); }
+              noteMap[t.id] = 'コメントへのいいね';
+            });
+            renderRows(resultTopics, noteMap);
+          }).catch(function () { renderRows(resultTopics, noteMap); });
+        }).catch(function () {
+          emptyTextEl.textContent = '読み込みに失敗しました。';
+          emptyEl.hidden = false;
+        });
+        return;
+      }
+
+      renderRows([]);
+    }).catch(function () {
+      emptyTextEl.textContent = '読み込みに失敗しました。';
+      emptyEl.hidden = false;
+    });
+  })();
 
   var ADS = [
     { name: "SLCサービス", desc: "米AmazonFBA納品代行サービス", gradient: "linear-gradient(120deg, var(--el-teal), #1B5A52)" },
@@ -672,183 +668,36 @@
       })
       .catch(renderMockAd);
   })();
-
-  // 「ご利用の前にご確認ください」：管理者ページで登録されたガイドライン（コミュニティ向け）をクリック→モーダル表示にする
-  document.addEventListener('DOMContentLoaded', function () {
-    (function () {
-      var box = document.getElementById('guideBox');
-      var listEl = document.getElementById('guideList');
-      var modal = document.getElementById('guideModal');
-      var modalTitle = document.getElementById('guideModalTitle');
-      var modalBody = document.getElementById('guideModalBody');
-      if (!box || !listEl) return;
-      var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
-
-      function esc(s) {
-        var d = document.createElement('div');
-        d.textContent = s == null ? '' : String(s);
-        return d.innerHTML;
-      }
-      function openGuideModal(title, bodyHtml) {
-        if (!modal) return;
-        modalTitle.textContent = title;
-        modalBody.innerHTML = bodyHtml || '';
-        modal.classList.add('is-open');
-        modal.setAttribute('aria-hidden', 'false');
-      }
-      if (modal) {
-        modal.querySelectorAll('[data-guide-close]').forEach(function (el) {
-          el.addEventListener('click', function () {
-            modal.classList.remove('is-open');
-            modal.setAttribute('aria-hidden', 'true');
-          });
-        });
-      }
-
-      fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({ action: 'listContent', type: 'guideline' })
-      })
-        .then(function (res) { return res.json(); })
-        .then(function (data) {
-          var items = (data.ok && data.items) ? data.items.filter(function (g) { return g.section === 'community'; }) : [];
-          items.sort(function (a, b) { return (Number(a.sortOrder) || 0) - (Number(b.sortOrder) || 0); });
-          if (!items.length) { box.style.display = 'none'; return; }
-          listEl.innerHTML = items.map(function (it, idx) {
-            return '<button type="button" class="el-pinned-item" style="width:100%;background:none;border:none;text-align:left;cursor:pointer;font:inherit;" data-idx="' + idx + '">' +
-              '<span class="dot"></span>' + esc(it.title) +
-              '<svg class="go" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></button>';
-          }).join('');
-          listEl.querySelectorAll('.el-pinned-item').forEach(function (btn, idx) {
-            btn.addEventListener('click', function () { openGuideModal(items[idx].title, items[idx].bodyHtml); });
-          });
-        })
-        .catch(function () { box.style.display = 'none'; });
-    })();
-  });
-
-  // このコミュニティの見出し情報と投稿一覧を、シートから取得して表示する
-  (function () {
-    var params = new URLSearchParams(window.location.search);
-    var groupId = params.get('id');
-    var container = document.getElementById('topicList');
-    var breadcrumb = document.getElementById('cbBreadcrumb');
-    var headerCard = document.getElementById('communityHeaderCard');
-    var CHEV = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>';
-    var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
-
-    function esc(s) {
-      var d = document.createElement('div');
-      d.textContent = s == null ? '' : String(s);
-      return d.innerHTML;
-    }
-    function descBlock(labelText, bodyText, accentColor) {
-      return '<div style="border-top:2px solid ' + accentColor + ';padding-top:10px;margin-bottom:16px;">' +
-        '<div style="font-size:11px;font-weight:700;color:' + accentColor + ';letter-spacing:.09em;margin-bottom:6px;">' + labelText + '</div>' +
-        '<p class="desc" style="margin:0;line-height:1.8;color:var(--el-navy-soft);">' + esc(bodyText).replace(/\n/g, '<br>') + '</p>' +
-      '</div>';
-    }
-    function apiPost(payload) {
-      return fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify(payload)
-      }).then(function (res) { return res.json(); });
-    }
-    function relativeTime(dateStr) {
-      var d = new Date(dateStr);
-      if (isNaN(d.getTime())) return '';
-      var diffDays = Math.round((Date.now() - d.getTime()) / 86400000);
-      if (diffDays <= 0) return '今日';
-      if (diffDays === 1) return '昨日';
-      if (diffDays < 30) return diffDays + '日前';
-      return d.toLocaleDateString('ja-JP');
-    }
-
-    if (!groupId) {
-      if (container) container.innerHTML = '<div style="padding:40px 4px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">コミュニティが指定されていません。<a href="groups.html">コミュニティ一覧に戻る</a></div>';
-      if (headerCard) headerCard.style.display = 'none';
-      return;
-    }
-
-    apiPost({ action: 'listContent', type: 'communityGroup' }).then(function (data) {
-      var items = (data.ok && data.items) ? data.items : [];
-      var community = null;
-      for (var i = 0; i < items.length; i++) { if (String(items[i].id) === String(groupId)) { community = items[i]; break; } }
-      if (!community) {
-        if (headerCard) headerCard.innerHTML = '<div style="padding:24px 4px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">コミュニティが見つかりませんでした。</div>';
-        return;
-      }
-      document.title = community.title + '｜Export Lab';
-      if (breadcrumb) breadcrumb.innerHTML = '<a href="index.html">ホーム</a>' + CHEV + '<a href="groups.html">コミュニティ</a>' + CHEV + '<span>' + esc(community.title) + '</span>';
-      if (headerCard) {
-        var iconColor = community.color || 'var(--el-teal)';
-        headerCard.innerHTML =
-          '<div class="el-group-top">' +
-          '<div class="el-group-icon" style="background:' + iconColor + ';">' +
-          '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20Z"/></svg>' +
-          '</div>' +
-          '<div><h4>' + esc(community.title) + '</h4><div class="visibility">' + esc(community.category || '') + '・運営：' + esc(community.creator || '') + '</div></div>' +
-          '</div>' +
-          descBlock('概要', community.description || '', 'var(--el-teal)') +
-          (community.longDescription ? descBlock('詳細', community.longDescription, 'var(--el-sky)') : '');
-      }
-    });
-
-    function plainText(html) {
-      var d = document.createElement('div');
-      d.innerHTML = html || '';
-      return (d.textContent || '').replace(/\s+/g, ' ').trim();
-    }
-    var EXCERPT_MAX = 140;
-    function excerptText(html) {
-      var t = plainText(html);
-      return t.length > EXCERPT_MAX ? t.slice(0, EXCERPT_MAX) + '…' : t;
-    }
-
-    apiPost({ action: 'listCommunityTopics', groupId: groupId }).then(function (data) {
-      if (!container) return;
-      var items = (data.ok && data.items) ? data.items : [];
-      if (!items.length) {
-        container.innerHTML = '<div style="padding:40px 4px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">まだ投稿がありません。最初の投稿をしてみましょう。</div>';
-        return;
-      }
-      // フォーラムの一覧（表形式）とは違い、SNSのタイムラインのようにカード単位で
-      // アイコン・投稿者・本文の一部をぱっと見て読めるカジュアルな見せ方にする
-      container.innerHTML = items.map(function (t) {
-        var isSolved = t.status === 'solved';
-        var pill = '<span class="el-sns-pill ' + (isSolved ? 'is-solved' : 'is-unsolved') + '">' + (isSolved ? '解決' : '未回答') + '</span>';
-        var initial = (t.authorName || '匿名').charAt(0);
-        var excerpt = excerptText(t.body);
-        // アイコンをクリックしたときは投稿者のプロフィールへ飛ばしたいが、カード自体もリンク（<a>）なので
-        // 入れ子の<a>にはできない。アイコンには行き先だけdata属性で持たせ、クリックはカード側で拾い分ける。
-        var profileUrl = 'profile.html?user=' + encodeURIComponent(t.authorUsername || t.authorName || '');
-        return '<a href="community-topic.html?id=' + encodeURIComponent(t.id) + '" class="el-sns-post">' +
-          '<div class="el-sns-post-top">' +
-          '<div class="el-avatar el-sns-avatar" data-profile-url="' + esc(profileUrl) + '" style="cursor:pointer;">' + esc(initial) + '</div>' +
-          '<div class="el-sns-post-who"><span class="name">' + esc(t.authorName || '匿名') + '</span><span class="time">' + esc(relativeTime(t.createdAt)) + '</span></div>' +
-          pill +
-          '</div>' +
-          '<div class="el-sns-post-title">' + esc(t.title) + '</div>' +
-          (excerpt ? '<div class="el-sns-post-excerpt">' + esc(excerpt) + '</div>' : '') +
-          '<div class="el-sns-post-foot">' +
-          '<span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z"/><circle cx="12" cy="12" r="3"/></svg>' + (t.views || 0) + '</span>' +
-          '<span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>' + (t.commentCount || 0) + '</span>' +
-          '</div></a>';
-      }).join('');
-      // カード全体は投稿詳細へのリンクだが、アイコンをクリックしたときだけ投稿者のプロフィールへ飛ぶようにする
-      container.querySelectorAll('.el-sns-avatar[data-profile-url]').forEach(function (avatar) {
-        avatar.addEventListener('click', function (e) {
-          e.preventDefault();
-          e.stopPropagation();
-          window.location.href = avatar.dataset.profileUrl;
-        });
-      });
-    }).catch(function () {
-      if (container) container.innerHTML = '<div style="padding:40px 4px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">読み込みに失敗しました。</div>';
-    });
-  })();
 </script>
+<div class="el-auth-modal" id="authModal" aria-hidden="true">
+  <div class="el-auth-modal-backdrop" data-auth-close></div>
+  <div class="el-auth-modal-panel" role="dialog" aria-modal="true">
+    <button type="button" class="el-auth-modal-close" data-auth-close aria-label="閉じる">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <h3>ユーザー登録してください</h3>
+    <p>この操作を行うには、会員登録（無料）が必要です。登録すると投稿・返信・購入などすべての機能がご利用いただけます。</p>
+    <div class="el-auth-modal-actions">
+      <a href="signup.html" class="el-btn el-btn--primary el-btn--sm">新規登録する</a>
+      <button type="button" class="el-btn el-btn--ghost el-btn--sm" data-auth-close>閉じる</button>
+    </div>
+  </div>
+</div>
+
+<div class="el-auth-modal" id="shiftModal" aria-hidden="true">
+  <div class="el-auth-modal-backdrop" data-shift-close></div>
+  <div class="el-auth-modal-panel" role="dialog" aria-modal="true">
+    <button type="button" class="el-auth-modal-close" data-shift-close aria-label="閉じる">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <h3>SHiFT会員限定です</h3>
+    <p>この内容はSHiFT会員（WorldShiftの各種サービスをご利用中の方）だけが閲覧できます。SHiFT会員の方はサポート窓口までお問い合わせください。</p>
+    <div class="el-auth-modal-actions">
+      <a href="#" class="el-btn el-btn--primary el-btn--sm">SHiFT会員について見る</a>
+      <button type="button" class="el-btn el-btn--ghost el-btn--sm" data-shift-close>閉じる</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
