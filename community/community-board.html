@@ -690,6 +690,7 @@
           '<div><h4>' + esc(community.title) + '</h4><div class="visibility">' + esc(community.category || '') + '・運営：' + esc(community.creator || '') + '</div></div>' +
           '</div>' +
           '<p class="desc">' + esc(community.description || '') + '</p>' +
+          (community.longDescription ? '<p class="desc" style="margin-top:-6px;margin-bottom:14px;">' + esc(community.longDescription).replace(/\n/g, '<br>') + '</p>' : '') +
           '<a href="community-topic-new.html?groupId=' + encodeURIComponent(groupId) + '" class="el-btn el-btn--primary el-btn--sm" data-guest-block>新規投稿する</a>';
         if (window.elGetRole && window.elGetRole() === 'guest') {
           headerCard.querySelector('a.el-btn').addEventListener('click', window.elRequireAuth);

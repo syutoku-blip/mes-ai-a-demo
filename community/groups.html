@@ -567,6 +567,7 @@
           creator: it.creator || '運営メンバー',
           category: it.category || '未分類',
           color: it.color || 'var(--el-teal)',
+          longDescription: it.longDescription || '',
           members: []
         };
         var iconColor = it.color || 'var(--el-teal)';
@@ -640,7 +641,9 @@
       document.getElementById('gdmIcon').innerHTML = iconSvg;
       document.getElementById('gdmTitle').textContent = title;
       document.getElementById('gdmVisibility').textContent = visibility;
-      document.getElementById('gdmDesc').textContent = desc;
+      var gdmDesc = document.getElementById('gdmDesc');
+      gdmDesc.style.whiteSpace = 'pre-line';
+      gdmDesc.textContent = desc + (detail.longDescription ? '\n\n' + detail.longDescription : '');
       document.getElementById('gdmCreator').textContent = detail.creator;
       document.getElementById('gdmCategory').textContent = detail.category;
       document.getElementById('gdmMemberCount').textContent = memberCount + '人（クリックで一覧を見る）';
