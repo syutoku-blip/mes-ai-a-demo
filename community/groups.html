@@ -162,6 +162,8 @@
   }
   .el-guide-modal-panel h3{
     margin:0 0 14px;
+    font-family:var(--font-display);
+    font-weight:600;
     font-size:17px;
     color:var(--el-navy, #16233F);
     padding-right:26px;
@@ -642,13 +644,17 @@
       document.getElementById('gdmTitle').textContent = title;
       document.getElementById('gdmVisibility').textContent = visibility;
       var gdmDesc = document.getElementById('gdmDesc');
+      function descBlock(labelText, bodyText, accentColor) {
+        return '<div style="background:var(--el-cream-deep);border-left:3px solid ' + accentColor + ';border-radius:0 var(--el-radius-m) var(--el-radius-m) 0;padding:12px 14px;margin-bottom:10px;">' +
+          '<div style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:' + accentColor + ';letter-spacing:.06em;margin-bottom:6px;">' +
+            '<span style="width:5px;height:5px;border-radius:50%;background:' + accentColor + ';display:inline-block;flex:none;"></span>' + labelText +
+          '</div>' +
+          '<div style="white-space:pre-line;line-height:1.75;color:var(--el-navy-soft);">' + esc(bodyText) + '</div>' +
+        '</div>';
+      }
       gdmDesc.innerHTML =
-        '<div style="font-size:11.5px;font-weight:700;color:var(--el-ink-faint);letter-spacing:.02em;margin-bottom:4px;">【コミュニティ概要】</div>' +
-        '<div style="white-space:pre-line;">' + esc(desc) + '</div>' +
-        (detail.longDescription
-          ? '<div style="font-size:11.5px;font-weight:700;color:var(--el-ink-faint);letter-spacing:.02em;margin:14px 0 4px;">【説明】</div>' +
-            '<div style="white-space:pre-line;">' + esc(detail.longDescription) + '</div>'
-          : '');
+        descBlock('概要', desc, 'var(--el-teal)') +
+        (detail.longDescription ? descBlock('詳細', detail.longDescription, 'var(--el-sky)') : '');
       document.getElementById('gdmCreator').textContent = detail.creator;
       document.getElementById('gdmCategory').textContent = detail.category;
       document.getElementById('gdmMemberCount').textContent = memberCount + '人（クリックで一覧を見る）';

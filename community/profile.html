@@ -776,6 +776,8 @@
             localStorage.setItem('el-user-role', data.role);
             localStorage.setItem('el-user-name', profile.fullname || profile.username || '');
             localStorage.setItem('el-username', profile.username || '');
+            // ユーザーID（シートの登録ID）：投稿者・コメント者の判別や、今後の通知機能のために保存しておく
+            localStorage.setItem('el-user-id', profile.userId || '');
             localStorage.setItem('el-user-email', payload.email);
             if (payload.password) localStorage.setItem('el-user-password', payload.password);
           } catch (err) {}

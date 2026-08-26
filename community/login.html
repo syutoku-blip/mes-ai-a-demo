@@ -319,6 +319,8 @@
           localStorage.setItem('el-user-role', data.role);
           localStorage.setItem('el-user-name', (data.profile && data.profile.fullname) || (data.profile && data.profile.username) || '');
           localStorage.setItem('el-username', (data.profile && data.profile.username) || '');
+          // ユーザーID（シートの登録ID）：投稿者・コメント者の判別や、今後の通知機能のために保存しておく
+          localStorage.setItem('el-user-id', (data.profile && data.profile.userId) || '');
           localStorage.setItem('el-user-email', email);
           localStorage.setItem('el-user-password', password);
           localStorage.setItem('el-user-profile', JSON.stringify(data.profile || {}));

@@ -112,6 +112,8 @@
   }
   .el-guide-modal-panel h3{
     margin:0 0 14px;
+    font-family:var(--font-display);
+    font-weight:600;
     font-size:17px;
     color:var(--el-navy, #16233F);
     padding-right:26px;
@@ -739,6 +741,14 @@
       d.textContent = s == null ? '' : String(s);
       return d.innerHTML;
     }
+    function descBlock(labelText, bodyText, accentColor) {
+      return '<div style="background:var(--el-cream-deep);border-left:3px solid ' + accentColor + ';border-radius:0 var(--el-radius-m) var(--el-radius-m) 0;padding:11px 14px;margin-bottom:10px;">' +
+        '<div style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:' + accentColor + ';letter-spacing:.06em;margin-bottom:5px;">' +
+          '<span style="width:5px;height:5px;border-radius:50%;background:' + accentColor + ';display:inline-block;flex:none;"></span>' + labelText +
+        '</div>' +
+        '<p class="desc" style="margin:0;line-height:1.75;color:var(--el-navy-soft);">' + esc(bodyText).replace(/\n/g, '<br>') + '</p>' +
+      '</div>';
+    }
     function apiPost(payload) {
       return fetch(API_URL, {
         method: 'POST',
@@ -781,12 +791,8 @@
           '</div>' +
           '<div><h4>' + esc(community.title) + '</h4><div class="visibility">' + esc(community.category || '') + '・運営：' + esc(community.creator || '') + '</div></div>' +
           '</div>' +
-          '<div style="font-size:11px;font-weight:700;color:var(--el-ink-faint);letter-spacing:.02em;margin-bottom:3px;">【コミュニティ概要】</div>' +
-          '<p class="desc">' + esc(community.description || '') + '</p>' +
-          (community.longDescription
-            ? '<div style="font-size:11px;font-weight:700;color:var(--el-ink-faint);letter-spacing:.02em;margin:10px 0 3px;">【説明】</div>' +
-              '<p class="desc" style="margin-bottom:14px;">' + esc(community.longDescription).replace(/\n/g, '<br>') + '</p>'
-            : '') +
+          descBlock('概要', community.description || '', 'var(--el-teal)') +
+          (community.longDescription ? descBlock('詳細', community.longDescription, 'var(--el-sky)') : '') +
           '<a href="community-topic-new.html?groupId=' + encodeURIComponent(groupId) + '" class="el-btn el-btn--primary el-btn--sm" data-guest-block>新規投稿する</a>';
         if (window.elGetRole && window.elGetRole() === 'guest') {
           headerCard.querySelector('a.el-btn').addEventListener('click', window.elRequireAuth);
@@ -798,6 +804,11 @@
       var d = document.createElement('div');
       d.innerHTML = html || '';
       return (d.textContent || '').replace(/\s+/g, ' ').trim();
+    }
+    var EXCERPT_MAX = 80;
+    function excerptText(html) {
+      var t = plainText(html);
+      return t.length > EXCERPT_MAX ? t.slice(0, EXCERPT_MAX) + '…' : t;
     }
 
     apiPost({ action: 'listCommunityTopics', groupId: groupId }).then(function (data) {
@@ -813,7 +824,7 @@
         var isSolved = t.status === 'solved';
         var pill = '<span class="el-sns-pill ' + (isSolved ? 'is-solved' : 'is-unsolved') + '">' + (isSolved ? '解決' : '未回答') + '</span>';
         var initial = (t.authorName || '匿名').charAt(0);
-        var excerpt = plainText(t.body);
+        var excerpt = excerptText(t.body);
         return '<a href="community-topic.html?id=' + encodeURIComponent(t.id) + '" class="el-sns-post">' +
           '<div class="el-sns-post-top">' +
           '<div class="el-avatar el-sns-avatar">' + esc(initial) + '</div>' +

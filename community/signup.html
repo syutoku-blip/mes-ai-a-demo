@@ -554,6 +554,8 @@
           localStorage.setItem('el-user-role', data.role);
           localStorage.setItem('el-user-name', (data.profile && data.profile.fullname) || payload.fullname || payload.username || '');
           localStorage.setItem('el-username', payload.username || '');
+          // ユーザーID（シートの登録ID）：投稿者・コメント者の判別や、今後の通知機能のために保存しておく
+          localStorage.setItem('el-user-id', (data.profile && data.profile.userId) || '');
           localStorage.setItem('el-user-email', payload.email || '');
           localStorage.setItem('el-user-password', payload.password || '');
           localStorage.setItem('el-user-profile', JSON.stringify(data.profile || payload));

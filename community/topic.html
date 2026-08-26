@@ -677,10 +677,14 @@
         } catch (e) { return false; }
       }
       function runCommand(cmd, value) {
-        insertMarkers();
+        // 太字などの単純なトグル系コマンドは、実行前にマーカー要素を挿入すると
+        // （既に書式が当たっている範囲の内側にマーカーが入れ子になり）ブラウザの
+        // 「すでに適用済みか」の判定が狂い、2回目のクリックで解除できなくなる
+        // 不具合があったため、マーカーを使わず素の選択範囲に対して直接実行する。
+        restoreSelection();
         document.execCommand('styleWithCSS', false, true);
         document.execCommand(cmd, false, value == null ? null : value);
-        restoreFromMarkers();
+        saveSelection();
       }
       function clearMarkers() {
         editor.querySelectorAll('[data-sel-marker]').forEach(function (m) { m.remove(); });
@@ -934,6 +938,17 @@
   function elCurrentUsername() {
     try { return localStorage.getItem('el-username') || ''; } catch (e) { return ''; }
   }
+  // 投稿者本人かどうかの判定はユーザーIDで行う（ユーザーネームは変更されうるため）。
+  // ただしユーザーID未設定の古い投稿も表示に残るため、その場合だけユーザーネームで判定する。
+  function elCurrentUserId() {
+    try { return localStorage.getItem('el-user-id') || ''; } catch (e) { return ''; }
+  }
+  function elIsSameAuthor(authorUserId, authorUsername) {
+    var myId = elCurrentUserId();
+    if (myId && authorUserId) return myId === authorUserId;
+    var myUsername = elCurrentUsername();
+    return !!(myUsername && authorUsername && myUsername === authorUsername);
+  }
   function bestAnswerKey(topicId) { return 'el-best-answer-' + (topicId || 'demo'); }
   function getBestAnswerId(topicId) {
     try { return localStorage.getItem(bestAnswerKey(topicId)); } catch (e) { return null; }
@@ -995,7 +1010,8 @@
   (function () {
     var opEl = document.getElementById('op');
     var authorUsername = opEl ? (opEl.dataset.authorUsername || '') : '';
-    var isAuthor = !!(elCurrentUsername() && authorUsername && elCurrentUsername() === authorUsername);
+    var authorUserId = opEl ? (opEl.dataset.authorUserId || '') : '';
+    var isAuthor = elIsSameAuthor(authorUserId, authorUsername);
     refreshBestAnswerUI('demo', isAuthor);
   })();
 
@@ -1082,7 +1098,7 @@
       if (metaSpans[0]) metaSpans[0].textContent = items.length + '件の返信';
       wireReplyButtons();
       wireReplyTags();
-      var isAuthorNow = !!(currentItem && elCurrentUsername() && elCurrentUsername() === currentItem.authorUsername);
+      var isAuthorNow = !!(currentItem && elIsSameAuthor(currentItem.authorUserId, currentItem.authorUsername));
       refreshBestAnswerUI(topicId, isAuthorNow);
     }
 
@@ -1112,6 +1128,7 @@
       var op = document.getElementById('op');
       if (op) {
         op.dataset.authorUsername = item.authorUsername || '';
+        op.dataset.authorUserId = item.authorUserId || '';
         var opAvatar = op.querySelector('.el-avatar');
         if (opAvatar) opAvatar.textContent = (item.authorName || '?').charAt(0);
         var opName = op.querySelector('.name');
@@ -1146,6 +1163,7 @@
         try { profile = JSON.parse(localStorage.getItem('el-user-profile') || '{}'); } catch (e) {}
         var authorUsername = localStorage.getItem('el-username') || profile.username || '';
         var authorName = localStorage.getItem('el-user-name') || authorUsername || 'ゲスト';
+        var authorUserId = localStorage.getItem('el-user-id') || profile.userId || '';
         sendBtn.disabled = true;
         apiPost({
           action: 'createComment',
@@ -1153,6 +1171,7 @@
           parentId: currentReplyToId,
           authorUsername: authorUsername,
           authorName: authorName,
+          authorUserId: authorUserId,
           body: body
         }).then(function (data) {
           sendBtn.disabled = false;

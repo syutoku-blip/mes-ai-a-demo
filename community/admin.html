@@ -333,10 +333,10 @@
               <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">タイトル</span>
               <input type="text" name="title" required style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
             </label>
-            <label>
+            <div>
               <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">本文</span>
               <div id="announceEditorMount"></div>
-            </label>
+            </div>
             <div style="display:flex;gap:12px;flex-wrap:wrap;padding:14px;background:var(--el-cream-deep);border-radius:10px;">
               <label style="flex:1;min-width:200px;">
                 <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">末尾の遷移ボタン文言（任意）</span>
@@ -369,10 +369,10 @@
                 <input type="text" name="place" placeholder="オンライン／福岡市 など" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
               </label>
             </div>
-            <label>
+            <div>
               <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">詳細</span>
               <div id="eventEditorMount"></div>
-            </label>
+            </div>
             <label>
               <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">サムネイル画像（任意）</span>
               <div style="display:flex;align-items:center;gap:14px;">
@@ -419,14 +419,14 @@
               <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">価格（円）</span>
               <input type="number" name="price" min="0" step="100" required style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
             </label>
-            <label>
+            <div>
               <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">こんな方におすすめ</span>
               <div id="contentRecommendEditorMount"></div>
-            </label>
-            <label>
+            </div>
+            <div>
               <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">詳細</span>
               <div id="contentDetailEditorMount"></div>
-            </label>
+            </div>
             <button type="submit" class="el-btn el-btn--primary" style="align-self:flex-start;">コンテンツを登録する（WorldShift公式として掲載）</button>
           </form>
           <div id="contentAdminList" style="margin-top:32px;"></div>
@@ -499,10 +499,10 @@
               <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">タイトル</span>
               <input type="text" name="title" required style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
             </label>
-            <label>
+            <div>
               <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">本文（モーダルに表示されます）</span>
               <div id="guidelineEditorMount"></div>
-            </label>
+            </div>
             <button type="submit" class="el-btn el-btn--primary" style="align-self:flex-start;">ガイドラインを登録する</button>
           </form>
           <div id="guidelineList" style="margin-top:32px;"></div>
@@ -801,10 +801,14 @@
       } catch (e) { return false; }
     }
     function runCommand(cmd, value) {
-      insertMarkers();
+      // 太字などの単純なトグル系コマンドは、実行前にマーカー要素を挿入すると
+      // （既に書式が当たっている範囲の内側にマーカーが入れ子になり）ブラウザの
+      // 「すでに適用済みか」の判定が狂い、2回目のクリックで解除できなくなる
+      // 不具合があったため、マーカーを使わず素の選択範囲に対して直接実行する。
+      restoreSelection();
       document.execCommand('styleWithCSS', false, true);
       document.execCommand(cmd, false, value == null ? null : value);
-      restoreFromMarkers();
+      saveSelection();
     }
     function clearMarkers() {
       editor.querySelectorAll('[data-sel-marker]').forEach(function (m) { m.remove(); });
