@@ -549,6 +549,11 @@
   // コミュニティ詳細モーダル：カードをクリックすると開く。カード自体もシート（コミュニティ）から取得して描画する。
   document.addEventListener('DOMContentLoaded', function () {
     var GROUP_DETAILS = {};
+    function esc(s) {
+      var d = document.createElement('div');
+      d.textContent = s == null ? '' : String(s);
+      return d.innerHTML;
+    }
 
     // スプレッドシート連携：新着／人気コミュニティをシートから取得して描画する（デモデータは使用しない）
     (function () {
@@ -556,11 +561,6 @@
       var hotList = document.getElementById('hotGroupList');
       if (!newList && !hotList) return;
       var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
-      function esc(s) {
-        var d = document.createElement('div');
-        d.textContent = s == null ? '' : String(s);
-        return d.innerHTML;
-      }
       function renderGroupCard(it) {
         var title = it.title || '';
         GROUP_DETAILS[title] = {
@@ -642,8 +642,13 @@
       document.getElementById('gdmTitle').textContent = title;
       document.getElementById('gdmVisibility').textContent = visibility;
       var gdmDesc = document.getElementById('gdmDesc');
-      gdmDesc.style.whiteSpace = 'pre-line';
-      gdmDesc.textContent = desc + (detail.longDescription ? '\n\n' + detail.longDescription : '');
+      gdmDesc.innerHTML =
+        '<div style="font-size:11.5px;font-weight:700;color:var(--el-ink-faint);letter-spacing:.02em;margin-bottom:4px;">【コミュニティ概要】</div>' +
+        '<div style="white-space:pre-line;">' + esc(desc) + '</div>' +
+        (detail.longDescription
+          ? '<div style="font-size:11.5px;font-weight:700;color:var(--el-ink-faint);letter-spacing:.02em;margin:14px 0 4px;">【説明】</div>' +
+            '<div style="white-space:pre-line;">' + esc(detail.longDescription) + '</div>'
+          : '');
       document.getElementById('gdmCreator').textContent = detail.creator;
       document.getElementById('gdmCategory').textContent = detail.category;
       document.getElementById('gdmMemberCount').textContent = memberCount + '人（クリックで一覧を見る）';
