@@ -286,7 +286,7 @@
     line-height:1.7;
     margin-bottom:10px;
     display:-webkit-box;
-    -webkit-line-clamp:2;
+    -webkit-line-clamp:3;
     -webkit-box-orient:vertical;
     overflow:hidden;
   }
@@ -807,7 +807,7 @@
       d.innerHTML = html || '';
       return (d.textContent || '').replace(/\s+/g, ' ').trim();
     }
-    var EXCERPT_MAX = 80;
+    var EXCERPT_MAX = 140;
     function excerptText(html) {
       var t = plainText(html);
       return t.length > EXCERPT_MAX ? t.slice(0, EXCERPT_MAX) + '…' : t;
