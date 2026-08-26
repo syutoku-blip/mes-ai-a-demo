@@ -262,6 +262,7 @@
           <a href="#" data-tab="content">コンテンツ登録</a>
           <a href="#" data-tab="forms">フォーム管理</a>
           <a href="#" data-tab="community">コミュニティ登録</a>
+          <a href="#" data-tab="guideline">ガイドライン管理</a>
           <a href="#" data-tab="ads">広告設定</a>
           <a href="#" data-tab="apply">出品申請の確認</a>
           <a href="#" data-tab="marketOrders">マーケット申込み一覧</a>
@@ -473,6 +474,38 @@
             <button type="submit" class="el-btn el-btn--primary" style="align-self:flex-start;">コミュニティを登録する</button>
           </form>
           <div id="communityAdminList" style="margin-top:32px;"></div>
+        </div>
+
+        <!-- ガイドライン管理 -->
+        <div class="el-admin-panel" data-panel="guideline" style="display:none;">
+          <p style="font-size:13px;color:var(--el-ink-faint);margin:0 0 20px;line-height:1.8;">
+            「ご利用の前にご確認ください」に表示する項目を登録します。フォーラム（フォーラムTOP／すべての投稿）とコミュニティ（コミュニティ一覧）で別々に管理でき、クリックするとモーダルで本文が表示されます。表示順は「並び順」の数値が小さいものから並びます。
+          </p>
+          <form id="guidelineForm" style="display:flex;flex-direction:column;gap:16px;max-width:720px;">
+            <div style="display:flex;gap:12px;flex-wrap:wrap;">
+              <label style="flex:1;min-width:200px;">
+                <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">表示先</span>
+                <select name="section" required style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
+                  <option value="forum">フォーラム（フォーラムTOP／すべての投稿）</option>
+                  <option value="community">コミュニティ一覧</option>
+                </select>
+              </label>
+              <label style="width:140px;">
+                <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">並び順</span>
+                <input type="number" name="sortOrder" value="0" step="1" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
+              </label>
+            </div>
+            <label>
+              <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">タイトル</span>
+              <input type="text" name="title" required style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
+            </label>
+            <label>
+              <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">本文（モーダルに表示されます）</span>
+              <div id="guidelineEditorMount"></div>
+            </label>
+            <button type="submit" class="el-btn el-btn--primary" style="align-self:flex-start;">ガイドラインを登録する</button>
+          </form>
+          <div id="guidelineList" style="margin-top:32px;"></div>
         </div>
 
         <!-- フォーム管理 -->
@@ -1007,6 +1040,7 @@
   }
 
   var announceEditor = createFullRichEditor(document.getElementById('announceEditorMount'), 'announceEd');
+  var guidelineEditor = createFullRichEditor(document.getElementById('guidelineEditorMount'), 'guidelineEd');
   var eventEditor = createFullRichEditor(document.getElementById('eventEditorMount'), 'eventEd');
   var contentRecommendEditor = createFullRichEditor(document.getElementById('contentRecommendEditorMount'), 'contentRecEd');
   var contentDetailEditor = createFullRichEditor(document.getElementById('contentDetailEditorMount'), 'contentDetEd');
@@ -1191,6 +1225,38 @@
       ctaText: fd.get('ctaText'), ctaUrl: fd.get('ctaUrl')
     }).then(function (data) {
       if (data.ok) { alert('お知らせを登録しました。'); e.target.reset(); announceEditor.clear(); loadAnnouncements(); }
+      else alert(data.error || '登録に失敗しました');
+    }).catch(function () { alert('通信エラーが発生しました。'); });
+  });
+
+  // ------------------------------------------------------------
+  // ガイドライン管理（「ご利用の前にご確認ください」に表示する項目）
+  // ------------------------------------------------------------
+  var SECTION_LABEL = { forum: 'フォーラム', community: 'コミュニティ' };
+  function loadGuidelines() {
+    apiPost({ action: 'listContent', type: 'guideline' }).then(function (data) {
+      if (!data.ok) return;
+      var items = data.items.slice().sort(function (a, b) {
+        return (Number(a.sortOrder) || 0) - (Number(b.sortOrder) || 0);
+      });
+      renderSimpleList('guidelineList', items, function (it) {
+        return '<div style="padding:14px 16px;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);">' +
+          '<span class="badge badge--cat">' + (SECTION_LABEL[it.section] || it.section) + '</span> <strong>' + it.title + '</strong>' +
+          '<div style="font-size:12px;color:var(--el-ink-faint);margin-top:4px;">並び順：' + (it.sortOrder || 0) + '</div></div>';
+      }, 'guideline', loadGuidelines);
+    });
+  }
+  loadGuidelines();
+
+  document.getElementById('guidelineForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var fd = new FormData(e.target);
+    apiPost({
+      action: 'createContent', type: 'guideline',
+      section: fd.get('section'), title: fd.get('title'), bodyHtml: guidelineEditor.getHtml(),
+      sortOrder: fd.get('sortOrder')
+    }).then(function (data) {
+      if (data.ok) { alert('ガイドラインを登録しました。'); e.target.reset(); guidelineEditor.clear(); loadGuidelines(); }
       else alert(data.error || '登録に失敗しました');
     }).catch(function () { alert('通信エラーが発生しました。'); });
   });

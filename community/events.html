@@ -27,25 +27,29 @@
     -webkit-appearance:none;
     display:none;
   }
-  /* 広告バナー：スポンサー枠だとひと目でわかるよう、破線の縁取りとADタグ・アイコンで装飾 */
-  .el-ad-banner{
+  /* 広告バナー：横長の画像1枚を全面に表示し、CTAボタンとスポンサー表記を重ねる（管理者ページで「横長」「スクエア」を選択） */
+  .el-ad-banner-v2{
     position:relative !important;
-    display:flex !important;
-    align-items:center !important;
-    gap:16px !important;
-    background:var(--el-cream-deep, #FBF3E3) !important;
-    border:1.5px dashed var(--el-mustard-deep, #B9812A) !important;
+    display:block !important;
+    width:100% !important;
     border-radius:var(--el-radius-m, 14px) !important;
-    padding:22px 20px 18px !important;
-    overflow:visible !important;
+    overflow:hidden !important;
+    background:var(--el-cream-deep, #FBF3E3) !important;
+    aspect-ratio:960 / 220;
+    max-height:200px !important;
   }
-  .el-ad-banner::before{
-    content:"AD" !important;
+  .el-ad-banner-v2.is-square{
+    aspect-ratio:1 / 1 !important;
+    max-width:280px !important;
+    max-height:none !important;
+    margin:0 auto !important;
+  }
+  .el-ad-tag-v2{
     position:absolute !important;
-    top:-10px !important;
-    left:18px !important;
-    display:inline-block !important;
-    background:var(--el-mustard-deep, #B9812A) !important;
+    top:12px !important;
+    left:12px !important;
+    z-index:2 !important;
+    background:rgba(0,0,0,.55) !important;
     color:#fff !important;
     font-size:10px !important;
     font-weight:700 !important;
@@ -54,38 +58,30 @@
     border-radius:999px !important;
     line-height:1.6 !important;
   }
-  .el-ad-banner .el-ad-tag{
-    display:none !important;
+  .el-ad-image-v2{
+    position:absolute !important;
+    inset:0 !important;
+    background-size:cover !important;
+    background-position:center !important;
+    background-color:var(--el-teal, #2F8F82) !important;
   }
-  .el-ad-banner .el-ad-icon{
-    width:48px !important;
-    height:48px !important;
-    min-width:48px !important;
-    border-radius:14px !important;
-    display:flex !important;
-    align-items:center !important;
-    justify-content:center !important;
-    flex:none !important;
-    font-size:19px !important;
-    box-shadow:0 3px 8px rgba(0,0,0,.15) !important;
+  .el-ad-cta-v2{
+    position:absolute !important;
+    right:16px !important;
+    bottom:16px !important;
+    z-index:2 !important;
+    box-shadow:0 3px 10px rgba(0,0,0,.25) !important;
   }
-  .el-ad-banner .el-ad-body{
-    flex:1 !important;
-    min-width:0 !important;
-  }
-  .el-ad-banner .el-ad-body strong{
-    display:block !important;
-    color:var(--el-navy, #16233F) !important;
-    font-size:14px !important;
-  }
-  .el-ad-banner .el-ad-body span{
-    display:block !important;
-    color:var(--el-ink-faint, #8A8478) !important;
-    font-size:12.5px !important;
-    margin-top:2px !important;
-  }
-  .el-ad-banner > a.el-btn{
-    flex:none !important;
+  .el-ad-sponsor-v2{
+    position:absolute !important;
+    left:12px !important;
+    bottom:10px !important;
+    z-index:2 !important;
+    font-size:11px !important;
+    color:rgba(255,255,255,.85) !important;
+    background:rgba(0,0,0,.35) !important;
+    padding:2px 9px !important;
+    border-radius:999px !important;
   }
   .el-auth-modal{
     display:none;
@@ -296,61 +292,7 @@
         </div>
 
         <div class="el-event-grid" id="eventGrid">
-          <a href="event-detail.html?id=fda-consult" class="el-event-card">
-            <div class="el-event-thumb" style="background:linear-gradient(135deg,#2F8F82,#1B5A52);">
-              <span class="el-event-date-tag"><span class="d">20</span><span class="m">AUG</span></span>
-              <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-            </div>
-            <div class="el-event-body">
-              <span class="badge badge--member">SHiFT限定</span>
-              <h3>FDA施設登録に関するオンライン相談会</h3>
-              <div class="meta">2026年8月20日（木）19:00〜20:00・オンライン（Zoom）</div>
-              <p>更新期限の考え方や、よくある差し戻し事例への対処法を運営チームが直接ご案内します。</p>
-              <span class="el-event-cta">詳細・申込 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></span>
-            </div>
-          </a>
-
-          <a href="event-detail.html?id=intro-seminar" class="el-event-card">
-            <div class="el-event-thumb" style="background:linear-gradient(135deg,#EAAA3C,#C88A24);">
-              <span class="el-event-date-tag"><span class="d">05</span><span class="m">SEP</span></span>
-              <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><path d="M12 2 3 7l9 5 9-5-9-5Z"/><path d="M3 12l9 5 9-5M3 17l9 5 9-5"/></svg>
-            </div>
-            <div class="el-event-body">
-              <span class="badge badge--open">公開</span>
-              <h3>初めての輸出セミナー（初心者向け）</h3>
-              <div class="meta">2026年9月5日（土）10:00〜11:30・オンライン（Zoom）</div>
-              <p>輸出の基本的な流れと、最初につまずきやすいポイントをまとめてお伝えします。</p>
-              <span class="el-event-cta">詳細・申込 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></span>
-            </div>
-          </a>
-
-          <a href="event-detail.html?id=slc-seminar" class="el-event-card">
-            <div class="el-event-thumb" style="background:linear-gradient(135deg,#6FA3C7,#3E7EA3);">
-              <span class="el-event-date-tag"><span class="d">18</span><span class="m">SEP</span></span>
-              <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="m9 10 3 2-3 2z"/></svg>
-            </div>
-            <div class="el-event-body">
-              <span class="badge badge--restricted">メンバー限定</span>
-              <h3>SLC活用セミナー：FBA納品費用の内訳を読み解く</h3>
-              <div class="meta">2026年9月18日（金）19:00〜20:00・オンライン（Zoom）</div>
-              <p>実データを見ながら、費用の内訳と削減余地の見つけ方を解説します。</p>
-              <span class="el-event-cta">詳細・申込 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></span>
-            </div>
-          </a>
-
-          <a href="event-detail.html?id=fukuoka-offline" class="el-event-card">
-            <div class="el-event-thumb" style="background:linear-gradient(135deg,#D8785A,#B85C3E);">
-              <span class="el-event-date-tag"><span class="d">10</span><span class="m">OCT</span></span>
-              <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z"/></svg>
-            </div>
-            <div class="el-event-body">
-              <span class="badge badge--open">公開</span>
-              <h3>福岡オフ会：輸出事業者の集い</h3>
-              <div class="meta">2026年10月10日（土）14:00〜16:00・福岡市内（現地開催）</div>
-              <p>Export Lab発、初めてのリアルイベントです。定員に限りがございます。</p>
-              <span class="el-event-cta">詳細・申込 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></span>
-            </div>
-          </a>
+          <div style="padding:40px 4px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;grid-column:1/-1;">読み込み中...</div>
         </div>
 
         <div class="el-section-head" style="margin-top:52px;">
@@ -359,33 +301,8 @@
             <div class="sub">開催済みのアーカイブです</div>
           </div>
         </div>
-        <div class="el-event-grid is-past">
-          <a href="event-detail.html?id=slc-seminar-jul" class="el-event-card">
-            <div class="el-event-thumb" style="background:linear-gradient(135deg,#8A94A8,#5C6784);">
-              <span class="el-event-date-tag"><span class="d">22</span><span class="m">JUL</span></span>
-              <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="m9 10 3 2-3 2z"/></svg>
-            </div>
-            <div class="el-event-body">
-              <span class="badge badge--announce">公式</span>
-              <h3>SLC活用セミナー（2026年7月開催分）</h3>
-              <div class="meta">2026年7月22日（水）開催・録画をマーケットで販売中</div>
-              <p>FBA納品費用の内訳の見方を解説した回です。</p>
-              <span class="el-event-cta">録画を見る <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></span>
-            </div>
-          </a>
-          <a href="event-detail.html?id=kickoff" class="el-event-card">
-            <div class="el-event-thumb" style="background:linear-gradient(135deg,#8A94A8,#5C6784);">
-              <span class="el-event-date-tag"><span class="d">01</span><span class="m">JUL</span></span>
-              <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
-            </div>
-            <div class="el-event-body">
-              <span class="badge badge--announce">公式</span>
-              <h3>Export Lab オープン記念キックオフ</h3>
-              <div class="meta">2026年7月1日（水）開催</div>
-              <p>コミュニティのオープンを記念して開催した初回イベントです。</p>
-              <span class="el-event-cta">レポートを見る <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></span>
-            </div>
-          </a>
+        <div class="el-event-grid is-past" id="pastEventGrid">
+          <div style="padding:40px 4px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;grid-column:1/-1;">読み込み中...</div>
         </div>
 
       </div>
@@ -393,14 +310,11 @@
     <section class="el-section" style="padding-top:0;padding-bottom:24px;">
       <div class="wrap">
 
-        <div class="el-ad-banner el-page-bottom-ad">
-          <span class="el-ad-tag">AD</span>
-          <span class="el-ad-icon" style="background:#3E7EA3;color:#fff;font-weight:800;">⌕</span>
-          <div class="el-ad-body">
-            <strong>ProFinder</strong>
-            <span>米Amazonの商品リサーチを効率化</span>
-          </div>
-          <a href="#" class="el-btn el-btn--ghost el-btn--sm">詳しく見る</a>
+        <div class="el-ad-banner-v2" id="adBanner">
+          <span class="el-ad-tag-v2">AD</span>
+          <div class="el-ad-image-v2" id="adImageV2"></div>
+          <a href="#" class="el-btn el-btn--primary el-btn--sm el-ad-cta-v2" id="adCtaV2">詳しく見る</a>
+          <span class="el-ad-sponsor-v2" id="adSponsorV2"></span>
         </div>
 
       </div>
@@ -573,11 +487,43 @@
     }
   });
 
-  // 管理者ページで登録された実際のイベントを先頭に追加する
+  // 管理者ページで登録された実際のイベントを表示する（デモは使わず、シートのデータのみ）
   (function () {
     var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
     var grid = document.getElementById('eventGrid');
-    if (!grid) return;
+    var pastGrid = document.getElementById('pastEventGrid');
+    if (!grid && !pastGrid) return;
+
+    function esc(s) {
+      var d = document.createElement('div');
+      d.textContent = s == null ? '' : String(s);
+      return d.innerHTML;
+    }
+
+    function renderCard(it) {
+      var dt = it.eventDate ? new Date(it.eventDate) : null;
+      var d = dt ? ('0' + dt.getDate()).slice(-2) : '-';
+      var m = dt ? dt.toLocaleString('en-US', { month: 'short' }).toUpperCase() : '';
+      var metaText = (dt ? dt.toLocaleString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'short', hour: '2-digit', minute: '2-digit' }) : '') + (it.place ? '・' + it.place : '');
+      var plain = (it.bodyHtml || '').replace(/<[^>]*>/g, '').slice(0, 70);
+      var thumbInner = it.thumbnailUrl
+        ? '<img src="' + it.thumbnailUrl + '" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;">'
+        : '<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
+      return '<a href="event-detail.html?id=' + encodeURIComponent(it.id) + '" class="el-event-card">' +
+        '<div class="el-event-thumb" style="background:linear-gradient(135deg,#2F8F82,#1B5A52);position:relative;overflow:hidden;">' +
+        '<span class="el-event-date-tag" style="position:relative;z-index:1;"><span class="d">' + d + '</span><span class="m">' + m + '</span></span>' +
+        thumbInner +
+        '</div><div class="el-event-body">' +
+        '<h3>' + esc(it.title) + '</h3>' +
+        '<div class="meta">' + esc(metaText) + '</div>' +
+        '<p>' + esc(plain) + '</p>' +
+        '<span class="el-event-cta">詳細 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></span>' +
+        '</div></a>';
+    }
+
+    var emptyHtml = function (msg) {
+      return '<div style="padding:40px 4px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;grid-column:1/-1;">' + msg + '</div>';
+    };
 
     fetch(API_URL, {
       method: 'POST',
@@ -586,31 +532,24 @@
     })
       .then(function (res) { return res.json(); })
       .then(function (data) {
-        var items = (data.ok && data.items) ? data.items : [];
-        if (!items.length) return;
-        var html = items.map(function (it) {
-          var dt = it.eventDate ? new Date(it.eventDate) : null;
-          var d = dt ? ('0' + dt.getDate()).slice(-2) : '-';
-          var m = dt ? dt.toLocaleString('en-US', { month: 'short' }).toUpperCase() : '';
-          var metaText = (dt ? dt.toLocaleString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'short', hour: '2-digit', minute: '2-digit' }) : '') + (it.place ? '・' + it.place : '');
-          var plain = (it.bodyHtml || '').replace(/<[^>]*>/g, '').slice(0, 70);
-          var thumbInner = it.thumbnailUrl
-            ? '<img src="' + it.thumbnailUrl + '" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;">'
-            : '<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
-          return '<a href="event-detail.html?id=' + encodeURIComponent(it.id) + '" class="el-event-card">' +
-            '<div class="el-event-thumb" style="background:linear-gradient(135deg,#2F8F82,#1B5A52);position:relative;overflow:hidden;">' +
-            '<span class="el-event-date-tag" style="position:relative;z-index:1;"><span class="d">' + d + '</span><span class="m">' + m + '</span></span>' +
-            thumbInner +
-            '</div><div class="el-event-body">' +
-            '<h3>' + it.title + '</h3>' +
-            '<div class="meta">' + metaText + '</div>' +
-            '<p>' + plain + '</p>' +
-            '<span class="el-event-cta">詳細 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></span>' +
-            '</div></a>';
-        }).join('');
-        grid.insertAdjacentHTML('afterbegin', html);
+        var items = (data.ok && data.items) ? data.items.slice() : [];
+        var now = Date.now();
+        var upcoming = [];
+        var past = [];
+        items.forEach(function (it) {
+          var t = it.eventDate ? Date.parse(it.eventDate) : NaN;
+          if (!isNaN(t) && t < now) past.push(it); else upcoming.push(it);
+        });
+        upcoming.sort(function (a, b) { return (Date.parse(a.eventDate || '') || 0) - (Date.parse(b.eventDate || '') || 0); });
+        past.sort(function (a, b) { return (Date.parse(b.eventDate || '') || 0) - (Date.parse(a.eventDate || '') || 0); });
+
+        if (grid) grid.innerHTML = upcoming.length ? upcoming.map(renderCard).join('') : emptyHtml('現在、開催予定のイベントはありません。');
+        if (pastGrid) pastGrid.innerHTML = past.length ? past.map(renderCard).join('') : emptyHtml('過去のイベントはまだありません。');
       })
-      .catch(function () {});
+      .catch(function () {
+        if (grid) grid.innerHTML = emptyHtml('読み込みに失敗しました。');
+        if (pastGrid) pastGrid.innerHTML = emptyHtml('読み込みに失敗しました。');
+      });
   })();
 
   // イベントカードは event-detail.html?id=... へ直接遷移する（モーダルは使用しない）
@@ -655,6 +594,54 @@
     }, 700);
   })();
 
+  var ADS = [
+    { name: "SLCサービス", desc: "米AmazonFBA納品代行サービス", gradient: "linear-gradient(120deg, var(--el-teal), #1B5A52)" },
+    { name: "FDA Compliance Partner", desc: "FDA規制対応サービス", gradient: "linear-gradient(120deg, var(--el-mustard), #8A5E1A)" },
+    { name: "ProFinder", desc: "米Amazonリサーチツール", gradient: "linear-gradient(120deg, #3E7EA3, #1B3E5C)" },
+    { name: "Allynair", desc: "海外発送代行サービス", gradient: "linear-gradient(120deg, var(--el-sage), #2E5C3E)" },
+    { name: "AmaNavi", desc: "米Amazon進出サポートサービス", gradient: "linear-gradient(120deg, var(--el-coral), #8A3E2E)" }
+  ];
+  (function () {
+    var el = document.getElementById('adBanner');
+    if (!el) return;
+    var imageEl = document.getElementById('adImageV2');
+    var ctaEl = document.getElementById('adCtaV2');
+    var sponsorEl = document.getElementById('adSponsorV2');
+
+    function renderMockAd() {
+      var ad = ADS[Math.floor(Math.random() * ADS.length)];
+      el.classList.remove('is-square');
+      imageEl.style.background = ad.gradient;
+      imageEl.style.backgroundImage = 'none';
+      ctaEl.textContent = '詳しく見る';
+      sponsorEl.textContent = 'スポンサー：' + ad.name;
+    }
+
+    // 管理者ページで登録された広告（横長／スクエア）があれば、そちらを優先して表示する
+    var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
+    fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'listContent', type: 'ad' })
+    })
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        var ads = (data.ok && data.items) ? data.items : [];
+        if (!ads.length) { renderMockAd(); return; }
+        var ad = ads[Math.floor(Math.random() * ads.length)];
+        el.classList.toggle('is-square', ad.adType === 'square');
+        if (ad.imageUrl) {
+          imageEl.style.backgroundImage = 'url(' + ad.imageUrl + ')';
+        } else {
+          imageEl.style.backgroundImage = 'none';
+          imageEl.style.background = 'var(--el-teal)';
+        }
+        ctaEl.textContent = ad.ctaText || '詳しく見る';
+        if (ad.ctaUrl) ctaEl.href = ad.ctaUrl;
+        sponsorEl.textContent = 'スポンサー：' + (ad.serviceName || '');
+      })
+      .catch(renderMockAd);
+  })();
 </script>
 <div class="el-auth-modal" id="authModal" aria-hidden="true">
   <div class="el-auth-modal-backdrop" data-auth-close></div>

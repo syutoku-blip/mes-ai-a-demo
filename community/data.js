@@ -22,7 +22,7 @@ window.EL_loadLiveTopics = function (callback) {
           id: t.id, title: t.title, body: t.body, category: t.category, tags: t.tags || [],
           author: t.authorName || 'ゲスト', date: (t.createdAt || '').slice(0, 10),
           views: t.views || 0, recency: Date.parse(t.createdAt || '') || 0, status: t.status || 'unsolved',
-          visibility: t.visibility || 'general', comments: []
+          visibility: t.visibility || 'general', comments: new Array(t.commentCount || 0)
         };
       });
       window.EL_TOPICS = live;

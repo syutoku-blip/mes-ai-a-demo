@@ -29,66 +29,6 @@
   }
   /* 「ご利用の前に」ボックスとその下のコンテンツの余白 */
   .el-pinned-box{ margin-bottom:28px; }
-  /* 広告バナー：スポンサー枠だとひと目でわかるよう、破線の縁取りとADタグ・アイコンで装飾 */
-  .el-ad-banner{
-    position:relative !important;
-    display:flex !important;
-    align-items:center !important;
-    gap:16px !important;
-    background:var(--el-cream-deep, #FBF3E3) !important;
-    border:1.5px dashed var(--el-mustard-deep, #B9812A) !important;
-    border-radius:var(--el-radius-m, 14px) !important;
-    padding:22px 20px 18px !important;
-    overflow:visible !important;
-  }
-  .el-ad-banner::before{
-    content:"AD" !important;
-    position:absolute !important;
-    top:-10px !important;
-    left:18px !important;
-    display:inline-block !important;
-    background:var(--el-mustard-deep, #B9812A) !important;
-    color:#fff !important;
-    font-size:10px !important;
-    font-weight:700 !important;
-    letter-spacing:.08em !important;
-    padding:3px 10px !important;
-    border-radius:999px !important;
-    line-height:1.6 !important;
-  }
-  .el-ad-banner .el-ad-tag{
-    display:none !important;
-  }
-  .el-ad-banner .el-ad-icon{
-    width:48px !important;
-    height:48px !important;
-    min-width:48px !important;
-    border-radius:14px !important;
-    display:flex !important;
-    align-items:center !important;
-    justify-content:center !important;
-    flex:none !important;
-    font-size:19px !important;
-    box-shadow:0 3px 8px rgba(0,0,0,.15) !important;
-  }
-  .el-ad-banner .el-ad-body{
-    flex:1 !important;
-    min-width:0 !important;
-  }
-  .el-ad-banner .el-ad-body strong{
-    display:block !important;
-    color:var(--el-navy, #16233F) !important;
-    font-size:14px !important;
-  }
-  .el-ad-banner .el-ad-body span{
-    display:block !important;
-    color:var(--el-ink-faint, #8A8478) !important;
-    font-size:12.5px !important;
-    margin-top:2px !important;
-  }
-  .el-ad-banner > a.el-btn{
-    flex:none !important;
-  }
   .el-auth-modal{
     display:none;
     position:fixed;
@@ -139,6 +79,54 @@
     color:var(--el-ink-faint, #8A8478);
     padding:4px;
   }
+  /* ガイドラインモーダル：「ご利用の前にご確認ください」の各項目をクリックすると、本文をここに表示する */
+  .el-guide-modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    z-index:900;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+  }
+  .el-guide-modal.is-open{ display:flex; }
+  .el-guide-modal-backdrop{
+    position:absolute;
+    inset:0;
+    background:rgba(22,35,63,.45);
+  }
+  .el-guide-modal-panel{
+    position:relative;
+    background:#fff;
+    border-radius:var(--el-radius-m, 14px);
+    padding:28px 26px;
+    max-width:520px;
+    width:100%;
+    max-height:80vh;
+    overflow-y:auto;
+    box-shadow:0 12px 40px rgba(22,35,63,.25);
+  }
+  .el-guide-modal-panel h3{
+    margin:0 0 14px;
+    font-size:17px;
+    color:var(--el-navy, #16233F);
+    padding-right:26px;
+  }
+  .el-guide-modal-body{
+    font-size:13.5px;
+    color:var(--el-ink-faint, #8A8478);
+    line-height:1.8;
+  }
+  .el-guide-modal-close{
+    position:absolute;
+    top:10px;
+    right:10px;
+    border:none;
+    background:transparent;
+    cursor:pointer;
+    color:var(--el-ink-faint, #8A8478);
+    padding:4px;
+  }
   [data-guest-hide]{ display:none !important; }
   /* ヘッダーの新規登録／ログイン／ログアウトボタン：背景色に関わらず文字が見えるよう、
      透過ではなく塗りのボタンにする */
@@ -159,7 +147,7 @@
   .el-footer-cols a{ color:var(--el-ink-faint, #8A8478) !important; }
   .el-footer-cols h6{ color:var(--el-navy, #16233F) !important; }
   .el-footer-bottom{ color:var(--el-ink-faint, #8A8478) !important; border-top-color:var(--el-line-soft, #E5DFD2) !important; }
-  /* 広告バナー：横長の画像1枚を全面に表示し、CTAボタンとスポンサー表記を重ねる */
+  /* 広告バナー：横長の画像1枚を全面に表示し、CTAボタンとスポンサー表記を重ねる（管理者ページで「横長」「スクエア」を選択） */
   .el-ad-banner-v2{
     position:relative !important;
     display:block !important;
@@ -169,6 +157,12 @@
     background:var(--el-cream-deep, #FBF3E3) !important;
     aspect-ratio:960 / 220;
     max-height:200px !important;
+  }
+  .el-ad-banner-v2.is-square{
+    aspect-ratio:1 / 1 !important;
+    max-width:280px !important;
+    max-height:none !important;
+    margin:0 auto !important;
   }
   .el-ad-tag-v2{
     position:absolute !important;
@@ -331,18 +325,13 @@
         <nav class="el-breadcrumb el-page-breadcrumb" aria-label="パンくず"><a href="index.html">ホーム</a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg><span>フォーラムTOP</span></nav>
 
 
-        <details class="el-pinned-box" open>
+        <details class="el-pinned-box" open id="guideBox">
           <summary class="el-pinned-head">
             <span class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 17v5M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16h14v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z"/></svg></span>
             <h2>ご利用の前にご確認ください</h2>
             <svg class="el-pinned-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
           </summary>
-          <div class="el-pinned-list">
-            <a href="topic.html" class="el-pinned-item"><span class="dot"></span>投稿ルールについて<svg class="go" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></a>
-            <a href="topic.html" class="el-pinned-item"><span class="dot"></span>カテゴリ・ハッシュタグの使い方<svg class="go" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></a>
-            <a href="topic.html" class="el-pinned-item"><span class="dot"></span>SHiFT会員限定エリアについて<svg class="go" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></a>
-            <a href="topic.html" class="el-pinned-item"><span class="dot"></span>「解決」の付け方<svg class="go" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></a>
-          </div>
+          <div class="el-pinned-list" id="guideList"></div>
         </details>
 
         <div class="el-feed-head" style="--feed-color:var(--el-teal-deep);">
@@ -793,6 +782,7 @@
 
     function renderMockAd() {
       var ad = ADS[Math.floor(Math.random() * ADS.length)];
+      el.classList.remove('is-square');
       imageEl.style.background = ad.gradient;
       imageEl.style.backgroundImage = 'none';
       ctaEl.textContent = '詳しく見る';
@@ -807,12 +797,14 @@
     })
       .then(function (res) { return res.json(); })
       .then(function (data) {
-        var ads = ((data.ok && data.items) ? data.items : []).filter(function (a) { return (a.adType || 'banner') === 'banner'; });
+        var ads = (data.ok && data.items) ? data.items : [];
         if (!ads.length) { renderMockAd(); return; }
         var ad = ads[Math.floor(Math.random() * ads.length)];
+        el.classList.toggle('is-square', ad.adType === 'square');
         if (ad.imageUrl) {
           imageEl.style.backgroundImage = 'url(' + ad.imageUrl + ')';
         } else {
+          imageEl.style.backgroundImage = 'none';
           imageEl.style.background = 'var(--el-teal)';
         }
         ctaEl.textContent = ad.ctaText || '詳しく見る';
@@ -820,6 +812,59 @@
         sponsorEl.textContent = 'スポンサー：' + (ad.serviceName || '');
       })
       .catch(renderMockAd);
+  })();
+
+  // 「ご利用の前にご確認ください」：管理者ページで登録されたガイドラインをクリック→モーダル表示にする（デモは使わない）
+  (function () {
+    var box = document.getElementById('guideBox');
+    var listEl = document.getElementById('guideList');
+    var modal = document.getElementById('guideModal');
+    var modalTitle = document.getElementById('guideModalTitle');
+    var modalBody = document.getElementById('guideModalBody');
+    if (!box || !listEl) return;
+    var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
+
+    function esc(s) {
+      var d = document.createElement('div');
+      d.textContent = s == null ? '' : String(s);
+      return d.innerHTML;
+    }
+    function openGuideModal(title, bodyHtml) {
+      if (!modal) return;
+      modalTitle.textContent = title;
+      modalBody.innerHTML = bodyHtml || '';
+      modal.classList.add('is-open');
+      modal.setAttribute('aria-hidden', 'false');
+    }
+    if (modal) {
+      modal.querySelectorAll('[data-guide-close]').forEach(function (el) {
+        el.addEventListener('click', function () {
+          modal.classList.remove('is-open');
+          modal.setAttribute('aria-hidden', 'true');
+        });
+      });
+    }
+
+    fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'listContent', type: 'guideline' })
+    })
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        var items = (data.ok && data.items) ? data.items.filter(function (g) { return g.section === 'forum'; }) : [];
+        items.sort(function (a, b) { return (Number(a.sortOrder) || 0) - (Number(b.sortOrder) || 0); });
+        if (!items.length) { box.style.display = 'none'; return; }
+        listEl.innerHTML = items.map(function (it, idx) {
+          return '<button type="button" class="el-pinned-item" style="width:100%;background:none;border:none;text-align:left;cursor:pointer;font:inherit;" data-idx="' + idx + '">' +
+            '<span class="dot"></span>' + esc(it.title) +
+            '<svg class="go" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></button>';
+        }).join('');
+        listEl.querySelectorAll('.el-pinned-item').forEach(function (btn, idx) {
+          btn.addEventListener('click', function () { openGuideModal(items[idx].title, items[idx].bodyHtml); });
+        });
+      })
+      .catch(function () { box.style.display = 'none'; });
   })();
 </script>
 <div class="el-auth-modal" id="authModal" aria-hidden="true">
@@ -849,6 +894,18 @@
       <a href="#" class="el-btn el-btn--primary el-btn--sm">SHiFT会員について見る</a>
       <button type="button" class="el-btn el-btn--ghost el-btn--sm" data-shift-close>閉じる</button>
     </div>
+  </div>
+</div>
+
+
+<div class="el-guide-modal" id="guideModal" aria-hidden="true">
+  <div class="el-guide-modal-backdrop" data-guide-close></div>
+  <div class="el-guide-modal-panel" role="dialog" aria-modal="true">
+    <button type="button" class="el-guide-modal-close" data-guide-close aria-label="閉じる">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <h3 id="guideModalTitle"></h3>
+    <div class="el-guide-modal-body" id="guideModalBody"></div>
   </div>
 </div>
 

@@ -102,7 +102,7 @@
   .el-footer-cols a{ color:var(--el-ink-faint, #8A8478) !important; }
   .el-footer-cols h6{ color:var(--el-navy, #16233F) !important; }
   .el-footer-bottom{ color:var(--el-ink-faint, #8A8478) !important; border-top-color:var(--el-line-soft, #E5DFD2) !important; }
-  /* 広告バナー：横長の画像1枚を全面に表示し、CTAボタンとスポンサー表記を重ねる */
+  /* 広告バナー：横長の画像1枚を全面に表示し、CTAボタンとスポンサー表記を重ねる（管理者ページで「横長」「スクエア」を選択） */
   .el-ad-banner-v2{
     position:relative !important;
     display:block !important;
@@ -112,6 +112,12 @@
     background:var(--el-cream-deep, #FBF3E3) !important;
     aspect-ratio:960 / 220;
     max-height:200px !important;
+  }
+  .el-ad-banner-v2.is-square{
+    aspect-ratio:1 / 1 !important;
+    max-width:280px !important;
+    max-height:none !important;
+    margin:0 auto !important;
   }
   .el-ad-tag-v2{
     position:absolute !important;
@@ -1482,6 +1488,7 @@
 
     function renderMockAd() {
       var ad = ADS[Math.floor(Math.random() * ADS.length)];
+      el.classList.remove('is-square');
       imageEl.style.background = ad.gradient;
       imageEl.style.backgroundImage = 'none';
       ctaEl.textContent = '詳しく見る';
@@ -1496,12 +1503,14 @@
     })
       .then(function (res) { return res.json(); })
       .then(function (data) {
-        var ads = ((data.ok && data.items) ? data.items : []).filter(function (a) { return (a.adType || 'banner') === 'banner'; });
+        var ads = (data.ok && data.items) ? data.items : [];
         if (!ads.length) { renderMockAd(); return; }
         var ad = ads[Math.floor(Math.random() * ads.length)];
+        el.classList.toggle('is-square', ad.adType === 'square');
         if (ad.imageUrl) {
           imageEl.style.backgroundImage = 'url(' + ad.imageUrl + ')';
         } else {
+          imageEl.style.backgroundImage = 'none';
           imageEl.style.background = 'var(--el-teal)';
         }
         ctaEl.textContent = ad.ctaText || '詳しく見る';

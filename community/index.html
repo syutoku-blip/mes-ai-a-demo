@@ -27,7 +27,7 @@
     -webkit-appearance:none;
     display:none;
   }
-  /* 広告バナー：横長の画像1枚を全面に表示し、CTAボタンとスポンサー表記を重ねる */
+  /* 広告バナー：横長の画像1枚を全面に表示し、CTAボタンとスポンサー表記を重ねる（管理者ページで「横長」「スクエア」を選択） */
   .el-ad-banner-v2{
     position:relative !important;
     display:block !important;
@@ -37,6 +37,12 @@
     background:var(--el-cream-deep, #FBF3E3) !important;
     aspect-ratio:960 / 220;
     max-height:200px !important;
+  }
+  .el-ad-banner-v2.is-square{
+    aspect-ratio:1 / 1 !important;
+    max-width:280px !important;
+    max-height:none !important;
+    margin:0 auto !important;
   }
   .el-ad-tag-v2{
     position:absolute !important;
@@ -359,56 +365,7 @@
             <h2>公式お知らせ</h2>
           </div>
           <div class="el-announce-box" id="announceBox">
-            <a href="announcement-detail.html" class="el-announce-row">
-              <span class="ic" style="background:var(--el-coral);">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
-              </span>
-              <span class="el-announce-row-main">
-                <span class="title">Export Lab、正式オープンしました</span>
-                <span class="meta"><span class="badge badge--announce">公式</span>運営チーム・3時間前</span>
-              </span>
-              <span class="el-announce-arrow"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></span>
-            </a>
-            <a href="announcement-detail.html" class="el-announce-row">
-              <span class="ic" style="background:var(--el-coral);">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
-              </span>
-              <span class="el-announce-row-main">
-                <span class="title">FDA施設登録に関するオンライン相談会を開催します</span>
-                <span class="meta"><span class="badge badge--announce">公式</span>運営チーム・1日前</span>
-              </span>
-              <span class="el-announce-arrow"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></span>
-            </a>
-            <a href="announcement-detail.html" class="el-announce-row">
-              <span class="ic" style="background:var(--el-sage);">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
-              </span>
-              <span class="el-announce-row-main">
-                <span class="title">8月上旬、システムメンテナンスのお知らせ</span>
-                <span class="meta"><span class="badge badge--cat">メンテナンス</span>運営チーム・2026年8月1日</span>
-              </span>
-              <span class="el-announce-arrow"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></span>
-            </a>
-            <a href="announcement-detail.html" class="el-announce-row">
-              <span class="ic" style="background:var(--el-sage);">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
-              </span>
-              <span class="el-announce-row-main">
-                <span class="title">投稿ガイドラインを公開しました</span>
-                <span class="meta"><span class="badge badge--cat">ガイドライン</span>運営チーム・2026年7月16日</span>
-              </span>
-              <span class="el-announce-arrow"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></span>
-            </a>
-            <a href="announcement-detail.html" class="el-announce-row">
-              <span class="ic" style="background:var(--el-coral);">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
-              </span>
-              <span class="el-announce-row-main">
-                <span class="title">SHiFT会員限定カテゴリを追加しました</span>
-                <span class="meta"><span class="badge badge--announce">公式</span>運営チーム・2026年7月7日</span>
-              </span>
-              <span class="el-announce-arrow"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></span>
-            </a>
+            <div style="padding:40px 4px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">読み込み中...</div>
           </div>
           <div style="text-align:center;margin-top:18px;">
             <a href="announcements.html" class="el-btn el-btn--ghost el-btn--sm">すべて見る</a>
@@ -671,6 +628,7 @@
 
     function renderMockAd() {
       var ad = ADS[Math.floor(Math.random() * ADS.length)];
+      el.classList.remove('is-square');
       imageEl.style.background = ad.gradient;
       imageEl.style.backgroundImage = 'none';
       ctaEl.textContent = '詳しく見る';
@@ -686,12 +644,14 @@
     })
       .then(function (res) { return res.json(); })
       .then(function (data) {
-        var ads = ((data.ok && data.items) ? data.items : []).filter(function (a) { return (a.adType || 'banner') === 'banner'; });
+        var ads = (data.ok && data.items) ? data.items : [];
         if (!ads.length) { renderMockAd(); return; }
         var ad = ads[Math.floor(Math.random() * ads.length)];
+        el.classList.toggle('is-square', ad.adType === 'square');
         if (ad.imageUrl) {
           imageEl.style.backgroundImage = 'url(' + ad.imageUrl + ')';
         } else {
+          imageEl.style.backgroundImage = 'none';
           imageEl.style.background = 'var(--el-teal)';
         }
         ctaEl.textContent = ad.ctaText || '詳しく見る';
@@ -701,7 +661,7 @@
       .catch(renderMockAd);
   })();
 
-  // 公式お知らせ：管理者ページで登録された最新のお知らせを先頭に差し込む（デモの5件はそのまま残す）
+  // 公式お知らせ：デモは使わず、シート（お知らせ）から最新3件のみ取得して表示する
   (function () {
     var box = document.getElementById('announceBox');
     if (!box) return;
@@ -727,9 +687,12 @@
     })
       .then(function (res) { return res.json(); })
       .then(function (data) {
-        var items = (data.ok && data.items) ? data.items.slice(0, 3) : [];
-        if (!items.length) return;
-        var html = items.map(function (a) {
+        var items = (data.ok && data.items) ? data.items.slice(0, 5) : [];
+        if (!items.length) {
+          box.innerHTML = '<div style="padding:40px 4px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">お知らせはまだありません。</div>';
+          return;
+        }
+        box.innerHTML = items.map(function (a) {
           return '<a href="announcement-detail.html?id=' + encodeURIComponent(a.id) + '" class="el-announce-row">' +
             '<span class="ic" style="background:var(--el-coral);">' +
             '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>' +
@@ -741,9 +704,10 @@
             '<span class="el-announce-arrow"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></span>' +
             '</a>';
         }).join('');
-        box.insertAdjacentHTML('afterbegin', html);
       })
-      .catch(function () {});
+      .catch(function () {
+        box.innerHTML = '<div style="padding:40px 4px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">読み込みに失敗しました。</div>';
+      });
   })();
 
   // コミュニティに参加する：デモは使わず、シート（コミュニティ）から新着3件のみ取得して表示する

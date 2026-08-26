@@ -27,25 +27,29 @@
     -webkit-appearance:none;
     display:none;
   }
-  /* 広告バナー：スポンサー枠だとひと目でわかるよう、破線の縁取りとADタグ・アイコンで装飾 */
-  .el-ad-banner{
+  /* 広告バナー：横長の画像1枚を全面に表示し、CTAボタンとスポンサー表記を重ねる（管理者ページで「横長」「スクエア」を選択） */
+  .el-ad-banner-v2{
     position:relative !important;
-    display:flex !important;
-    align-items:center !important;
-    gap:16px !important;
-    background:var(--el-cream-deep, #FBF3E3) !important;
-    border:1.5px dashed var(--el-mustard-deep, #B9812A) !important;
+    display:block !important;
+    width:100% !important;
     border-radius:var(--el-radius-m, 14px) !important;
-    padding:22px 20px 18px !important;
-    overflow:visible !important;
+    overflow:hidden !important;
+    background:var(--el-cream-deep, #FBF3E3) !important;
+    aspect-ratio:960 / 220;
+    max-height:200px !important;
   }
-  .el-ad-banner::before{
-    content:"AD" !important;
+  .el-ad-banner-v2.is-square{
+    aspect-ratio:1 / 1 !important;
+    max-width:280px !important;
+    max-height:none !important;
+    margin:0 auto !important;
+  }
+  .el-ad-tag-v2{
     position:absolute !important;
-    top:-10px !important;
-    left:18px !important;
-    display:inline-block !important;
-    background:var(--el-mustard-deep, #B9812A) !important;
+    top:12px !important;
+    left:12px !important;
+    z-index:2 !important;
+    background:rgba(0,0,0,.55) !important;
     color:#fff !important;
     font-size:10px !important;
     font-weight:700 !important;
@@ -54,38 +58,30 @@
     border-radius:999px !important;
     line-height:1.6 !important;
   }
-  .el-ad-banner .el-ad-tag{
-    display:none !important;
+  .el-ad-image-v2{
+    position:absolute !important;
+    inset:0 !important;
+    background-size:cover !important;
+    background-position:center !important;
+    background-color:var(--el-teal, #2F8F82) !important;
   }
-  .el-ad-banner .el-ad-icon{
-    width:48px !important;
-    height:48px !important;
-    min-width:48px !important;
-    border-radius:14px !important;
-    display:flex !important;
-    align-items:center !important;
-    justify-content:center !important;
-    flex:none !important;
-    font-size:19px !important;
-    box-shadow:0 3px 8px rgba(0,0,0,.15) !important;
+  .el-ad-cta-v2{
+    position:absolute !important;
+    right:16px !important;
+    bottom:16px !important;
+    z-index:2 !important;
+    box-shadow:0 3px 10px rgba(0,0,0,.25) !important;
   }
-  .el-ad-banner .el-ad-body{
-    flex:1 !important;
-    min-width:0 !important;
-  }
-  .el-ad-banner .el-ad-body strong{
-    display:block !important;
-    color:var(--el-navy, #16233F) !important;
-    font-size:14px !important;
-  }
-  .el-ad-banner .el-ad-body span{
-    display:block !important;
-    color:var(--el-ink-faint, #8A8478) !important;
-    font-size:12.5px !important;
-    margin-top:2px !important;
-  }
-  .el-ad-banner > a.el-btn{
-    flex:none !important;
+  .el-ad-sponsor-v2{
+    position:absolute !important;
+    left:12px !important;
+    bottom:10px !important;
+    z-index:2 !important;
+    font-size:11px !important;
+    color:rgba(255,255,255,.85) !important;
+    background:rgba(0,0,0,.35) !important;
+    padding:2px 9px !important;
+    border-radius:999px !important;
   }
   .el-auth-modal{
     display:none;
@@ -342,14 +338,11 @@
     <section class="el-section" style="padding-top:0;padding-bottom:24px;">
       <div class="wrap">
 
-        <div class="el-ad-banner el-page-bottom-ad">
-          <span class="el-ad-tag">AD</span>
-          <span class="el-ad-icon" style="background:var(--el-teal);color:#fff;font-weight:800;">▣</span>
-          <div class="el-ad-body">
-            <strong>SLCサービス</strong>
-            <span>米Amazon FBA納品をもっとシンプルに</span>
-          </div>
-          <a href="#" class="el-btn el-btn--ghost el-btn--sm">詳しく見る</a>
+        <div class="el-ad-banner-v2" id="adBanner">
+          <span class="el-ad-tag-v2">AD</span>
+          <div class="el-ad-image-v2" id="adImageV2"></div>
+          <a href="#" class="el-btn el-btn--primary el-btn--sm el-ad-cta-v2" id="adCtaV2">詳しく見る</a>
+          <span class="el-ad-sponsor-v2" id="adSponsorV2"></span>
         </div>
 
       </div>
@@ -559,6 +552,54 @@
           if (status) { status.textContent = '送信に失敗しました。通信環境をご確認の上、再度お試しください。'; status.style.color = '#B8593D'; }
         });
     });
+  })();
+  var ADS = [
+    { name: "SLCサービス", desc: "米AmazonFBA納品代行サービス", gradient: "linear-gradient(120deg, var(--el-teal), #1B5A52)" },
+    { name: "FDA Compliance Partner", desc: "FDA規制対応サービス", gradient: "linear-gradient(120deg, var(--el-mustard), #8A5E1A)" },
+    { name: "ProFinder", desc: "米Amazonリサーチツール", gradient: "linear-gradient(120deg, #3E7EA3, #1B3E5C)" },
+    { name: "Allynair", desc: "海外発送代行サービス", gradient: "linear-gradient(120deg, var(--el-sage), #2E5C3E)" },
+    { name: "AmaNavi", desc: "米Amazon進出サポートサービス", gradient: "linear-gradient(120deg, var(--el-coral), #8A3E2E)" }
+  ];
+  (function () {
+    var el = document.getElementById('adBanner');
+    if (!el) return;
+    var imageEl = document.getElementById('adImageV2');
+    var ctaEl = document.getElementById('adCtaV2');
+    var sponsorEl = document.getElementById('adSponsorV2');
+
+    function renderMockAd() {
+      var ad = ADS[Math.floor(Math.random() * ADS.length)];
+      el.classList.remove('is-square');
+      imageEl.style.background = ad.gradient;
+      imageEl.style.backgroundImage = 'none';
+      ctaEl.textContent = '詳しく見る';
+      sponsorEl.textContent = 'スポンサー：' + ad.name;
+    }
+
+    // 管理者ページで登録された広告（横長／スクエア）があれば、そちらを優先して表示する
+    var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
+    fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'listContent', type: 'ad' })
+    })
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        var ads = (data.ok && data.items) ? data.items : [];
+        if (!ads.length) { renderMockAd(); return; }
+        var ad = ads[Math.floor(Math.random() * ads.length)];
+        el.classList.toggle('is-square', ad.adType === 'square');
+        if (ad.imageUrl) {
+          imageEl.style.backgroundImage = 'url(' + ad.imageUrl + ')';
+        } else {
+          imageEl.style.backgroundImage = 'none';
+          imageEl.style.background = 'var(--el-teal)';
+        }
+        ctaEl.textContent = ad.ctaText || '詳しく見る';
+        if (ad.ctaUrl) ctaEl.href = ad.ctaUrl;
+        sponsorEl.textContent = 'スポンサー：' + (ad.serviceName || '');
+      })
+      .catch(renderMockAd);
   })();
 </script>
 <div class="el-auth-modal" id="authModal" aria-hidden="true">
