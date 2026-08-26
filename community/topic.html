@@ -38,6 +38,8 @@
     border-color:var(--el-teal-deep, #1E6F63) !important;
   }
   .el-footer{ background:#EDE4D0 !important; border-top:1px solid var(--el-line-soft, #E5DFD2) !important; }
+  /* .el-post のpaddingが後勝ちで上書きしてしまうため、質問本文（OP）の余白を明示的に復元 */
+  .el-post--op{ padding:28px 28px 26px !important; }
   .el-footer .tag{ color:var(--el-ink-faint, #8A8478) !important; }
   .el-footer .el-logo{ color:var(--el-navy, #16233F) !important; }
   .el-footer .el-logo .dot{ color:var(--el-mustard-deep, #B9812A) !important; }
@@ -439,8 +441,7 @@
             <div id="replyEditor" class="el-editor-area" contenteditable="true" data-placeholder="コメントを入力してください…"></div>
           </div>
           <div class="el-reply-foot">
-            <span style="font-size:12.5px;color:var(--el-ink-faint);">リッチテキストで入力できます</span>
-            <button class="el-btn el-btn--primary el-btn--sm">返信を送信</button>
+            <button class="el-btn el-btn--primary el-btn--sm" style="margin-left:auto;">返信を送信</button>
           </div>
         </div>
 
@@ -850,6 +851,8 @@
           var end = editor.querySelector('[data-sel-marker="end"]');
           var a = document.createElement('a');
           a.href = url;
+          a.target = '_blank';
+          a.rel = 'noopener noreferrer';
           if (!end) {
             a.textContent = url;
             start.parentNode.insertBefore(a, start);
@@ -1062,6 +1065,14 @@
       d.textContent = s == null ? '' : String(s);
       return d.innerHTML;
     }
+    // 本文内のリンク（リッチエディターで埋め込まれたもの）は、その場で遷移せず別タブで開くようにする
+    function elOpenLinksInNewTab(container) {
+      if (!container) return;
+      container.querySelectorAll('a[href]').forEach(function (a) {
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+      });
+    }
     function relativeTime(dateStr) {
       var d = new Date(dateStr);
       if (isNaN(d.getTime())) return '';
@@ -1093,6 +1104,7 @@
           '<button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H4l2.4-3.6A8.5 8.5 0 1 1 21 11.5Z"/></svg> 返信</button>' +
           '</div></div>';
         list.appendChild(article);
+        elOpenLinksInNewTab(article.querySelector('.el-post-body'));
       });
       var countEl = document.querySelector('.el-comments-head .count');
       if (countEl) countEl.textContent = items.length + '件の返信';
@@ -1138,7 +1150,7 @@
         var opDates = op.querySelector('.el-post-dates');
         if (opDates) opDates.textContent = '投稿日：' + relativeTime(item.createdAt);
         var opBody = op.querySelector('.el-post-body');
-        if (opBody) opBody.innerHTML = item.body || '';
+        if (opBody) { opBody.innerHTML = item.body || ''; elOpenLinksInNewTab(opBody); }
         var opTags = op.querySelector('.el-post-tags');
         if (opTags) {
           var tagLabelFn = window.EL_getTagLabel || function (t) { return '#' + t; };

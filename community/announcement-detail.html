@@ -274,61 +274,36 @@
           <a href="announcements.html" style="color:var(--el-ink-faint);">公式お知らせ</a>
         </div>
 
-        <article class="el-notice">
+        <article class="el-notice" id="noticeArticle" hidden>
           <div class="el-notice-head">
             <span class="el-notice-icon">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
             </span>
             <div>
-              <span class="badge badge--announce" id="noticeCategory">公式</span>
-              <h1 id="noticeTitle">FDA施設登録に関するオンライン相談会を開催します</h1>
-              <div class="el-notice-meta" id="noticeMeta">Export Lab運営チーム・2026年8月5日</div>
+              <span class="badge badge--announce" id="noticeCategory">お知らせ</span>
+              <h1 id="noticeTitle"></h1>
+              <div class="el-notice-meta" id="noticeMeta"></div>
             </div>
           </div>
 
-          <div class="el-notice-body" id="noticeBody">
-            <p>いつもExport Labをご利用いただきありがとうございます。</p>
-            <p>「FDA対応 実務者の会」グループのメンバーを対象に、FDA施設登録の更新手続きに関するオンライン相談会を開催いたします。更新期限の考え方や、よくある差し戻し事例への対処法について、運営チームより直接ご案内します。</p>
-            <p>個別の状況に応じたご質問にもその場でお答えしますので、施設登録の更新を控えている方はぜひご参加ください。</p>
-            <div class="el-notice-fact">
-              <div><span>日時</span>2026年8月20日（木）19:00〜20:00</div>
-              <div><span>対象</span>FDA対応 実務者の会 グループメンバー</div>
-              <div><span>形式</span>オンライン（Zoom）</div>
-            </div>
-            <p>参加をご希望の方は、グループページの参加申請からお申し込みください。</p>
-          </div>
+          <div class="el-notice-body" id="noticeBody"></div>
           <div id="noticeCta"></div>
 
           <div class="el-notice-foot">
-            <a href="groups.html" class="el-btn el-btn--primary el-btn--sm">グループページへ</a>
             <a href="announcements.html" class="el-btn el-btn--ghost el-btn--sm">お知らせ一覧へ戻る</a>
           </div>
         </article>
 
-        <div class="el-section-head" style="margin-top:48px;margin-bottom:14px;">
-          <div><h2 style="font-size:17px;">他のお知らせ</h2></div>
+        <div id="noticeEmpty" style="padding:60px 20px;text-align:center;color:var(--el-ink-faint);font-size:14px;" hidden>
+          <p id="noticeEmptyText">お知らせが見つかりませんでした。</p>
+          <a href="announcements.html" class="el-btn el-btn--ghost el-btn--sm" style="margin-top:14px;display:inline-block;">お知らせ一覧へ戻る</a>
         </div>
-        <div class="el-announce-box">
-          <a href="announcement-detail.html" class="el-announce-row">
-            <span class="ic" style="background:var(--el-coral);">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
-            </span>
-            <span class="el-announce-row-main">
-              <span class="title">Export Lab、正式オープンしました</span>
-              <span class="meta"><span class="badge badge--announce">公式</span>運営チーム・3時間前</span>
-            </span>
-            <span class="el-announce-arrow"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></span>
-          </a>
-          <a href="announcement-detail.html" class="el-announce-row">
-            <span class="ic" style="background:var(--el-sage);">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
-            </span>
-            <span class="el-announce-row-main">
-              <span class="title">8月上旬、システムメンテナンスのお知らせ</span>
-              <span class="meta"><span class="badge badge--cat">メンテナンス</span>運営チーム・2026年8月1日</span>
-            </span>
-            <span class="el-announce-arrow"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></span>
-          </a>
+
+        <div id="otherNoticesSection" hidden>
+          <div class="el-section-head" style="margin-top:48px;margin-bottom:14px;">
+            <div><h2 style="font-size:17px;">他のお知らせ</h2></div>
+          </div>
+          <div class="el-announce-box" id="otherNoticesBox"></div>
         </div>
 
       </div>
@@ -513,11 +488,47 @@
     }
   });
 
-  // ?id= が指定されている場合は、管理者ページで登録した実際のお知らせを表示する
+  // 管理者ページで登録された実際のお知らせをシートから取得して表示する（デモデータは使用しない）
   (function () {
+    var badgeClass = { 'お知らせ': 'badge--announce', 'メンテナンス': 'badge--cat', 'ガイドライン': 'badge--cat' };
+    var iconColor = { 'お知らせ': 'var(--el-coral)', 'メンテナンス': 'var(--el-sage)', 'ガイドライン': 'var(--el-teal)' };
+    var noticeArticle = document.getElementById('noticeArticle');
+    var noticeEmpty = document.getElementById('noticeEmpty');
+    var noticeEmptyText = document.getElementById('noticeEmptyText');
+    var otherSection = document.getElementById('otherNoticesSection');
+    var otherBox = document.getElementById('otherNoticesBox');
+
+    function showEmpty(message) {
+      noticeArticle.hidden = true;
+      noticeEmptyText.textContent = message;
+      noticeEmpty.hidden = false;
+    }
+
+    function renderOtherNotices(items, currentId) {
+      var others = items
+        .filter(function (it) { return it.id !== currentId; })
+        .sort(function (a, b) { return new Date(b.createdAt) - new Date(a.createdAt); })
+        .slice(0, 4);
+      if (!others.length) { otherSection.hidden = true; return; }
+      otherBox.innerHTML = others.map(function (it) {
+        var cat = it.category || 'お知らせ';
+        return '<a href="announcement-detail.html?id=' + encodeURIComponent(it.id) + '" class="el-announce-row">' +
+          '<span class="ic" style="background:' + (iconColor[cat] || 'var(--el-coral)') + ';">' +
+          '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>' +
+          '</span>' +
+          '<span class="el-announce-row-main">' +
+          '<span class="title">' + it.title + '</span>' +
+          '<span class="meta"><span class="badge ' + (badgeClass[cat] || 'badge--announce') + '">' + cat + '</span>' + new Date(it.createdAt).toLocaleDateString('ja-JP') + '</span>' +
+          '</span>' +
+          '<span class="el-announce-arrow"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></span>' +
+          '</a>';
+      }).join('');
+      otherSection.hidden = false;
+    }
+
     var params = new URLSearchParams(window.location.search);
     var id = params.get('id');
-    if (!id) return; // 指定が無ければサンプル表示のまま
+    if (!id) { showEmpty('お知らせが指定されていません。'); return; }
 
     var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
     fetch(API_URL, {
@@ -529,7 +540,8 @@
       .then(function (data) {
         var items = (data.ok && data.items) ? data.items : [];
         var item = items.filter(function (it) { return it.id === id; })[0];
-        if (!item) return;
+        if (!item) { showEmpty('お知らせが見つかりませんでした。'); return; }
+        noticeArticle.hidden = false;
         document.title = item.title + '｜Export Lab';
         document.getElementById('noticeCategory').textContent = item.category || 'お知らせ';
         document.getElementById('noticeTitle').textContent = item.title;
@@ -543,13 +555,14 @@
         var iframe = document.createElement('iframe');
         iframe.style.cssText = 'width:100%;border:none;display:block;';
         bodyEl.appendChild(iframe);
-        iframe.srcdoc = '<div style="font-family:sans-serif;line-height:1.8;">' + (item.bodyHtml || '') + '</div>';
+        // 本文内のリンクは、その場（iframe内）で遷移せず別タブで開くようにする
+        iframe.srcdoc = '<base target="_blank"><div style="font-family:sans-serif;line-height:1.8;">' + (item.bodyHtml || '') + '</div>';
         iframe.addEventListener('load', function () {
           try { iframe.style.height = iframe.contentWindow.document.body.scrollHeight + 'px'; } catch (e) {}
           // 検索結果からのキーワードは、iframeの中身自体にもハイライトを入れる
           try {
-            var params = new URLSearchParams(window.location.search);
-            var hl = params.get('hl');
+            var params2 = new URLSearchParams(window.location.search);
+            var hl = params2.get('hl');
             if (hl) {
               var idoc = iframe.contentWindow.document;
               var hlLower = hl.toLowerCase();
@@ -580,7 +593,9 @@
             }
           } catch (e) {}
         });
-      });
+        renderOtherNotices(items, id);
+      })
+      .catch(function () { showEmpty('お知らせの取得に失敗しました。'); });
   })();
   // 検索結果からのキーワードをハイライトして該当箇所までスクロールする
   (function () {

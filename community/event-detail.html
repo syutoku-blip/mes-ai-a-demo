@@ -508,6 +508,15 @@
         '</div>' +
       '</div>' +
       '<div class="el-notice-foot">' + footHtml + '</div>';
+
+    // 本文内のリンク（リッチエディターで埋め込まれたもの）は、その場で遷移せず別タブで開くようにする
+    var noticeBodyEl = article.querySelector('.el-notice-body');
+    if (noticeBodyEl) {
+      noticeBodyEl.querySelectorAll('a[href]').forEach(function (a) {
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+      });
+    }
   }
 
   function showEventNotFound() {

@@ -879,6 +879,8 @@
       var end = editor.querySelector('[data-sel-marker="end"]');
       var a = document.createElement('a');
       a.href = url;
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
 
       if (!end) {
         // 文字が選択されていない場合、execCommand('createLink')は何も挿入しないため、

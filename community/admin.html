@@ -971,6 +971,8 @@
       var end = editor.querySelector('[data-sel-marker="end"]');
       var a = document.createElement('a');
       a.href = url;
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
       if (!end) {
         a.textContent = url;
         start.parentNode.insertBefore(a, start);
