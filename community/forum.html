@@ -161,8 +161,10 @@
     border-radius:var(--el-radius-m, 14px) !important;
     overflow:hidden !important;
     background:var(--el-cream-deep, #FBF3E3) !important;
+    /* 高さはアスペクト比（960:220）だけで決める。以前はここに max-height:200px の上限があり、
+       表示エリアの実際の横幅（最大1116px程度）に対して高さが低く固定されすぎていた結果、
+       推奨サイズ（960×220px）で用意した画像でも拡大されて表示されてしまっていた。 */
     aspect-ratio:960 / 220;
-    max-height:200px !important;
   }
   .el-ad-banner-v2.is-square{
     aspect-ratio:1 / 1 !important;

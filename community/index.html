@@ -35,8 +35,10 @@
     border-radius:var(--el-radius-m, 14px) !important;
     overflow:hidden !important;
     background:var(--el-cream-deep, #FBF3E3) !important;
+    /* 高さはアスペクト比（960:220）だけで決める。以前はここに max-height:200px の上限があり、
+       表示エリアの実際の横幅（最大1116px程度）に対して高さが低く固定されすぎていた結果、
+       推奨サイズ（960×220px）で用意した画像でも拡大されて表示されてしまっていた。 */
     aspect-ratio:960 / 220;
-    max-height:200px !important;
   }
   .el-ad-banner-v2.is-square{
     aspect-ratio:1 / 1 !important;
@@ -153,6 +155,19 @@
   .el-footer-cols a{ color:var(--el-ink-faint, #8A8478) !important; }
   .el-footer-cols h6{ color:var(--el-navy, #16233F) !important; }
   .el-footer-bottom{ color:var(--el-ink-faint, #8A8478) !important; border-top-color:var(--el-line-soft, #E5DFD2) !important; }
+
+  /* TOP画像下のCTAバー（「気づきやノウハウをシェアしよう」）：枠線は不要とのことなので外す。影だけで浮かせる */
+  .el-hero-cta-bar{ border:none !important; }
+
+  /* 「コミュニティに参加する」カード：aタグに直接 display:block を指定していたため、
+     style.cssが本来カードに効かせているflexレイアウト（説明文の長さに関わらずボタン位置を
+     カード下端で揃える仕組み）が働かず、カードごとにボタンの高さがバラついていた。
+     ここでflexレイアウトを明示的に復元する。 */
+  .el-group-grid a.el-group-card{
+    display:flex !important;
+    flex-direction:column !important;
+    text-decoration:none !important;
+  }
 
   /* WorldShift Trade Watch ニュースカード（ホーム画面） */
   .el-news-grid{
@@ -736,7 +751,7 @@
         }
         list.innerHTML = items.map(function (it) {
           var iconColor = it.color || 'var(--el-teal)';
-          var moreLabel = it.postCount ? (it.postCount + '件の投稿') : '新規';
+          var moreLabel = (it.postCount || 0) + '件の投稿';
           return '<a href="groups.html" class="el-group-card" style="display:block;text-decoration:none;">' +
             '<div class="el-group-top">' +
             '<div class="el-group-icon" style="background:' + iconColor + ';">' +
