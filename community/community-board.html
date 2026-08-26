@@ -35,10 +35,10 @@
     border-radius:var(--el-radius-m, 14px) !important;
     overflow:hidden !important;
     background:var(--el-cream-deep, #FBF3E3) !important;
-    /* 高さはアスペクト比（960:220）だけで決める。以前はここに max-height:200px の上限があり、
-       表示エリアの実際の横幅（最大1116px程度）に対して高さが低く固定されすぎていた結果、
-       推奨サイズ（960×220px）で用意した画像でも拡大されて表示されてしまっていた。 */
-    aspect-ratio:960 / 220;
+    /* 高さはアスペクト比（1200:200＝6:1）で決める。以前は960:220（4.4:1）にしていたが、
+       表示エリアの実際の横幅（最大1116px程度）だと縦幅が256px程度まで伸びてしまい、
+       バナーとして縦に大きすぎたため、より横長の比率に変更した。 */
+    aspect-ratio:1200 / 200;
   }
   .el-ad-banner-v2.is-square{
     aspect-ratio:1 / 1 !important;
@@ -744,11 +744,9 @@
       return d.innerHTML;
     }
     function descBlock(labelText, bodyText, accentColor) {
-      return '<div style="background:var(--el-cream-deep);border-left:3px solid ' + accentColor + ';border-radius:0 var(--el-radius-m) var(--el-radius-m) 0;padding:11px 14px;margin-bottom:10px;">' +
-        '<div style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:' + accentColor + ';letter-spacing:.06em;margin-bottom:5px;">' +
-          '<span style="width:5px;height:5px;border-radius:50%;background:' + accentColor + ';display:inline-block;flex:none;"></span>' + labelText +
-        '</div>' +
-        '<p class="desc" style="margin:0;line-height:1.75;color:var(--el-navy-soft);">' + esc(bodyText).replace(/\n/g, '<br>') + '</p>' +
+      return '<div style="border-top:2px solid ' + accentColor + ';padding-top:10px;margin-bottom:16px;">' +
+        '<div style="font-size:11px;font-weight:700;color:' + accentColor + ';letter-spacing:.09em;margin-bottom:6px;">' + labelText + '</div>' +
+        '<p class="desc" style="margin:0;line-height:1.8;color:var(--el-navy-soft);">' + esc(bodyText).replace(/\n/g, '<br>') + '</p>' +
       '</div>';
     }
     function apiPost(payload) {
@@ -794,11 +792,7 @@
           '<div><h4>' + esc(community.title) + '</h4><div class="visibility">' + esc(community.category || '') + '・運営：' + esc(community.creator || '') + '</div></div>' +
           '</div>' +
           descBlock('概要', community.description || '', 'var(--el-teal)') +
-          (community.longDescription ? descBlock('詳細', community.longDescription, 'var(--el-sky)') : '') +
-          '<a href="community-topic-new.html?groupId=' + encodeURIComponent(groupId) + '" class="el-btn el-btn--primary el-btn--sm" data-guest-block>新規投稿する</a>';
-        if (window.elGetRole && window.elGetRole() === 'guest') {
-          headerCard.querySelector('a.el-btn').addEventListener('click', window.elRequireAuth);
-        }
+          (community.longDescription ? descBlock('詳細', community.longDescription, 'var(--el-sky)') : '');
       }
     });
 

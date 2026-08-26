@@ -1654,7 +1654,7 @@
     var bg = ad.imageUrl
       ? 'background-image:url(' + ad.imageUrl + ');background-size:cover;background-position:center;'
       : 'background:var(--el-teal);';
-    return '<div style="position:relative;border-radius:var(--el-radius-m);overflow:hidden;aspect-ratio:960/220;' + bg + '">' +
+    return '<div style="position:relative;border-radius:var(--el-radius-m);overflow:hidden;aspect-ratio:1200/200;' + bg + '">' +
       '<span style="position:absolute;top:12px;left:12px;background:rgba(0,0,0,.55);color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:999px;">AD</span>' +
       '<span style="position:absolute;right:16px;bottom:16px;box-shadow:0 3px 10px rgba(0,0,0,.25);" class="el-btn el-btn--primary el-btn--sm">' + (ad.ctaText || '詳しく見る') + '</span>' +
       '<span style="position:absolute;left:12px;bottom:10px;font-size:11px;color:rgba(255,255,255,.85);background:rgba(0,0,0,.35);padding:2px 9px;border-radius:999px;">スポンサー：' + (ad.serviceName || 'サービス名') + '</span>' +
@@ -1662,13 +1662,13 @@
   }
 
   var AD_TYPE_INFO = {
-    banner: '<strong>表示場所：</strong>サイトTOP・トピック詳細ページの上部（横長バナー）<br><strong>推奨画像サイズ：</strong>1200 × 275px（アスペクト比 約4.4:1）。表示エリアはパソコンの画面幅いっぱいまで広がる（最大 約1116px）ため、960×220pxちょうどだと引き伸ばされて粗く見えます。1200×275px以上で用意すると、拡大されずきれいに表示されます。この比率からずれる画像は、左右または上下がトリミングされます。',
+    banner: '<strong>表示場所：</strong>サイトTOP・トピック詳細ページの上部（横長バナー）<br><strong>推奨画像サイズ：</strong>1200 × 200px（アスペクト比 6:1）。表示エリアはパソコンの画面幅いっぱいまで広がる（最大 約1116px）ため、この比率より小さい画像だと引き伸ばされて粗く見えます。1200×200px以上で用意すると、拡大されずきれいに表示されます。この比率からずれる画像は、左右または上下がトリミングされます。',
     square: '<strong>表示場所：</strong>新規トピック投稿画面のサイドバー（正方形に近いカード型）<br><strong>推奨画像サイズ：</strong>520 × 300px（アスペクト比 約1.7:1）。カード上部の画像エリアに表示され、下にサービス名・紹介文・CTAボタンが続きます。'
   };
   function updateAdTypeExplain() {
     var type = adForm.querySelector('input[name="adType"]:checked').value;
     document.getElementById('adTypeExplain').innerHTML = AD_TYPE_INFO[type];
-    document.getElementById('adImageLabel').textContent = type === 'square' ? '画像（推奨 520×300px）' : '画像（推奨 1200×275px以上）';
+    document.getElementById('adImageLabel').textContent = type === 'square' ? '画像（推奨 520×300px）' : '画像（推奨 1200×200px以上）';
   }
   adForm.querySelectorAll('input[name="adType"]').forEach(function (r) { r.addEventListener('change', function () { updateAdTypeExplain(); updateAdPreviewFromForm(); }); });
   updateAdTypeExplain();
