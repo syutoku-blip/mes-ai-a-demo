@@ -1,0 +1,1196 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>コミュニティの投稿｜Export Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&family=Noto+Sans+JP:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="../shared/global-header.css">
+<style>
+  /* 検索ボックス：input要素の初期スタイル（黒枠など）を消して馴染ませる */
+  .el-search input[type="search"]{
+    border:none !important;
+    outline:none !important;
+    background:transparent !important;
+    box-shadow:none !important;
+    -webkit-appearance:none !important;
+    appearance:none !important;
+    font:inherit !important;
+    color:inherit !important;
+    padding:0 !important;
+    margin:0 !important;
+    width:100%;
+  }
+  .el-search input[type="search"]::-webkit-search-cancel-button{
+    -webkit-appearance:none;
+    display:none;
+  }
+  [data-guest-hide]{ display:none !important; }
+  #headerAuthLinks .el-btn, #headerSignupLink.el-btn, #headerLoginLink.el-btn{
+    color:#fff !important;
+    background:var(--el-navy, #16233F) !important;
+    border:1px solid var(--el-navy, #16233F) !important;
+  }
+  #headerAuthLinks .el-btn:hover, #headerSignupLink.el-btn:hover, #headerLoginLink.el-btn:hover{
+    background:var(--el-teal-deep, #1E6F63) !important;
+    border-color:var(--el-teal-deep, #1E6F63) !important;
+  }
+  .el-footer{ background:#EDE4D0 !important; border-top:1px solid var(--el-line-soft, #E5DFD2) !important; }
+  .el-footer .tag{ color:var(--el-ink-faint, #8A8478) !important; }
+  .el-footer .el-logo{ color:var(--el-navy, #16233F) !important; }
+  .el-footer .el-logo .dot{ color:var(--el-mustard-deep, #B9812A) !important; }
+  .el-footer-cols a{ color:var(--el-ink-faint, #8A8478) !important; }
+  .el-footer-cols h6{ color:var(--el-navy, #16233F) !important; }
+  .el-footer-bottom{ color:var(--el-ink-faint, #8A8478) !important; border-top-color:var(--el-line-soft, #E5DFD2) !important; }
+  /* 広告バナー：横長の画像1枚を全面に表示し、CTAボタンとスポンサー表記を重ねる（管理者ページで「横長」「スクエア」を選択） */
+  .el-ad-banner-v2{
+    position:relative !important;
+    display:block !important;
+    width:100% !important;
+    border-radius:var(--el-radius-m, 14px) !important;
+    overflow:hidden !important;
+    background:var(--el-cream-deep, #FBF3E3) !important;
+    aspect-ratio:960 / 220;
+    max-height:200px !important;
+  }
+  .el-ad-banner-v2.is-square{
+    aspect-ratio:1 / 1 !important;
+    max-width:280px !important;
+    max-height:none !important;
+    margin:0 auto !important;
+  }
+  .el-ad-tag-v2{
+    position:absolute !important;
+    top:12px !important;
+    left:12px !important;
+    z-index:2 !important;
+    background:rgba(0,0,0,.55) !important;
+    color:#fff !important;
+    font-size:10px !important;
+    font-weight:700 !important;
+    letter-spacing:.08em !important;
+    padding:3px 10px !important;
+    border-radius:999px !important;
+    line-height:1.6 !important;
+  }
+  .el-ad-image-v2{
+    position:absolute !important;
+    inset:0 !important;
+    background-size:cover !important;
+    background-position:center !important;
+    background-color:var(--el-teal, #2F8F82) !important;
+  }
+  .el-ad-cta-v2{
+    position:absolute !important;
+    right:16px !important;
+    bottom:16px !important;
+    z-index:2 !important;
+    box-shadow:0 3px 10px rgba(0,0,0,.25) !important;
+  }
+  .el-ad-sponsor-v2{
+    position:absolute !important;
+    left:12px !important;
+    bottom:10px !important;
+    z-index:2 !important;
+    font-size:11px !important;
+    color:rgba(255,255,255,.85) !important;
+    background:rgba(0,0,0,.35) !important;
+    padding:2px 9px !important;
+    border-radius:999px !important;
+  }
+  .el-auth-modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    z-index:900;
+    align-items:center;
+    justify-content:center;
+  }
+  .el-auth-modal.is-open{ display:flex; }
+  .el-auth-modal-backdrop{
+    position:absolute;
+    inset:0;
+    background:rgba(22,35,63,.45);
+  }
+  .el-auth-modal-panel{
+    position:relative;
+    background:#fff;
+    border-radius:var(--el-radius-m, 14px);
+    padding:28px 26px;
+    max-width:340px;
+    width:90%;
+    text-align:center;
+    box-shadow:0 12px 40px rgba(22,35,63,.25);
+  }
+  .el-auth-modal-panel h3{
+    margin:0 0 10px;
+    font-size:17px;
+    color:var(--el-navy, #16233F);
+  }
+  .el-auth-modal-panel p{
+    margin:0 0 20px;
+    font-size:13px;
+    color:var(--el-ink-faint, #8A8478);
+    line-height:1.7;
+  }
+  .el-auth-modal-actions{
+    display:flex;
+    gap:8px;
+    justify-content:center;
+  }
+  .el-auth-modal-close{
+    position:absolute;
+    top:10px;
+    right:10px;
+    border:none;
+    background:transparent;
+    cursor:pointer;
+    color:var(--el-ink-faint, #8A8478);
+    padding:4px;
+  }
+</style>
+</head>
+<body data-site="community" data-root="..">
+
+<header class="el-header">
+  <div class="el-header-inner">
+    <button class="el-menu-toggle" id="sidebarToggle" aria-label="メニュー">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+    <a href="index.html" class="el-logo">Export Lab<span class="dot">.</span></a>
+    <div class="el-header-actions">
+      <form class="el-search" action="search.html" method="get">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input type="search" name="q" placeholder="検索" aria-label="検索" autocomplete="off">
+      </form>
+      <span id="headerAuthLinks" style="display:flex;gap:6px;white-space:nowrap;"><a href="signup.html" class="el-btn el-btn--ghost el-btn--sm" id="headerSignupLink">新規登録</a><a href="login.html" class="el-btn el-btn--ghost el-btn--sm" id="headerLoginLink">ログイン</a></span>
+      <a href="mypage.html" class="el-header-bell" aria-label="通知">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="count">3</span>
+      </a>
+      <a href="mypage.html" class="el-avatar" id="headerAvatar" aria-label="マイページ">り</a>
+    </div>
+  </div>
+</header>
+
+<div class="el-app" id="appShell">
+  <div class="el-sidebar-wrap">
+    <aside class="el-sidebar" id="sidebar">
+    <nav>
+      <a href="index.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/><path d="M9 22V12h6v10"/></svg>
+        <span class="lbl">ホーム</span>
+      </a>
+
+      <details class="el-side-forum">
+        <summary data-href="forum.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <span class="lbl">フォーラム</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
+        </summary>
+        <div class="el-side-sub">
+          <a href="forum-new.html" class="el-side-cta" data-guest-block>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+            新規投稿をする
+          </a>
+          <a href="board.html">すべて</a>
+          <a href="board.html?sort=new">新着</a>
+          <a href="board.html?sort=hot">人気</a>
+          <a href="board.html?filter=shift&sort=hot">SHiFT member only</a>
+          <a href="board.html?filter=unsolved&sort=hot">未解決</a>
+
+          <a href="forum-categories.html">カテゴリで探す</a>
+          <a href="forum-tags.html">ハッシュタグで探す</a>
+        </div>
+      </details>
+
+      <details class="el-side-forum" open>
+        <summary class="is-active" data-href="groups.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <span class="lbl">コミュニティ</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
+        </summary>
+        <div class="el-side-sub">
+          <a href="groups.html" class="el-side-cta" data-guest-block>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+            新規コミュニティを作成する
+          </a>
+          <a href="groups-list.html">すべて</a>
+          <a href="groups-list.html?sort=new">新着</a>
+          <a href="groups-list.html?sort=hot">人気</a>
+          <a href="groups-list.html?filter=joined&sort=hot">参加中のコミュニティ</a>
+          <a href="groups-list.html?filter=pending&sort=hot">申請中のコミュニティ</a>
+        </div>
+      </details>
+
+      <a href="announcements.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
+        <span class="lbl">公式お知らせ</span>
+      </a>
+
+      <a href="events.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        <span class="lbl">イベント</span>
+      </a>
+
+      <details class="el-side-forum">
+        <summary data-href="market.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/></svg>
+          <span class="lbl">マーケット</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
+        </summary>
+        <div class="el-side-sub">
+          <a href="market-list.html">すべて</a>
+          <a href="market-official.html">ワールドシフト提供</a>
+          <a href="market-apply.html">出品申請</a>
+        </div>
+      </details>
+
+      <a href="members.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M6 16c.5-1.6 1.7-2.5 3-2.5s2.5.9 3 2.5"/><path d="M14 9h4M14 13h4"/></svg>
+        <span class="lbl">メンバー</span>
+      </a>
+
+      <a href="mypage.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+        <span class="lbl">マイページ</span>
+      </a>
+    </nav>
+
+  </aside>
+  </div>
+
+  <div class="el-content">
+    <main class="el-section" style="padding-top:0;">
+      <div class="el-thread-layout">
+        <div class="el-thread-main">
+
+        <div class="el-thread-head">
+          <nav class="el-breadcrumb" aria-label="breadcrumb" id="ctBreadcrumb">
+            <a href="index.html">ホーム</a>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
+            <a href="groups.html">コミュニティ</a>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
+            <span>読み込み中…</span>
+          </nav>
+          <div class="el-t-row-badges" style="margin-bottom:12px;" id="ctBadges"></div>
+          <h1 id="ctTitle">読み込み中…</h1>
+          <div class="el-thread-meta" id="ctMeta">
+            <span id="ctCommentCount">0件の返信</span><span>・</span><span id="ctViewCount">0回の閲覧</span><span>・</span><span id="ctUpdated"></span>
+          </div>
+        </div>
+
+        <article class="el-post el-post--op" id="op" data-author-username="">
+          <div class="el-avatar" id="opAvatar">?</div>
+          <div>
+            <div class="el-reply-tag-slot"></div>
+              <div class="el-post-head">
+              <span class="name" id="opName">読み込み中…</span>
+              <span class="role">投稿者</span>
+            </div>
+            <div class="el-post-dates" id="opDates"></div>
+            <div class="el-post-body" id="opBody"></div>
+            <div class="el-post-actions">
+              <button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14Z"/></svg> 0</button>
+              <button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H4l2.4-3.6A8.5 8.5 0 1 1 21 11.5Z"/></svg> 返信</button>
+              <button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13"/></svg> 共有</button>
+            </div>
+          </div>
+        </article>
+
+        <div class="el-comments-head">
+          <h2>コメント</h2>
+          <span class="count" id="ctCommentsHeadCount">0件</span>
+        </div>
+
+        <div class="el-comments" id="commentsList">
+          <div style="padding:24px 4px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">読み込み中...</div>
+        </div>
+
+        <div class="el-reply-box" id="replyBox" style="display:none;">
+          <div class="el-reply-context" id="replyContext">
+            <a href="#" id="replyContextLink"></a>
+            <button type="button" id="replyContextClear" aria-label="返信を閉じる">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg>
+            </button>
+          </div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:10px;">返信を投稿</div>
+          <div class="el-rich-editor">
+            <div class="el-editor-toolbar" role="toolbar" aria-label="返信の書式">
+              <button type="button" data-command="bold" title="太字"><strong>B</strong></button>
+              <button type="button" data-command="italic" title="斜体"><em>I</em></button>
+              <button type="button" data-command="underline" title="下線"><span style="text-decoration:underline;font-weight:700;">U</span></button>
+              <button type="button" data-command="strikeThrough" title="取り消し線"><span style="text-decoration:line-through;">S</span></button>
+              <span class="sep"></span>
+              <select id="replyFontSizeSelect" class="el-editor-select" title="文字サイズ" aria-label="文字サイズ">
+                <option value="">文字サイズ</option>
+                <option value="12px">小</option>
+                <option value="14px">標準</option>
+                <option value="18px">大</option>
+                <option value="24px">特大</option>
+                <option value="32px">見出し</option>
+              </select>
+              <label class="el-editor-color" title="文字色">A<input type="color" id="replyTextColorPicker" value="#16233f" aria-label="文字色"></label>
+              <label class="el-editor-color el-editor-color--bg" title="背景色"><span>■</span><input type="color" id="replyBgColorPicker" value="#fff3d8" aria-label="背景色"></label>
+              <span class="sep"></span>
+              <button type="button" data-command="insertUnorderedList" title="箇条書き">
+                <svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+              </button>
+              <button type="button" data-command="insertOrderedList" title="番号付きリスト">
+                <svg viewBox="0 0 24 24"><path d="M10 6h11M10 12h11M10 18h11M4 6h1V3M4 3h2M4 12h2l-2 3h2M4 18h2v3H4"/></svg>
+              </button>
+              <button type="button" id="replyQuoteBtn" title="引用">
+                <svg viewBox="0 0 24 24"><path d="M10 11H6a4 4 0 0 1 4-4V5a6 6 0 0 0-6 6v6h6v-6ZM20 11h-4a4 4 0 0 1 4-4V5a6 6 0 0 0-6 6v6h6v-6Z"/></svg>
+              </button>
+              <button type="button" data-command="insertHorizontalRule" title="区切り線">
+                <svg viewBox="0 0 24 24"><path d="M4 12h16"/></svg>
+              </button>
+              <span class="sep"></span>
+              <button type="button" id="replyAddLinkBtn" title="リンク">
+                <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+              </button>
+              <button type="button" id="replyClearFormatBtn" title="書式を解除">
+                <svg viewBox="0 0 24 24"><path d="m3 3 18 18M9 5h9M13 5l-3 10M6 19h8"/></svg>
+              </button>
+            </div>
+            <div class="el-link-popover" id="replyLinkPopover" hidden>
+              <input type="url" id="replyLinkUrlInput" placeholder="https://example.com" aria-label="リンク先URL">
+              <button type="button" id="replyApplyLinkBtn">リンクを設定</button>
+              <button type="button" id="replyRemoveLinkBtn">解除</button>
+            </div>
+            <div id="replyEditor" class="el-editor-area" contenteditable="true" data-placeholder="コメントを入力してください…"></div>
+          </div>
+          <div class="el-reply-foot">
+            <span style="font-size:12.5px;color:var(--el-ink-faint);">リッチテキストで入力できます</span>
+            <button class="el-btn el-btn--primary el-btn--sm">返信を送信</button>
+          </div>
+        </div>
+
+        <div class="el-ad-banner-v2" id="adBanner">
+          <span class="el-ad-tag-v2">AD</span>
+          <div class="el-ad-image-v2" id="adImageV2"></div>
+          <a href="#" class="el-btn el-btn--primary el-btn--sm el-ad-cta-v2" id="adCtaV2">詳しく見る</a>
+          <span class="el-ad-sponsor-v2" id="adSponsorV2"></span>
+        </div>
+
+        </div>
+
+        <aside class="el-thread-side">
+          <div class="el-side-panel">
+            <h4 id="ctSidePanelTitle">このコミュニティの他の投稿</h4>
+            <div id="ctOtherTopics">
+              <div style="padding:8px 2px;color:var(--el-ink-faint);font-size:12.5px;">読み込み中...</div>
+            </div>
+          </div>
+
+          <div class="el-side-panel">
+            <a href="groups.html" class="el-side-panel-row" id="ctBackToCommunityLink">
+              <span class="title">コミュニティの掲示板に戻る →</span>
+            </a>
+          </div>
+        </aside>
+
+      </div>
+    </main>
+
+    <footer class="el-footer">
+      <div class="wrap">
+        <div class="el-footer-grid">
+          <div>
+            <a href="index.html" class="el-logo">Export Lab<span class="dot">.</span></a>
+            <p class="tag">人・モノ・情報がつながる、輸出の共創コミュニティ。運営：WorldShift株式会社</p>
+          </div>
+          <div class="el-footer-cols">
+            <div>
+              <h6>コミュニティ</h6>
+              <a href="board.html">フォーラム</a>
+              <a href="groups.html">コミュニティ</a>
+              <a href="announcements.html">公式お知らせ</a>
+              <a href="events.html">イベント</a>
+              <a href="market.html">マーケット</a>
+            </div>
+            <div>
+              <h6>サポート</h6>
+              <a href="#">ガイドライン</a>
+              <a href="#">よくある質問</a>
+              <a href="#">お問い合わせ</a>
+            </div>
+          </div>
+        </div>
+        <div class="el-footer-bottom">
+          <span>© 2026 WorldShift Inc.</span>
+          <span>Export Lab Community</span>
+        </div>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<div class="el-auth-modal" id="authModal" aria-hidden="true">
+  <div class="el-auth-modal-backdrop" data-auth-close></div>
+  <div class="el-auth-modal-panel" role="dialog" aria-modal="true">
+    <button type="button" class="el-auth-modal-close" data-auth-close aria-label="閉じる">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <h3>ユーザー登録してください</h3>
+    <p>この操作を行うには、会員登録（無料）が必要です。登録すると投稿・返信・購入などすべての機能がご利用いただけます。</p>
+    <div class="el-auth-modal-actions">
+      <a href="signup.html" class="el-btn el-btn--primary el-btn--sm">新規登録する</a>
+      <button type="button" class="el-btn el-btn--ghost el-btn--sm" data-auth-close>閉じる</button>
+    </div>
+  </div>
+</div>
+
+<script src="../shared/global-header.js" defer></script>
+<script>
+  (function () {
+    var appShell = document.getElementById('appShell');
+    var STORAGE_KEY = 'el-sidebar-collapsed';
+    try {
+      if (localStorage.getItem(STORAGE_KEY) === '1') { appShell.classList.add('is-toggled'); }
+    } catch (e) {}
+    document.getElementById('sidebarToggle').addEventListener('click', function () {
+      appShell.classList.toggle('is-toggled');
+      try { localStorage.setItem(STORAGE_KEY, appShell.classList.contains('is-toggled') ? '1' : '0'); } catch (e) {}
+    });
+  })();
+
+  // フォーラム／コミュニティ／マーケットの見出し：矢印以外をクリックしたらページ遷移、矢印は開閉のみ
+  document.querySelectorAll('.el-side-forum > summary[data-href]').forEach(function (summary) {
+    summary.addEventListener('click', function (e) {
+      if (e.target.closest('svg.chev')) return;
+      e.preventDefault();
+      window.location.href = summary.dataset.href;
+    });
+  });
+
+  // ユーザーモード（ゲスト／登録ユーザー／管理者）の切り替えと共通ゲート処理
+  function elDriveImgUrl(url) {
+    if (!url) return url;
+    var m = url.match(/drive\.google\.com\/file\/d\/([^/]+)/) || url.match(/[?&]id=([^&]+)/);
+    if (m && m[1]) return 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w1000';
+    return url;
+  }
+  window.elDriveImgUrl = elDriveImgUrl;
+
+  document.addEventListener('DOMContentLoaded', function () {
+    var ROLE_KEY = 'el-user-role';
+    function getRole() {
+      try { return localStorage.getItem(ROLE_KEY) || 'guest'; } catch (e) { return 'guest'; }
+    }
+    function setRole(role) {
+      try { localStorage.setItem(ROLE_KEY, role); } catch (e) {}
+    }
+    window.elGetRole = getRole;
+
+    var role = getRole();
+    document.body.setAttribute('data-role', role);
+
+    var bell = document.querySelector('.el-header-bell');
+    if (bell && role === 'guest') bell.style.display = 'none';
+    var headerAvatar = document.getElementById('headerAvatar');
+    if (headerAvatar && role === 'guest') headerAvatar.style.display = 'none';
+    else if (headerAvatar) {
+      try {
+        var hp = JSON.parse(localStorage.getItem('el-user-profile') || '{}');
+        var hUsername = localStorage.getItem('el-username') || hp.username || '';
+        if (hp.photoUrl) headerAvatar.innerHTML = '<img src="' + window.elDriveImgUrl(hp.photoUrl) + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
+        else if (hUsername) headerAvatar.textContent = hUsername.charAt(0);
+      } catch (e) {}
+    }
+
+    var authLinksWrap = document.getElementById('headerAuthLinks');
+    var loginLink = document.getElementById('headerLoginLink');
+    var signupLink = document.getElementById('headerSignupLink');
+    if (role !== 'guest' && authLinksWrap) {
+      if (loginLink) loginLink.remove();
+      if (signupLink) {
+        signupLink.textContent = 'ログアウト';
+        signupLink.href = '#';
+        signupLink.addEventListener('click', function (e) {
+          e.preventDefault();
+          setRole('guest');
+          window.location.href = 'index.html';
+        });
+      }
+    }
+
+    var modal = document.getElementById('authModal');
+    window.elRequireAuth = function (e) {
+      if (getRole() !== 'guest') return true;
+      if (e) e.preventDefault();
+      if (modal) { modal.classList.add('is-open'); modal.setAttribute('aria-hidden', 'false'); }
+      return false;
+    };
+    if (modal) {
+      modal.querySelectorAll('[data-auth-close]').forEach(function (el) {
+        el.addEventListener('click', function () {
+          modal.classList.remove('is-open');
+          modal.setAttribute('aria-hidden', 'true');
+        });
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') { modal.classList.remove('is-open'); modal.setAttribute('aria-hidden', 'true'); }
+      });
+    }
+
+    if (role === 'admin') {
+      var sideNav = document.querySelector('.el-sidebar nav');
+      if (sideNav && !sideNav.querySelector('a[href="admin.html"]')) {
+        var adminLink = document.createElement('a');
+        adminLink.href = 'admin.html';
+        adminLink.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 3 7v6c0 5 4 9 9 9s9-4 9-9V7l-9-5Z"/><path d="m9 12 2 2 4-4"/></svg><span class="lbl">管理者ページ</span>';
+        sideNav.appendChild(adminLink);
+      }
+    }
+
+    if (role === 'guest') {
+      document.querySelectorAll('[data-guest-block]').forEach(function (el) {
+        el.addEventListener('click', window.elRequireAuth);
+      });
+    }
+  });
+
+  var ADS = [
+    { name: "SLCサービス", desc: "米AmazonFBA納品代行サービス", gradient: "linear-gradient(120deg, var(--el-teal), #1B5A52)" },
+    { name: "FDA Compliance Partner", desc: "FDA規制対応サービス", gradient: "linear-gradient(120deg, var(--el-mustard), #8A5E1A)" },
+    { name: "ProFinder", desc: "米Amazonリサーチツール", gradient: "linear-gradient(120deg, #3E7EA3, #1B3E5C)" },
+    { name: "Allynair", desc: "海外発送代行サービス", gradient: "linear-gradient(120deg, var(--el-sage), #2E5C3E)" },
+    { name: "AmaNavi", desc: "米Amazon進出サポートサービス", gradient: "linear-gradient(120deg, var(--el-coral), #8A3E2E)" }
+  ];
+  (function () {
+    var el = document.getElementById('adBanner');
+    if (!el) return;
+    var imageEl = document.getElementById('adImageV2');
+    var ctaEl = document.getElementById('adCtaV2');
+    var sponsorEl = document.getElementById('adSponsorV2');
+
+    function renderMockAd() {
+      var ad = ADS[Math.floor(Math.random() * ADS.length)];
+      el.classList.remove('is-square');
+      imageEl.style.background = ad.gradient;
+      imageEl.style.backgroundImage = 'none';
+      ctaEl.textContent = '詳しく見る';
+      sponsorEl.textContent = 'スポンサー：' + ad.name;
+    }
+
+    // 管理者ページで登録された広告（横長／スクエア）があれば、そちらを優先して表示する
+    var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
+    fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'listContent', type: 'ad' })
+    })
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        var ads = (data.ok && data.items) ? data.items : [];
+        if (!ads.length) { renderMockAd(); return; }
+        var ad = ads[Math.floor(Math.random() * ads.length)];
+        el.classList.toggle('is-square', ad.adType === 'square');
+        if (ad.imageUrl) {
+          imageEl.style.backgroundImage = 'url(' + ad.imageUrl + ')';
+        } else {
+          imageEl.style.backgroundImage = 'none';
+          imageEl.style.background = 'var(--el-teal)';
+        }
+        ctaEl.textContent = ad.ctaText || '詳しく見る';
+        if (ad.ctaUrl) ctaEl.href = ad.ctaUrl;
+        sponsorEl.textContent = 'スポンサー：' + (ad.serviceName || '');
+      })
+      .catch(renderMockAd);
+  })();
+
+  // 返信リッチエディター（topic.htmlの返信エディターと同じ仕組み）
+  var replyBox = document.getElementById('replyBox');
+  var replyEditor = document.getElementById('replyEditor');
+  var replyCtx = document.getElementById('replyContext');
+  var replyCtxLink = document.getElementById('replyContextLink');
+  var replyCtxClear = document.getElementById('replyContextClear');
+  var currentReplyToId = 'op';
+
+  function setReplyMention(name) {
+    if (!replyEditor) return;
+    replyEditor.innerHTML = '';
+    replyEditor.appendChild(document.createTextNode('@' + name + ' '));
+    var r = document.createRange();
+    r.selectNodeContents(replyEditor);
+    r.collapse(false);
+    var sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(r);
+  }
+
+  function clearReplyEditor() {
+    if (replyEditor) replyEditor.innerHTML = '';
+  }
+
+  if (replyEditor) {
+    (function () {
+      var editor = replyEditor;
+      var savedRange = null;
+
+      function selectionIsInsideEditor(sel) {
+        if (!sel || !sel.rangeCount) return false;
+        var node = sel.anchorNode;
+        return !!node && (node === editor || editor.contains(node.nodeType === 1 ? node : node.parentNode));
+      }
+      function saveSelection() {
+        var sel = window.getSelection();
+        if (selectionIsInsideEditor(sel)) { savedRange = sel.getRangeAt(0).cloneRange(); }
+      }
+      function restoreSelection() {
+        editor.focus({ preventScroll: true });
+        if (!savedRange) return false;
+        try {
+          var sel = window.getSelection();
+          sel.removeAllRanges();
+          sel.addRange(savedRange.cloneRange());
+          return true;
+        } catch (e) { return false; }
+      }
+      function runCommand(cmd, value) {
+        insertMarkers();
+        document.execCommand('styleWithCSS', false, true);
+        document.execCommand(cmd, false, value == null ? null : value);
+        restoreFromMarkers();
+      }
+      function clearMarkers() {
+        editor.querySelectorAll('[data-sel-marker]').forEach(function (m) { m.remove(); });
+      }
+      function insertMarkers() {
+        restoreSelection();
+        clearMarkers();
+        var sel = window.getSelection();
+        if (!sel || !sel.rangeCount || !selectionIsInsideEditor(sel)) return false;
+        var range = sel.getRangeAt(0);
+        var startMarker = document.createElement('span');
+        startMarker.setAttribute('data-sel-marker', 'start');
+        var endMarker = document.createElement('span');
+        endMarker.setAttribute('data-sel-marker', 'end');
+        if (range.collapsed) { range.insertNode(startMarker); return true; }
+        var endRange = range.cloneRange();
+        endRange.collapse(false);
+        endRange.insertNode(endMarker);
+        var startRange = range.cloneRange();
+        startRange.collapse(true);
+        startRange.insertNode(startMarker);
+        return true;
+      }
+      function rangeFromMarkers() {
+        var start = editor.querySelector('[data-sel-marker="start"]');
+        var end = editor.querySelector('[data-sel-marker="end"]');
+        if (!start) return null;
+        var range = document.createRange();
+        if (end) { range.setStartAfter(start); range.setEndBefore(end); }
+        else { range.setStartAfter(start); range.collapse(true); }
+        return { range: range, start: start, end: end };
+      }
+      function restoreFromMarkers() {
+        var found = rangeFromMarkers();
+        if (!found) { saveSelection(); return; }
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(found.range);
+        found.start.remove();
+        if (found.end) found.end.remove();
+        saveSelection();
+      }
+
+      document.addEventListener('selectionchange', function () {
+        var sel = window.getSelection();
+        if (selectionIsInsideEditor(sel)) saveSelection();
+      });
+      editor.addEventListener('keyup', saveSelection);
+      editor.addEventListener('mouseup', saveSelection);
+      editor.addEventListener('focus', saveSelection);
+      editor.addEventListener('input', saveSelection);
+
+      document.querySelectorAll('#replyBox .el-editor-toolbar button').forEach(function (btn) {
+        btn.addEventListener('pointerdown', function (e) { saveSelection(); e.preventDefault(); });
+      });
+      document.querySelectorAll('#replyBox .el-editor-toolbar select, #replyBox .el-editor-toolbar input[type="color"]').forEach(function (control) {
+        control.addEventListener('pointerdown', saveSelection);
+      });
+      document.querySelectorAll('#replyBox .el-editor-toolbar [data-command]').forEach(function (btn) {
+        btn.addEventListener('click', function () { runCommand(btn.dataset.command, btn.dataset.value || null); });
+      });
+
+      var quoteBtn = document.getElementById('replyQuoteBtn');
+      if (quoteBtn) {
+        quoteBtn.addEventListener('click', function () {
+          insertMarkers();
+          var start = editor.querySelector('[data-sel-marker="start"]');
+          var el = start && start.parentElement;
+          var existing = el && el.closest('blockquote');
+          if (existing && editor.contains(existing)) { document.execCommand('formatBlock', false, 'div'); }
+          else { document.execCommand('formatBlock', false, 'blockquote'); }
+          restoreFromMarkers();
+        });
+      }
+
+      editor.addEventListener('keydown', function (e) {
+        if (e.key !== 'Enter' || e.shiftKey) return;
+        var sel = window.getSelection();
+        if (!sel || !sel.rangeCount || !sel.isCollapsed) return;
+        var node = sel.anchorNode;
+        var el = node && (node.nodeType === 1 ? node : node.parentElement);
+        if (!el) return;
+        var quote = el.closest('blockquote');
+        if (!quote || !editor.contains(quote)) return;
+        e.preventDefault();
+        var normal = document.createElement('div');
+        normal.innerHTML = '<br>';
+        quote.parentNode.insertBefore(normal, quote.nextSibling);
+        var r = document.createRange();
+        r.setStart(normal, 0);
+        r.collapse(true);
+        sel.removeAllRanges();
+        sel.addRange(r);
+        saveSelection();
+      });
+
+      var fontSizeSelect = document.getElementById('replyFontSizeSelect');
+      if (fontSizeSelect) {
+        fontSizeSelect.addEventListener('pointerdown', function () { saveSelection(); });
+        fontSizeSelect.addEventListener('change', function () {
+          var px = this.value;
+          if (!px) return;
+          restoreSelection();
+          document.execCommand('styleWithCSS', false, false);
+          document.execCommand('fontSize', false, '7');
+          editor.querySelectorAll('font[size="7"]').forEach(function (font) {
+            var span = document.createElement('span');
+            span.style.fontSize = px;
+            while (font.firstChild) span.appendChild(font.firstChild);
+            font.replaceWith(span);
+          });
+          document.execCommand('styleWithCSS', false, true);
+          this.value = '';
+          saveSelection();
+        });
+      }
+
+      var textColorPicker = document.getElementById('replyTextColorPicker');
+      if (textColorPicker) textColorPicker.addEventListener('input', function () { runCommand('foreColor', this.value); });
+      var bgColorPicker = document.getElementById('replyBgColorPicker');
+      if (bgColorPicker) {
+        bgColorPicker.addEventListener('input', function () {
+          insertMarkers();
+          document.execCommand('styleWithCSS', false, true);
+          var ok = document.execCommand('hiliteColor', false, this.value);
+          if (!ok) document.execCommand('backColor', false, this.value);
+          restoreFromMarkers();
+        });
+      }
+
+      var linkPopover = document.getElementById('replyLinkPopover');
+      var linkUrlInput = document.getElementById('replyLinkUrlInput');
+      var addLinkBtn = document.getElementById('replyAddLinkBtn');
+      if (addLinkBtn && linkPopover && linkUrlInput) {
+        addLinkBtn.addEventListener('mousedown', function (e) { saveSelection(); e.preventDefault(); });
+        addLinkBtn.addEventListener('click', function () {
+          insertMarkers();
+          var found = rangeFromMarkers();
+          if (!found || !found.end) {
+            linkPopover.hidden = false;
+            linkPopover.classList.add('is-centered');
+          } else {
+            var rect = found.range.getBoundingClientRect();
+            var editorRect = document.querySelector('#replyBox .el-rich-editor').getBoundingClientRect();
+            linkPopover.hidden = false;
+            linkPopover.classList.remove('is-centered');
+            linkPopover.style.left = Math.max(10, Math.min(rect.left - editorRect.left, editorRect.width - 340)) + 'px';
+            linkPopover.style.top = (rect.bottom - editorRect.top + 8) + 'px';
+          }
+          linkUrlInput.value = '';
+          linkUrlInput.focus();
+        });
+        var applyLinkBtn = document.getElementById('replyApplyLinkBtn');
+        applyLinkBtn.addEventListener('mousedown', function (e) { e.preventDefault(); });
+        applyLinkBtn.addEventListener('click', function () {
+          var url = linkUrlInput.value.trim();
+          var start = editor.querySelector('[data-sel-marker="start"]');
+          if (!url || !start) { linkPopover.hidden = true; clearMarkers(); return; }
+          if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+          editor.focus({ preventScroll: true });
+          var end = editor.querySelector('[data-sel-marker="end"]');
+          var a = document.createElement('a');
+          a.href = url;
+          if (!end) {
+            a.textContent = url;
+            start.parentNode.insertBefore(a, start);
+            start.remove();
+          } else {
+            var range = document.createRange();
+            range.setStartAfter(start);
+            range.setEndBefore(end);
+            try { range.surroundContents(a); }
+            catch (err) { var frag = range.extractContents(); a.appendChild(frag); range.insertNode(a); }
+            start.remove();
+            end.remove();
+          }
+          var after = document.createRange();
+          after.setStartAfter(a);
+          after.collapse(true);
+          var sel = window.getSelection();
+          sel.removeAllRanges();
+          sel.addRange(after);
+          saveSelection();
+          linkPopover.hidden = true;
+        });
+        document.getElementById('replyRemoveLinkBtn').addEventListener('click', function () {
+          runCommand('unlink'); linkPopover.hidden = true;
+        });
+        document.addEventListener('mousedown', function (e) {
+          if (!linkPopover.hidden && !e.target.closest('#replyLinkPopover') && !e.target.closest('#replyAddLinkBtn')) {
+            linkPopover.hidden = true;
+            clearMarkers();
+          }
+        });
+      }
+
+      var clearFormatBtn = document.getElementById('replyClearFormatBtn');
+      if (clearFormatBtn) {
+        clearFormatBtn.addEventListener('mousedown', function (e) { e.preventDefault(); });
+        clearFormatBtn.addEventListener('click', function () {
+          restoreSelection();
+          document.execCommand('removeFormat', false, null);
+          document.execCommand('unlink', false, null);
+          var sel = window.getSelection();
+          if (sel.rangeCount) {
+            var node = sel.anchorNode;
+            var el = node && (node.nodeType === 1 ? node : node.parentElement);
+            var block = el && el.closest('blockquote,pre,h1,h2,h3,h4,h5,h6');
+            if (block && editor.contains(block)) document.execCommand('formatBlock', false, 'div');
+          }
+          saveSelection();
+        });
+      }
+    })();
+  }
+
+  function wireReplyButtons() {
+    if (!replyBox) return;
+    document.querySelectorAll('.el-post').forEach(function (post) {
+      var buttons = post.querySelectorAll('.el-post-actions button');
+      var replyBtn = null;
+      buttons.forEach(function (b) { if (b.textContent.indexOf('返信') !== -1) replyBtn = b; });
+      if (!replyBtn) return;
+      var nameEl = post.querySelector('.name');
+      var name = nameEl ? nameEl.textContent.trim() : '';
+      replyBtn.addEventListener('click', function () {
+        if (window.elRequireAuth && !window.elRequireAuth()) return;
+        currentReplyToId = post.id;
+        setReplyMention(name);
+        replyCtxLink.textContent = name + 'さんの投稿に返信中';
+        replyCtxLink.href = '#' + post.id;
+        replyCtx.classList.add('is-visible');
+        replyBox.style.display = '';
+        replyBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        if (replyEditor) replyEditor.focus();
+      });
+    });
+  }
+  if (replyBox) {
+    // コメントは必ずトピック本文かいずれかの返信を対象に投稿するため、返信枠は常時表示せず
+    // 各投稿の「返信」ボタンを押したときだけ、その対象を選んだ状態で開く。
+    replyCtxClear.addEventListener('click', function () {
+      currentReplyToId = 'op';
+      replyCtx.classList.remove('is-visible');
+      clearReplyEditor();
+      replyBox.style.display = 'none';
+    });
+  }
+  wireReplyButtons();
+
+  // ベストアンサー機能：スレ主のみコメントに「ベストアンサーに選ぶ」ボタンを押せる（ローカル保存）
+  function elCurrentUsername() {
+    try { return localStorage.getItem('el-username') || ''; } catch (e) { return ''; }
+  }
+  function bestAnswerKey(topicId) { return 'el-community-best-answer-' + (topicId || 'demo'); }
+  function getBestAnswerId(topicId) {
+    try { return localStorage.getItem(bestAnswerKey(topicId)); } catch (e) { return null; }
+  }
+  function setBestAnswerId(topicId, commentId) {
+    try { localStorage.setItem(bestAnswerKey(topicId), commentId); } catch (e) {}
+  }
+  function clearBestAnswerId(topicId) {
+    try { localStorage.removeItem(bestAnswerKey(topicId)); } catch (e) {}
+  }
+  function markThreadSolvedUI(solved) {
+    var badgesEl = document.getElementById('ctBadges');
+    if (!badgesEl) return;
+    var existing = badgesEl.querySelector('.badge--solved, .badge--unsolved');
+    if (existing) existing.remove();
+    var span = document.createElement('span');
+    span.className = 'badge ' + (solved ? 'badge--solved' : 'badge--unsolved');
+    span.textContent = solved ? '解決' : '未解決';
+    badgesEl.appendChild(span);
+  }
+  function refreshBestAnswerUI(topicId, isAuthor) {
+    var savedBestId = getBestAnswerId(topicId);
+    document.querySelectorAll('#commentsList .el-post').forEach(function (post) {
+      var head = post.querySelector('.el-post-head');
+      var actions = post.querySelector('.el-post-actions');
+      if (head) {
+        var oldBadge = head.querySelector('.el-best-answer-badge');
+        if (oldBadge) oldBadge.remove();
+      }
+      if (actions) {
+        var oldBtn = actions.querySelector('.el-best-answer-btn');
+        if (oldBtn) oldBtn.remove();
+      }
+      var isBest = !!(savedBestId && post.id === savedBestId);
+      if (isBest && head) {
+        var badge = document.createElement('span');
+        badge.className = 'badge badge--solved el-best-answer-badge';
+        badge.style.marginLeft = '6px';
+        badge.textContent = 'ベストアンサー';
+        head.appendChild(badge);
+      }
+      if (isAuthor && actions) {
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'el-best-answer-btn';
+        btn.innerHTML = isBest
+          ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg> 選択を解除'
+          : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg> ベストアンサーに選ぶ';
+        btn.addEventListener('click', function () {
+          if (isBest) { clearBestAnswerId(topicId); }
+          else { setBestAnswerId(topicId, post.id); }
+          markThreadSolvedUI(!!getBestAnswerId(topicId));
+          refreshBestAnswerUI(topicId, isAuthor);
+        });
+        actions.appendChild(btn);
+      }
+    });
+  }
+
+  // 各コメントに「誰への返信か」を常時表示する矢印タグ
+  function wireReplyTags() {
+    document.querySelectorAll('.el-post[data-reply-to]').forEach(function (post) {
+      var slot = post.querySelector('.el-reply-tag-slot');
+      var targetId = post.dataset.replyTo;
+      var target = document.getElementById(targetId);
+      if (!slot || !target || slot.children.length) return;
+      var targetName = target.querySelector('.name');
+      var name = targetName ? targetName.textContent.trim() : '';
+      var tag = document.createElement('a');
+      tag.href = '#' + targetId;
+      tag.className = 'el-reply-tag';
+      tag.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 5 5v6"/></svg>返信 <strong>' + name + '</strong>';
+      tag.addEventListener('click', function (e) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        target.classList.remove('is-highlighted');
+        void target.offsetWidth;
+        target.classList.add('is-highlighted');
+      });
+      slot.appendChild(tag);
+    });
+  }
+
+  // このコミュニティ投稿と、そのコメントをスプレッドシート（コミュニティ投稿／コミュニティコメント）から読み込んで表示する
+  (function () {
+    var params = new URLSearchParams(window.location.search);
+    var topicId = params.get('id');
+    var container = document.getElementById('commentsList');
+    var breadcrumb = document.getElementById('ctBreadcrumb');
+    var CHEV = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>';
+    var currentItem = null;
+
+    if (!topicId) {
+      var head = document.querySelector('.el-thread-head');
+      if (head) head.innerHTML = '<div style="padding:40px 4px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">投稿が指定されていません。<a href="groups.html">コミュニティ一覧に戻る</a></div>';
+      var op0 = document.getElementById('op');
+      if (op0) op0.style.display = 'none';
+      if (container) container.innerHTML = '';
+      var replyBox0 = document.getElementById('replyBox');
+      if (replyBox0) replyBox0.style.display = 'none';
+      return;
+    }
+
+    var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
+    function apiPost(payload) {
+      return fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      }).then(function (res) { return res.json(); });
+    }
+    function esc(s) {
+      var d = document.createElement('div');
+      d.textContent = s == null ? '' : String(s);
+      return d.innerHTML;
+    }
+    function relativeTime(dateStr) {
+      var d = new Date(dateStr);
+      if (isNaN(d.getTime())) return '';
+      var diffMs = Date.now() - d.getTime();
+      var diffDays = Math.floor(diffMs / 86400000);
+      if (diffDays <= 0) return '今日';
+      if (diffDays === 1) return '昨日';
+      if (diffDays < 30) return diffDays + '日前';
+      return d.toLocaleDateString('ja-JP');
+    }
+
+    function renderComments(items) {
+      container.innerHTML = '';
+      if (!items.length) {
+        container.innerHTML = '<div style="padding:24px 4px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">まだコメントがありません。最初のコメントを投稿してみましょう。</div>';
+      }
+      items.forEach(function (c) {
+        var article = document.createElement('article');
+        article.className = 'el-post';
+        article.id = c.id;
+        article.dataset.replyTo = c.parentId || 'op';
+        var initial = (c.authorName || '?').charAt(0);
+        article.innerHTML =
+          '<div class="el-avatar">' + esc(initial) + '</div>' +
+          '<div>' +
+          '<div class="el-reply-tag-slot"></div>' +
+          '<div class="el-post-head"><span class="name">' + esc(c.authorName || '匿名') + '</span><span class="time">' + esc(relativeTime(c.createdAt)) + '</span></div>' +
+          '<div class="el-post-body">' + (c.body || '') + '</div>' +
+          '<div class="el-post-actions">' +
+          '<button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14Z"/></svg> 0</button>' +
+          '<button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H4l2.4-3.6A8.5 8.5 0 1 1 21 11.5Z"/></svg> 返信</button>' +
+          '</div></div>';
+        container.appendChild(article);
+      });
+      var countEl = document.getElementById('ctCommentsHeadCount');
+      if (countEl) countEl.textContent = items.length + '件';
+      var commentCountEl = document.getElementById('ctCommentCount');
+      if (commentCountEl) commentCountEl.textContent = items.length + '件の返信';
+      wireReplyButtons();
+      wireReplyTags();
+      var isAuthorNow = !!(currentItem && elCurrentUsername() && elCurrentUsername() === currentItem.authorUsername);
+      refreshBestAnswerUI(topicId, isAuthorNow);
+    }
+
+    function loadOtherTopics(groupId) {
+      var wrap = document.getElementById('ctOtherTopics');
+      if (!wrap) return;
+      apiPost({ action: 'listCommunityTopics', groupId: groupId }).then(function (data) {
+        var items = ((data.ok && data.items) ? data.items : []).filter(function (t) { return String(t.id) !== String(topicId); }).slice(0, 5);
+        if (!items.length) {
+          wrap.innerHTML = '<div style="padding:8px 2px;color:var(--el-ink-faint);font-size:12.5px;">他の投稿はまだありません。</div>';
+          return;
+        }
+        wrap.innerHTML = items.map(function (t) {
+          return '<a href="community-topic.html?id=' + encodeURIComponent(t.id) + '" class="el-side-panel-row">' +
+            '<span class="title">' + esc(t.title) + '</span></a>';
+        }).join('');
+      }).catch(function () {
+        wrap.innerHTML = '<div style="padding:8px 2px;color:var(--el-ink-faint);font-size:12.5px;">読み込みに失敗しました。</div>';
+      });
+    }
+
+    apiPost({ action: 'getCommunityTopic', id: topicId }).then(function (data) {
+      if (!data.ok || !data.found) {
+        var head = document.querySelector('.el-thread-head');
+        if (head) head.innerHTML = '<div style="padding:40px 4px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">投稿が見つかりませんでした。<a href="groups.html">コミュニティ一覧に戻る</a></div>';
+        var op0b = document.getElementById('op');
+        if (op0b) op0b.style.display = 'none';
+        container.innerHTML = '';
+        var replyBox0b = document.getElementById('replyBox');
+        if (replyBox0b) replyBox0b.style.display = 'none';
+        return;
+      }
+      var item = data.item;
+      currentItem = item;
+      document.title = item.title + '｜Export Lab';
+
+      var backLink = document.getElementById('ctBackToCommunityLink');
+      if (backLink) backLink.href = 'community-board.html?id=' + encodeURIComponent(item.groupId || '');
+
+      var statusBadge = (item.status === 'solved')
+        ? '<span class="badge badge--solved">解決</span>'
+        : '<span class="badge badge--unsolved">未解決</span>';
+      var badgesEl = document.getElementById('ctBadges');
+      if (badgesEl) badgesEl.innerHTML = statusBadge;
+
+      var h1 = document.getElementById('ctTitle');
+      if (h1) h1.textContent = item.title;
+
+      var viewCountEl = document.getElementById('ctViewCount');
+      if (viewCountEl) viewCountEl.textContent = (item.views || 0) + '回の閲覧';
+      var updatedEl = document.getElementById('ctUpdated');
+      if (updatedEl) updatedEl.textContent = '最終更新：' + relativeTime(item.createdAt);
+
+      var op = document.getElementById('op');
+      if (op) {
+        op.dataset.authorUsername = item.authorUsername || '';
+        var opAvatar = document.getElementById('opAvatar');
+        if (opAvatar) opAvatar.textContent = (item.authorName || '?').charAt(0);
+        var opName = document.getElementById('opName');
+        if (opName) opName.textContent = item.authorName || '匿名';
+        var opDates = document.getElementById('opDates');
+        if (opDates) opDates.textContent = '投稿日：' + relativeTime(item.createdAt);
+        var opBody = document.getElementById('opBody');
+        if (opBody) opBody.innerHTML = item.body || '';
+      }
+
+      loadOtherTopics(item.groupId);
+
+      apiPost({ action: 'listContent', type: 'communityGroup' }).then(function (gdata) {
+        var groups = (gdata.ok && gdata.items) ? gdata.items : [];
+        var community = null;
+        for (var i = 0; i < groups.length; i++) { if (String(groups[i].id) === String(item.groupId)) { community = groups[i]; break; } }
+        if (breadcrumb) {
+          breadcrumb.innerHTML = '<a href="index.html">ホーム</a>' + CHEV +
+            '<a href="groups.html">コミュニティ</a>' + CHEV +
+            (community ? '<a href="community-board.html?id=' + encodeURIComponent(item.groupId) + '">' + esc(community.title) + '</a>' + CHEV : '') +
+            '<span>' + esc(item.title) + '</span>';
+        }
+      });
+
+      apiPost({ action: 'listCommunityComments', postId: topicId }).then(function (cdata) {
+        var items = (cdata.ok && cdata.items) ? cdata.items : [];
+        renderComments(items);
+      });
+    });
+
+    // 返信の送信：スプレッドシート（コミュニティコメント）に保存する
+    var sendBtn = replyBox ? replyBox.querySelector('.el-reply-foot button') : null;
+    if (sendBtn) {
+      sendBtn.addEventListener('click', function () {
+        if (window.elRequireAuth && !window.elRequireAuth()) return;
+        var plainText = replyEditor ? (replyEditor.textContent || '').trim() : '';
+        if (!plainText) return;
+        var body = replyEditor ? replyEditor.innerHTML.trim() : '';
+        var profile = {};
+        try { profile = JSON.parse(localStorage.getItem('el-user-profile') || '{}'); } catch (e) {}
+        var authorUsername = localStorage.getItem('el-username') || profile.username || '';
+        var authorName = localStorage.getItem('el-user-name') || authorUsername || 'ゲスト';
+        sendBtn.disabled = true;
+        apiPost({
+          action: 'createCommunityComment',
+          postId: topicId,
+          groupId: currentItem ? currentItem.groupId : '',
+          parentId: currentReplyToId,
+          authorUsername: authorUsername,
+          authorName: authorName,
+          body: body
+        }).then(function (data) {
+          sendBtn.disabled = false;
+          if (!data.ok) { alert('送信に失敗しました。時間をおいて再度お試しください。'); return; }
+          clearReplyEditor();
+          currentReplyToId = 'op';
+          if (replyCtx) replyCtx.classList.remove('is-visible');
+          if (replyBox) replyBox.style.display = 'none';
+          apiPost({ action: 'listCommunityComments', postId: topicId }).then(function (cdata) {
+            var items = (cdata.ok && cdata.items) ? cdata.items : [];
+            renderComments(items);
+          });
+        }).catch(function () {
+          sendBtn.disabled = false;
+          alert('通信エラーが発生しました。');
+        });
+      });
+    }
+  })();
+</script>
+</body>
+</html>

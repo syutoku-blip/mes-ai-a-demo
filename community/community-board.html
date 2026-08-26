@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>コミュニティTOP｜Export Lab</title>
+<title>コミュニティ掲示板｜Export Lab</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&family=Noto+Sans+JP:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
@@ -83,56 +83,6 @@
     padding:2px 9px !important;
     border-radius:999px !important;
   }
-  .el-auth-modal{
-    display:none;
-    position:fixed;
-    inset:0;
-    z-index:900;
-    align-items:center;
-    justify-content:center;
-  }
-  .el-auth-modal.is-open{ display:flex; }
-  .el-auth-modal-backdrop{
-    position:absolute;
-    inset:0;
-    background:rgba(22,35,63,.45);
-  }
-  .el-auth-modal-panel{
-    position:relative;
-    background:#fff;
-    border-radius:var(--el-radius-m, 14px);
-    padding:28px 26px;
-    max-width:340px;
-    width:90%;
-    text-align:center;
-    box-shadow:0 12px 40px rgba(22,35,63,.25);
-  }
-  .el-auth-modal-panel h3{
-    margin:0 0 10px;
-    font-size:17px;
-    color:var(--el-navy, #16233F);
-  }
-  .el-auth-modal-panel p{
-    margin:0 0 20px;
-    font-size:13px;
-    color:var(--el-ink-faint, #8A8478);
-    line-height:1.7;
-  }
-  .el-auth-modal-actions{
-    display:flex;
-    gap:8px;
-    justify-content:center;
-  }
-  .el-auth-modal-close{
-    position:absolute;
-    top:10px;
-    right:10px;
-    border:none;
-    background:transparent;
-    cursor:pointer;
-    color:var(--el-ink-faint, #8A8478);
-    padding:4px;
-  }
   /* ガイドラインモーダル：「ご利用の前にご確認ください」の各項目をクリックすると、本文をここに表示する */
   .el-guide-modal{
     display:none;
@@ -185,9 +135,57 @@
     color:var(--el-ink-faint, #8A8478);
     padding:4px;
   }
+  .el-auth-modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    z-index:900;
+    align-items:center;
+    justify-content:center;
+  }
+  .el-auth-modal.is-open{ display:flex; }
+  .el-auth-modal-backdrop{
+    position:absolute;
+    inset:0;
+    background:rgba(22,35,63,.45);
+  }
+  .el-auth-modal-panel{
+    position:relative;
+    background:#fff;
+    border-radius:var(--el-radius-m, 14px);
+    padding:28px 26px;
+    max-width:340px;
+    width:90%;
+    text-align:center;
+    box-shadow:0 12px 40px rgba(22,35,63,.25);
+  }
+  .el-auth-modal-panel h3{
+    margin:0 0 10px;
+    font-size:17px;
+    color:var(--el-navy, #16233F);
+  }
+  .el-auth-modal-panel p{
+    margin:0 0 20px;
+    font-size:13px;
+    color:var(--el-ink-faint, #8A8478);
+    line-height:1.7;
+  }
+  .el-auth-modal-actions{
+    display:flex;
+    gap:8px;
+    justify-content:center;
+  }
+  .el-auth-modal-close{
+    position:absolute;
+    top:10px;
+    right:10px;
+    border:none;
+    background:transparent;
+    cursor:pointer;
+    color:var(--el-ink-faint, #8A8478);
+    padding:4px;
+  }
   [data-guest-hide]{ display:none !important; }
-  /* ヘッダーの新規登録／ログイン／ログアウトボタン：背景色に関わらず文字が見えるよう、
-     透過ではなく塗りのボタンにする */
   #headerAuthLinks .el-btn, #headerSignupLink.el-btn, #headerLoginLink.el-btn{
     color:#fff !important;
     background:var(--el-navy, #16233F) !important;
@@ -197,7 +195,6 @@
     background:var(--el-teal-deep, #1E6F63) !important;
     border-color:var(--el-teal-deep, #1E6F63) !important;
   }
-  /* フッターの背景色が正しく当たらない場合の保険（文字が背景と同化して見えなくなるのを防ぐ） */
   .el-footer{ background:#EDE4D0 !important; border-top:1px solid var(--el-line-soft, #E5DFD2) !important; }
   .el-footer .tag{ color:var(--el-ink-faint, #8A8478) !important; }
   .el-footer .el-logo{ color:var(--el-navy, #16233F) !important; }
@@ -205,7 +202,12 @@
   .el-footer-cols a{ color:var(--el-ink-faint, #8A8478) !important; }
   .el-footer-cols h6{ color:var(--el-navy, #16233F) !important; }
   .el-footer-bottom{ color:var(--el-ink-faint, #8A8478) !important; border-top-color:var(--el-line-soft, #E5DFD2) !important; }
-  .el-group-card{ cursor:pointer !important; }
+  /* コミュニティ見出しカード：groups.htmlのカードデザインを流用し、掲示板の先頭に固定表示する */
+  .el-community-head-card{
+    cursor:default !important;
+    margin-bottom:22px;
+  }
+  .el-community-head-card .desc{ margin-bottom:14px; }
 </style>
 </head>
 <body data-site="community" data-root="..">
@@ -319,23 +321,15 @@
 
   <div class="el-content">
     <main class="el-section" style="padding-top:0;">
-      <div class="el-catch">
-      <p>ひとりで抱えるより、同じ景色を見ている誰かと。<br>テーマごとに集まって話せる、コミュニティの入り口です。</p>
-    </div>
-
       <div class="wrap">
-        <nav class="el-breadcrumb el-page-breadcrumb" aria-label="パンくず"><a href="index.html">ホーム</a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg><span>コミュニティTOP</span></nav>
 
+        <nav class="el-breadcrumb el-page-breadcrumb" id="cbBreadcrumb" aria-label="パンくず"><a href="index.html">ホーム</a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg><a href="groups.html">コミュニティ</a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg><span>読み込み中…</span></nav>
 
-        <div class="el-group-hero">
-          <div>
-            <h2>コミュニティ — メンバーだけで話し合える場所</h2>
-            <p>テーマや業種ごとに集まり、フォーラムには出しにくい実務の話や非公開の相談ができます。参加には承認が必要なコミュニティもあります。</p>
-          </div>
-          <a href="#" class="el-btn el-btn--mustard">新しいコミュニティを作る</a>
+        <div class="el-group-card el-community-head-card" id="communityHeaderCard">
+          <div style="padding:24px 4px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">読み込み中...</div>
         </div>
 
-        <details class="el-pinned-box" style="margin-top:26px;" id="guideBox" open>
+        <details class="el-pinned-box" style="margin-top:0;" id="guideBox" open>
           <summary class="el-pinned-head">
             <span class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 17v5M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16h14v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z"/></svg></span>
             <h2>ご利用の前にご確認ください</h2>
@@ -344,32 +338,19 @@
           <div class="el-pinned-list" id="guideList"></div>
         </details>
 
-        <div class="el-section-head" style="margin-top:48px;">
+        <div class="el-section-head" style="margin-top:26px;margin-bottom:12px;">
           <div>
-            <h2>新着コミュニティ</h2>
-            <div class="sub">最近つくられたコミュニティ</div>
+            <h2 style="font-size:16px;">このコミュニティの投稿</h2>
           </div>
         </div>
-        <div class="el-group-grid" id="newGroupList">
-          <div style="padding:40px 4px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">読み込み中…</div>
-        </div>
 
-        <div class="el-section-head" style="margin-top:52px;">
-          <div>
-            <h2>人気コミュニティ</h2>
-            <div class="sub">投稿数の多いコミュニティ</div>
+        <div class="el-board">
+          <div id="topicList">
+            <div style="padding:40px 4px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">読み込み中...</div>
           </div>
         </div>
-        <div class="el-group-grid" id="hotGroupList">
-          <div style="padding:40px 4px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">読み込み中…</div>
-        </div>
 
-      </div>
-    </main>
-    <section class="el-section" style="padding-top:0;padding-bottom:24px;">
-      <div class="wrap">
-
-        <div class="el-ad-banner-v2" id="adBanner">
+        <div class="el-ad-banner-v2" id="adBanner" style="margin-top:32px;">
           <span class="el-ad-tag-v2">AD</span>
           <div class="el-ad-image-v2" id="adImageV2"></div>
           <a href="#" class="el-btn el-btn--primary el-btn--sm el-ad-cta-v2" id="adCtaV2">詳しく見る</a>
@@ -377,8 +358,7 @@
         </div>
 
       </div>
-    </section>
-
+    </main>
 
     <footer class="el-footer">
       <div class="wrap">
@@ -413,6 +393,32 @@
   </div>
 </div>
 
+<div class="el-auth-modal" id="authModal" aria-hidden="true">
+  <div class="el-auth-modal-backdrop" data-auth-close></div>
+  <div class="el-auth-modal-panel" role="dialog" aria-modal="true">
+    <button type="button" class="el-auth-modal-close" data-auth-close aria-label="閉じる">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <h3>ユーザー登録してください</h3>
+    <p>この操作を行うには、会員登録（無料）が必要です。登録すると投稿・返信・購入などすべての機能がご利用いただけます。</p>
+    <div class="el-auth-modal-actions">
+      <a href="signup.html" class="el-btn el-btn--primary el-btn--sm">新規登録する</a>
+      <button type="button" class="el-btn el-btn--ghost el-btn--sm" data-auth-close>閉じる</button>
+    </div>
+  </div>
+</div>
+
+<div class="el-guide-modal" id="guideModal" aria-hidden="true">
+  <div class="el-guide-modal-backdrop" data-guide-close></div>
+  <div class="el-guide-modal-panel" role="dialog" aria-modal="true">
+    <button type="button" class="el-guide-modal-close" data-guide-close aria-label="閉じる">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <h3 id="guideModalTitle"></h3>
+    <div class="el-guide-modal-body" id="guideModalBody"></div>
+  </div>
+</div>
+
 <script src="../shared/global-header.js" defer></script>
 <script>
   (function () {
@@ -435,8 +441,8 @@
       window.location.href = summary.dataset.href;
     });
   });
+
   // ユーザーモード（ゲスト／登録ユーザー／管理者）の切り替えと共通ゲート処理
-  // Googleドライブの共有リンクを、<img>で直接表示できる形式のURLに変換する
   function elDriveImgUrl(url) {
     if (!url) return url;
     var m = url.match(/drive\.google\.com\/file\/d\/([^/]+)/) || url.match(/[?&]id=([^&]+)/);
@@ -458,7 +464,6 @@
     var role = getRole();
     document.body.setAttribute('data-role', role);
 
-    // ゲストは通知ベルとアイコンを非表示
     var bell = document.querySelector('.el-header-bell');
     if (bell && role === 'guest') bell.style.display = 'none';
     var headerAvatar = document.getElementById('headerAvatar');
@@ -472,7 +477,6 @@
       } catch (e) {}
     }
 
-    // ヘッダーの認証リンク：ゲストは「新規登録」「ログイン」、それ以外は「ログアウト」のみ
     var authLinksWrap = document.getElementById('headerAuthLinks');
     var loginLink = document.getElementById('headerLoginLink');
     var signupLink = document.getElementById('headerSignupLink');
@@ -489,7 +493,6 @@
       }
     }
 
-    // 「ユーザー登録してください」モーダル
     var modal = document.getElementById('authModal');
     window.elRequireAuth = function (e) {
       if (getRole() !== 'guest') return true;
@@ -509,193 +512,21 @@
       });
     }
 
-    // SHiFT会員限定コンテンツ用モーダル
-    var shiftModal = document.getElementById('shiftModal');
-    window.elRequireShift = function () {
-      var r = getRole();
-      if (r === 'shift' || r === 'admin') return true;
-      if (shiftModal) { shiftModal.classList.add('is-open'); shiftModal.setAttribute('aria-hidden', 'false'); }
-      return false;
-    };
-    if (shiftModal) {
-      shiftModal.querySelectorAll('[data-shift-close]').forEach(function (el) {
-        el.addEventListener('click', function () {
-          shiftModal.classList.remove('is-open');
-          shiftModal.setAttribute('aria-hidden', 'true');
-        });
-      });
-    }
-
-    // 管理者にはサイドバーに管理者ページへのリンクを追加
     if (role === 'admin') {
       var sideNav = document.querySelector('.el-sidebar nav');
       if (sideNav && !sideNav.querySelector('a[href="admin.html"]')) {
         var adminLink = document.createElement('a');
         adminLink.href = 'admin.html';
-        if (window.location.pathname.indexOf('admin.html') !== -1) adminLink.className = 'is-active';
         adminLink.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 3 7v6c0 5 4 9 9 9s9-4 9-9V7l-9-5Z"/><path d="m9 12 2 2 4-4"/></svg><span class="lbl">管理者ページ</span>';
         sideNav.appendChild(adminLink);
       }
     }
 
-    // ゲストには data-guest-hide の要素を隠す（本文はCSSでも隠すが、動的挿入分もここでカバー）
     if (role === 'guest') {
       document.querySelectorAll('[data-guest-block]').forEach(function (el) {
         el.addEventListener('click', window.elRequireAuth);
       });
     }
-  });
-
-  // コミュニティ詳細モーダル：カードをクリックすると開く。カード自体もシート（コミュニティ）から取得して描画する。
-  document.addEventListener('DOMContentLoaded', function () {
-    var GROUP_DETAILS = {};
-
-    // スプレッドシート連携：新着／人気コミュニティをシートから取得して描画する（デモデータは使用しない）
-    (function () {
-      var newList = document.getElementById('newGroupList');
-      var hotList = document.getElementById('hotGroupList');
-      if (!newList && !hotList) return;
-      var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
-      function esc(s) {
-        var d = document.createElement('div');
-        d.textContent = s == null ? '' : String(s);
-        return d.innerHTML;
-      }
-      function renderGroupCard(it) {
-        var title = it.title || '';
-        GROUP_DETAILS[title] = {
-          creator: it.creator || '運営メンバー',
-          category: it.category || '未分類',
-          color: it.color || 'var(--el-teal)',
-          members: []
-        };
-        var iconColor = it.color || 'var(--el-teal)';
-        var moreLabel = it.postCount ? (it.postCount + '件の投稿') : '新規';
-        return '<div class="el-group-card" data-group="' + esc(it.id || '') + '" data-state="" data-members="0">' +
-          '<div class="el-group-top">' +
-          '<div class="el-group-icon" style="background:' + iconColor + ';">' +
-          '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20Z"/></svg>' +
-          '</div>' +
-          '<div><h4>' + esc(title) + '</h4><div class="visibility">誰でも参加可</div></div>' +
-          '</div>' +
-          '<p class="desc">' + esc(it.description || '') + '</p>' +
-          '<div class="el-group-foot"><div class="el-group-members"><span class="more">' + esc(moreLabel) + '</span></div>' +
-          '<button class="el-btn el-btn--primary el-btn--sm">参加する</button></div>' +
-          '</div>';
-      }
-      fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({ action: 'listContent', type: 'communityGroup' })
-      })
-        .then(function (res) { return res.json(); })
-        .then(function (data) {
-          var items = (data.ok && data.items) ? data.items : [];
-          var emptyMsg = '<div style="padding:40px 4px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">まだコミュニティがありません。</div>';
-          if (newList) {
-            var byNew = items.slice().sort(function (a, b) {
-              return (Date.parse(b.createdAt || '') || 0) - (Date.parse(a.createdAt || '') || 0);
-            }).slice(0, 3);
-            newList.innerHTML = byNew.map(renderGroupCard).join('') || emptyMsg;
-          }
-          if (hotList) {
-            var byHot = items.slice().sort(function (a, b) { return (+b.postCount || 0) - (+a.postCount || 0); }).slice(0, 3);
-            hotList.innerHTML = byHot.map(renderGroupCard).join('') || emptyMsg;
-          }
-        })
-        .catch(function () {
-          var errMsg = '<div style="padding:40px 4px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">読み込みに失敗しました。</div>';
-          if (newList) newList.innerHTML = errMsg;
-          if (hotList) hotList.innerHTML = errMsg;
-        });
-    })();
-
-    var modal = document.getElementById('groupDetailModal');
-    if (!modal) return;
-    var view = document.getElementById('gdmView');
-    var memberView = document.getElementById('gdmMemberView');
-
-    function openModal(card) {
-      var title = (card.querySelector('h4') || {}).textContent || '';
-      var desc = (card.querySelector('.desc') || {}).textContent || '';
-      var visibility = (card.querySelector('.visibility') || {}).textContent || '';
-      var memberCount = card.dataset.members || '0';
-      var iconColor = (card.querySelector('.el-group-icon') || {}).style.background || 'var(--el-teal)';
-      var iconSvg = (card.querySelector('.el-group-icon svg') || {}).outerHTML || '';
-      var state = card.dataset.state || '';
-      var groupId = card.dataset.group || '';
-      var detail = GROUP_DETAILS[title] || { creator: '運営メンバー', category: '未分類', members: [] };
-
-      var boardBtn = document.getElementById('gdmBoardBtn');
-      if (boardBtn) {
-        if (groupId) {
-          boardBtn.href = 'community-board.html?id=' + encodeURIComponent(groupId);
-          boardBtn.style.display = '';
-        } else {
-          boardBtn.style.display = 'none';
-        }
-      }
-
-      document.getElementById('gdmIcon').style.background = iconColor;
-      document.getElementById('gdmIcon').innerHTML = iconSvg;
-      document.getElementById('gdmTitle').textContent = title;
-      document.getElementById('gdmVisibility').textContent = visibility;
-      document.getElementById('gdmDesc').textContent = desc;
-      document.getElementById('gdmCreator').textContent = detail.creator;
-      document.getElementById('gdmCategory').textContent = detail.category;
-      document.getElementById('gdmMemberCount').textContent = memberCount + '人（クリックで一覧を見る）';
-
-      var joinBtn = document.getElementById('gdmJoinBtn');
-      if (state === 'joined') { joinBtn.textContent = '参加中'; joinBtn.disabled = true; }
-      else if (state === 'pending') { joinBtn.textContent = '承認待ち'; joinBtn.disabled = true; }
-      else if (visibility.indexOf('メンバー限定') !== -1) { joinBtn.textContent = '参加申請'; joinBtn.disabled = false; }
-      else { joinBtn.textContent = '参加する'; joinBtn.disabled = false; }
-
-      modal.dataset.currentGroup = title;
-      modal.dataset.currentCount = memberCount;
-      view.hidden = false;
-      memberView.hidden = true;
-      modal.classList.add('is-open');
-      modal.setAttribute('aria-hidden', 'false');
-    }
-
-    document.addEventListener('click', function (e) {
-      var card = e.target.closest('.el-group-card');
-      if (!card) return;
-      if (e.target.closest('button')) return; // 参加する等のボタンはこれまで通りの動作
-      openModal(card);
-    });
-
-    document.getElementById('gdmMemberBtn').addEventListener('click', function () {
-      var title = modal.dataset.currentGroup;
-      var count = modal.dataset.currentCount;
-      var detail = GROUP_DETAILS[title] || { members: [] };
-      document.getElementById('gdmMemberViewCount').textContent = count + '人が参加しています';
-      var shown = detail.members;
-      var remaining = Math.max(0, (+count) - shown.length);
-      var html = shown.map(function (m) {
-        return '<div style="display:flex;align-items:center;gap:10px;padding:8px 4px;border-bottom:1px solid var(--el-line-soft);">' +
-          '<div class="el-avatar" style="width:32px;height:32px;font-size:13px;flex:none;">' + m.charAt(0) + '</div>' +
-          '<span style="font-size:13.5px;color:var(--el-navy);">' + m + '</span></div>';
-      }).join('');
-      if (remaining > 0) {
-        html += '<div style="padding:10px 4px;font-size:12.5px;color:var(--el-ink-faint);">ほか' + remaining + '人</div>';
-      }
-      document.getElementById('gdmMemberList').innerHTML = html;
-      view.hidden = true;
-      memberView.hidden = false;
-    });
-    document.getElementById('gdmBackBtn').addEventListener('click', function () {
-      view.hidden = false;
-      memberView.hidden = true;
-    });
-
-    modal.querySelectorAll('[data-group-close]').forEach(function (el) {
-      el.addEventListener('click', function () {
-        modal.classList.remove('is-open');
-        modal.setAttribute('aria-hidden', 'true');
-      });
-    });
   });
 
   var ADS = [
@@ -721,7 +552,6 @@
       sponsorEl.textContent = 'スポンサー：' + ad.name;
     }
 
-    // 管理者ページで登録された広告（横長／スクエア）があれば、そちらを優先して表示する
     var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
     fetch(API_URL, {
       method: 'POST',
@@ -747,7 +577,7 @@
       .catch(renderMockAd);
   })();
 
-  // 「ご利用の前にご確認ください」：管理者ページで登録されたガイドラインをクリック→モーダル表示にする（デモは使わない）
+  // 「ご利用の前にご確認ください」：管理者ページで登録されたガイドライン（コミュニティ向け）をクリック→モーダル表示にする
   document.addEventListener('DOMContentLoaded', function () {
     (function () {
       var box = document.getElementById('guideBox');
@@ -801,87 +631,96 @@
         .catch(function () { box.style.display = 'none'; });
     })();
   });
+
+  // このコミュニティの見出し情報と投稿一覧を、シートから取得して表示する
+  (function () {
+    var params = new URLSearchParams(window.location.search);
+    var groupId = params.get('id');
+    var container = document.getElementById('topicList');
+    var breadcrumb = document.getElementById('cbBreadcrumb');
+    var headerCard = document.getElementById('communityHeaderCard');
+    var CHEV = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>';
+    var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
+
+    function esc(s) {
+      var d = document.createElement('div');
+      d.textContent = s == null ? '' : String(s);
+      return d.innerHTML;
+    }
+    function apiPost(payload) {
+      return fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      }).then(function (res) { return res.json(); });
+    }
+    function relativeTime(dateStr) {
+      var d = new Date(dateStr);
+      if (isNaN(d.getTime())) return '';
+      var diffDays = Math.round((Date.now() - d.getTime()) / 86400000);
+      if (diffDays <= 0) return '今日';
+      if (diffDays === 1) return '昨日';
+      if (diffDays < 30) return diffDays + '日前';
+      return d.toLocaleDateString('ja-JP');
+    }
+
+    if (!groupId) {
+      if (container) container.innerHTML = '<div style="padding:40px 4px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">コミュニティが指定されていません。<a href="groups.html">コミュニティ一覧に戻る</a></div>';
+      if (headerCard) headerCard.style.display = 'none';
+      return;
+    }
+
+    apiPost({ action: 'listContent', type: 'communityGroup' }).then(function (data) {
+      var items = (data.ok && data.items) ? data.items : [];
+      var community = null;
+      for (var i = 0; i < items.length; i++) { if (String(items[i].id) === String(groupId)) { community = items[i]; break; } }
+      if (!community) {
+        if (headerCard) headerCard.innerHTML = '<div style="padding:24px 4px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">コミュニティが見つかりませんでした。</div>';
+        return;
+      }
+      document.title = community.title + '｜Export Lab';
+      if (breadcrumb) breadcrumb.innerHTML = '<a href="index.html">ホーム</a>' + CHEV + '<a href="groups.html">コミュニティ</a>' + CHEV + '<span>' + esc(community.title) + '</span>';
+      if (headerCard) {
+        var iconColor = community.color || 'var(--el-teal)';
+        headerCard.innerHTML =
+          '<div class="el-group-top">' +
+          '<div class="el-group-icon" style="background:' + iconColor + ';">' +
+          '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20Z"/></svg>' +
+          '</div>' +
+          '<div><h4>' + esc(community.title) + '</h4><div class="visibility">' + esc(community.category || '') + '・運営：' + esc(community.creator || '') + '</div></div>' +
+          '</div>' +
+          '<p class="desc">' + esc(community.description || '') + '</p>' +
+          '<a href="community-topic-new.html?groupId=' + encodeURIComponent(groupId) + '" class="el-btn el-btn--primary el-btn--sm" data-guest-block>新規投稿する</a>';
+        if (window.elGetRole && window.elGetRole() === 'guest') {
+          headerCard.querySelector('a.el-btn').addEventListener('click', window.elRequireAuth);
+        }
+      }
+    });
+
+    apiPost({ action: 'listCommunityTopics', groupId: groupId }).then(function (data) {
+      if (!container) return;
+      var items = (data.ok && data.items) ? data.items : [];
+      if (!items.length) {
+        container.innerHTML = '<div style="padding:40px 4px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">まだ投稿がありません。最初の投稿をしてみましょう。</div>';
+        return;
+      }
+      container.innerHTML = items.map(function (t) {
+        var statusBadge = t.status === 'solved' ? '<span class="badge badge--solved">解決</span>' : '<span class="badge badge--unsolved">未解決</span>';
+        return '<a href="community-topic.html?id=' + encodeURIComponent(t.id) + '" class="el-t-row">' +
+          '<div class="el-t-row-main">' +
+          '<div class="el-t-row-badges">' + statusBadge + '</div>' +
+          '<span class="el-t-row-title">' + esc(t.title) + '</span>' +
+          '<div class="el-t-row-meta">' + esc(t.authorName || '匿名') + '・' + relativeTime(t.createdAt) + '</div>' +
+          '</div>' +
+          '<div class="el-t-row-stats">' +
+          '<div><strong>' + (t.views || 0) + '</strong><span>閲覧</span></div>' +
+          '<div><strong>' + (t.commentCount || 0) + '</strong><span>返信</span></div>' +
+          '</div></a>';
+      }).join('');
+    }).catch(function () {
+      if (container) container.innerHTML = '<div style="padding:40px 4px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">読み込みに失敗しました。</div>';
+    });
+  })();
 </script>
-<div class="el-auth-modal" id="authModal" aria-hidden="true">
-  <div class="el-auth-modal-backdrop" data-auth-close></div>
-  <div class="el-auth-modal-panel" role="dialog" aria-modal="true">
-    <button type="button" class="el-auth-modal-close" data-auth-close aria-label="閉じる">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
-    </button>
-    <h3>ユーザー登録してください</h3>
-    <p>この操作を行うには、会員登録（無料）が必要です。登録すると投稿・返信・購入などすべての機能がご利用いただけます。</p>
-    <div class="el-auth-modal-actions">
-      <a href="signup.html" class="el-btn el-btn--primary el-btn--sm">新規登録する</a>
-      <button type="button" class="el-btn el-btn--ghost el-btn--sm" data-auth-close>閉じる</button>
-    </div>
-  </div>
-</div>
-
-<div class="el-auth-modal" id="shiftModal" aria-hidden="true">
-  <div class="el-auth-modal-backdrop" data-shift-close></div>
-  <div class="el-auth-modal-panel" role="dialog" aria-modal="true">
-    <button type="button" class="el-auth-modal-close" data-shift-close aria-label="閉じる">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
-    </button>
-    <h3>SHiFT会員限定です</h3>
-    <p>この内容はSHiFT会員（WorldShiftの各種サービスをご利用中の方）だけが閲覧できます。SHiFT会員の方はサポート窓口までお問い合わせください。</p>
-    <div class="el-auth-modal-actions">
-      <a href="#" class="el-btn el-btn--primary el-btn--sm">SHiFT会員について見る</a>
-      <button type="button" class="el-btn el-btn--ghost el-btn--sm" data-shift-close>閉じる</button>
-    </div>
-  </div>
-</div>
-
-<div class="el-auth-modal" id="groupDetailModal" aria-hidden="true">
-  <div class="el-auth-modal-backdrop" data-group-close></div>
-  <div class="el-auth-modal-panel" role="dialog" aria-modal="true" style="max-width:480px;text-align:left;">
-    <button type="button" class="el-auth-modal-close" data-group-close aria-label="閉じる">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
-    </button>
-    <div id="gdmView">
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px;">
-        <div id="gdmIcon" style="width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex:none;color:#fff;"></div>
-        <div>
-          <h3 id="gdmTitle" style="margin:0;font-size:17px;"></h3>
-          <div id="gdmVisibility" style="font-size:12px;color:var(--el-ink-faint);margin-top:2px;"></div>
-        </div>
-      </div>
-      <p id="gdmDesc" style="font-size:14px;color:var(--el-navy);line-height:1.8;margin:14px 0;"></p>
-      <div style="display:flex;flex-direction:column;gap:8px;font-size:13.5px;color:var(--el-navy);margin-bottom:16px;">
-        <div><strong style="color:var(--el-ink-faint);font-weight:600;">作成者：</strong><span id="gdmCreator"></span></div>
-        <div><strong style="color:var(--el-ink-faint);font-weight:600;">カテゴリ：</strong><span id="gdmCategory"></span></div>
-        <button type="button" id="gdmMemberBtn" style="text-align:left;background:none;border:none;padding:0;cursor:pointer;color:inherit;font:inherit;">
-          <strong style="color:var(--el-ink-faint);font-weight:600;">メンバー：</strong><span id="gdmMemberCount" style="text-decoration:underline;color:var(--el-teal-deep);"></span>
-        </button>
-      </div>
-      <div class="el-auth-modal-actions">
-        <button type="button" class="el-btn el-btn--primary el-btn--sm" id="gdmJoinBtn">参加する</button>
-        <a href="#" class="el-btn el-btn--ghost el-btn--sm" id="gdmBoardBtn">掲示板を見る</a>
-        <button type="button" class="el-btn el-btn--ghost el-btn--sm" data-group-close>閉じる</button>
-      </div>
-    </div>
-    <div id="gdmMemberView" hidden>
-      <h3 style="margin:0 0 4px;font-size:16px;">メンバー一覧</h3>
-      <div style="font-size:12.5px;color:var(--el-ink-faint);margin-bottom:14px;" id="gdmMemberViewCount"></div>
-      <div id="gdmMemberList" style="max-height:320px;overflow-y:auto;display:flex;flex-direction:column;gap:2px;"></div>
-      <div class="el-auth-modal-actions">
-        <button type="button" class="el-btn el-btn--ghost el-btn--sm" id="gdmBackBtn">戻る</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-<div class="el-guide-modal" id="guideModal" aria-hidden="true">
-  <div class="el-guide-modal-backdrop" data-guide-close></div>
-  <div class="el-guide-modal-panel" role="dialog" aria-modal="true">
-    <button type="button" class="el-guide-modal-close" data-guide-close aria-label="閉じる">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
-    </button>
-    <h3 id="guideModalTitle"></h3>
-    <div class="el-guide-modal-body" id="guideModalBody"></div>
-  </div>
-</div>
-
 </body>
 </html>

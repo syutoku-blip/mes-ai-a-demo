@@ -177,6 +177,10 @@
     font-size:13.5px;
     color:var(--el-ink-faint, #8A8478);
     line-height:1.8;
+    font-family:inherit;
+  }
+  .el-guide-modal-body *{
+    font-family:inherit !important;
   }
   .el-guide-modal-close{
     position:absolute;
@@ -1087,57 +1091,59 @@
   })();
 
   // 「ご利用の前にご確認ください」：管理者ページで登録されたガイドラインをクリック→モーダル表示にする（デモは使わない）
-  (function () {
-    var box = document.getElementById('guideBox');
-    var listEl = document.getElementById('guideList');
-    var modal = document.getElementById('guideModal');
-    var modalTitle = document.getElementById('guideModalTitle');
-    var modalBody = document.getElementById('guideModalBody');
-    if (!box || !listEl) return;
-    var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
+  document.addEventListener('DOMContentLoaded', function () {
+    (function () {
+      var box = document.getElementById('guideBox');
+      var listEl = document.getElementById('guideList');
+      var modal = document.getElementById('guideModal');
+      var modalTitle = document.getElementById('guideModalTitle');
+      var modalBody = document.getElementById('guideModalBody');
+      if (!box || !listEl) return;
+      var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
 
-    function esc(s) {
-      var d = document.createElement('div');
-      d.textContent = s == null ? '' : String(s);
-      return d.innerHTML;
-    }
-    function openGuideModal(title, bodyHtml) {
-      if (!modal) return;
-      modalTitle.textContent = title;
-      modalBody.innerHTML = bodyHtml || '';
-      modal.classList.add('is-open');
-      modal.setAttribute('aria-hidden', 'false');
-    }
-    if (modal) {
-      modal.querySelectorAll('[data-guide-close]').forEach(function (el) {
-        el.addEventListener('click', function () {
-          modal.classList.remove('is-open');
-          modal.setAttribute('aria-hidden', 'true');
+      function esc(s) {
+        var d = document.createElement('div');
+        d.textContent = s == null ? '' : String(s);
+        return d.innerHTML;
+      }
+      function openGuideModal(title, bodyHtml) {
+        if (!modal) return;
+        modalTitle.textContent = title;
+        modalBody.innerHTML = bodyHtml || '';
+        modal.classList.add('is-open');
+        modal.setAttribute('aria-hidden', 'false');
+      }
+      if (modal) {
+        modal.querySelectorAll('[data-guide-close]').forEach(function (el) {
+          el.addEventListener('click', function () {
+            modal.classList.remove('is-open');
+            modal.setAttribute('aria-hidden', 'true');
+          });
         });
-      });
-    }
+      }
 
-    fetch(API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({ action: 'listContent', type: 'guideline' })
-    })
-      .then(function (res) { return res.json(); })
-      .then(function (data) {
-        var items = (data.ok && data.items) ? data.items.filter(function (g) { return g.section === 'forum'; }) : [];
-        items.sort(function (a, b) { return (Number(a.sortOrder) || 0) - (Number(b.sortOrder) || 0); });
-        if (!items.length) { box.style.display = 'none'; return; }
-        listEl.innerHTML = items.map(function (it, idx) {
-          return '<button type="button" class="el-pinned-item" style="width:100%;background:none;border:none;text-align:left;cursor:pointer;font:inherit;" data-idx="' + idx + '">' +
-            '<span class="dot"></span>' + esc(it.title) +
-            '<svg class="go" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></button>';
-        }).join('');
-        listEl.querySelectorAll('.el-pinned-item').forEach(function (btn, idx) {
-          btn.addEventListener('click', function () { openGuideModal(items[idx].title, items[idx].bodyHtml); });
-        });
+      fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: 'listContent', type: 'guideline' })
       })
-      .catch(function () { box.style.display = 'none'; });
-  })();
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+          var items = (data.ok && data.items) ? data.items.filter(function (g) { return g.section === 'forum'; }) : [];
+          items.sort(function (a, b) { return (Number(a.sortOrder) || 0) - (Number(b.sortOrder) || 0); });
+          if (!items.length) { box.style.display = 'none'; return; }
+          listEl.innerHTML = items.map(function (it, idx) {
+            return '<button type="button" class="el-pinned-item" style="width:100%;background:none;border:none;text-align:left;cursor:pointer;font:inherit;" data-idx="' + idx + '">' +
+              '<span class="dot"></span>' + esc(it.title) +
+              '<svg class="go" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></button>';
+          }).join('');
+          listEl.querySelectorAll('.el-pinned-item').forEach(function (btn, idx) {
+            btn.addEventListener('click', function () { openGuideModal(items[idx].title, items[idx].bodyHtml); });
+          });
+        })
+        .catch(function () { box.style.display = 'none'; });
+    })();
+  });
 </script>
 <div class="el-auth-modal" id="authModal" aria-hidden="true">
   <div class="el-auth-modal-backdrop" data-auth-close></div>

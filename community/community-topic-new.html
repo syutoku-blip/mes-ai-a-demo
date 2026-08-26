@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>コミュニティに新規投稿｜Export Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&family=Noto+Sans+JP:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="../shared/global-header.css">
+<style>
+  /* 検索ボックス：input要素の初期スタイル（黒枠など）を消して馴染ませる */
+  .el-search input[type="search"]{
+    border:none !important;
+    outline:none !important;
+    background:transparent !important;
+    box-shadow:none !important;
+    -webkit-appearance:none !important;
+    appearance:none !important;
+    font:inherit !important;
+    color:inherit !important;
+    padding:0 !important;
+    margin:0 !important;
+    width:100%;
+  }
+  .el-search input[type="search"]::-webkit-search-cancel-button{
+    -webkit-appearance:none;
+    display:none;
+  }
+  .el-auth-modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    z-index:900;
+    align-items:center;
+    justify-content:center;
+  }
+  .el-auth-modal.is-open{ display:flex; }
+  .el-auth-modal-backdrop{
+    position:absolute;
+    inset:0;
+    background:rgba(22,35,63,.45);
+  }
+  .el-auth-modal-panel{
+    position:relative;
+    background:#fff;
+    border-radius:var(--el-radius-m, 14px);
+    padding:28px 26px;
+    max-width:340px;
+    width:90%;
+    text-align:center;
+    box-shadow:0 12px 40px rgba(22,35,63,.25);
+  }
+  .el-auth-modal-panel h3{
+    margin:0 0 10px;
+    font-size:17px;
+    color:var(--el-navy, #16233F);
+  }
+  .el-auth-modal-panel p{
+    margin:0 0 20px;
+    font-size:13px;
+    color:var(--el-ink-faint, #8A8478);
+    line-height:1.7;
+  }
+  .el-auth-modal-actions{
+    display:flex;
+    gap:8px;
+    justify-content:center;
+  }
+  .el-auth-modal-close{
+    position:absolute;
+    top:10px;
+    right:10px;
+    border:none;
+    background:transparent;
+    cursor:pointer;
+    color:var(--el-ink-faint, #8A8478);
+    padding:4px;
+  }
+  [data-guest-hide]{ display:none !important; }
+  /* 編集中の本文にリンクを埋め込んだ際、リンクだと一目でわかるようにする */
+  .el-editor-area a{
+    color:var(--el-teal-deep, #1E6F63) !important;
+    text-decoration:underline !important;
+  }
+  #headerAuthLinks .el-btn, #headerSignupLink.el-btn, #headerLoginLink.el-btn{
+    color:#fff !important;
+    background:var(--el-navy, #16233F) !important;
+    border:1px solid var(--el-navy, #16233F) !important;
+  }
+  #headerAuthLinks .el-btn:hover, #headerSignupLink.el-btn:hover, #headerLoginLink.el-btn:hover{
+    background:var(--el-teal-deep, #1E6F63) !important;
+    border-color:var(--el-teal-deep, #1E6F63) !important;
+  }
+  .el-footer{ background:#EDE4D0 !important; border-top:1px solid var(--el-line-soft, #E5DFD2) !important; }
+  .el-footer .tag{ color:var(--el-ink-faint, #8A8478) !important; }
+  .el-footer .el-logo{ color:var(--el-navy, #16233F) !important; }
+  .el-footer .el-logo .dot{ color:var(--el-mustard-deep, #B9812A) !important; }
+  .el-footer-cols a{ color:var(--el-ink-faint, #8A8478) !important; }
+  .el-footer-cols h6{ color:var(--el-navy, #16233F) !important; }
+  .el-footer-bottom{ color:var(--el-ink-faint, #8A8478) !important; border-top-color:var(--el-line-soft, #E5DFD2) !important; }
+  /* 広告バナー：横長の画像1枚を全面に表示し、CTAボタンとスポンサー表記を重ねる（管理者ページで「横長」「スクエア」を選択） */
+  .el-ad-banner-v2{
+    position:relative !important;
+    display:block !important;
+    width:100% !important;
+    border-radius:var(--el-radius-m, 14px) !important;
+    overflow:hidden !important;
+    background:var(--el-cream-deep, #FBF3E3) !important;
+    aspect-ratio:960 / 220;
+    max-height:200px !important;
+  }
+  .el-ad-banner-v2.is-square{
+    aspect-ratio:1 / 1 !important;
+    max-width:280px !important;
+    max-height:none !important;
+    margin:0 auto !important;
+  }
+  .el-ad-tag-v2{
+    position:absolute !important;
+    top:12px !important;
+    left:12px !important;
+    z-index:2 !important;
+    background:rgba(0,0,0,.55) !important;
+    color:#fff !important;
+    font-size:10px !important;
+    font-weight:700 !important;
+    letter-spacing:.08em !important;
+    padding:3px 10px !important;
+    border-radius:999px !important;
+    line-height:1.6 !important;
+  }
+  .el-ad-image-v2{
+    position:absolute !important;
+    inset:0 !important;
+    background-size:cover !important;
+    background-position:center !important;
+    background-color:var(--el-teal, #2F8F82) !important;
+  }
+  .el-ad-cta-v2{
+    position:absolute !important;
+    right:16px !important;
+    bottom:16px !important;
+    z-index:2 !important;
+    box-shadow:0 3px 10px rgba(0,0,0,.25) !important;
+  }
+  .el-ad-sponsor-v2{
+    position:absolute !important;
+    left:12px !important;
+    bottom:10px !important;
+    z-index:2 !important;
+    font-size:11px !important;
+    color:rgba(255,255,255,.85) !important;
+    background:rgba(0,0,0,.35) !important;
+    padding:2px 9px !important;
+    border-radius:999px !important;
+  }
+</style>
+</head>
+<body data-site="community" data-root="..">
+
+<header class="el-header">
+  <div class="el-header-inner">
+    <button class="el-menu-toggle" id="sidebarToggle" aria-label="メニュー">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+    <a href="index.html" class="el-logo">Export Lab<span class="dot">.</span></a>
+    <div class="el-header-actions">
+      <form class="el-search" action="search.html" method="get">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input type="search" name="q" placeholder="検索" aria-label="検索" autocomplete="off">
+      </form>
+      <span id="headerAuthLinks" style="display:flex;gap:6px;white-space:nowrap;"><a href="signup.html" class="el-btn el-btn--ghost el-btn--sm" id="headerSignupLink">新規登録</a><a href="login.html" class="el-btn el-btn--ghost el-btn--sm" id="headerLoginLink">ログイン</a></span>
+      <a href="mypage.html" class="el-header-bell" aria-label="通知">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="count">3</span>
+      </a>
+      <a href="mypage.html" class="el-avatar" id="headerAvatar" aria-label="マイページ">り</a>
+    </div>
+  </div>
+</header>
+
+<div class="el-app" id="appShell">
+  <div class="el-sidebar-wrap">
+    <aside class="el-sidebar" id="sidebar">
+    <nav>
+      <a href="index.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/><path d="M9 22V12h6v10"/></svg>
+        <span class="lbl">ホーム</span>
+      </a>
+
+      <details class="el-side-forum">
+        <summary data-href="forum.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <span class="lbl">フォーラム</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
+        </summary>
+        <div class="el-side-sub">
+          <a href="forum-new.html" class="el-side-cta" data-guest-block>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+            新規投稿をする
+          </a>
+          <a href="board.html">すべて</a>
+          <a href="board.html?sort=new">新着</a>
+          <a href="board.html?sort=hot">人気</a>
+          <a href="board.html?filter=shift&sort=hot">SHiFT member only</a>
+          <a href="board.html?filter=unsolved&sort=hot">未解決</a>
+
+          <a href="forum-categories.html">カテゴリで探す</a>
+          <a href="forum-tags.html">ハッシュタグで探す</a>
+        </div>
+      </details>
+
+      <details class="el-side-forum" open>
+        <summary class="is-active" data-href="groups.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <span class="lbl">コミュニティ</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
+        </summary>
+        <div class="el-side-sub">
+          <a href="groups.html" class="el-side-cta" data-guest-block>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+            新規コミュニティを作成する
+          </a>
+          <a href="groups-list.html">すべて</a>
+          <a href="groups-list.html?sort=new">新着</a>
+          <a href="groups-list.html?sort=hot">人気</a>
+          <a href="groups-list.html?filter=joined&sort=hot">参加中のコミュニティ</a>
+          <a href="groups-list.html?filter=pending&sort=hot">申請中のコミュニティ</a>
+        </div>
+      </details>
+
+      <a href="announcements.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
+        <span class="lbl">公式お知らせ</span>
+      </a>
+
+      <a href="events.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        <span class="lbl">イベント</span>
+      </a>
+
+      <details class="el-side-forum">
+        <summary data-href="market.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/></svg>
+          <span class="lbl">マーケット</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
+        </summary>
+        <div class="el-side-sub">
+          <a href="market-list.html">すべて</a>
+          <a href="market-official.html">ワールドシフト提供</a>
+          <a href="market-apply.html">出品申請</a>
+        </div>
+      </details>
+
+      <a href="members.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M6 16c.5-1.6 1.7-2.5 3-2.5s2.5.9 3 2.5"/><path d="M14 9h4M14 13h4"/></svg>
+        <span class="lbl">メンバー</span>
+      </a>
+
+      <a href="mypage.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+        <span class="lbl">マイページ</span>
+      </a>
+    </nav>
+  </aside>
+  </div>
+
+  <div class="el-content">
+    <main class="el-section el-compose-section" style="padding-top:0;">
+      <div class="wrap">
+        <nav class="el-breadcrumb el-page-breadcrumb" aria-label="パンくず" id="ctnBreadcrumb">
+          <a href="index.html">ホーム</a>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
+          <a href="groups.html">コミュニティ</a>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
+          <span>新規投稿</span>
+        </nav>
+
+        <div class="el-compose-head">
+          <div>
+            <span class="el-compose-kicker">NEW POST</span>
+            <h1 id="ctnHeading">コミュニティに新しい投稿をする</h1>
+          </div>
+        </div>
+
+        <div id="ctnNoGroupNotice" style="display:none;padding:24px 4px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">
+          コミュニティが指定されていません。<a href="groups.html">コミュニティ一覧に戻る</a>
+        </div>
+
+        <form class="el-compose-form" id="newTopicForm">
+          <section class="el-compose-card">
+            <div class="el-form-block">
+              <div class="el-form-label-row">
+                <label for="topicTitle">タイトル <span class="required">必須</span></label>
+                <span class="el-char-count"><span id="titleCount">0</span>/80</span>
+              </div>
+              <input id="topicTitle" name="title" class="el-form-input el-form-input--title" maxlength="80"
+                     placeholder="例：初めての展示会出展で気をつけたいこと" required>
+            </div>
+
+            <div class="el-form-block">
+              <div class="el-form-label-row">
+                <label>本文 <span class="required">必須</span></label>
+                <span class="el-form-hint">できるだけ具体的に書くと反応が集まりやすくなります</span>
+              </div>
+
+              <div class="el-rich-editor">
+                <div class="el-editor-toolbar" role="toolbar" aria-label="本文の書式">
+                  <button type="button" data-command="bold" title="太字"><strong>B</strong></button>
+                  <button type="button" data-command="italic" title="斜体"><em>I</em></button>
+                  <button type="button" data-command="underline" title="下線"><span style="text-decoration:underline;font-weight:700;">U</span></button>
+                  <button type="button" data-command="strikeThrough" title="取り消し線"><span style="text-decoration:line-through;">S</span></button>
+                  <span class="sep"></span>
+                  <select id="fontSizeSelect" class="el-editor-select" title="文字サイズ" aria-label="文字サイズ">
+                    <option value="">文字サイズ</option>
+                    <option value="12px">小</option>
+                    <option value="14px">標準</option>
+                    <option value="18px">大</option>
+                    <option value="24px">特大</option>
+                    <option value="32px">見出し</option>
+                  </select>
+                  <label class="el-editor-color" title="文字色">A<input type="color" id="textColorPicker" value="#16233f" aria-label="文字色"></label>
+                  <label class="el-editor-color el-editor-color--bg" title="背景色"><span>■</span><input type="color" id="bgColorPicker" value="#fff3d8" aria-label="背景色"></label>
+                  <span class="sep"></span>
+                  <button type="button" data-command="insertUnorderedList" title="箇条書き">
+                    <svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+                  </button>
+                  <button type="button" data-command="insertOrderedList" title="番号付きリスト">
+                    <svg viewBox="0 0 24 24"><path d="M10 6h11M10 12h11M10 18h11M4 6h1V3M4 3h2M4 12h2l-2 3h2M4 18h2v3H4"/></svg>
+                  </button>
+                  <button type="button" id="quoteBtn" title="引用">
+                    <svg viewBox="0 0 24 24"><path d="M10 11H6a4 4 0 0 1 4-4V5a6 6 0 0 0-6 6v6h6v-6ZM20 11h-4a4 4 0 0 1 4-4V5a6 6 0 0 0-6 6v6h6v-6Z"/></svg>
+                  </button>
+                  <button type="button" data-command="insertHorizontalRule" title="区切り線">
+                    <svg viewBox="0 0 24 24"><path d="M4 12h16"/></svg>
+                  </button>
+                  <span class="sep"></span>
+                  <button type="button" id="addLinkBtn" title="リンク">
+                    <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                  </button>
+                  <button type="button" id="imageBtn" title="画像を挿入">
+                    <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9" r="1.5"/><path d="m21 15-5-5L5 20"/></svg>
+                  </button>
+                  <input type="file" id="inlineImageInput" accept="image/*" hidden>
+                  <button type="button" id="clearFormatBtn" title="書式を解除">
+                    <svg viewBox="0 0 24 24"><path d="m3 3 18 18M9 5h9M13 5l-3 10M6 19h8"/></svg>
+                  </button>
+                </div>
+                <div class="el-link-popover" id="linkPopover" hidden>
+                  <input type="url" id="linkUrlInput" placeholder="https://example.com" aria-label="リンク先URL">
+                  <button type="button" id="applyLinkBtn">リンクを設定</button>
+                  <button type="button" id="removeLinkBtn">解除</button>
+                </div>
+                <div id="topicBody" class="el-editor-area" contenteditable="true"
+                     data-placeholder="相談したいこと、共有したい情報などを入力してください…"></div>
+                <textarea id="topicBodyValue" name="body" hidden></textarea>
+              </div>
+            </div>
+          </section>
+
+          <aside class="el-compose-side">
+            <div class="el-compose-help">
+              <h3>投稿前のチェック</h3>
+              <ul>
+                <li>タイトルだけで内容が想像できる</li>
+                <li>コミュニティのメンバーに向けた内容になっている</li>
+                <li>個人情報・機密情報を含めていない</li>
+              </ul>
+            </div>
+          </aside>
+
+          <div class="el-compose-actions">
+            <button type="button" class="el-btn el-btn--ghost" id="saveDraftBtn">下書き保存</button>
+            <button type="button" class="el-btn el-btn--outline" id="previewBtn">プレビュー</button>
+            <button type="submit" class="el-btn el-btn--primary el-submit-topic">投稿する</button>
+          </div>
+        </form>
+      </div>
+
+      <dialog class="el-preview-dialog" id="previewDialog">
+        <div class="el-preview-dialog-inner">
+          <div class="el-preview-head">
+            <div>
+              <span>PREVIEW</span>
+              <h2 id="previewTitle">投稿プレビュー</h2>
+            </div>
+            <button type="button" id="previewClose" aria-label="閉じる">×</button>
+          </div>
+          <div class="el-preview-meta" id="previewMeta"></div>
+          <div class="el-preview-body" id="previewBody"></div>
+        </div>
+      </dialog>
+    </main>
+    <section class="el-section" style="padding-top:0;padding-bottom:24px;">
+      <div class="wrap">
+
+        <div class="el-ad-banner-v2" id="adBanner">
+          <span class="el-ad-tag-v2">AD</span>
+          <div class="el-ad-image-v2" id="adImageV2"></div>
+          <a href="#" class="el-btn el-btn--primary el-btn--sm el-ad-cta-v2" id="adCtaV2">詳しく見る</a>
+          <span class="el-ad-sponsor-v2" id="adSponsorV2"></span>
+        </div>
+
+      </div>
+    </section>
+<footer class="el-footer">
+      <div class="wrap">
+        <div class="el-footer-grid">
+          <div>
+            <a href="index.html" class="el-logo">Export Lab<span class="dot">.</span></a>
+            <p class="tag">人・モノ・情報がつながる、輸出の共創コミュニティ。<br>運営：WorldShift株式会社</p>
+          </div>
+          <div class="el-footer-cols">
+            <div>
+              <h6>コミュニティ</h6>
+              <a href="board.html">フォーラム</a>
+              <a href="groups.html">コミュニティ</a>
+              <a href="announcements.html">公式お知らせ</a>
+              <a href="events.html">イベント</a>
+              <a href="market.html">マーケット</a>
+            </div>
+            <div>
+              <h6>サポート</h6>
+              <a href="#">ガイドライン</a>
+              <a href="#">よくある質問</a>
+              <a href="#">お問い合わせ</a>
+            </div>
+          </div>
+        </div>
+        <div class="el-footer-bottom">
+          <span>© 2026 WorldShift Inc.</span>
+          <span>Export Lab Community</span>
+        </div>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<div class="el-auth-modal" id="authModal" aria-hidden="true">
+  <div class="el-auth-modal-backdrop" data-auth-close></div>
+  <div class="el-auth-modal-panel" role="dialog" aria-modal="true">
+    <button type="button" class="el-auth-modal-close" data-auth-close aria-label="閉じる">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <h3>ユーザー登録してください</h3>
+    <p>この操作を行うには、会員登録（無料）が必要です。登録すると投稿・返信・購入などすべての機能がご利用いただけます。</p>
+    <div class="el-auth-modal-actions">
+      <a href="signup.html" class="el-btn el-btn--primary el-btn--sm">新規登録する</a>
+      <button type="button" class="el-btn el-btn--ghost el-btn--sm" data-auth-close>閉じる</button>
+    </div>
+  </div>
+</div>
+
+<script src="../shared/global-header.js" defer></script>
+<script>
+  (function () {
+    var appShell = document.getElementById('appShell');
+    var STORAGE_KEY = 'el-sidebar-collapsed';
+    try {
+      if (localStorage.getItem(STORAGE_KEY) === '1') appShell.classList.add('is-toggled');
+    } catch (e) {}
+    var toggle = document.getElementById('sidebarToggle');
+    if (toggle) toggle.addEventListener('click', function () {
+      appShell.classList.toggle('is-toggled');
+      try { localStorage.setItem(STORAGE_KEY, appShell.classList.contains('is-toggled') ? '1' : '0'); } catch (e) {}
+    });
+  })();
+
+  document.querySelectorAll('.el-side-forum > summary[data-href]').forEach(function (summary) {
+    summary.addEventListener('click', function (e) {
+      if (e.target.closest('svg.chev')) return;
+      e.preventDefault();
+      window.location.href = summary.dataset.href;
+    });
+  });
+
+  var EL_GROUP_ID = new URLSearchParams(window.location.search).get('groupId') || '';
+  var EL_DRAFT_KEY = 'el-community-topic-draft-' + (EL_GROUP_ID || 'unknown');
+
+  (function () {
+    var title = document.getElementById('topicTitle');
+    var titleCount = document.getElementById('titleCount');
+    var editor = document.getElementById('topicBody');
+    var bodyValue = document.getElementById('topicBodyValue');
+    var form = document.getElementById('newTopicForm');
+
+    title.addEventListener('input', function () {
+      titleCount.textContent = title.value.length;
+    });
+
+    var savedRange = null;
+
+    function selectionIsInsideEditor(sel) {
+      if (!sel || !sel.rangeCount) return false;
+      var node = sel.anchorNode;
+      return !!node && (node === editor || editor.contains(node.nodeType === 1 ? node : node.parentNode));
+    }
+
+    function saveSelection() {
+      var sel = window.getSelection();
+      if (selectionIsInsideEditor(sel)) {
+        savedRange = sel.getRangeAt(0).cloneRange();
+      }
+    }
+
+    function restoreSelection() {
+      editor.focus({preventScroll:true});
+      if (!savedRange) return false;
+
+      try {
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(savedRange.cloneRange());
+        return true;
+      } catch (e) {
+        return false;
+      }
+    }
+
+    function runCommand(cmd, value) {
+      insertMarkers();
+      document.execCommand('styleWithCSS', false, true);
+      document.execCommand(cmd, false, value == null ? null : value);
+      restoreFromMarkers();
+    }
+
+    function clearMarkers() {
+      editor.querySelectorAll('[data-sel-marker]').forEach(function (m) { m.remove(); });
+    }
+
+    function insertMarkers() {
+      restoreSelection();
+      clearMarkers();
+      var sel = window.getSelection();
+      if (!sel || !sel.rangeCount || !selectionIsInsideEditor(sel)) return false;
+      var range = sel.getRangeAt(0);
+
+      var startMarker = document.createElement('span');
+      startMarker.setAttribute('data-sel-marker', 'start');
+      var endMarker = document.createElement('span');
+      endMarker.setAttribute('data-sel-marker', 'end');
+
+      if (range.collapsed) {
+        range.insertNode(startMarker);
+        return true;
+      }
+
+      var endRange = range.cloneRange();
+      endRange.collapse(false);
+      endRange.insertNode(endMarker);
+
+      var startRange = range.cloneRange();
+      startRange.collapse(true);
+      startRange.insertNode(startMarker);
+
+      return true;
+    }
+
+    function rangeFromMarkers() {
+      var start = editor.querySelector('[data-sel-marker="start"]');
+      var end = editor.querySelector('[data-sel-marker="end"]');
+      if (!start) return null;
+      var range = document.createRange();
+      if (end) {
+        range.setStartAfter(start);
+        range.setEndBefore(end);
+      } else {
+        range.setStartAfter(start);
+        range.collapse(true);
+      }
+      return { range: range, start: start, end: end };
+    }
+
+    function restoreFromMarkers() {
+      var found = rangeFromMarkers();
+      if (!found) { saveSelection(); return; }
+      var sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(found.range);
+      found.start.remove();
+      if (found.end) found.end.remove();
+      saveSelection();
+    }
+
+    document.addEventListener('selectionchange', function () {
+      var sel = window.getSelection();
+      if (selectionIsInsideEditor(sel)) saveSelection();
+    });
+    editor.addEventListener('keyup', saveSelection);
+    editor.addEventListener('mouseup', saveSelection);
+    editor.addEventListener('focus', saveSelection);
+    editor.addEventListener('input', saveSelection);
+
+    document.querySelectorAll('.el-editor-toolbar button').forEach(function (btn) {
+      btn.addEventListener('pointerdown', function (e) {
+        saveSelection();
+        e.preventDefault();
+      });
+    });
+
+    document.querySelectorAll('.el-editor-toolbar select, .el-editor-toolbar input[type="color"]').forEach(function (control) {
+      control.addEventListener('pointerdown', saveSelection);
+    });
+
+    document.querySelectorAll('.el-editor-toolbar [data-command]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        runCommand(btn.dataset.command, btn.dataset.value || null);
+      });
+    });
+
+    function placeCaretAfter(node) {
+      var sel = window.getSelection();
+      var r = document.createRange();
+      r.setStartAfter(node);
+      r.collapse(true);
+      sel.removeAllRanges();
+      sel.addRange(r);
+      saveSelection();
+    }
+
+    document.getElementById('quoteBtn').addEventListener('click', function () {
+      insertMarkers();
+      var start = editor.querySelector('[data-sel-marker="start"]');
+      var el = start && start.parentElement;
+      var existing = el && el.closest('blockquote');
+
+      if (existing && editor.contains(existing)) {
+        document.execCommand('formatBlock', false, 'div');
+      } else {
+        document.execCommand('formatBlock', false, 'blockquote');
+      }
+      restoreFromMarkers();
+    });
+
+    editor.addEventListener('keydown', function (e) {
+      if (e.key !== 'Enter' || e.shiftKey) return;
+
+      var sel = window.getSelection();
+      if (!sel || !sel.rangeCount || !sel.isCollapsed) return;
+
+      var node = sel.anchorNode;
+      var el = node && (node.nodeType === 1 ? node : node.parentElement);
+      if (!el) return;
+
+      var quote = el.closest('blockquote');
+      if (!quote || !editor.contains(quote)) return;
+
+      e.preventDefault();
+      var normal = document.createElement('div');
+      normal.innerHTML = '<br>';
+      quote.parentNode.insertBefore(normal, quote.nextSibling);
+      placeCaretAfter(quote);
+      var r = document.createRange();
+      r.setStart(normal, 0);
+      r.collapse(true);
+      sel.removeAllRanges();
+      sel.addRange(r);
+      saveSelection();
+    });
+
+    var fontSizeSelect = document.getElementById('fontSizeSelect');
+    fontSizeSelect.addEventListener('pointerdown', function () { saveSelection(); });
+    fontSizeSelect.addEventListener('change', function () {
+      var px = this.value;
+      if (!px) return;
+
+      restoreSelection();
+      document.execCommand('styleWithCSS', false, false);
+      document.execCommand('fontSize', false, '7');
+
+      editor.querySelectorAll('font[size="7"]').forEach(function (font) {
+        var span = document.createElement('span');
+        span.style.fontSize = px;
+        while (font.firstChild) span.appendChild(font.firstChild);
+        font.replaceWith(span);
+      });
+
+      document.execCommand('styleWithCSS', false, true);
+      this.value = '';
+      saveSelection();
+    });
+
+    document.getElementById('textColorPicker').addEventListener('input', function () { runCommand('foreColor', this.value); });
+    document.getElementById('bgColorPicker').addEventListener('input', function () {
+      insertMarkers();
+      document.execCommand('styleWithCSS', false, true);
+      var ok = document.execCommand('hiliteColor', false, this.value);
+      if (!ok) document.execCommand('backColor', false, this.value);
+      restoreFromMarkers();
+    });
+
+    var linkPopover = document.getElementById('linkPopover');
+    var linkUrlInput = document.getElementById('linkUrlInput');
+    document.getElementById('addLinkBtn').addEventListener('mousedown', function(e){
+      saveSelection();
+      e.preventDefault();
+    });
+    document.getElementById('addLinkBtn').addEventListener('click', function () {
+      insertMarkers();
+      var found = rangeFromMarkers();
+      if (!found) {
+        linkPopover.hidden = false;
+        linkPopover.classList.add('is-centered');
+      } else if (!found.end) {
+        linkPopover.hidden = false;
+        linkPopover.classList.add('is-centered');
+      } else {
+        var rect = found.range.getBoundingClientRect();
+        var editorRect = document.querySelector('.el-rich-editor').getBoundingClientRect();
+        linkPopover.hidden = false;
+        linkPopover.classList.remove('is-centered');
+        linkPopover.style.left = Math.max(10, Math.min(rect.left - editorRect.left, editorRect.width - 340)) + 'px';
+        linkPopover.style.top = (rect.bottom - editorRect.top + 8) + 'px';
+      }
+      linkUrlInput.value = '';
+      linkUrlInput.focus();
+    });
+    document.getElementById('applyLinkBtn').addEventListener('mousedown', function(e){
+      e.preventDefault();
+    });
+    document.getElementById('applyLinkBtn').addEventListener('click', function () {
+      var url = linkUrlInput.value.trim();
+      var start = editor.querySelector('[data-sel-marker="start"]');
+      if (!url || !start) { linkPopover.hidden = true; clearMarkers(); return; }
+      if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+
+      editor.focus({preventScroll:true});
+      var end = editor.querySelector('[data-sel-marker="end"]');
+      var a = document.createElement('a');
+      a.href = url;
+
+      if (!end) {
+        a.textContent = url;
+        start.parentNode.insertBefore(a, start);
+        start.remove();
+      } else {
+        var range = document.createRange();
+        range.setStartAfter(start);
+        range.setEndBefore(end);
+        try {
+          range.surroundContents(a);
+        } catch (err) {
+          var frag = range.extractContents();
+          a.appendChild(frag);
+          range.insertNode(a);
+        }
+        start.remove();
+        end.remove();
+      }
+
+      var after = document.createRange();
+      after.setStartAfter(a);
+      after.collapse(true);
+      var sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(after);
+      saveSelection();
+      linkPopover.hidden = true;
+    });
+    document.getElementById('removeLinkBtn').addEventListener('click', function () {
+      runCommand('unlink'); linkPopover.hidden = true;
+    });
+    document.addEventListener('mousedown', function(e){
+      if (!linkPopover.hidden && !e.target.closest('#linkPopover') && !e.target.closest('#addLinkBtn')) {
+        linkPopover.hidden = true;
+        clearMarkers();
+      }
+    });
+
+    var inlineImageInput = document.getElementById('inlineImageInput');
+    document.getElementById('imageBtn').addEventListener('mousedown', function(e){ e.preventDefault(); saveSelection(); });
+    document.getElementById('imageBtn').addEventListener('click', function(){ inlineImageInput.click(); });
+    inlineImageInput.addEventListener('change', function () {
+      var file = this.files && this.files[0];
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function () {
+        restoreSelection();
+        var img = document.createElement('img');
+        img.src = reader.result; img.alt = file.name; img.className = 'el-editor-image';
+        var sel = window.getSelection();
+        var r = sel.rangeCount ? sel.getRangeAt(0) : null;
+        if (r) { r.deleteContents(); r.insertNode(img); r.setStartAfter(img); r.collapse(true); sel.removeAllRanges(); sel.addRange(r); }
+        saveSelection();
+      };
+      reader.readAsDataURL(file); this.value = '';
+    });
+
+    document.getElementById('clearFormatBtn').addEventListener('mousedown', function(e){ e.preventDefault(); });
+    document.getElementById('clearFormatBtn').addEventListener('click', function () {
+      restoreSelection();
+      document.execCommand('removeFormat', false, null);
+      document.execCommand('unlink', false, null);
+      var sel = window.getSelection();
+      if (sel.rangeCount) {
+        var node = sel.anchorNode;
+        var el = node && (node.nodeType === 1 ? node : node.parentElement);
+        var block = el && el.closest('blockquote,pre,h1,h2,h3,h4,h5,h6');
+        if (block && editor.contains(block)) document.execCommand('formatBlock', false, 'div');
+      }
+      saveSelection();
+    });
+
+    function syncBody() {
+      bodyValue.value = editor.innerHTML.trim();
+      return editor.innerText.trim().length > 0;
+    }
+
+    document.getElementById('saveDraftBtn').addEventListener('click', function () {
+      syncBody();
+      var draft = { title: title.value, body: editor.innerHTML };
+      try { localStorage.setItem(EL_DRAFT_KEY, JSON.stringify(draft)); } catch (e) {}
+      this.textContent = '保存しました';
+      var btn = this;
+      setTimeout(function(){ btn.textContent = '下書き保存'; }, 1400);
+    });
+
+    var dialog = document.getElementById('previewDialog');
+    document.getElementById('previewBtn').addEventListener('click', function () {
+      if (!syncBody()) {
+        alert('本文を入力してください。');
+        return;
+      }
+      document.getElementById('previewTitle').textContent = title.value || '（タイトル未入力）';
+      document.getElementById('previewMeta').textContent = '';
+      document.getElementById('previewBody').innerHTML = editor.innerHTML;
+      dialog.showModal();
+    });
+    document.getElementById('previewClose').addEventListener('click', function(){ dialog.close(); });
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (!EL_GROUP_ID) {
+        alert('コミュニティが指定されていません。');
+        return;
+      }
+      if (!syncBody()) {
+        editor.focus();
+        editor.classList.add('is-error');
+        alert('本文を入力してください。');
+        return;
+      }
+      editor.classList.remove('is-error');
+
+      var submitBtn = form.querySelector('button[type="submit"]');
+      if (submitBtn) { submitBtn.disabled = true; }
+
+      var authorName = localStorage.getItem('el-user-name') || localStorage.getItem('el-username') || 'ゲスト';
+      var authorUsername = localStorage.getItem('el-username') || '';
+
+      var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
+      fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({
+          action: 'createCommunityTopic',
+          groupId: EL_GROUP_ID,
+          title: title.value.trim(),
+          body: bodyValue.value,
+          authorUsername: authorUsername,
+          authorName: authorName
+        })
+      })
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+          if (data.ok) {
+            try { localStorage.removeItem(EL_DRAFT_KEY); } catch (err) {}
+            window.location.href = 'community-topic.html?id=' + encodeURIComponent(data.id);
+          } else {
+            if (submitBtn) { submitBtn.disabled = false; }
+            alert('投稿に失敗しました。時間をおいて再度お試しください。');
+          }
+        })
+        .catch(function () {
+          if (submitBtn) { submitBtn.disabled = false; }
+          alert('投稿に失敗しました。通信環境をご確認の上、再度お試しください。');
+        });
+    });
+
+    // 右側の追尾エリアは投稿ボタン群の手前で停止させる。
+    (function () {
+      var side = document.querySelector('.el-compose-side');
+      var actions = document.querySelector('.el-compose-actions');
+      if (!side || !actions) return;
+
+      var ticking = false;
+      function stopBeforeActions() {
+        side.style.transform = '';
+        var sideRect = side.getBoundingClientRect();
+        var actionsRect = actions.getBoundingClientRect();
+        var gap = 20;
+        var overlap = sideRect.bottom - (actionsRect.top - gap);
+
+        if (overlap > 0) {
+          side.style.transform = 'translateY(-' + overlap + 'px)';
+        }
+        ticking = false;
+      }
+
+      function requestUpdate() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(stopBeforeActions);
+      }
+
+      window.addEventListener('scroll', requestUpdate, { passive:true });
+      window.addEventListener('resize', requestUpdate);
+      requestUpdate();
+    })();
+
+    try {
+      var saved = JSON.parse(localStorage.getItem(EL_DRAFT_KEY) || 'null');
+      if (saved) {
+        title.value = saved.title || '';
+        editor.innerHTML = saved.body || '';
+        titleCount.textContent = title.value.length;
+      }
+    } catch (e) {}
+  })();
+
+  // groupIdが指定されていない場合は、フォームを隠してエラーメッセージのみ表示する
+  (function () {
+    if (EL_GROUP_ID) return;
+    var form = document.getElementById('newTopicForm');
+    var notice = document.getElementById('ctnNoGroupNotice');
+    if (form) form.style.display = 'none';
+    if (notice) notice.style.display = '';
+  })();
+
+  // パンくずと見出しに、投稿先のコミュニティ名を表示する
+  (function () {
+    if (!EL_GROUP_ID) return;
+    var breadcrumb = document.getElementById('ctnBreadcrumb');
+    var heading = document.getElementById('ctnHeading');
+    var CHEV = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>';
+    var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
+    function esc(s) {
+      var d = document.createElement('div');
+      d.textContent = s == null ? '' : String(s);
+      return d.innerHTML;
+    }
+    fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'listContent', type: 'communityGroup' })
+    })
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        var items = (data.ok && data.items) ? data.items : [];
+        var community = null;
+        for (var i = 0; i < items.length; i++) { if (String(items[i].id) === String(EL_GROUP_ID)) { community = items[i]; break; } }
+        if (!community) return;
+        document.title = 'コミュニティに新規投稿｜' + community.title + '｜Export Lab';
+        if (breadcrumb) {
+          breadcrumb.innerHTML = '<a href="index.html">ホーム</a>' + CHEV +
+            '<a href="groups.html">コミュニティ</a>' + CHEV +
+            '<a href="community-board.html?id=' + encodeURIComponent(EL_GROUP_ID) + '">' + esc(community.title) + '</a>' + CHEV +
+            '<span>新規投稿</span>';
+        }
+        if (heading) heading.textContent = esc(community.title) + 'に新しい投稿をする';
+      })
+      .catch(function () {});
+  })();
+
+  // ユーザーモード（ゲスト／登録ユーザー／管理者）の切り替えと共通ゲート処理
+  function elDriveImgUrl(url) {
+    if (!url) return url;
+    var m = url.match(/drive\.google\.com\/file\/d\/([^/]+)/) || url.match(/[?&]id=([^&]+)/);
+    if (m && m[1]) return 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w1000';
+    return url;
+  }
+  window.elDriveImgUrl = elDriveImgUrl;
+
+  document.addEventListener('DOMContentLoaded', function () {
+    var ROLE_KEY = 'el-user-role';
+    function getRole() {
+      try { return localStorage.getItem(ROLE_KEY) || 'guest'; } catch (e) { return 'guest'; }
+    }
+    function setRole(role) {
+      try { localStorage.setItem(ROLE_KEY, role); } catch (e) {}
+    }
+    window.elGetRole = getRole;
+
+    var role = getRole();
+    document.body.setAttribute('data-role', role);
+
+    var bell = document.querySelector('.el-header-bell');
+    if (bell && role === 'guest') bell.style.display = 'none';
+    var headerAvatar = document.getElementById('headerAvatar');
+    if (headerAvatar && role === 'guest') headerAvatar.style.display = 'none';
+    else if (headerAvatar) {
+      try {
+        var hp = JSON.parse(localStorage.getItem('el-user-profile') || '{}');
+        var hUsername = localStorage.getItem('el-username') || hp.username || '';
+        if (hp.photoUrl) headerAvatar.innerHTML = '<img src="' + window.elDriveImgUrl(hp.photoUrl) + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
+        else if (hUsername) headerAvatar.textContent = hUsername.charAt(0);
+      } catch (e) {}
+    }
+
+    var authLinksWrap = document.getElementById('headerAuthLinks');
+    var loginLink = document.getElementById('headerLoginLink');
+    var signupLink = document.getElementById('headerSignupLink');
+    if (role !== 'guest' && authLinksWrap) {
+      if (loginLink) loginLink.remove();
+      if (signupLink) {
+        signupLink.textContent = 'ログアウト';
+        signupLink.href = '#';
+        signupLink.addEventListener('click', function (e) {
+          e.preventDefault();
+          setRole('guest');
+          window.location.href = 'index.html';
+        });
+      }
+    }
+
+    var modal = document.getElementById('authModal');
+    window.elRequireAuth = function (e) {
+      if (getRole() !== 'guest') return true;
+      if (e) e.preventDefault();
+      if (modal) { modal.classList.add('is-open'); modal.setAttribute('aria-hidden', 'false'); }
+      return false;
+    };
+    if (modal) {
+      modal.querySelectorAll('[data-auth-close]').forEach(function (el) {
+        el.addEventListener('click', function () {
+          modal.classList.remove('is-open');
+          modal.setAttribute('aria-hidden', 'true');
+        });
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') { modal.classList.remove('is-open'); modal.setAttribute('aria-hidden', 'true'); }
+      });
+    }
+
+    if (role === 'admin') {
+      var sideNav = document.querySelector('.el-sidebar nav');
+      if (sideNav && !sideNav.querySelector('a[href="admin.html"]')) {
+        var adminLink = document.createElement('a');
+        adminLink.href = 'admin.html';
+        adminLink.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 3 7v6c0 5 4 9 9 9s9-4 9-9V7l-9-5Z"/><path d="m9 12 2 2 4-4"/></svg><span class="lbl">管理者ページ</span>';
+        sideNav.appendChild(adminLink);
+      }
+    }
+
+    if (role === 'guest') {
+      document.querySelectorAll('[data-guest-block]').forEach(function (el) {
+        el.addEventListener('click', window.elRequireAuth);
+      });
+      // 新規投稿ページはゲストが直接開いた場合も登録モーダルを表示し、投稿フォームは使わせない。
+      var composeForm = document.getElementById('newTopicForm');
+      if (composeForm) {
+        composeForm.style.opacity = '.4';
+        composeForm.style.pointerEvents = 'none';
+        window.elRequireAuth();
+      }
+    }
+  });
+
+  var ADS = [
+    { name: "SLCサービス", desc: "米AmazonFBA納品代行サービス", gradient: "linear-gradient(120deg, var(--el-teal), #1B5A52)" },
+    { name: "FDA Compliance Partner", desc: "FDA規制対応サービス", gradient: "linear-gradient(120deg, var(--el-mustard), #8A5E1A)" },
+    { name: "ProFinder", desc: "米Amazonリサーチツール", gradient: "linear-gradient(120deg, #3E7EA3, #1B3E5C)" },
+    { name: "Allynair", desc: "海外発送代行サービス", gradient: "linear-gradient(120deg, var(--el-sage), #2E5C3E)" },
+    { name: "AmaNavi", desc: "米Amazon進出サポートサービス", gradient: "linear-gradient(120deg, var(--el-coral), #8A3E2E)" }
+  ];
+  (function () {
+    var el = document.getElementById('adBanner');
+    if (!el) return;
+    var imageEl = document.getElementById('adImageV2');
+    var ctaEl = document.getElementById('adCtaV2');
+    var sponsorEl = document.getElementById('adSponsorV2');
+
+    function renderMockAd() {
+      var ad = ADS[Math.floor(Math.random() * ADS.length)];
+      el.classList.remove('is-square');
+      imageEl.style.background = ad.gradient;
+      imageEl.style.backgroundImage = 'none';
+      ctaEl.textContent = '詳しく見る';
+      sponsorEl.textContent = 'スポンサー：' + ad.name;
+    }
+
+    var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
+    fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'listContent', type: 'ad' })
+    })
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        var ads = (data.ok && data.items) ? data.items : [];
+        if (!ads.length) { renderMockAd(); return; }
+        var ad = ads[Math.floor(Math.random() * ads.length)];
+        el.classList.toggle('is-square', ad.adType === 'square');
+        if (ad.imageUrl) {
+          imageEl.style.backgroundImage = 'url(' + ad.imageUrl + ')';
+        } else {
+          imageEl.style.backgroundImage = 'none';
+          imageEl.style.background = 'var(--el-teal)';
+        }
+        ctaEl.textContent = ad.ctaText || '詳しく見る';
+        if (ad.ctaUrl) ctaEl.href = ad.ctaUrl;
+        sponsorEl.textContent = 'スポンサー：' + (ad.serviceName || '');
+      })
+      .catch(renderMockAd);
+  })();
+</script>
+</body>
+</html>
