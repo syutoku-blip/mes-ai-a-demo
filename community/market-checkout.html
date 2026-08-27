@@ -304,28 +304,37 @@
 
         <div class="el-section-head" style="margin-bottom:20px;">
           <div>
-            <h2>購入確認</h2>
-            <div class="sub">内容をご確認の上、お手続きを進めてください</div>
+            <h2 id="checkoutPageTitle">購入確認</h2>
+            <div class="sub" id="checkoutPageSub">内容をご確認の上、お手続きを進めてください</div>
           </div>
         </div>
 
-        <div id="checkoutItems"></div>
+        <div id="checkoutFlowSection">
+          <div id="checkoutItems"></div>
 
-        <div class="el-apply-form" style="margin-top:24px;">
-          <div class="el-apply-field">
-            <label>お支払い方法</label>
-            <select>
-              <option>クレジットカード（登録済み）</option>
-              <option>銀行振込</option>
-            </select>
+          <div class="el-apply-form" style="margin-top:24px;">
+            <div class="el-apply-field">
+              <label>お支払い方法</label>
+              <select>
+                <option>クレジットカード（登録済み）</option>
+                <option>銀行振込</option>
+              </select>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding-top:16px;border-top:1px solid var(--el-line-soft);margin-top:8px;">
+              <span style="font-size:14px;color:var(--el-navy-soft);">合計金額</span>
+              <strong id="checkoutTotal" style="font-size:23px;color:var(--el-navy);">¥0</strong>
+            </div>
+            <div class="el-apply-foot">
+              <p>実際の決済は行われないプロトタイプです。</p>
+              <button type="button" class="el-btn el-btn--primary" id="confirmPurchaseBtn">購入を確定する</button>
+            </div>
           </div>
-          <div style="display:flex;align-items:center;justify-content:space-between;padding-top:16px;border-top:1px solid var(--el-line-soft);margin-top:8px;">
-            <span style="font-size:14px;color:var(--el-navy-soft);">合計金額</span>
-            <strong id="checkoutTotal" style="font-size:23px;color:var(--el-navy);">¥0</strong>
-          </div>
-          <div class="el-apply-foot">
-            <p>実際の決済は行われないプロトタイプです。</p>
-            <button type="button" class="el-btn el-btn--primary" id="confirmPurchaseBtn">購入を確定する</button>
+        </div>
+
+        <div id="purchaseHistorySection" style="display:none;">
+          <div id="purchaseHistoryList" style="display:flex;flex-direction:column;gap:10px;"></div>
+          <div id="purchaseHistoryEmpty" style="display:none;padding:60px 20px;text-align:center;color:var(--el-ink-faint);font-size:14px;">
+            <p id="purchaseHistoryEmptyText">まだ購入履歴がありません。</p>
           </div>
         </div>
 
@@ -525,7 +534,18 @@
       try { return localStorage.getItem(ROLE_KEY) || 'guest'; } catch (e) { return 'guest'; }
     }
     function setRole(role) {
-      try { localStorage.setItem(ROLE_KEY, role); } catch (e) {}
+      try {
+        localStorage.setItem(ROLE_KEY, role);
+        // ログアウト時は権限だけでなく、以前ログインしていたユーザーの識別情報も
+        // 消しておかないと、いいね等の「ログイン済みか」の判定がユーザーIDの残存で
+        // 誤って通ってしまうため、あわせて削除する。
+        if (role === 'guest') {
+          localStorage.removeItem('el-user-id');
+          localStorage.removeItem('el-username');
+          localStorage.removeItem('el-user-name');
+          localStorage.removeItem('el-user-profile');
+        }
+      } catch (e) {}
     }
     window.elGetRole = getRole;
 
@@ -676,6 +696,82 @@
         sponsorEl.textContent = 'スポンサー：' + (ad.serviceName || '');
       })
       .catch(renderMockAd);
+  })();
+</script>
+
+<script>
+  // マイページ「購入したコンテンツ」からの購入履歴表示（?view=history）。
+  // マーケット申込みシート（submitMarketOrder で記録）を、ログイン中のユーザーネーム／メールアドレスで絞り込む。
+  (function () {
+    var params = new URLSearchParams(window.location.search);
+    if (params.get('view') !== 'history') return;
+
+    var flowSection = document.getElementById('checkoutFlowSection');
+    var historySection = document.getElementById('purchaseHistorySection');
+    if (flowSection) flowSection.style.display = 'none';
+    if (historySection) historySection.style.display = 'block';
+    var titleEl = document.getElementById('checkoutPageTitle');
+    var subEl = document.getElementById('checkoutPageSub');
+    if (titleEl) titleEl.textContent = '購入履歴';
+    if (subEl) subEl.textContent = 'これまでにご購入いただいたコンテンツの一覧です';
+    document.title = '購入履歴｜Export Lab';
+
+    var listEl = document.getElementById('purchaseHistoryList');
+    var emptyEl = document.getElementById('purchaseHistoryEmpty');
+    var emptyTextEl = document.getElementById('purchaseHistoryEmptyText');
+
+    var uname = '', email = '';
+    try {
+      uname = localStorage.getItem('el-username') || '';
+      email = localStorage.getItem('el-user-email') || '';
+    } catch (e) {}
+
+    if (!uname && !email) {
+      emptyTextEl.textContent = 'ログイン（会員登録）すると、購入履歴が表示されます。';
+      emptyEl.style.display = 'block';
+      return;
+    }
+
+    function esc(s) {
+      var d = document.createElement('div');
+      d.textContent = s == null ? '' : String(s);
+      return d.innerHTML;
+    }
+    function fmtDateTime(dateStr) {
+      var d = new Date(dateStr);
+      if (isNaN(d.getTime())) return '';
+      return d.toLocaleDateString('ja-JP') + ' ' + d.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' });
+    }
+
+    var HISTORY_API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
+    fetch(HISTORY_API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'listMarketOrders' })
+    })
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        var all = (data.ok && data.items) ? data.items : [];
+        var mine = all.filter(function (o) {
+          return (uname && o.username && String(o.username) === String(uname)) ||
+            (email && o.email && String(o.email) === String(email));
+        });
+        if (!mine.length) {
+          emptyTextEl.textContent = 'まだ購入履歴がありません。';
+          emptyEl.style.display = 'block';
+          return;
+        }
+        listEl.innerHTML = mine.map(function (o) {
+          return '<div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 18px;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);">' +
+            '<div><div style="font-size:14.5px;font-weight:700;color:var(--el-navy);">' + esc(o.contentTitle) + '</div>' +
+            '<div style="font-size:12.5px;color:var(--el-ink-faint);margin-top:3px;">' + esc(fmtDateTime(o.createdAt)) + '・' + esc(o.status || '受付済み') + '</div></div>' +
+            '<strong style="font-size:15px;color:var(--el-navy);flex-shrink:0;">¥' + Number(o.amount || 0).toLocaleString('ja-JP') + '</strong></div>';
+        }).join('');
+      })
+      .catch(function () {
+        emptyTextEl.textContent = '読み込みに失敗しました。';
+        emptyEl.style.display = 'block';
+      });
   })();
 </script>
 <div class="el-auth-modal" id="authModal" aria-hidden="true">

@@ -309,7 +309,13 @@
       authLink.href = '#';
       authLink.addEventListener('click', function (e) {
         e.preventDefault();
-        try { localStorage.setItem('el-user-role', 'guest'); } catch (err) {}
+        try {
+          localStorage.setItem('el-user-role', 'guest');
+          localStorage.removeItem('el-user-id');
+          localStorage.removeItem('el-username');
+          localStorage.removeItem('el-user-name');
+          localStorage.removeItem('el-user-profile');
+        } catch (err) {}
         window.location.href = 'index.html';
       });
     }
@@ -362,7 +368,7 @@
         } catch (err) {}
 
         if (data.role === 'admin') window.location.href = 'admin.html';
-        else window.location.href = 'mypage.html';
+        else window.location.href = 'index.html';
       })
       .catch(function () {
         submitBtn.disabled = false;

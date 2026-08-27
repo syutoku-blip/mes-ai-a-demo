@@ -291,21 +291,21 @@
             <strong style="display:block;font-size:14px;color:var(--el-navy);">アカウント設定</strong>
             <span style="display:block;font-size:12.5px;color:var(--el-ink-faint);margin-top:2px;">プロフィールの確認・変更</span>
           </a>
-          <a href="#" style="display:block;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);padding:18px;text-decoration:none;color:inherit;">
+          <a href="notifications.html" style="display:block;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);padding:18px;text-decoration:none;color:inherit;">
             <span style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;background:var(--el-teal-tint);color:var(--el-teal-deep);margin-bottom:10px;">
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
             </span>
             <strong style="display:block;font-size:14px;color:var(--el-navy);">通知一覧</strong>
             <span style="display:block;font-size:12.5px;color:var(--el-ink-faint);margin-top:2px;">お知らせ・返信通知</span>
           </a>
-          <a href="#" style="display:block;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);padding:18px;text-decoration:none;color:inherit;">
+          <a href="messages.html" style="display:block;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);padding:18px;text-decoration:none;color:inherit;">
             <span style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;background:var(--el-mustard-tint);color:var(--el-mustard-deep);margin-bottom:10px;">
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
             </span>
             <strong style="display:block;font-size:14px;color:var(--el-navy);">DM一覧</strong>
             <span style="display:block;font-size:12.5px;color:var(--el-ink-faint);margin-top:2px;">メンバーとのやり取り</span>
           </a>
-          <a href="#" style="display:block;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);padding:18px;text-decoration:none;color:inherit;">
+          <a href="market-checkout.html?view=history" style="display:block;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);padding:18px;text-decoration:none;color:inherit;">
             <span style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;background:#F3E9F7;color:#6B4FA0;margin-bottom:10px;">
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
             </span>
@@ -346,8 +346,8 @@
           <a href="groups-list.html?filter=pending" class="el-mypage-list-row">
             <span>申請中のコミュニティ</span><span class="count">0件</span>
           </a>
-          <a href="groups.html" class="el-mypage-list-row" style="border-bottom:none;">
-            <span>作成したコミュニティ</span><span class="count">0件</span>
+          <a href="groups-list.html?filter=created" class="el-mypage-list-row" style="border-bottom:none;">
+            <span>作成したコミュニティ</span><span class="count" id="mypageCreatedGroupsCount">0件</span>
           </a>
         </div>
 
@@ -357,13 +357,13 @@
           </div>
         </div>
         <div style="display:flex;flex-direction:column;gap:0;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);overflow:hidden;">
-          <a href="market-checkout.html" class="el-mypage-list-row">
-            <span>購入したコンテンツ</span><span class="count">0件</span>
+          <a href="market-checkout.html?view=history" class="el-mypage-list-row">
+            <span>購入したコンテンツ</span><span class="count" id="mypagePurchaseCount">0件</span>
           </a>
-          <a href="market-list.html" class="el-mypage-list-row">
+          <a href="market-list.html?filter=favorites" class="el-mypage-list-row">
             <span>お気に入りコンテンツ</span><span class="count" id="favCountRow">0件</span>
           </a>
-          <a href="market-list.html" class="el-mypage-list-row">
+          <a href="market-list.html?filter=mine" class="el-mypage-list-row">
             <span>出品したコンテンツ</span><span class="count">0件</span>
           </a>
           <a href="market-apply.html" class="el-mypage-list-row" style="border-bottom:none;">
@@ -459,6 +459,58 @@
     if (favCountRow) favCountRow.textContent = getFavorites().length + '件';
   })();
 
+  // 「作成したコミュニティ」件数の表示：コミュニティ概要シートを自分のユーザーID／ユーザーネームで絞り込み
+  (function () {
+    var createdEl = document.getElementById('mypageCreatedGroupsCount');
+    if (!createdEl) return;
+    var uid = '', uname = '';
+    try {
+      uid = localStorage.getItem('el-user-id') || '';
+      uname = localStorage.getItem('el-username') || localStorage.getItem('el-user-name') || '';
+    } catch (e) {}
+    if (!uid && !uname) return; // 未ログインなら0件のまま
+
+    var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
+    fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'listContent', type: 'communityGroup' })
+    }).then(function (res) { return res.json(); }).then(function (data) {
+      var items = (data.ok && data.items) ? data.items : [];
+      var mine = items.filter(function (it) {
+        if (uid && it.creatorUserId) return String(it.creatorUserId) === String(uid);
+        return !!(uname && it.creator && String(it.creator) === String(uname));
+      });
+      createdEl.textContent = mine.length + '件';
+    }).catch(function () {});
+  })();
+
+  // 「購入したコンテンツ」件数の表示：マーケット申込みシートを自分のユーザーネーム／メールで絞り込み
+  (function () {
+    var purchaseEl = document.getElementById('mypagePurchaseCount');
+    if (!purchaseEl) return;
+    var uname = '', email = '';
+    try {
+      uname = localStorage.getItem('el-username') || '';
+      email = localStorage.getItem('el-user-email') || '';
+    } catch (e) {}
+    if (!uname && !email) return; // 未ログインなら0件のまま
+
+    var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
+    fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'listMarketOrders' })
+    }).then(function (res) { return res.json(); }).then(function (data) {
+      var items = (data.ok && data.items) ? data.items : [];
+      var mine = items.filter(function (o) {
+        return (uname && o.username && String(o.username) === String(uname)) ||
+          (email && o.email && String(o.email) === String(email));
+      });
+      purchaseEl.textContent = mine.length + '件';
+    }).catch(function () {});
+  })();
+
   // フォーラムの活動状況（投稿・返信・いいね・ベストアンサー）の件数表示
   // ・投稿したトピック：フォーラム投稿シートを自分のユーザーID／ユーザーネームで絞り込み
   // ・返信したトピック：自分の書いたコメントが紐づくトピックのユニーク件数
@@ -534,7 +586,18 @@
       try { return localStorage.getItem(ROLE_KEY) || 'guest'; } catch (e) { return 'guest'; }
     }
     function setRole(role) {
-      try { localStorage.setItem(ROLE_KEY, role); } catch (e) {}
+      try {
+        localStorage.setItem(ROLE_KEY, role);
+        // ログアウト時は権限だけでなく、以前ログインしていたユーザーの識別情報も
+        // 消しておかないと、いいね等の「ログイン済みか」の判定がユーザーIDの残存で
+        // 誤って通ってしまうため、あわせて削除する。
+        if (role === 'guest') {
+          localStorage.removeItem('el-user-id');
+          localStorage.removeItem('el-username');
+          localStorage.removeItem('el-user-name');
+          localStorage.removeItem('el-user-profile');
+        }
+      } catch (e) {}
     }
     window.elGetRole = getRole;
 

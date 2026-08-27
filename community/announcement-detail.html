@@ -298,9 +298,13 @@
     <main class="el-section" style="padding-top:36px;">
       <div class="wrap" style="max-width:720px;">
 
-        <div style="font-size:13.5px;color:var(--el-ink-faint);margin-bottom:20px;">
-          <a href="announcements.html" style="color:var(--el-ink-faint);">公式お知らせ</a>
-        </div>
+        <nav class="el-breadcrumb" aria-label="breadcrumb" style="margin-bottom:20px;">
+          <a href="index.html">ホーム</a>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
+          <a href="announcements.html">公式お知らせ</a>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
+          <span id="noticeBreadcrumbTitle">読み込み中…</span>
+        </nav>
 
         <article class="el-notice" id="noticeArticle" hidden>
           <div class="el-notice-head">
@@ -315,7 +319,6 @@
           </div>
 
           <div class="el-notice-body" id="noticeBody"></div>
-          <div id="noticeCta"></div>
 
           <div class="el-notice-foot">
             <a href="announcements.html" class="el-btn el-btn--ghost el-btn--sm">お知らせ一覧へ戻る</a>
@@ -420,7 +423,18 @@
       try { return localStorage.getItem(ROLE_KEY) || 'guest'; } catch (e) { return 'guest'; }
     }
     function setRole(role) {
-      try { localStorage.setItem(ROLE_KEY, role); } catch (e) {}
+      try {
+        localStorage.setItem(ROLE_KEY, role);
+        // ログアウト時は権限だけでなく、以前ログインしていたユーザーの識別情報も
+        // 消しておかないと、いいね等の「ログイン済みか」の判定がユーザーIDの残存で
+        // 誤って通ってしまうため、あわせて削除する。
+        if (role === 'guest') {
+          localStorage.removeItem('el-user-id');
+          localStorage.removeItem('el-username');
+          localStorage.removeItem('el-user-name');
+          localStorage.removeItem('el-user-profile');
+        }
+      } catch (e) {}
     }
     window.elGetRole = getRole;
 
@@ -529,6 +543,8 @@
       noticeArticle.hidden = true;
       noticeEmptyText.textContent = message;
       noticeEmpty.hidden = false;
+      var bc = document.getElementById('noticeBreadcrumbTitle');
+      if (bc) bc.textContent = 'お知らせが見つかりません';
     }
 
     function renderOtherNotices(items, currentId) {
@@ -572,11 +588,9 @@
         document.title = item.title + '｜Export Lab';
         document.getElementById('noticeCategory').textContent = item.category || 'お知らせ';
         document.getElementById('noticeTitle').textContent = item.title;
-        document.getElementById('noticeMeta').textContent = 'Export Lab運営チーム・' + new Date(item.createdAt).toLocaleDateString('ja-JP');
-        if (item.ctaText) {
-          document.getElementById('noticeCta').innerHTML =
-            '<a href="' + (item.ctaUrl || '#') + '" target="_blank" rel="noopener" class="el-btn el-btn--primary el-btn--sm" style="margin:0 0 20px;display:inline-block;">' + item.ctaText + '</a>';
-        }
+        document.getElementById('noticeMeta').textContent = new Date(item.createdAt).toLocaleDateString('ja-JP');
+        var noticeBreadcrumbTitle = document.getElementById('noticeBreadcrumbTitle');
+        if (noticeBreadcrumbTitle) noticeBreadcrumbTitle.textContent = item.title;
         var bodyEl = document.getElementById('noticeBody');
         bodyEl.innerHTML = '';
         var iframe = document.createElement('iframe');

@@ -369,6 +369,7 @@
               <label><input type="checkbox" name="groupFilterOpt" value="" checked> すべて</label>
               <label><input type="checkbox" name="groupFilterOpt" value="joined"> 参加中</label>
               <label><input type="checkbox" name="groupFilterOpt" value="pending"> 申請中</label>
+              <label><input type="checkbox" name="groupFilterOpt" value="created"> 作成した</label>
             </div>
           </details>
           <details class="el-filter-menu" id="groupSortMenu">
@@ -500,7 +501,7 @@
       visible.slice((page-1)*size,page*size).forEach(function(c){list.appendChild(c);c.style.display='';});
       setSingleCheck('groupFilterOpt', filter);
       setSingleCheck('groupSortOpt', sort);
-      var filterNames = {'':'すべて', joined:'参加中', pending:'申請中'};
+      var filterNames = {'':'すべて', joined:'参加中', pending:'申請中', created:'作成した'};
       var sortNames = {hot:'人気順', new:'新しい順'};
       var filterSummaryEl = document.getElementById('groupFilterSummary'); if (filterSummaryEl) filterSummaryEl.textContent = filterNames[filter] || 'すべて';
       var sortSummaryEl = document.getElementById('groupSortSummary'); if (sortSummaryEl) sortSummaryEl.textContent = sortNames[sort] || '人気順';
@@ -517,6 +518,7 @@
       if(sort==='new') current='新着';
       else if(filter==='joined') current='参加中のコミュニティ';
       else if(filter==='pending') current='申請中のコミュニティ';
+      else if(filter==='created') current='作成したコミュニティ';
 
       if(current){
         var svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
@@ -571,7 +573,18 @@
       try { return localStorage.getItem(ROLE_KEY) || 'guest'; } catch (e) { return 'guest'; }
     }
     function setRole(role) {
-      try { localStorage.setItem(ROLE_KEY, role); } catch (e) {}
+      try {
+        localStorage.setItem(ROLE_KEY, role);
+        // ログアウト時は権限だけでなく、以前ログインしていたユーザーの識別情報も
+        // 消しておかないと、いいね等の「ログイン済みか」の判定がユーザーIDの残存で
+        // 誤って通ってしまうため、あわせて削除する。
+        if (role === 'guest') {
+          localStorage.removeItem('el-user-id');
+          localStorage.removeItem('el-username');
+          localStorage.removeItem('el-user-name');
+          localStorage.removeItem('el-user-profile');
+        }
+      } catch (e) {}
     }
     window.elGetRole = getRole;
 
@@ -677,6 +690,18 @@
       var listEl = document.getElementById('groupList');
       if (!listEl) return;
       var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
+      // 「作成した」絞り込み：コミュニティ概要シートの creatorUserId（無ければ creator 名）を
+      // ログイン中のユーザーID／ユーザーネームと突き合わせて判定する。
+      // ※ 参加中／申請中はメンバーシップを記録するシートが無いため、判定できず常に0件になる（既存の挙動）。
+      var myUid = '', myUname = '';
+      try {
+        myUid = localStorage.getItem('el-user-id') || '';
+        myUname = localStorage.getItem('el-username') || localStorage.getItem('el-user-name') || '';
+      } catch (e) {}
+      function isMyGroup_(creatorUserId, creatorName) {
+        if (myUid && creatorUserId) return String(creatorUserId) === String(myUid);
+        return !!(myUname && creatorName && String(creatorName) === String(myUname));
+      }
       fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -695,7 +720,8 @@
             };
             var iconColor = it.color || 'var(--el-teal)';
             var recency = Date.parse(it.createdAt || '') || 0;
-            return '<div class="el-group-card" data-group="' + (it.id || '') + '" data-state="" data-members="0" data-recency="' + recency + '">' +
+            var state = isMyGroup_(it.creatorUserId, it.creator) ? 'created' : '';
+            return '<div class="el-group-card" data-group="' + (it.id || '') + '" data-state="' + state + '" data-members="0" data-recency="' + recency + '">' +
               '<div class="el-group-top">' +
               '<div class="el-group-icon" style="background:' + iconColor + ';">' +
               '<svg fill="none" height="18" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="18"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20Z"></path></svg>' +

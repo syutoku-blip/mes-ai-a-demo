@@ -264,6 +264,98 @@
     .el-dm-wrap{ flex-direction:column; min-height:0; }
     .el-dm-threads{ width:100%; max-height:220px; border-right:none; border-bottom:1px solid var(--el-line-soft, #E5DFD2); }
   }
+
+  /* DM添付ファイル機能 */
+  .el-dm-attachment{ margin-top:6px; }
+  .el-dm-attachment-img{
+    display:block;
+    max-width:220px;
+    max-height:220px;
+    width:auto;
+    height:auto;
+    border-radius:10px;
+    cursor:zoom-in;
+    border:1px solid rgba(0,0,0,.08);
+  }
+  .el-dm-compose{ align-items:flex-end; }
+  .el-dm-compose-main{ flex:1; min-width:0; display:flex; flex-direction:column; gap:8px; }
+  .el-dm-attach-btn{
+    display:grid;
+    place-items:center;
+    width:36px;
+    height:36px;
+    flex:none;
+    padding:0;
+    border:1px solid var(--el-line-soft, #E5DFD2);
+    border-radius:10px;
+    background:transparent;
+    color:var(--el-navy-soft, #40506E);
+    cursor:pointer;
+    align-self:flex-end;
+  }
+  .el-dm-attach-btn:hover{ background:var(--el-teal-tint, #E4F1EE); color:var(--el-teal-deep, #1E6F63); }
+  .el-dm-attach-btn svg{ width:17px; height:17px; }
+  .el-dm-attach-preview{
+    align-items:center;
+    gap:8px;
+    padding:6px 8px;
+    border:1px solid var(--el-line-soft, #E5DFD2);
+    border-radius:10px;
+    background:var(--el-cream-deep, #FBF3E3);
+    font-size:12px;
+    color:var(--el-ink-faint, #8A8478);
+  }
+  /* [hidden]属性はUAスタイルシートのdisplay:noneで隠れる想定だが、上のdisplay指定と
+     ぶつからないよう、表示時のみ明示的にflexにする（hidden属性側を優先させる） */
+  .el-dm-attach-preview:not([hidden]){ display:flex; }
+  .el-dm-attach-preview img{
+    width:36px;
+    height:36px;
+    object-fit:cover;
+    border-radius:6px;
+    flex:none;
+  }
+  .el-dm-attach-preview .el-dm-attach-name{
+    flex:1;
+    min-width:0;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .el-dm-attach-remove{
+    flex:none;
+    display:grid;
+    place-items:center;
+    width:22px;
+    height:22px;
+    padding:0;
+    border:none;
+    border-radius:50%;
+    background:transparent;
+    color:var(--el-ink-faint, #8A8478);
+    cursor:pointer;
+  }
+  .el-dm-attach-remove:hover{ background:rgba(0,0,0,.06); color:var(--el-coral, #C1553B); }
+  .el-dm-attach-remove svg{ width:14px; height:14px; }
+  /* 画像添付の拡大表示用ライトボックス（既存の.el-auth-modalの見た目をそのまま流用） */
+  #dmLightbox .el-auth-modal-panel{
+    max-width:92vw;
+    width:auto;
+    padding:10px;
+    background:transparent;
+    box-shadow:none;
+  }
+  #dmLightbox .el-auth-modal-close{
+    background:rgba(0,0,0,.5);
+    border-radius:50%;
+    color:#fff;
+  }
+  #dmLightboxImg{
+    display:block;
+    max-width:92vw;
+    max-height:86vh;
+    border-radius:var(--el-radius-m, 14px);
+  }
 </style>
 </head>
 <body data-site="community" data-root="..">
@@ -482,7 +574,18 @@
       try { return localStorage.getItem(ROLE_KEY) || 'guest'; } catch (e) { return 'guest'; }
     }
     function setRole(role) {
-      try { localStorage.setItem(ROLE_KEY, role); } catch (e) {}
+      try {
+        localStorage.setItem(ROLE_KEY, role);
+        // ログアウト時は権限だけでなく、以前ログインしていたユーザーの識別情報も
+        // 消しておかないと、いいね等の「ログイン済みか」の判定がユーザーIDの残存で
+        // 誤って通ってしまうため、あわせて削除する。
+        if (role === 'guest') {
+          localStorage.removeItem('el-user-id');
+          localStorage.removeItem('el-username');
+          localStorage.removeItem('el-user-name');
+          localStorage.removeItem('el-user-profile');
+        }
+      } catch (e) {}
     }
     window.elGetRole = getRole;
 
@@ -613,6 +716,90 @@
       d.textContent = s == null ? '' : String(s);
       return d.innerHTML;
     }
+
+    // ---- 添付ファイル機能 -------------------------------------------------
+    // このシステムには専用のファイルストレージが無く、DMは1メッセージ＝1行のスプレッドシート
+    // 行として保存される（既存のフォーラム本文内画像挿入機能=inlineImageInputと同じく、
+    // 画像をdata URL(base64)化してセルにそのまま格納するアーキテクチャ）。
+    // Googleスプレッドシートは1セルあたり約50,000文字までしか保存できないため、
+    // 元画像が数MBの写真であっても、送信前にcanvasで縮小・再圧縮して収める。
+    var DM_ATTACHMENT_MAX_SOURCE_BYTES = 8 * 1024 * 1024; // 元ファイルの受け付け上限（8MB）。これより大きい画像は圧縮を試みる前に弾く
+    var DM_ATTACHMENT_MAX_DATA_URL_CHARS = 45000; // 50,000文字のセル上限に対し、他の列の分の余裕を残した保守的な上限
+    // 縮小の各段階（[最長辺px, JPEG品質]）。大きい方から順に試し、上限に収まった最初の結果を使う
+    var DM_ATTACHMENT_RESIZE_STEPS = [
+      [1000, 0.82], [800, 0.7], [640, 0.6], [480, 0.5], [360, 0.4], [260, 0.3], [200, 0.25]
+    ];
+
+    // 画像ファイルをdata URLに変換。必要に応じて縮小・再圧縮してセル上限に収める。
+    // callback(err, dataUrl) 形式（errがあればdataUrlはnull）。
+    function processAttachmentFile(file, callback) {
+      if (!file.type || file.type.indexOf('image/') !== 0) {
+        callback('添付できるのは画像ファイルのみです（対応形式：JPEG/PNG/GIF/WEBPなど）。');
+        return;
+      }
+      if (file.size > DM_ATTACHMENT_MAX_SOURCE_BYTES) {
+        callback('画像のファイルサイズが大きすぎます（8MB以下の画像をお選びください）。');
+        return;
+      }
+      var reader = new FileReader();
+      reader.onerror = function () { callback('画像の読み込みに失敗しました。'); };
+      reader.onload = function () {
+        var img = new Image();
+        img.onerror = function () { callback('画像の読み込みに失敗しました。'); };
+        img.onload = function () {
+          var srcW = img.naturalWidth || img.width;
+          var srcH = img.naturalHeight || img.height;
+          if (!srcW || !srcH) { callback('画像の読み込みに失敗しました。'); return; }
+          var canvas = document.createElement('canvas');
+          var ctx = canvas.getContext('2d');
+          var result = null;
+          for (var i = 0; i < DM_ATTACHMENT_RESIZE_STEPS.length; i++) {
+            var maxDim = DM_ATTACHMENT_RESIZE_STEPS[i][0];
+            var quality = DM_ATTACHMENT_RESIZE_STEPS[i][1];
+            var scale = Math.min(1, maxDim / Math.max(srcW, srcH));
+            var w = Math.max(1, Math.round(srcW * scale));
+            var h = Math.max(1, Math.round(srcH * scale));
+            canvas.width = w;
+            canvas.height = h;
+            ctx.fillStyle = '#fff'; // JPEGは透過非対応のため、透過PNG等は白背景に合成する
+            ctx.fillRect(0, 0, w, h);
+            ctx.drawImage(img, 0, 0, w, h);
+            var dataUrl = canvas.toDataURL('image/jpeg', quality);
+            if (dataUrl.length <= DM_ATTACHMENT_MAX_DATA_URL_CHARS) { result = dataUrl; break; }
+          }
+          if (!result) { callback('画像が大きすぎるため添付できません（圧縮しても上限を超えました）。'); return; }
+          callback(null, result);
+        };
+        img.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // 画像拡大表示用ライトボックス。
+    // この#dmLightbox要素はHTML内でこの<script>より後ろに記述されているため、
+    // このIIFE実行時点（パース時）ではまだDOMに存在しない。取得は呼び出し時まで遅延させる。
+    function openLightbox(dataUrl) {
+      var el = document.getElementById('dmLightbox');
+      var imgEl = document.getElementById('dmLightboxImg');
+      if (!el || !imgEl || !dataUrl) return;
+      imgEl.src = dataUrl;
+      el.classList.add('is-open');
+      el.setAttribute('aria-hidden', 'false');
+    }
+    function closeLightbox() {
+      var el = document.getElementById('dmLightbox');
+      var imgEl = document.getElementById('dmLightboxImg');
+      if (!el) return;
+      el.classList.remove('is-open');
+      el.setAttribute('aria-hidden', 'true');
+      if (imgEl) imgEl.src = '';
+    }
+    document.addEventListener('click', function (e) {
+      if (e.target.closest && e.target.closest('[data-dm-lightbox-close]')) closeLightbox();
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') closeLightbox();
+    });
     function relativeTime(dateStr) {
       var d = new Date(dateStr);
       if (isNaN(d.getTime())) return '';
@@ -682,22 +869,83 @@
         '<div class="el-dm-panel-head">' + esc(otherUsername || '不明なユーザー') + '</div>' +
         '<div class="el-dm-messages" id="dmMessages"></div>' +
         '<div class="el-dm-compose">' +
+        '<button type="button" class="el-dm-attach-btn" id="dmAttachBtn" title="画像を添付" aria-label="画像を添付">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05 12.25 20.24a5 5 0 0 1-7.07-7.07l9.19-9.19a3.5 3.5 0 0 1 4.95 4.95L10.13 17.1a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>' +
+        '</button>' +
+        '<input type="file" id="dmAttachInput" accept="image/*" hidden>' +
+        '<div class="el-dm-compose-main">' +
+        '<div class="el-dm-attach-preview" id="dmAttachPreview" hidden>' +
+        '<img id="dmAttachPreviewImg" src="" alt="">' +
+        '<span class="el-dm-attach-name" id="dmAttachName"></span>' +
+        '<button type="button" class="el-dm-attach-remove" id="dmAttachRemoveBtn" aria-label="添付を削除" title="添付を削除">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>' +
+        '</button>' +
+        '</div>' +
         '<textarea id="dmComposeBody" placeholder="メッセージを入力…"></textarea>' +
+        '</div>' +
         '<button type="button" class="el-btn el-btn--primary el-btn--sm" id="dmSendBtn" style="align-self:flex-end;">送信</button>' +
         '</div>';
       var messagesEl = document.getElementById('dmMessages');
-      messagesEl.innerHTML = items.map(function (m) {
-        return '<div class="el-dm-message' + (m.isMine ? ' is-mine' : '') + '">' + esc(m.body) +
-          '<span class="el-dm-message-time">' + esc(relativeTime(m.createdAt)) + '</span></div>';
-      }).join('');
-      messagesEl.scrollTop = messagesEl.scrollHeight;
+
+      function renderMessageList() {
+        messagesEl.innerHTML = items.map(function (m) {
+          var bodyHtml = m.body ? esc(m.body) : '';
+          var attHtml = m.attachmentDataUrl
+            ? '<div class="el-dm-attachment"><img class="el-dm-attachment-img" data-full="' + esc(m.attachmentDataUrl) + '" src="' + esc(m.attachmentDataUrl) + '" alt="' + esc(m.attachmentName || '添付画像') + '"></div>'
+            : '';
+          return '<div class="el-dm-message' + (m.isMine ? ' is-mine' : '') + '">' + bodyHtml + attHtml +
+            '<span class="el-dm-message-time">' + esc(relativeTime(m.createdAt)) + '</span></div>';
+        }).join('');
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+        Array.prototype.forEach.call(messagesEl.querySelectorAll('.el-dm-attachment-img'), function (img) {
+          img.addEventListener('click', function () { openLightbox(img.getAttribute('data-full')); });
+        });
+      }
+      renderMessageList();
 
       var sendBtn = document.getElementById('dmSendBtn');
       var bodyEl = document.getElementById('dmComposeBody');
+      var attachBtn = document.getElementById('dmAttachBtn');
+      var attachInput = document.getElementById('dmAttachInput');
+      var attachPreview = document.getElementById('dmAttachPreview');
+      var attachPreviewImg = document.getElementById('dmAttachPreviewImg');
+      var attachNameEl = document.getElementById('dmAttachName');
+      var attachRemoveBtn = document.getElementById('dmAttachRemoveBtn');
+      var pendingAttachment = null; // { dataUrl, name, type } | null
+
+      function clearPendingAttachment() {
+        pendingAttachment = null;
+        attachPreview.hidden = true;
+        attachPreviewImg.src = '';
+        attachNameEl.textContent = '';
+        attachInput.value = '';
+      }
+
+      attachBtn.addEventListener('click', function () {
+        if (window.elRequireAuth && !window.elRequireAuth()) return;
+        attachInput.click();
+      });
+      attachInput.addEventListener('change', function () {
+        var file = this.files && this.files[0];
+        if (!file) return;
+        processAttachmentFile(file, function (err, dataUrl) {
+          if (err) {
+            alert(err);
+            attachInput.value = '';
+            return;
+          }
+          pendingAttachment = { dataUrl: dataUrl, name: file.name || '', type: 'image/jpeg' };
+          attachPreviewImg.src = dataUrl;
+          attachNameEl.textContent = file.name || '添付画像';
+          attachPreview.hidden = false;
+        });
+      });
+      attachRemoveBtn.addEventListener('click', clearPendingAttachment);
+
       sendBtn.addEventListener('click', function () {
         if (window.elRequireAuth && !window.elRequireAuth()) return;
         var text = (bodyEl.value || '').trim();
-        if (!text || !currentOther) return;
+        if ((!text && !pendingAttachment) || !currentOther) return;
         sendBtn.disabled = true;
         var profile = {};
         try { profile = JSON.parse(localStorage.getItem('el-user-profile') || '{}'); } catch (e) {}
@@ -706,11 +954,15 @@
           action: 'sendDm',
           senderUserId: uid, senderUsername: uname, senderName: myName,
           recipientUserId: currentOther.otherUserId, recipientUsername: currentOther.otherUsername,
-          body: text
+          body: text,
+          attachmentDataUrl: pendingAttachment ? pendingAttachment.dataUrl : '',
+          attachmentName: pendingAttachment ? pendingAttachment.name : '',
+          attachmentType: pendingAttachment ? pendingAttachment.type : ''
         }).then(function (res) {
           sendBtn.disabled = false;
           if (!res.ok) { alert(res.error || '送信に失敗しました。'); return; }
           bodyEl.value = '';
+          clearPendingAttachment();
           openThread(currentOther.otherUserId, currentOther.otherUsername);
           loadThreads();
         }).catch(function () {
@@ -817,6 +1069,16 @@
       <a href="signup.html" class="el-btn el-btn--primary el-btn--sm">新規登録する</a>
       <button type="button" class="el-btn el-btn--ghost el-btn--sm" data-auth-close>閉じる</button>
     </div>
+  </div>
+</div>
+
+<div class="el-auth-modal" id="dmLightbox" aria-hidden="true">
+  <div class="el-auth-modal-backdrop" data-dm-lightbox-close></div>
+  <div class="el-auth-modal-panel" role="dialog" aria-modal="true">
+    <button type="button" class="el-auth-modal-close" data-dm-lightbox-close aria-label="閉じる">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <img id="dmLightboxImg" src="" alt="添付画像">
   </div>
 </div>
 

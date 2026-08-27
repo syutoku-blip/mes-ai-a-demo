@@ -405,7 +405,7 @@
 
         <div class="el-section-head" style="margin-bottom:0;">
           <div>
-            <h2>コンテンツ一覧</h2>
+            <h2 id="marketPageTitle">コンテンツ一覧</h2>
             <div class="el-market-count">全11件</div>
           </div>
         </div>
@@ -448,6 +448,9 @@
             </div>
           </details>
           <span class="el-result-count el-result-count--plain" id="marketResultCount">11件</span>
+        </div>
+        <div class="el-market-empty" id="marketEmptyState" style="display:none;padding:60px 20px;text-align:center;color:var(--el-ink-faint);font-size:14px;">
+          <p id="marketEmptyStateText">該当するコンテンツがありません。</p>
         </div>
 
         <div class="el-market-grid" id="marketGrid">
@@ -672,6 +675,26 @@
     var sort = 'hot';
     var seller = '';
 
+    // マイページからの絞り込み（?filter=favorites／?filter=mine）。
+    // favorites：お気に入りに追加したコンテンツ（localStorageの el-market-favorites を参照、既存のお気に入り機能と同じキー）。
+    // mine：自分が出品したコンテンツ。ただし現状、マーケットコンテンツ（管理者が登録するシート）には
+    // 出品者をユーザーIDで紐づける列が無く、出品申請（sellerApplication）が承認されても自動連携されないため、
+    // 実データでは判定できない。ここでは data-seller-user-id（現状どのカードにも設定されない）を
+    // ログイン中のユーザーIDと比較するだけにとどめ、データを捏造せず常に「該当なし」を正直に表示する。
+    var pageParams = new URLSearchParams(window.location.search);
+    var pageFilter = pageParams.get('filter') || '';
+    var myUserId = '';
+    try { myUserId = localStorage.getItem('el-user-id') || ''; } catch (e) {}
+    function getMarketFavorites_() {
+      try { return JSON.parse(localStorage.getItem('el-market-favorites') || '[]'); } catch (e) { return []; }
+    }
+    (function () {
+      var titleEl = document.getElementById('marketPageTitle');
+      if (!titleEl) return;
+      if (pageFilter === 'favorites') { titleEl.textContent = 'お気に入りコンテンツ'; document.title = 'お気に入りコンテンツ｜Export Lab'; }
+      else if (pageFilter === 'mine') { titleEl.textContent = '出品したコンテンツ'; document.title = '出品したコンテンツ｜Export Lab'; }
+    })();
+
     function getCategories() {
       return Array.prototype.slice.call(document.querySelectorAll('input[name="marketCategory"]:checked')).map(function (x) { return x.value; });
     }
@@ -679,10 +702,13 @@
     function render() {
       var categories = getCategories();
       var q = (searchInput.value || '').trim().toLowerCase();
+      var favorites = getMarketFavorites_();
 
       var visible = cards.filter(function (card) {
         if (categories.length && categories.indexOf(card.dataset.category) === -1) return false;
         if (seller && card.dataset.seller !== seller) return false;
+        if (pageFilter === 'favorites' && favorites.indexOf(card.dataset.product) === -1) return false;
+        if (pageFilter === 'mine' && (!myUserId || card.dataset.sellerUserId !== myUserId)) return false;
         if (q) {
           var title = (card.querySelector('h3') && card.querySelector('h3').textContent || '').toLowerCase();
           if (title.indexOf(q) === -1) return false;
@@ -699,6 +725,23 @@
 
       cards.forEach(function (c) { c.style.display = 'none'; });
       visible.forEach(function (c) { grid.appendChild(c); c.style.display = ''; });
+
+      var emptyStateEl = document.getElementById('marketEmptyState');
+      var emptyStateTextEl = document.getElementById('marketEmptyStateText');
+      if (emptyStateEl) {
+        if (pageFilter && !visible.length) {
+          if (emptyStateTextEl) {
+            if (pageFilter === 'favorites') emptyStateTextEl.textContent = 'まだお気に入りに追加したコンテンツがありません。';
+            else if (pageFilter === 'mine') emptyStateTextEl.textContent = '現在、出品コンテンツと出品者情報の紐づけには対応していないため、表示できるコンテンツがありません。';
+            else emptyStateTextEl.textContent = '該当するコンテンツがありません。';
+          }
+          emptyStateEl.style.display = 'block';
+          grid.style.display = 'none';
+        } else {
+          emptyStateEl.style.display = 'none';
+          grid.style.display = '';
+        }
+      }
 
       if (resultCount) resultCount.textContent = visible.length + '件';
       if (categorySummary) {
@@ -997,7 +1040,18 @@
       try { return localStorage.getItem(ROLE_KEY) || 'guest'; } catch (e) { return 'guest'; }
     }
     function setRole(role) {
-      try { localStorage.setItem(ROLE_KEY, role); } catch (e) {}
+      try {
+        localStorage.setItem(ROLE_KEY, role);
+        // ログアウト時は権限だけでなく、以前ログインしていたユーザーの識別情報も
+        // 消しておかないと、いいね等の「ログイン済みか」の判定がユーザーIDの残存で
+        // 誤って通ってしまうため、あわせて削除する。
+        if (role === 'guest') {
+          localStorage.removeItem('el-user-id');
+          localStorage.removeItem('el-username');
+          localStorage.removeItem('el-user-name');
+          localStorage.removeItem('el-user-profile');
+        }
+      } catch (e) {}
     }
     window.elGetRole = getRole;
 
