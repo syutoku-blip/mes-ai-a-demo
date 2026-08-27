@@ -9,6 +9,16 @@
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="../shared/global-header.css">
 <style>
+  /* フォーラム投稿のカテゴリチップ：見た目がハッシュタグに見えてしまう「#」の装飾を外す
+     （style.cssそのものは変更できないため、ここで上書きする）。クリックで絞り込みページへ
+     遷移できるように<a>化するため、下線・カーソルも合わせて調整する。 */
+  .badge--cat.el-cat-chip::before{
+    content:"" !important;
+    margin:0 !important;
+  }
+  a.badge--cat.el-cat-chip{
+    cursor:pointer;
+  }
   /* 検索ボックス：input要素の初期スタイル（黒枠など）を消して馴染ませる */
   .el-search input[type="search"]{
     border:none !important;
@@ -713,7 +723,7 @@
 
       a.innerHTML =
         '<div class="el-t-row-main">' +
-          '<div class="el-t-row-badges">' + visBadge + '<span class="badge badge--cat">' + catLabel + '</span>' + statusBadge + '</div>' +
+          '<div class="el-t-row-badges">' + visBadge + '<span class="badge badge--cat el-cat-chip" data-category="' + (t.category || '') + '" role="link" tabindex="0">' + catLabel + '</span>' + statusBadge + '</div>' +
           '<span class="el-t-row-title">' + t.title + '</span>' +
           '<div class="el-t-row-meta">' + t.author + '・' + relativeTime(t.date) + '</div>' +
         '</div>' +
@@ -721,6 +731,34 @@
           '<div><strong>' + (t.views || 0) + '</strong><span>閲覧</span></div>' +
           '<div><strong>' + (t.comments ? t.comments.length : 0) + '</strong><span>返信</span></div>' +
         '</div>';
+
+      // カテゴリチップ：クリックでそのカテゴリの絞り込みページへ遷移する（行全体のリンクとは独立させる）
+      var catChip = a.querySelector('.el-cat-chip');
+      if (catChip) {
+        catChip.addEventListener('click', function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          window.location.href = 'board.html?category=' + encodeURIComponent(t.category || '');
+        });
+        catChip.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); catChip.click(); }
+        });
+      }
+
+      // ログイン状態に応じた閲覧制御：SHiFT会員限定／メンバー限定の投稿は、
+      // 権限のないユーザーがクリックしても中身が見えないよう遷移前に確認する。
+      a.addEventListener('click', function (e) {
+        var role = window.elGetRole ? window.elGetRole() : 'guest';
+        if (t.visibility === 'shift' && role !== 'shift' && role !== 'admin') {
+          e.preventDefault();
+          if (window.elRequireShift) window.elRequireShift();
+          return;
+        }
+        if (t.visibility === 'member' && role === 'guest') {
+          e.preventDefault();
+          if (window.elRequireAuth) window.elRequireAuth();
+        }
+      });
       return a;
     }
 
@@ -977,7 +1015,18 @@
       try { return localStorage.getItem(ROLE_KEY) || 'guest'; } catch (e) { return 'guest'; }
     }
     function setRole(role) {
-      try { localStorage.setItem(ROLE_KEY, role); } catch (e) {}
+      try {
+        localStorage.setItem(ROLE_KEY, role);
+        // ログアウト時は権限だけでなく、以前ログインしていたユーザーの識別情報も
+        // 消しておかないと、いいね等の「ログイン済みか」の判定がユーザーIDの残存で
+        // 誤って通ってしまうため、あわせて削除する。
+        if (role === 'guest') {
+          localStorage.removeItem('el-user-id');
+          localStorage.removeItem('el-username');
+          localStorage.removeItem('el-user-name');
+          localStorage.removeItem('el-user-profile');
+        }
+      } catch (e) {}
     }
     window.elGetRole = getRole;
 
@@ -1164,7 +1213,9 @@
       })
         .then(function (res) { return res.json(); })
         .then(function (data) {
-          var items = (data.ok && data.items) ? data.items.filter(function (g) { return g.section === 'forum'; }) : [];
+          // フォーラム／コミュニティで別々に管理する必要がなくなったため、section による絞り込みは行わず
+          // 登録されているガイドラインを全件表示する（表示順は従来通り sortOrder）。
+          var items = (data.ok && data.items) ? data.items.slice() : [];
           items.sort(function (a, b) { return (Number(a.sortOrder) || 0) - (Number(b.sortOrder) || 0); });
           if (!items.length) { box.style.display = 'none'; return; }
           listEl.innerHTML = items.map(function (it, idx) {

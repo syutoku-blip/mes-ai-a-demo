@@ -614,8 +614,18 @@
       var badgeEl = document.getElementById('pmBadge');
       if (p.badge) { badgeEl.style.display = ''; badgeEl.textContent = p.badge; } else { badgeEl.style.display = 'none'; }
       var banner = document.getElementById('pmBanner');
-      banner.style.background = p.bannerColor || 'var(--el-teal)';
-      document.getElementById('pmBannerIcon').innerHTML = p.bannerIcon || '';
+      var bannerIconEl = document.getElementById('pmBannerIcon');
+      if (p.thumbnailUrl) {
+        // 実際にアップロードされたサムネイル画像がある場合は、それをヘッダー背景に表示する
+        // （デモ商品用のグラデーション＋アイコンは使わない）
+        banner.style.background = 'center / cover no-repeat url("' + p.thumbnailUrl + '")';
+        bannerIconEl.style.display = 'none';
+        bannerIconEl.innerHTML = '';
+      } else {
+        banner.style.background = p.bannerColor || 'var(--el-teal)';
+        bannerIconEl.style.display = '';
+        bannerIconEl.innerHTML = p.bannerIcon || '';
+      }
       var featuresWrap = document.getElementById('pmFeaturesWrap');
       var featuresEl = document.getElementById('pmFeatures');
       if (p.features && p.features.length) {
@@ -723,7 +733,7 @@
       setFavorites(list);
       return i === -1;
     }
-    document.querySelectorAll('.el-market-card[data-product]').forEach(function (card) {
+    function wireFavButton(card) {
       var btns = card.querySelector('.el-market-btns');
       if (!btns || btns.querySelector('[data-fav]')) return;
       var id = card.dataset.product;
@@ -740,7 +750,11 @@
         favBtn.querySelector('svg').setAttribute('fill', nowFav ? 'currentColor' : 'none');
       });
       btns.insertBefore(favBtn, btns.firstChild);
-    });
+    }
+    document.querySelectorAll('.el-market-card[data-product]').forEach(wireFavButton);
+    // 管理者ページで登録された実際のコンテンツ（下部で動的に追加されるカード）にも
+    // お気に入りボタンを付与できるようにする
+    window.__marketWireFavButton = wireFavButton;
   })();
   // ユーザーモード（ゲスト／登録ユーザー／管理者）の切り替えと共通ゲート処理
   document.addEventListener('DOMContentLoaded', function () {
@@ -749,7 +763,18 @@
       try { return localStorage.getItem(ROLE_KEY) || 'guest'; } catch (e) { return 'guest'; }
     }
     function setRole(role) {
-      try { localStorage.setItem(ROLE_KEY, role); } catch (e) {}
+      try {
+        localStorage.setItem(ROLE_KEY, role);
+        // ログアウト時は権限だけでなく、以前ログインしていたユーザーの識別情報も
+        // 消しておかないと、いいね等の「ログイン済みか」の判定がユーザーIDの残存で
+        // 誤って通ってしまうため、あわせて削除する。
+        if (role === 'guest') {
+          localStorage.removeItem('el-user-id');
+          localStorage.removeItem('el-username');
+          localStorage.removeItem('el-user-name');
+          localStorage.removeItem('el-user-profile');
+        }
+      } catch (e) {}
     }
     window.elGetRole = getRole;
 
@@ -875,6 +900,7 @@
           PRODUCTS[id] = {
             title: it.title, seller: 'WorldShift公式', price: '¥' + priceNum.toLocaleString(), badge: '公式',
             recommend: it.recommendHtml || '', detail: it.detailHtml || '',
+            thumbnailUrl: it.thumbnailUrl || '',
             bannerColor: 'linear-gradient(135deg, var(--el-teal), #1F6E63)',
             bannerIcon: '<path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/>'
           };
@@ -895,6 +921,7 @@
 
           grid.insertBefore(card, grid.firstChild);
           if (window.__marketWireCardClick) window.__marketWireCardClick(card);
+          if (window.__marketWireFavButton) window.__marketWireFavButton(card);
           card.querySelector('[data-cart]').addEventListener('click', function (e) {
             e.stopPropagation();
             addToCart(id);

@@ -482,7 +482,18 @@
       try { return localStorage.getItem(ROLE_KEY) || 'guest'; } catch (e) { return 'guest'; }
     }
     function setRole(role) {
-      try { localStorage.setItem(ROLE_KEY, role); } catch (e) {}
+      try {
+        localStorage.setItem(ROLE_KEY, role);
+        // ログアウト時は権限だけでなく、以前ログインしていたユーザーの識別情報も
+        // 消しておかないと、いいね等の「ログイン済みか」の判定がユーザーIDの残存で
+        // 誤って通ってしまうため、あわせて削除する。
+        if (role === 'guest') {
+          localStorage.removeItem('el-user-id');
+          localStorage.removeItem('el-username');
+          localStorage.removeItem('el-user-name');
+          localStorage.removeItem('el-user-profile');
+        }
+      } catch (e) {}
     }
     window.elGetRole = getRole;
 
@@ -831,7 +842,9 @@
       })
         .then(function (res) { return res.json(); })
         .then(function (data) {
-          var items = (data.ok && data.items) ? data.items.filter(function (g) { return g.section === 'community'; }) : [];
+          // フォーラム／コミュニティで別々に管理する必要がなくなったため、section による絞り込みは行わず
+          // 登録されているガイドラインを全件表示する（表示順は従来通り sortOrder）。
+          var items = (data.ok && data.items) ? data.items.slice() : [];
           items.sort(function (a, b) { return (Number(a.sortOrder) || 0) - (Number(b.sortOrder) || 0); });
           if (!items.length) { box.style.display = 'none'; return; }
           listEl.innerHTML = items.map(function (it, idx) {

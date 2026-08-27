@@ -594,12 +594,19 @@
         var bodyEl = document.getElementById('noticeBody');
         bodyEl.innerHTML = '';
         var iframe = document.createElement('iframe');
-        iframe.style.cssText = 'width:100%;border:none;display:block;';
+        iframe.setAttribute('scrolling', 'no');
+        iframe.style.cssText = 'width:100%;border:none;display:block;overflow:hidden;';
         bodyEl.appendChild(iframe);
         // 本文内のリンクは、その場（iframe内）で遷移せず別タブで開くようにする
-        iframe.srcdoc = '<base target="_blank"><div style="font-family:sans-serif;line-height:1.8;">' + (item.bodyHtml || '') + '</div>';
+        // ※ html/body の既定マージンを0にリセットしておかないと、高さ計算（scrollHeight）に
+        //   マージン分が余計に含まれ、枠が実際の本文より狭く見えて縦スクロールが発生してしまう。
+        iframe.srcdoc = '<html><head><style>html,body{margin:0;padding:0;}</style></head><body>' +
+          '<base target="_blank"><div style="font-family:sans-serif;font-size:15px;line-height:1.9;color:#16233F;">' + (item.bodyHtml || '') + '</div></body></html>';
         iframe.addEventListener('load', function () {
-          try { iframe.style.height = iframe.contentWindow.document.body.scrollHeight + 'px'; } catch (e) {}
+          try {
+            // 実際の本文より少し余白を持たせて、端数の丸め誤差でスクロールバーが出ないようにする
+            iframe.style.height = (iframe.contentWindow.document.body.scrollHeight + 8) + 'px';
+          } catch (e) {}
           // 検索結果からのキーワードは、iframeの中身自体にもハイライトを入れる
           try {
             var params2 = new URLSearchParams(window.location.search);

@@ -299,6 +299,84 @@
     width:14px;
     height:14px;
   }
+  /* コミュニティ編集ボタン／モーダル：作成者本人にのみ見出しカードへ表示する（groups-list.htmlの
+     isMyGroup_と同じ判定ロジックを流用）。デザインはガイドラインモーダル（.el-guide-modal系）を踏襲。 */
+  .el-community-edit-btn{
+    margin-left:auto !important;
+    flex:none !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    gap:5px !important;
+  }
+  .el-community-edit-modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    z-index:900;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+  }
+  .el-community-edit-modal.is-open{ display:flex; }
+  .el-community-edit-modal-backdrop{
+    position:absolute;
+    inset:0;
+    background:rgba(22,35,63,.45);
+  }
+  .el-community-edit-modal-panel{
+    position:relative;
+    background:#fff;
+    border-radius:var(--el-radius-m, 14px);
+    padding:28px 26px;
+    max-width:480px;
+    width:100%;
+    max-height:85vh;
+    overflow-y:auto;
+    box-shadow:0 12px 40px rgba(22,35,63,.25);
+  }
+  .el-community-edit-modal-panel h3{
+    margin:0 0 16px;
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:17px;
+    color:var(--el-navy, #16233F);
+    padding-right:26px;
+  }
+  .el-community-edit-modal-close{
+    position:absolute;
+    top:10px;
+    right:10px;
+    border:none;
+    background:transparent;
+    cursor:pointer;
+    color:var(--el-ink-faint, #8A8478);
+    padding:4px;
+  }
+  .el-community-edit-field{ margin-bottom:14px; }
+  .el-community-edit-field span{
+    display:block;
+    font-weight:700;
+    font-size:12.5px;
+    margin-bottom:6px;
+    color:var(--el-navy, #16233F);
+  }
+  .el-community-edit-field input[type="text"],
+  .el-community-edit-field select,
+  .el-community-edit-field textarea{
+    width:100%;
+    box-sizing:border-box;
+    padding:10px 12px;
+    border:1px solid var(--el-line-soft, #E5DFD2);
+    border-radius:10px;
+    font:inherit;
+    color:inherit;
+  }
+  .el-community-edit-field textarea{ resize:vertical; }
+  .el-community-edit-actions{
+    display:flex;
+    gap:8px;
+    margin-top:6px;
+  }
 </style>
 </head>
 <body data-site="community" data-root="..">
@@ -542,6 +620,49 @@
   </div>
 </div>
 
+<div class="el-community-edit-modal" id="communityEditModal" aria-hidden="true">
+  <div class="el-community-edit-modal-backdrop" data-community-edit-close></div>
+  <div class="el-community-edit-modal-panel" role="dialog" aria-modal="true">
+    <button type="button" class="el-community-edit-modal-close" data-community-edit-close aria-label="閉じる">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <h3>コミュニティを編集</h3>
+    <form id="communityEditForm">
+      <div class="el-community-edit-field">
+        <span>コミュニティ名</span>
+        <input type="text" id="ceTitle" required>
+      </div>
+      <div class="el-community-edit-field">
+        <span>カテゴリ</span>
+        <input type="text" id="ceCategory" placeholder="情報交換・雑談 など">
+      </div>
+      <div class="el-community-edit-field">
+        <span>アイコンの色</span>
+        <select id="ceColor">
+          <option value="var(--el-teal)">ティール</option>
+          <option value="var(--el-sky)">スカイ</option>
+          <option value="var(--el-navy-soft)">ネイビー</option>
+          <option value="var(--el-mustard)">マスタード</option>
+          <option value="var(--el-coral)">コーラル</option>
+          <option value="var(--el-sage)">セージ</option>
+        </select>
+      </div>
+      <div class="el-community-edit-field">
+        <span>紹介文（一覧・見出しに表示されます）</span>
+        <textarea id="ceDescription" rows="3" required></textarea>
+      </div>
+      <div class="el-community-edit-field">
+        <span>詳細説明（任意）</span>
+        <textarea id="ceLongDescription" rows="4"></textarea>
+      </div>
+      <div class="el-community-edit-actions">
+        <button type="submit" class="el-btn el-btn--primary el-btn--sm">保存する</button>
+        <button type="button" class="el-btn el-btn--ghost el-btn--sm" data-community-edit-close>キャンセル</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <script src="../shared/global-header.js" defer></script>
 <script>
   (function () {
@@ -580,7 +701,18 @@
       try { return localStorage.getItem(ROLE_KEY) || 'guest'; } catch (e) { return 'guest'; }
     }
     function setRole(role) {
-      try { localStorage.setItem(ROLE_KEY, role); } catch (e) {}
+      try {
+        localStorage.setItem(ROLE_KEY, role);
+        // ログアウト時は権限だけでなく、以前ログインしていたユーザーの識別情報も
+        // 消しておかないと、いいね等の「ログイン済みか」の判定がユーザーIDの残存で
+        // 誤って通ってしまうため、あわせて削除する。
+        if (role === 'guest') {
+          localStorage.removeItem('el-user-id');
+          localStorage.removeItem('el-username');
+          localStorage.removeItem('el-user-name');
+          localStorage.removeItem('el-user-profile');
+        }
+      } catch (e) {}
     }
     window.elGetRole = getRole;
 
@@ -769,6 +901,18 @@
     var CHEV = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>';
     var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
 
+    // このコミュニティの作成者本人かどうかの判定：groups-list.htmlのisMyGroup_と同じロジック
+    // （ユーザーIDが両方あればID優先、無ければユーザーネームで比較）を流用する。
+    var myUid = '', myUname = '';
+    try {
+      myUid = localStorage.getItem('el-user-id') || '';
+      myUname = localStorage.getItem('el-username') || localStorage.getItem('el-user-name') || '';
+    } catch (e) {}
+    function isMyGroup_(creatorUserId, creatorName) {
+      if (myUid && creatorUserId) return String(creatorUserId) === String(myUid);
+      return !!(myUname && creatorName && String(creatorName) === String(myUname));
+    }
+
     function esc(s) {
       var d = document.createElement('div');
       d.textContent = s == null ? '' : String(s);
@@ -815,15 +959,67 @@
       if (breadcrumb) breadcrumb.innerHTML = '<a href="index.html">ホーム</a>' + CHEV + '<a href="groups.html">コミュニティ</a>' + CHEV + '<span>' + esc(community.title) + '</span>';
       if (headerCard) {
         var iconColor = community.color || 'var(--el-teal)';
+        // 作成者本人（管理画面のcreator入力とユーザーマスタが一致している場合はcreatorUserIdが
+        // 補完されているのでID優先で判定、無ければユーザーネームで判定）にのみ編集ボタンを出す。
+        var isOwner = isMyGroup_(community.creatorUserId, community.creator);
         headerCard.innerHTML =
           '<div class="el-group-top">' +
           '<div class="el-group-icon" style="background:' + iconColor + ';">' +
           '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20Z"/></svg>' +
           '</div>' +
           '<div><h4>' + esc(community.title) + '</h4><div class="visibility">' + esc(community.category || '') + '・運営：' + esc(community.creator || '') + '</div></div>' +
+          (isOwner ? '<button type="button" class="el-btn el-btn--ghost el-btn--sm el-community-edit-btn" id="communityEditBtn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg> 編集</button>' : '') +
           '</div>' +
           descBlock('概要', community.description || '', 'var(--el-teal)') +
           (community.longDescription ? descBlock('詳細', community.longDescription, 'var(--el-sky)') : '');
+
+        if (isOwner) {
+          var editModal = document.getElementById('communityEditModal');
+          var editBtn = document.getElementById('communityEditBtn');
+          var editForm = document.getElementById('communityEditForm');
+          function closeEditModal() {
+            if (!editModal) return;
+            editModal.classList.remove('is-open');
+            editModal.setAttribute('aria-hidden', 'true');
+          }
+          if (editBtn && editModal) {
+            editBtn.addEventListener('click', function () {
+              document.getElementById('ceTitle').value = community.title || '';
+              document.getElementById('ceCategory').value = community.category || '';
+              document.getElementById('ceColor').value = community.color || 'var(--el-teal)';
+              document.getElementById('ceDescription').value = community.description || '';
+              document.getElementById('ceLongDescription').value = community.longDescription || '';
+              editModal.classList.add('is-open');
+              editModal.setAttribute('aria-hidden', 'false');
+            });
+            editModal.querySelectorAll('[data-community-edit-close]').forEach(function (el) {
+              el.addEventListener('click', closeEditModal);
+            });
+            document.addEventListener('keydown', function (e) {
+              if (e.key === 'Escape') closeEditModal();
+            });
+          }
+          if (editForm) {
+            editForm.addEventListener('submit', function (e) {
+              e.preventDefault();
+              var newTitle = document.getElementById('ceTitle').value.trim();
+              var newDescription = document.getElementById('ceDescription').value.trim();
+              if (!newTitle || !newDescription) { alert('コミュニティ名と紹介文を入力してください。'); return; }
+              apiPost({
+                action: 'updateContent', type: 'communityGroup', id: community.id,
+                requesterUserId: myUid, requesterUsername: myUname,
+                title: newTitle,
+                category: document.getElementById('ceCategory').value.trim(),
+                color: document.getElementById('ceColor').value,
+                description: newDescription,
+                longDescription: document.getElementById('ceLongDescription').value.trim()
+              }).then(function (res) {
+                if (!res.ok) { alert(res.error || '更新に失敗しました。'); return; }
+                location.reload();
+              }).catch(function () { alert('通信エラーが発生しました。'); });
+            });
+          }
+        }
       }
     });
 

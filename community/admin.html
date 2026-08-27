@@ -355,6 +355,10 @@
 
         <!-- お知らせ登録 -->
         <div class="el-admin-panel" data-panel="announce" style="display:none;">
+          <div id="announceEditBanner" style="display:none;padding:10px 14px;background:var(--el-cream-deep);border-radius:10px;font-size:12.5px;color:var(--el-navy);align-items:center;justify-content:space-between;gap:10px;margin-bottom:16px;">
+            <span>この項目を編集しています</span>
+            <button type="button" id="announceCancelEditBtn" class="el-btn el-btn--ghost el-btn--sm">キャンセル</button>
+          </div>
           <form id="announceForm" style="display:flex;flex-direction:column;gap:16px;max-width:720px;">
             <label>
               <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">種別</span>
@@ -382,13 +386,17 @@
                 <input type="url" name="ctaUrl" placeholder="https://..." style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
               </label>
             </div>
-            <button type="submit" class="el-btn el-btn--primary" style="align-self:flex-start;">お知らせを登録する</button>
+            <button type="submit" class="el-btn el-btn--primary" id="announceSubmitBtn" style="align-self:flex-start;">お知らせを登録する</button>
           </form>
           <div id="announceList" style="margin-top:32px;"></div>
         </div>
 
         <!-- イベント登録 -->
         <div class="el-admin-panel" data-panel="event" style="display:none;">
+          <div id="eventEditBanner" style="display:none;padding:10px 14px;background:var(--el-cream-deep);border-radius:10px;font-size:12.5px;color:var(--el-navy);align-items:center;justify-content:space-between;gap:10px;margin-bottom:16px;">
+            <span>この項目を編集しています</span>
+            <button type="button" id="eventCancelEditBtn" class="el-btn el-btn--ghost el-btn--sm">キャンセル</button>
+          </div>
           <form id="eventForm" style="display:flex;flex-direction:column;gap:16px;max-width:720px;">
             <label>
               <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">イベント名</span>
@@ -422,13 +430,17 @@
               </select>
               <span style="display:block;font-size:12px;color:var(--el-ink-faint);margin-top:6px;">「フォーム管理」タブで作成したフォームを選ぶと、イベント詳細ページの「申し込む」ボタンからこのフォームに遷移します。</span>
             </label>
-            <button type="submit" class="el-btn el-btn--primary" style="align-self:flex-start;">イベントを登録する</button>
+            <button type="submit" class="el-btn el-btn--primary" id="eventSubmitBtn" style="align-self:flex-start;">イベントを登録する</button>
           </form>
           <div id="eventList" style="margin-top:32px;"></div>
         </div>
 
         <!-- マーケットコンテンツ登録 -->
         <div class="el-admin-panel" data-panel="content" style="display:none;">
+          <div id="contentEditBanner" style="display:none;padding:10px 14px;background:var(--el-cream-deep);border-radius:10px;font-size:12.5px;color:var(--el-navy);align-items:center;justify-content:space-between;gap:10px;margin-bottom:16px;">
+            <span>この項目を編集しています</span>
+            <button type="button" id="contentCancelEditBtn" class="el-btn el-btn--ghost el-btn--sm">キャンセル</button>
+          </div>
           <form id="contentForm" style="display:flex;flex-direction:column;gap:16px;max-width:720px;">
             <label>
               <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">タイトル</span>
@@ -462,7 +474,7 @@
               <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">詳細</span>
               <div id="contentDetailEditorMount"></div>
             </div>
-            <button type="submit" class="el-btn el-btn--primary" style="align-self:flex-start;">コンテンツを登録する（WorldShift公式として掲載）</button>
+            <button type="submit" class="el-btn el-btn--primary" id="contentSubmitBtn" style="align-self:flex-start;">コンテンツを登録する（WorldShift公式として掲載）</button>
           </form>
           <div id="contentAdminList" style="margin-top:32px;"></div>
         </div>
@@ -472,6 +484,10 @@
           <p style="font-size:13px;color:var(--el-ink-faint);margin:0 0 20px;line-height:1.8;">
             新しいコミュニティを登録します。登録した内容はスプレッドシートに保存され、コミュニティ一覧（groups-list.html）のカードと詳細モーダルにすぐ反映されます。
           </p>
+          <div id="communityEditBanner" style="display:none;padding:10px 14px;background:var(--el-cream-deep);border-radius:10px;font-size:12.5px;color:var(--el-navy);align-items:center;justify-content:space-between;gap:10px;margin-bottom:16px;">
+            <span>この項目を編集しています</span>
+            <button type="button" id="communityCancelEditBtn" class="el-btn el-btn--ghost el-btn--sm">キャンセル</button>
+          </div>
           <form id="communityForm" style="display:flex;flex-direction:column;gap:16px;max-width:640px;">
             <label>
               <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">コミュニティ名</span>
@@ -506,7 +522,7 @@
               <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">詳細説明（任意）</span>
               <textarea name="longDescription" rows="4" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;resize:vertical;"></textarea>
             </label>
-            <button type="submit" class="el-btn el-btn--primary" style="align-self:flex-start;">コミュニティを登録する</button>
+            <button type="submit" class="el-btn el-btn--primary" id="communitySubmitBtn" style="align-self:flex-start;">コミュニティを登録する</button>
           </form>
           <div id="communityAdminList" style="margin-top:32px;"></div>
         </div>
@@ -514,17 +530,14 @@
         <!-- ガイドライン管理 -->
         <div class="el-admin-panel" data-panel="guideline" style="display:none;">
           <p style="font-size:13px;color:var(--el-ink-faint);margin:0 0 20px;line-height:1.8;">
-            「ご利用の前にご確認ください」に表示する項目を登録します。フォーラム（フォーラムTOP／すべての投稿）とコミュニティ（コミュニティ一覧）で別々に管理でき、クリックするとモーダルで本文が表示されます。表示順は「並び順」の数値が小さいものから並びます。
+            「ご利用の前にご確認ください」に表示する項目を登録します。フォーラム（フォーラムTOP／すべての投稿）とコミュニティ（コミュニティ一覧）のどちらにも同じ内容が表示されます。クリックするとモーダルで本文が表示されます。表示順は「並び順」の数値が小さいものから並びます（並び順は編集ボタンからいつでも変更できます）。
           </p>
+          <div id="guidelineEditBanner" style="display:none;padding:10px 14px;background:var(--el-cream-deep);border-radius:10px;font-size:12.5px;color:var(--el-navy);align-items:center;justify-content:space-between;gap:10px;margin-bottom:16px;">
+            <span>この項目を編集しています</span>
+            <button type="button" id="guidelineCancelEditBtn" class="el-btn el-btn--ghost el-btn--sm">キャンセル</button>
+          </div>
           <form id="guidelineForm" style="display:flex;flex-direction:column;gap:16px;max-width:720px;">
             <div style="display:flex;gap:12px;flex-wrap:wrap;">
-              <label style="flex:1;min-width:200px;">
-                <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">表示先</span>
-                <select name="section" required style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
-                  <option value="forum">フォーラム（フォーラムTOP／すべての投稿）</option>
-                  <option value="community">コミュニティ一覧</option>
-                </select>
-              </label>
               <label style="width:140px;">
                 <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">並び順</span>
                 <input type="number" name="sortOrder" value="0" step="1" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
@@ -538,7 +551,9 @@
               <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">本文（モーダルに表示されます）</span>
               <div id="guidelineEditorMount"></div>
             </div>
-            <button type="submit" class="el-btn el-btn--primary" style="align-self:flex-start;">ガイドラインを登録する</button>
+            <div style="display:flex;gap:10px;">
+              <button type="submit" class="el-btn el-btn--primary" id="guidelineSubmitBtn" style="align-self:flex-start;">ガイドラインを登録する</button>
+            </div>
           </form>
           <div id="guidelineList" style="margin-top:32px;"></div>
         </div>
@@ -602,6 +617,10 @@
 
         <!-- 広告設定 -->
         <div class="el-admin-panel" data-panel="ads" style="display:none;">
+          <div id="adEditBanner" style="display:none;padding:10px 14px;background:var(--el-cream-deep);border-radius:10px;font-size:12.5px;color:var(--el-navy);align-items:center;justify-content:space-between;gap:10px;margin-bottom:16px;">
+            <span>この項目を編集しています</span>
+            <button type="button" id="adCancelEditBtn" class="el-btn el-btn--ghost el-btn--sm">キャンセル</button>
+          </div>
           <form id="adForm" style="display:flex;flex-direction:column;gap:16px;max-width:520px;">
             <div>
               <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">広告の種類 <span style="color:#B9541F;font-weight:700;">必須</span></span>
@@ -629,14 +648,10 @@
               </div>
             </label>
             <label>
-              <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">CTA文言</span>
-              <input type="text" name="ctaText" placeholder="詳しく見る" required style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
-            </label>
-            <label>
-              <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">CTAリンク先URL</span>
+              <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">リンク先URL</span>
               <input type="url" name="ctaUrl" placeholder="https://..." style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
             </label>
-            <button type="submit" class="el-btn el-btn--primary" style="align-self:flex-start;">広告を登録する</button>
+            <button type="submit" class="el-btn el-btn--primary" id="adSubmitBtn" style="align-self:flex-start;">広告を登録する</button>
           </form>
           <div style="margin-top:28px;">
             <h3 style="font-size:14px;margin:0 0 12px;">プレビュー</h3>
@@ -843,6 +858,24 @@
       restoreSelection();
       document.execCommand('styleWithCSS', false, true);
       document.execCommand(cmd, false, value == null ? null : value);
+      if (cmd === 'insertHorizontalRule') {
+        // 区切り線がエディターの末尾に挿入されると、その後ろに文字を置ける場所が
+        // 無くなり「線の下に入力できない」状態になるため、末尾に来た場合は
+        // カーソルを置ける空の行を区切り線の直後に必ず用意する。
+        var hrs = editor.querySelectorAll('hr');
+        var lastHr = hrs[hrs.length - 1];
+        if (lastHr && !lastHr.nextSibling) {
+          var afterHr = document.createElement('div');
+          afterHr.innerHTML = '<br>';
+          lastHr.parentNode.insertBefore(afterHr, lastHr.nextSibling);
+          var hrRange = document.createRange();
+          hrRange.setStart(afterHr, 0);
+          hrRange.collapse(true);
+          var hrSel = window.getSelection();
+          hrSel.removeAllRanges();
+          hrSel.addRange(hrRange);
+        }
+      }
       saveSelection();
     }
     function clearMarkers() {
@@ -1076,6 +1109,7 @@
 
     return {
       getHtml: function () { return editor.innerHTML; },
+      setHtml: function (html) { editor.innerHTML = html || ''; },
       clear: function () { editor.innerHTML = ''; }
     };
   }
@@ -1216,17 +1250,25 @@
   // お知らせ登録
   // ------------------------------------------------------------
   // contentType・onReload を渡すと、各アイテムに削除ボタンが付き、コンテンツ管理シート
-  // （announcement/event/marketContent/ad/communityGroup）から削除できるようになる。
-  function renderSimpleList(containerId, items, renderItem, contentType, onReload) {
+  // （announcement/event/marketContent/ad/communityGroup/guideline）から削除できるようになる。
+  // onEdit を渡すと、削除ボタンの隣に「編集」ボタンも表示され、クリック時にその項目のデータを
+  // 引数に onEdit(item) が呼ばれる（各タブ側でフォームへの値の反映を行う）。
+  function renderSimpleList(containerId, items, renderItem, contentType, onReload, onEdit) {
     var el = document.getElementById(containerId);
     if (!items.length) {
       el.innerHTML = '<div style="padding:24px;text-align:center;color:var(--el-ink-faint);font-size:13px;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);">まだ登録がありません。</div>';
       return;
     }
+    var itemsById = {};
+    items.forEach(function (it) { itemsById[it.id] = it; });
     el.innerHTML = '<h3 style="font-size:14px;margin:0 0 12px;">登録済み一覧</h3>' +
       '<div style="display:flex;flex-direction:column;gap:10px;">' + items.map(function (it) {
         if (!contentType) return renderItem(it);
-        return '<div style="position:relative;">' + renderItem(it) +
+        var editBtnHtml = onEdit ? (
+          '<button type="button" class="el-content-edit-btn" data-type="' + contentType + '" data-id="' + it.id + '" ' +
+          'style="position:absolute;top:10px;right:66px;background:var(--el-paper);border:1px solid var(--el-line-soft);color:var(--el-navy);cursor:pointer;font-size:11.5px;padding:4px 10px;border-radius:999px;">編集</button>'
+        ) : '';
+        return '<div style="position:relative;">' + renderItem(it) + editBtnHtml +
           '<button type="button" class="el-content-delete-btn" data-type="' + contentType + '" data-id="' + it.id + '" ' +
           'style="position:absolute;top:10px;right:10px;background:var(--el-paper);border:1px solid var(--el-line-soft);color:var(--el-coral);cursor:pointer;font-size:11.5px;padding:4px 10px;border-radius:999px;">削除</button></div>';
       }).join('') + '</div>';
@@ -1241,6 +1283,14 @@
           }).catch(function () { alert('通信エラーが発生しました。'); });
         });
       });
+      if (onEdit) {
+        el.querySelectorAll('.el-content-edit-btn').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            var it = itemsById[btn.dataset.id];
+            if (it) onEdit(it);
+          });
+        });
+      }
     }
   }
 
@@ -1252,28 +1302,59 @@
         return '<div style="padding:14px 16px;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);">' +
           '<span class="badge badge--announce">' + it.category + '</span> <strong>' + it.title + '</strong>' +
           '<div style="font-size:12px;color:var(--el-ink-faint);margin-top:4px;">' + new Date(it.createdAt).toLocaleString('ja-JP') + '</div>' + cta + '</div>';
-      }, 'announcement', loadAnnouncements);
+      }, 'announcement', loadAnnouncements, loadAnnouncementIntoForm);
     });
   }
   loadAnnouncements();
 
+  var editingAnnouncementId = '';
+  function resetAnnounceForm() {
+    editingAnnouncementId = '';
+    document.getElementById('announceForm').reset();
+    announceEditor.clear();
+    document.getElementById('announceEditBanner').style.display = 'none';
+    document.getElementById('announceSubmitBtn').textContent = 'お知らせを登録する';
+  }
+  function loadAnnouncementIntoForm(it) {
+    editingAnnouncementId = it.id;
+    var form = document.getElementById('announceForm');
+    form.category.value = it.category || '';
+    form.title.value = it.title || '';
+    announceEditor.setHtml(it.bodyHtml || '');
+    form.ctaText.value = it.ctaText || '';
+    form.ctaUrl.value = it.ctaUrl || '';
+    document.getElementById('announceEditBanner').style.display = 'flex';
+    document.getElementById('announceSubmitBtn').textContent = 'お知らせを更新する';
+    form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  document.getElementById('announceCancelEditBtn').addEventListener('click', resetAnnounceForm);
+
   document.getElementById('announceForm').addEventListener('submit', function (e) {
     e.preventDefault();
     var fd = new FormData(e.target);
-    apiPost({
-      action: 'createContent', type: 'announcement',
+    var isEditing = !!editingAnnouncementId;
+    var payload = {
+      action: isEditing ? 'updateContent' : 'createContent', type: 'announcement',
       title: fd.get('title'), category: fd.get('category'), bodyHtml: announceEditor.getHtml(),
       ctaText: fd.get('ctaText'), ctaUrl: fd.get('ctaUrl')
-    }).then(function (data) {
-      if (data.ok) { alert('お知らせを登録しました。'); e.target.reset(); announceEditor.clear(); loadAnnouncements(); }
-      else alert(data.error || '登録に失敗しました');
+    };
+    if (isEditing) payload.id = editingAnnouncementId;
+    apiPost(payload).then(function (data) {
+      if (data.ok) {
+        alert(isEditing ? 'お知らせを更新しました。' : 'お知らせを登録しました。');
+        resetAnnounceForm(); loadAnnouncements();
+      } else alert(data.error || (isEditing ? '更新に失敗しました' : '登録に失敗しました'));
     }).catch(function () { alert('通信エラーが発生しました。'); });
   });
 
   // ------------------------------------------------------------
   // ガイドライン管理（「ご利用の前にご確認ください」に表示する項目）
+  // フォーラム／コミュニティで別々に管理する必要がなくなったため、管理画面の「表示先」入力は廃止し、
+  // 常に同じ一覧を両方の画面（board.html／forum.html／groups.html）に表示する。
+  // バックエンドのシート定義（CONTENT_SHEETS.guideline.fields）は section 列を引き続き持っているため、
+  // 列削除などのシート改修（＝Apps Script再デプロイ）を避けるべく、固定値 'all' を送って埋めておく。
   // ------------------------------------------------------------
-  var SECTION_LABEL = { forum: 'フォーラム', community: 'コミュニティ' };
+  var GUIDELINE_SECTION_VALUE = 'all';
   function loadGuidelines() {
     apiPost({ action: 'listContent', type: 'guideline' }).then(function (data) {
       if (!data.ok) return;
@@ -1282,23 +1363,48 @@
       });
       renderSimpleList('guidelineList', items, function (it) {
         return '<div style="padding:14px 16px;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);">' +
-          '<span class="badge badge--cat">' + (SECTION_LABEL[it.section] || it.section) + '</span> <strong>' + it.title + '</strong>' +
+          '<strong>' + it.title + '</strong>' +
           '<div style="font-size:12px;color:var(--el-ink-faint);margin-top:4px;">並び順：' + (it.sortOrder || 0) + '</div></div>';
-      }, 'guideline', loadGuidelines);
+      }, 'guideline', loadGuidelines, loadGuidelineIntoForm);
     });
   }
   loadGuidelines();
 
+  var editingGuidelineId = '';
+  function resetGuidelineForm() {
+    editingGuidelineId = '';
+    document.getElementById('guidelineForm').reset();
+    guidelineEditor.clear();
+    document.getElementById('guidelineEditBanner').style.display = 'none';
+    document.getElementById('guidelineSubmitBtn').textContent = 'ガイドラインを登録する';
+  }
+  function loadGuidelineIntoForm(it) {
+    editingGuidelineId = it.id;
+    var form = document.getElementById('guidelineForm');
+    form.sortOrder.value = it.sortOrder != null ? it.sortOrder : 0;
+    form.title.value = it.title || '';
+    guidelineEditor.setHtml(it.bodyHtml || '');
+    document.getElementById('guidelineEditBanner').style.display = 'flex';
+    document.getElementById('guidelineSubmitBtn').textContent = 'ガイドラインを更新する';
+    form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  document.getElementById('guidelineCancelEditBtn').addEventListener('click', resetGuidelineForm);
+
   document.getElementById('guidelineForm').addEventListener('submit', function (e) {
     e.preventDefault();
     var fd = new FormData(e.target);
-    apiPost({
-      action: 'createContent', type: 'guideline',
-      section: fd.get('section'), title: fd.get('title'), bodyHtml: guidelineEditor.getHtml(),
+    var isEditing = !!editingGuidelineId;
+    var payload = {
+      action: isEditing ? 'updateContent' : 'createContent', type: 'guideline',
+      section: GUIDELINE_SECTION_VALUE, title: fd.get('title'), bodyHtml: guidelineEditor.getHtml(),
       sortOrder: fd.get('sortOrder')
-    }).then(function (data) {
-      if (data.ok) { alert('ガイドラインを登録しました。'); e.target.reset(); guidelineEditor.clear(); loadGuidelines(); }
-      else alert(data.error || '登録に失敗しました');
+    };
+    if (isEditing) payload.id = editingGuidelineId;
+    apiPost(payload).then(function (data) {
+      if (data.ok) {
+        alert(isEditing ? 'ガイドラインを更新しました。' : 'ガイドラインを登録しました。');
+        resetGuidelineForm(); loadGuidelines();
+      } else alert(data.error || (isEditing ? '更新に失敗しました' : '登録に失敗しました'));
     }).catch(function () { alert('通信エラーが発生しました。'); });
   });
 
@@ -1311,33 +1417,63 @@
   // サイズ・画質を落として再試行する（既存の呼び出し側の挙動は変えないよう、
   // maxSize省略時は従来通り400pxのまま）。
   var SHEET_CELL_SAFE_LIMIT = 45000; // 50,000文字上限に対する安全マージン
+  // WebPはJPEGより同じ見た目の画質でファイルサイズが小さくなるため、対応しているブラウザでは
+  // WebPを優先して使う（画像が縮小・ぼやけずに、より高い解像度・画質のままセル文字数に収まりやすくなる）。
+  // 一度だけ判定してキャッシュする。
+  var _webpSupportCache = null;
+  function canvasSupportsWebp() {
+    if (_webpSupportCache !== null) return _webpSupportCache;
+    try {
+      var c = document.createElement('canvas');
+      c.width = c.height = 1;
+      _webpSupportCache = c.toDataURL('image/webp').indexOf('data:image/webp') === 0;
+    } catch (e) {
+      _webpSupportCache = false;
+    }
+    return _webpSupportCache;
+  }
   function compressImageFile(file, maxSize) {
     var target = maxSize || 400;
+    var format = canvasSupportsWebp() ? 'image/webp' : 'image/jpeg';
     return new Promise(function (resolve, reject) {
       var reader = new FileReader();
       reader.onload = function (e) {
         var img = new Image();
         img.onload = function () {
-          function render(size, quality) {
+          function render(size, quality, fmt) {
             var scale = Math.min(1, size / Math.max(img.width, img.height));
             var canvas = document.createElement('canvas');
             canvas.width = Math.max(1, Math.round(img.width * scale));
             canvas.height = Math.max(1, Math.round(img.height * scale));
             canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-            return canvas.toDataURL('image/jpeg', quality);
+            return canvas.toDataURL(fmt, quality);
           }
+          // まずは元のサイズのまま画質だけを段階的に下げていき、なるべく解像度を落とさずセル文字数に
+          // 収める。WebP対応ブラウザではさらに小さいファイルサイズで同等の画質が得られるため、
+          // フル解像度で収まる可能性が高くなる（＝広告バナー等がぼやけにくくなる）。
           var attempts = [
+            [target, 0.92],
             [target, 0.85],
-            [target, 0.72],
-            [Math.round(target * 0.75), 0.75],
+            [target, 0.78],
+            [target, 0.7],
+            [target, 0.6],
+            [Math.round(target * 0.75), 0.78],
+            [Math.round(target * 0.75), 0.65],
             [Math.round(target * 0.5), 0.75],
             [400, 0.72],
             [300, 0.7]
           ];
           var result = '';
           for (var i = 0; i < attempts.length; i++) {
-            result = render(attempts[i][0], attempts[i][1]);
+            result = render(attempts[i][0], attempts[i][1], format);
             if (result.length <= SHEET_CELL_SAFE_LIMIT) break;
+          }
+          // WebPで一度も収まらなかった場合の保険（理論上は起きないはずだが、念のためJPEGでも試す）
+          if (result.length > SHEET_CELL_SAFE_LIMIT && format !== 'image/jpeg') {
+            for (var j = 0; j < attempts.length; j++) {
+              result = render(attempts[j][0], attempts[j][1], 'image/jpeg');
+              if (result.length <= SHEET_CELL_SAFE_LIMIT) break;
+            }
           }
           resolve(result);
         };
@@ -1374,23 +1510,63 @@
         return '<div style="padding:14px 16px;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);overflow:hidden;">' +
           thumb + '<strong>' + it.title + '</strong>' + formTag +
           '<div style="font-size:12.5px;color:var(--el-ink-faint);margin-top:4px;">' + (it.eventDate ? new Date(it.eventDate).toLocaleString('ja-JP') : '') + (it.place ? '・' + it.place : '') + '</div></div>';
-      }, 'event', loadEvents);
+      }, 'event', loadEvents, loadEventIntoForm);
     });
   }
   loadEvents();
 
+  // サーバーから返る日時（ISO文字列や Date シリアライズ済みの値）を
+  // <input type="datetime-local"> が受け付ける "YYYY-MM-DDTHH:mm" 形式に変換する。
+  function toDatetimeLocalValue(v) {
+    if (!v) return '';
+    var d = new Date(v);
+    if (isNaN(d.getTime())) return '';
+    function pad(n) { return n < 10 ? '0' + n : '' + n; }
+    return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + 'T' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+  }
+
+  var editingEventId = '';
+  function resetEventForm() {
+    editingEventId = '';
+    document.getElementById('eventForm').reset();
+    eventEditor.clear();
+    eventThumbUrl = '';
+    document.getElementById('eventThumbPreview').innerHTML = '未設定';
+    document.getElementById('eventEditBanner').style.display = 'none';
+    document.getElementById('eventSubmitBtn').textContent = 'イベントを登録する';
+  }
+  function loadEventIntoForm(it) {
+    editingEventId = it.id;
+    var form = document.getElementById('eventForm');
+    form.title.value = it.title || '';
+    form.eventDate.value = toDatetimeLocalValue(it.eventDate);
+    form.place.value = it.place || '';
+    eventEditor.setHtml(it.bodyHtml || '');
+    eventThumbUrl = it.thumbnailUrl || '';
+    document.getElementById('eventThumbPreview').innerHTML = it.thumbnailUrl
+      ? '<img src="' + it.thumbnailUrl + '" style="width:100%;height:100%;object-fit:cover;">' : '未設定';
+    form.formId.value = it.formId || '';
+    document.getElementById('eventEditBanner').style.display = 'flex';
+    document.getElementById('eventSubmitBtn').textContent = 'イベントを更新する';
+    form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  document.getElementById('eventCancelEditBtn').addEventListener('click', resetEventForm);
+
   document.getElementById('eventForm').addEventListener('submit', function (e) {
     e.preventDefault();
     var fd = new FormData(e.target);
-    apiPost({
-      action: 'createContent', type: 'event',
+    var isEditing = !!editingEventId;
+    var payload = {
+      action: isEditing ? 'updateContent' : 'createContent', type: 'event',
       title: fd.get('title'), eventDate: fd.get('eventDate'), place: fd.get('place'), bodyHtml: eventEditor.getHtml(),
       thumbnailUrl: eventThumbUrl, formId: fd.get('formId') || ''
-    }).then(function (data) {
+    };
+    if (isEditing) payload.id = editingEventId;
+    apiPost(payload).then(function (data) {
       if (data.ok) {
-        alert('イベントを登録しました。'); e.target.reset(); eventEditor.clear(); loadEvents();
-        eventThumbUrl = ''; document.getElementById('eventThumbPreview').innerHTML = '未設定';
-      } else alert(data.error || '登録に失敗しました');
+        alert(isEditing ? 'イベントを更新しました。' : 'イベントを登録しました。');
+        resetEventForm(); loadEvents();
+      } else alert(data.error || (isEditing ? '更新に失敗しました' : '登録に失敗しました'));
     }).catch(function () { alert('通信エラーが発生しました。'); });
   });
 
@@ -1440,26 +1616,55 @@
         return '<div style="padding:14px 16px;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);overflow:hidden;">' +
           thumb + '<strong>' + it.title + '</strong> ・ ¥' + Number(it.price || 0).toLocaleString() +
           '<div style="font-size:12px;color:var(--el-ink-faint);margin-top:4px;">' + it.category + '</div></div>';
-      }, 'marketContent', loadContentAdmin);
+      }, 'marketContent', loadContentAdmin, loadMarketContentIntoForm);
     });
   }
   loadContentAdmin();
 
+  var editingMarketContentId = '';
+  function resetContentForm() {
+    editingMarketContentId = '';
+    document.getElementById('contentForm').reset();
+    contentRecommendEditor.clear(); contentDetailEditor.clear();
+    contentThumbUrl = '';
+    document.getElementById('contentThumbPreview').innerHTML = '未設定';
+    document.getElementById('contentEditBanner').style.display = 'none';
+    document.getElementById('contentSubmitBtn').textContent = 'コンテンツを登録する（WorldShift公式として掲載）';
+  }
+  function loadMarketContentIntoForm(it) {
+    editingMarketContentId = it.id;
+    var form = document.getElementById('contentForm');
+    form.title.value = it.title || '';
+    form.category.value = it.category || '';
+    form.price.value = Number(it.price || 0).toLocaleString();
+    contentRecommendEditor.setHtml(it.recommendHtml || '');
+    contentDetailEditor.setHtml(it.detailHtml || '');
+    contentThumbUrl = it.thumbnailUrl || '';
+    document.getElementById('contentThumbPreview').innerHTML = it.thumbnailUrl
+      ? '<img src="' + it.thumbnailUrl + '" style="width:100%;height:100%;object-fit:cover;">' : '未設定';
+    document.getElementById('contentEditBanner').style.display = 'flex';
+    document.getElementById('contentSubmitBtn').textContent = 'コンテンツを更新する';
+    form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  document.getElementById('contentCancelEditBtn').addEventListener('click', resetContentForm);
+
   document.getElementById('contentForm').addEventListener('submit', function (e) {
     e.preventDefault();
     var fd = new FormData(e.target);
-    apiPost({
-      action: 'createContent', type: 'marketContent',
+    var isEditing = !!editingMarketContentId;
+    var payload = {
+      action: isEditing ? 'updateContent' : 'createContent', type: 'marketContent',
       title: fd.get('title'), category: fd.get('category'),
       price: String(fd.get('price') || '').replace(/[^0-9]/g, ''), // カンマ表示を保存前に数字だけへ戻す
       recommendHtml: contentRecommendEditor.getHtml(), detailHtml: contentDetailEditor.getHtml(),
       thumbnailUrl: contentThumbUrl
-    }).then(function (data) {
+    };
+    if (isEditing) payload.id = editingMarketContentId;
+    apiPost(payload).then(function (data) {
       if (data.ok) {
-        alert('コンテンツを登録しました。'); e.target.reset();
-        contentRecommendEditor.clear(); contentDetailEditor.clear(); loadContentAdmin();
-        contentThumbUrl = ''; document.getElementById('contentThumbPreview').innerHTML = '未設定';
-      } else alert(data.error || '登録に失敗しました');
+        alert(isEditing ? 'コンテンツを更新しました。' : 'コンテンツを登録しました。');
+        resetContentForm(); loadContentAdmin();
+      } else alert(data.error || (isEditing ? '更新に失敗しました' : '登録に失敗しました'));
     }).catch(function () { alert('通信エラーが発生しました。'); });
   });
 
@@ -1722,16 +1927,15 @@
         '<span style="position:absolute;top:10px;left:10px;background:rgba(0,0,0,.55);color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:999px;">AD</span>' +
         '</div>' +
         '<div style="padding:12px 14px;background:var(--el-paper);">' +
-        '<small style="display:block;font-size:11px;color:var(--el-ink-faint);margin-bottom:10px;">' + (ad.serviceName ? 'スポンサー：' + ad.serviceName : 'スポンサー名') + '</small>' +
-        '<span class="el-btn el-btn--primary el-btn--sm" style="display:inline-block;">' + (ad.ctaText || '詳しく見る') + '</span>' +
+        '<small style="display:block;font-size:11px;color:var(--el-ink-faint);">' + (ad.serviceName ? 'スポンサー：' + ad.serviceName : 'スポンサー名') + '</small>' +
         '</div></div>';
     }
     var bg = ad.imageUrl
       ? 'background-image:url(' + ad.imageUrl + ');background-size:cover;background-position:center;'
       : 'background:var(--el-teal);';
+    // 実際の表示（バナー全体がリンクで、CTAボタンは無し）に合わせたプレビュー
     return '<div style="position:relative;border-radius:var(--el-radius-m);overflow:hidden;aspect-ratio:1200/200;' + bg + '">' +
       '<span style="position:absolute;top:12px;left:12px;background:rgba(0,0,0,.55);color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:999px;">AD</span>' +
-      '<span style="position:absolute;right:16px;bottom:16px;box-shadow:0 3px 10px rgba(0,0,0,.25);" class="el-btn el-btn--primary el-btn--sm">' + (ad.ctaText || '詳しく見る') + '</span>' +
       '<span style="position:absolute;left:12px;bottom:10px;font-size:11px;color:rgba(255,255,255,.85);background:rgba(0,0,0,.35);padding:2px 9px;border-radius:999px;">スポンサー：' + (ad.serviceName || 'サービス名') + '</span>' +
       '</div>';
   }
@@ -1750,7 +1954,7 @@
 
   function updateAdPreviewFromForm() {
     var fd = new FormData(adForm);
-    var ad = { adType: fd.get('adType'), serviceName: fd.get('serviceName'), imageUrl: adImageDataUrl, ctaText: fd.get('ctaText') };
+    var ad = { adType: fd.get('adType'), serviceName: fd.get('serviceName'), imageUrl: adImageDataUrl };
     adPreview.innerHTML = renderAdPreview(ad);
   }
   adForm.addEventListener('input', updateAdPreviewFromForm);
@@ -1759,24 +1963,51 @@
   function loadAds() {
     apiPost({ action: 'listContent', type: 'ad' }).then(function (data) {
       if (!data.ok) return;
-      renderSimpleList('adList', data.items, function (it) { return renderAdPreview(it); }, 'ad', loadAds);
+      renderSimpleList('adList', data.items, function (it) { return renderAdPreview(it); }, 'ad', loadAds, loadAdIntoForm);
     });
   }
   loadAds();
 
+  var editingAdId = '';
+  function resetAdForm() {
+    editingAdId = '';
+    adForm.reset();
+    adImageDataUrl = ''; adImagePreview.innerHTML = '未設定';
+    document.getElementById('adEditBanner').style.display = 'none';
+    document.getElementById('adSubmitBtn').textContent = '広告を登録する';
+    updateAdTypeExplain(); updateAdPreviewFromForm();
+  }
+  function loadAdIntoForm(it) {
+    editingAdId = it.id;
+    var typeRadio = adForm.querySelector('input[name="adType"][value="' + (it.adType || 'banner') + '"]');
+    if (typeRadio) typeRadio.checked = true;
+    adForm.serviceName.value = it.serviceName || '';
+    adForm.ctaUrl.value = it.ctaUrl || '';
+    adImageDataUrl = it.imageUrl || '';
+    adImagePreview.innerHTML = it.imageUrl
+      ? '<img src="' + it.imageUrl + '" style="width:100%;height:100%;object-fit:cover;">' : '未設定';
+    document.getElementById('adEditBanner').style.display = 'flex';
+    document.getElementById('adSubmitBtn').textContent = '広告を更新する';
+    updateAdTypeExplain(); updateAdPreviewFromForm();
+    adForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  document.getElementById('adCancelEditBtn').addEventListener('click', resetAdForm);
+
   adForm.addEventListener('submit', function (e) {
     e.preventDefault();
     var fd = new FormData(adForm);
-    apiPost({
-      action: 'createContent', type: 'ad',
+    var isEditing = !!editingAdId;
+    var payload = {
+      action: isEditing ? 'updateContent' : 'createContent', type: 'ad',
       adType: fd.get('adType'), serviceName: fd.get('serviceName'),
-      imageUrl: adImageDataUrl, ctaText: fd.get('ctaText'), ctaUrl: fd.get('ctaUrl')
-    }).then(function (data) {
+      imageUrl: adImageDataUrl, ctaUrl: fd.get('ctaUrl')
+    };
+    if (isEditing) payload.id = editingAdId;
+    apiPost(payload).then(function (data) {
       if (data.ok) {
-        alert('広告を登録しました。'); adForm.reset();
-        adImageDataUrl = ''; adImagePreview.innerHTML = '未設定';
-        updateAdTypeExplain(); updateAdPreviewFromForm(); loadAds();
-      } else alert(data.error || '登録に失敗しました');
+        alert(isEditing ? '広告を更新しました。' : '広告を登録しました。');
+        resetAdForm(); loadAds();
+      } else alert(data.error || (isEditing ? '更新に失敗しました' : '登録に失敗しました'));
     }).catch(function () { alert('通信エラーが発生しました。'); });
   });
 
@@ -1792,21 +2023,52 @@
           '<span class="badge badge--cat">' + (it.category || '未分類') + '</span> <strong>' + it.title + '</strong>' +
           '<div style="font-size:12.5px;color:var(--el-ink-faint);margin-top:4px;">運営：' + (it.creator || '運営メンバー') + '・' + new Date(it.createdAt).toLocaleString('ja-JP') + '</div>' +
           '<div style="font-size:13px;color:var(--el-navy);margin-top:6px;">' + (it.description || '') + '</div></div>';
-      }, 'communityGroup', loadCommunities);
+      }, 'communityGroup', loadCommunities, loadCommunityIntoForm);
     });
   }
   loadCommunities();
 
+  var editingCommunityId = '';
+  function resetCommunityForm() {
+    editingCommunityId = '';
+    document.getElementById('communityForm').reset();
+    document.getElementById('communityEditBanner').style.display = 'none';
+    document.getElementById('communitySubmitBtn').textContent = 'コミュニティを登録する';
+  }
+  function loadCommunityIntoForm(it) {
+    editingCommunityId = it.id;
+    var form = document.getElementById('communityForm');
+    form.title.value = it.title || '';
+    form.category.value = it.category || '';
+    form.creator.value = it.creator || '';
+    if (it.color) form.color.value = it.color;
+    form.description.value = it.description || '';
+    form.longDescription.value = it.longDescription || '';
+    document.getElementById('communityEditBanner').style.display = 'flex';
+    document.getElementById('communitySubmitBtn').textContent = 'コミュニティを更新する';
+    form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  document.getElementById('communityCancelEditBtn').addEventListener('click', resetCommunityForm);
+
   document.getElementById('communityForm').addEventListener('submit', function (e) {
     e.preventDefault();
     var fd = new FormData(e.target);
-    apiPost({
-      action: 'createContent', type: 'communityGroup',
+    var isEditing = !!editingCommunityId;
+    var payload = {
+      action: isEditing ? 'updateContent' : 'createContent', type: 'communityGroup',
+      // 管理者ページからの更新であることをバックエンドの所有者チェックに伝える（作成者以外のコミュニティも編集できるように）
+      requesterRole: 'admin',
+      requesterUserId: (localStorage.getItem('el-user-id') || ''),
+      requesterUsername: (localStorage.getItem('el-username') || ''),
       title: fd.get('title'), category: fd.get('category'), creator: fd.get('creator'),
       color: fd.get('color'), description: fd.get('description'), longDescription: fd.get('longDescription')
-    }).then(function (data) {
-      if (data.ok) { alert('コミュニティを登録しました。'); e.target.reset(); loadCommunities(); }
-      else alert(data.error || '登録に失敗しました');
+    };
+    if (isEditing) payload.id = editingCommunityId;
+    apiPost(payload).then(function (data) {
+      if (data.ok) {
+        alert(isEditing ? 'コミュニティを更新しました。' : 'コミュニティを登録しました。');
+        resetCommunityForm(); loadCommunities();
+      } else alert(data.error || (isEditing ? '更新に失敗しました' : '登録に失敗しました'));
     }).catch(function () { alert('通信エラーが発生しました。'); });
   });
 
@@ -1918,7 +2180,18 @@
       try { return localStorage.getItem(ROLE_KEY) || 'guest'; } catch (e) { return 'guest'; }
     }
     function setRole(role) {
-      try { localStorage.setItem(ROLE_KEY, role); } catch (e) {}
+      try {
+        localStorage.setItem(ROLE_KEY, role);
+        // ログアウト時は権限だけでなく、以前ログインしていたユーザーの識別情報も
+        // 消しておかないと、いいね等の「ログイン済みか」の判定がユーザーIDの残存で
+        // 誤って通ってしまうため、あわせて削除する。
+        if (role === 'guest') {
+          localStorage.removeItem('el-user-id');
+          localStorage.removeItem('el-username');
+          localStorage.removeItem('el-user-name');
+          localStorage.removeItem('el-user-profile');
+        }
+      } catch (e) {}
     }
     window.elGetRole = getRole;
 

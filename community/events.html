@@ -317,7 +317,6 @@
         <div class="el-section-head" style="margin-bottom:16px;">
           <div>
             <h2>今後のイベント</h2>
-            <div class="sub">参加には事前申込が必要です</div>
           </div>
         </div>
 
@@ -328,7 +327,6 @@
         <div class="el-section-head" style="margin-top:52px;">
           <div>
             <h2>過去のイベント</h2>
-            <div class="sub">開催済みのアーカイブです</div>
           </div>
         </div>
         <div class="el-event-grid is-past" id="pastEventGrid">
@@ -421,7 +419,18 @@
       try { return localStorage.getItem(ROLE_KEY) || 'guest'; } catch (e) { return 'guest'; }
     }
     function setRole(role) {
-      try { localStorage.setItem(ROLE_KEY, role); } catch (e) {}
+      try {
+        localStorage.setItem(ROLE_KEY, role);
+        // ログアウト時は権限だけでなく、以前ログインしていたユーザーの識別情報も
+        // 消しておかないと、いいね等の「ログイン済みか」の判定がユーザーIDの残存で
+        // 誤って通ってしまうため、あわせて削除する。
+        if (role === 'guest') {
+          localStorage.removeItem('el-user-id');
+          localStorage.removeItem('el-username');
+          localStorage.removeItem('el-user-name');
+          localStorage.removeItem('el-user-profile');
+        }
+      } catch (e) {}
     }
     window.elGetRole = getRole;
 

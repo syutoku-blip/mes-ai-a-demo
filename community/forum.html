@@ -9,6 +9,16 @@
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="../shared/global-header.css">
 <style>
+  /* フォーラム投稿のカテゴリチップ：見た目がハッシュタグに見えてしまう「#」の装飾を外す
+     （style.cssそのものは変更できないため、ここで上書きする）。クリックで絞り込みページへ
+     遷移できるように<a>化するため、下線・カーソルも合わせて調整する。 */
+  .badge--cat.el-cat-chip::before{
+    content:"" !important;
+    margin:0 !important;
+  }
+  a.badge--cat.el-cat-chip{
+    cursor:pointer;
+  }
   /* 検索ボックス：input要素の初期スタイル（黒枠など）を消して馴染ませる */
   .el-search input[type="search"]{
     border:none !important;
@@ -641,7 +651,18 @@
       try { return localStorage.getItem(ROLE_KEY) || 'guest'; } catch (e) { return 'guest'; }
     }
     function setRole(role) {
-      try { localStorage.setItem(ROLE_KEY, role); } catch (e) {}
+      try {
+        localStorage.setItem(ROLE_KEY, role);
+        // ログアウト時は権限だけでなく、以前ログインしていたユーザーの識別情報も
+        // 消しておかないと、いいね等の「ログイン済みか」の判定がユーザーIDの残存で
+        // 誤って通ってしまうため、あわせて削除する。
+        if (role === 'guest') {
+          localStorage.removeItem('el-user-id');
+          localStorage.removeItem('el-username');
+          localStorage.removeItem('el-user-name');
+          localStorage.removeItem('el-user-profile');
+        }
+      } catch (e) {}
     }
     window.elGetRole = getRole;
 
@@ -763,9 +784,9 @@
       var statusBadge = t.status === 'solved' ? '<span class="badge badge--solved">解決</span>'
         : t.status === 'unsolved' ? '<span class="badge badge--unsolved">未解決</span>' : '';
       var catLabel = CATEGORY_LABEL[t.category] || t.category;
-      return '<a href="topic.html?id=' + t.id + '" class="el-t-row">' +
+      return '<a href="topic.html?id=' + t.id + '" class="el-t-row" data-visibility="' + (t.visibility || 'general') + '">' +
         '<div class="el-t-row-main">' +
-          '<div class="el-t-row-badges">' + visBadge + '<span class="badge badge--cat">' + catLabel + '</span>' + statusBadge + '</div>' +
+          '<div class="el-t-row-badges">' + visBadge + '<span class="badge badge--cat el-cat-chip" data-category="' + (t.category || '') + '" role="link" tabindex="0">' + catLabel + '</span>' + statusBadge + '</div>' +
           '<span class="el-t-row-title">' + t.title + '</span>' +
           '<div class="el-t-row-meta">' + t.author + '・' + relativeTime(t.date) + '</div>' +
         '</div>' +
@@ -775,11 +796,43 @@
         '</div></a>';
     }
 
+    function wireRowGating(el, list) {
+      var rows = el.querySelectorAll('.el-t-row');
+      rows.forEach(function (row, idx) {
+        var t = list[idx];
+        if (!t) return;
+        var catChip = row.querySelector('.el-cat-chip');
+        if (catChip) {
+          catChip.addEventListener('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            window.location.href = 'board.html?category=' + encodeURIComponent(t.category || '');
+          });
+          catChip.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); catChip.click(); }
+          });
+        }
+        row.addEventListener('click', function (e) {
+          var role = window.elGetRole ? window.elGetRole() : 'guest';
+          if (t.visibility === 'shift' && role !== 'shift' && role !== 'admin') {
+            e.preventDefault();
+            if (window.elRequireShift) window.elRequireShift();
+            return;
+          }
+          if (t.visibility === 'member' && role === 'guest') {
+            e.preventDefault();
+            if (window.elRequireAuth) window.elRequireAuth();
+          }
+        });
+      });
+    }
+
     function renderList(id, list){
       var el = document.getElementById(id);
       if (!el) return;
       if (!list.length) return; // 「まだ投稿がありません」のまま
       el.innerHTML = list.map(buildRowHtml).join('');
+      wireRowGating(el, list);
     }
 
     var byNew = topics.slice().sort(function(a,b){ return (b.recency||0) - (a.recency||0); }).slice(0, 4);
@@ -892,7 +945,9 @@
       })
         .then(function (res) { return res.json(); })
         .then(function (data) {
-          var items = (data.ok && data.items) ? data.items.filter(function (g) { return g.section === 'forum'; }) : [];
+          // フォーラム／コミュニティで別々に管理する必要がなくなったため、section による絞り込みは行わず
+          // 登録されているガイドラインを全件表示する（表示順は従来通り sortOrder）。
+          var items = (data.ok && data.items) ? data.items.slice() : [];
           items.sort(function (a, b) { return (Number(a.sortOrder) || 0) - (Number(b.sortOrder) || 0); });
           if (!items.length) { box.style.display = 'none'; return; }
           listEl.innerHTML = items.map(function (it, idx) {
