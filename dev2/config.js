@@ -7,5 +7,5 @@
 
 window.ALLYNAIR_CONFIG = {
   GAS_WEB_APP_URL:
-    'https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec'
+    'https://script.google.com/macros/s/AKfycbxQVDxJS0J7qUBUtpGgNcOPiZAR2y9fD91G0pNV50g1YJEFYzlLWA4oYQDvu01Rmsn0/exec'
 };
