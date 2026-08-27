@@ -1488,12 +1488,12 @@
       reader.readAsDataURL(file);
     });
   }
-  function wireImageUpload(inputEl, previewEl, onChange, maxSize) {
+  function wireImageUpload(inputEl, previewEl, onChange, maxSize, fit) {
     inputEl.addEventListener('change', function () {
       var file = inputEl.files[0];
       if (!file) return;
       compressImageFile(file, maxSize).then(function (dataUrl) {
-        previewEl.innerHTML = '<img src="' + dataUrl + '" style="width:100%;height:100%;object-fit:cover;">';
+        previewEl.innerHTML = '<img src="' + dataUrl + '" style="width:100%;height:100%;object-fit:' + (fit || 'cover') + ';">';
         onChange(dataUrl);
       });
     });
@@ -1935,20 +1935,25 @@
       reader.readAsDataURL(file);
     });
   }
-  var AD_TARGET_RATIO = { banner: 1200 / 200, square: 520 / 300 };
+  // スクエア枠の実際の表示は正方形（1:1）のため、比率チェックの基準もそれに合わせる
+  // （以前は520:300＝約1.7:1を基準にしていたが、これだと「推奨サイズ」通りの画像でも
+  // 実際の正方形の枠には必ず収まらず、常にトリミング／余白が発生してしまっていた）。
+  var AD_TARGET_RATIO = { banner: 1200 / 200, square: 1 };
   function checkAdImageRatio(width, height) {
     var type = adForm.querySelector('input[name="adType"]:checked').value;
     var target = AD_TARGET_RATIO[type] || AD_TARGET_RATIO.banner;
     var actual = width / height;
     var diffPct = Math.abs(actual - target) / target * 100;
     if (diffPct < 3) { adRatioWarningEl.style.display = 'none'; return; }
-    var cropSide = actual > target ? '左右' : '上下';
-    // 表示エリアいっぱいに拡大したうえで、はみ出た分がトリミングされる量を概算する
-    var cropPct = actual > target ? Math.round((1 - target / actual) * 100) : Math.round((1 - actual / target) * 100);
+    // 表示は画像全体が欠けずに写る「contain」方式のため、比率が合わない場合は
+    // トリミングではなく余白（レターボックス）が入る。画像が横に長すぎる場合は上下に、
+    // 縦に長すぎる場合は左右に余白が入る（トリミング方向とは上下左右が逆になる点に注意）。
+    var padSide = actual > target ? '上下' : '左右';
+    var padPct = actual > target ? Math.round((1 - target / actual) * 100) : Math.round((1 - actual / target) * 100);
     adRatioWarningEl.innerHTML =
       '⚠ この画像は縦横比が ' + actual.toFixed(2) + ':1（' + width + '×' + height + 'px）で、' +
-      '必要な比率（' + target.toFixed(2) + ':1）と異なります。表示時に画像の' + cropSide + 'が約' + cropPct + '%トリミングされます。' +
-      '<br>ロゴや文字が' + cropSide + '寄りに配置されている場合は特に見切れやすいため、' + cropSide + 'を基準に比率を合わせて再度書き出すことをおすすめします。';
+      '必要な比率（' + target.toFixed(2) + ':1）と異なります。画像が欠けることはありませんが、' + padSide + 'に約' + padPct + '%の余白が入ります。' +
+      '<br>余白が気になる場合は、' + padSide + 'を基準に比率を合わせて再度書き出すことをおすすめします。';
     adRatioWarningEl.style.display = 'block';
   }
   document.getElementById('adImageInput').addEventListener('change', function (e) {
@@ -1959,15 +1964,20 @@
     }).catch(function () {});
   });
   // 広告バナーは横長で最大1100px程度の幅で大きく表示されるため、他の画像より高い解像度で保存する
-  wireImageUpload(document.getElementById('adImageInput'), adImagePreview, function (dataUrl) { adImageDataUrl = dataUrl; updateAdPreviewFromForm(); }, 1200);
+  // プレビューはobject-fit:containにし、実際の公開ページ（後述のcontain表示）と同じく、
+  // 画像が欠けずに全体表示される見た目を管理画面の時点から正しく確認できるようにする。
+  wireImageUpload(document.getElementById('adImageInput'), adImagePreview, function (dataUrl) { adImageDataUrl = dataUrl; updateAdPreviewFromForm(); }, 1200, 'contain');
 
   function renderAdPreview(ad) {
+    // 「推奨サイズ」通りの画像でも圧縮時の丸め誤差で比率が完全一致しないことがあり、
+    // background-size:coverだと必ずどこかがトリミングされてしまっていたため、
+    // 実際の公開ページと同じくcontain（画像全体を欠けさせずに表示）に統一する。
     if (ad.adType === 'square') {
       var sqBg = ad.imageUrl
-        ? 'background-image:url(' + ad.imageUrl + ');background-size:cover;background-position:center;'
+        ? 'background-image:url(' + ad.imageUrl + ');background-size:contain;background-repeat:no-repeat;background-position:center;background-color:var(--el-teal);'
         : 'background:var(--el-teal);';
       return '<div style="position:relative;border-radius:var(--el-radius-m);overflow:hidden;border:1px solid var(--el-line-soft);width:260px;">' +
-        '<div style="position:relative;height:190px;' + sqBg + '">' +
+        '<div style="position:relative;aspect-ratio:1/1;' + sqBg + '">' +
         '<span style="position:absolute;top:10px;left:10px;background:rgba(0,0,0,.55);color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:999px;">AD</span>' +
         '</div>' +
         '<div style="padding:12px 14px;background:var(--el-paper);">' +
@@ -1975,7 +1985,7 @@
         '</div></div>';
     }
     var bg = ad.imageUrl
-      ? 'background-image:url(' + ad.imageUrl + ');background-size:cover;background-position:center;'
+      ? 'background-image:url(' + ad.imageUrl + ');background-size:contain;background-repeat:no-repeat;background-position:center;background-color:var(--el-teal);'
       : 'background:var(--el-teal);';
     // 実際の表示（バナー全体がリンクで、CTAボタンは無し）に合わせたプレビュー
     return '<div style="position:relative;border-radius:var(--el-radius-m);overflow:hidden;aspect-ratio:1200/200;' + bg + '">' +
@@ -1985,15 +1995,15 @@
   }
 
   var AD_TYPE_INFO = {
-    banner: '<strong>表示場所：</strong>サイトTOP・トピック詳細ページの上部（横長バナー）<br><strong>推奨画像サイズ：</strong>1200 × 200px、またはこれと同じ比率（6:1）の画像。1200×900pxのように単に幅だけを合わせても、高さが比率通りでなければ上下がトリミングされます。ロゴや文字は中央付近に配置し、上下の縁ギリギリには置かないでください。画像を選択すると、比率がずれている場合はこの下に警告が表示されます。',
-    square: '<strong>表示場所：</strong>新規トピック投稿画面のサイドバー（正方形に近いカード型）<br><strong>推奨画像サイズ：</strong>520 × 300px（アスペクト比 約1.7:1）。カード上部の画像エリアに表示され、下にサービス名・紹介文・CTAボタンが続きます。'
+    banner: '<strong>表示場所：</strong>サイトTOP・トピック詳細ページの上部（横長バナー）<br><strong>推奨画像サイズ：</strong>1200 × 200px（比率6:1）ちょうど。1200×900pxのように幅だけを合わせても、高さが比率通りでなければ意図しない余白が出ます。画像全体は必ず表示されます（比率がずれている場合、切り取られる代わりに左右または上下に余白が入ります）。ロゴや文字は中央付近に配置してください。画像を選択すると、比率がずれている場合はこの下に警告が表示されます。',
+    square: '<strong>表示場所：</strong>新規トピック投稿画面のサイドバー（正方形カード型）<br><strong>推奨画像サイズ：</strong>520 × 520px（正方形、比率1:1）ちょうど。カード上部の正方形の画像エリアに表示され、下にサービス名・紹介文・CTAボタンが続きます。画像全体は必ず表示されます（比率がずれている場合、切り取られる代わりに上下または左右に余白が入ります）。'
   };
   function updateAdTypeExplain() {
     var type = adForm.querySelector('input[name="adType"]:checked').value;
     document.getElementById('adTypeExplain').innerHTML = AD_TYPE_INFO[type];
-    document.getElementById('adImageLabel').textContent = type === 'square' ? '画像（推奨 520×300px）' : '画像（推奨 1200×200px以上）';
+    document.getElementById('adImageLabel').textContent = type === 'square' ? '画像（推奨 520×520px）' : '画像（推奨 1200×200px）';
     // タイプ切り替え時、アップロード直後のプレビュー枠の比率も実際の表示に合わせて切り替える
-    adImagePreview.style.aspectRatio = type === 'square' ? '520/300' : '1200/200';
+    adImagePreview.style.aspectRatio = type === 'square' ? '1/1' : '1200/200';
     adRatioWarningEl.style.display = 'none';
   }
   adForm.querySelectorAll('input[name="adType"]').forEach(function (r) { r.addEventListener('change', function () { updateAdTypeExplain(); updateAdPreviewFromForm(); }); });
@@ -2032,7 +2042,7 @@
     adForm.ctaUrl.value = it.ctaUrl || '';
     adImageDataUrl = it.imageUrl || '';
     adImagePreview.innerHTML = it.imageUrl
-      ? '<img src="' + it.imageUrl + '" style="width:100%;height:100%;object-fit:cover;">' : '未設定';
+      ? '<img src="' + it.imageUrl + '" style="width:100%;height:100%;object-fit:contain;">' : '未設定';
     document.getElementById('adEditBanner').style.display = 'flex';
     document.getElementById('adSubmitBtn').textContent = '広告を更新する';
     updateAdTypeExplain(); updateAdPreviewFromForm();

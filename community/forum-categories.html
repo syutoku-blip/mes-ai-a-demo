@@ -133,7 +133,12 @@
   .el-ad-image-v2{
     position:absolute !important;
     inset:0 !important;
-    background-size:cover !important;
+    /* 「推奨サイズ」通りの画像でも、圧縮時の丸め誤差などでピクセル単位の比率のズレが
+       生じることがあり、cover（はみ出た部分を切り取る）だと必ず何かがトリミングされて
+       しまっていた。containに変更し、画像全体を必ず欠けさせずに表示する
+       （比率が合わない場合は左右または上下に背景色の余白が出るだけにする）。 */
+    background-size:contain !important;
+    background-repeat:no-repeat !important;
     background-position:center !important;
     background-color:var(--el-teal, #2F8F82) !important;
   }
@@ -389,7 +394,18 @@
       try { return localStorage.getItem(ROLE_KEY) || 'guest'; } catch (e) { return 'guest'; }
     }
     function setRole(role) {
-      try { localStorage.setItem(ROLE_KEY, role); } catch (e) {}
+      try {
+        localStorage.setItem(ROLE_KEY, role);
+        // ログアウト時は権限だけでなく、以前ログインしていたユーザーの識別情報も
+        // 消しておかないと、いいね等の「ログイン済みか」の判定がユーザーIDの残存で
+        // 誤って通ってしまうため、あわせて削除する。
+        if (role === 'guest') {
+          localStorage.removeItem('el-user-id');
+          localStorage.removeItem('el-username');
+          localStorage.removeItem('el-user-name');
+          localStorage.removeItem('el-user-profile');
+        }
+      } catch (e) {}
     }
     window.elGetRole = getRole;
 

@@ -63,7 +63,12 @@
   .el-ad-image-v2{
     position:absolute !important;
     inset:0 !important;
-    background-size:cover !important;
+    /* 「推奨サイズ」通りの画像でも、圧縮時の丸め誤差などでピクセル単位の比率のズレが
+       生じることがあり、cover（はみ出た部分を切り取る）だと必ず何かがトリミングされて
+       しまっていた。containに変更し、画像全体を必ず欠けさせずに表示する
+       （比率が合わない場合は左右または上下に背景色の余白が出るだけにする）。 */
+    background-size:contain !important;
+    background-repeat:no-repeat !important;
     background-position:center !important;
     background-color:var(--el-teal, #2F8F82) !important;
   }
