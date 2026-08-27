@@ -209,7 +209,7 @@
           <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
         </summary>
         <div class="el-side-sub">
-          <a href="groups.html" class="el-side-cta" data-guest-block>
+          <a href="groups.html?create=1" class="el-side-cta" data-guest-block>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
             新規コミュニティを作成する
           </a>
@@ -247,11 +247,6 @@
       <a href="members.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M6 16c.5-1.6 1.7-2.5 3-2.5s2.5.9 3 2.5"/><path d="M14 9h4M14 13h4"/></svg>
         <span class="lbl">メンバー</span>
-      </a>
-
-      <a href="messages.html">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-        <span class="lbl">メッセージ</span>
       </a>
 
       <a href="mypage.html" class="is-active">
@@ -537,26 +532,38 @@
       return !!(uname && authorUsername && String(authorUsername) === String(uname));
     }
 
+    // フォーラム（掲示板）だけでなく、コミュニティ内での投稿・コメントも「投稿したトピック」等の
+    // 集計に含める（以前はフォーラム分しか見ておらず、コミュニティにしか投稿していない会員は
+    // 実際は投稿しているのに0件と表示されてしまっていた）。
     Promise.all([
       apiPost({ action: 'listTopics' }),
       apiPost({ action: 'listComments', authorUserId: uid, authorUsername: uname }),
-      apiPost({ action: 'listMyLikes', userId: uid, username: uname })
+      apiPost({ action: 'listMyLikes', userId: uid, username: uname }),
+      apiPost({ action: 'listCommunityTopics' }), // groupId未指定＝全コミュニティの投稿を取得
+      apiPost({ action: 'listCommunityComments', authorUserId: uid, authorUsername: uname })
     ]).then(function (results) {
       var topics = (results[0] && results[0].ok && results[0].items) ? results[0].items : [];
       var myComments = (results[1] && results[1].ok && results[1].items) ? results[1].items : [];
       var myLikes = (results[2] && results[2].ok && results[2].items) ? results[2].items : [];
+      var communityTopics = (results[3] && results[3].ok && results[3].items) ? results[3].items : [];
+      var myCommunityComments = (results[4] && results[4].ok && results[4].items) ? results[4].items : [];
 
-      var postedCount = topics.filter(function (t) { return isMine(t.authorUserId, t.authorUsername); }).length;
+      var postedCount = topics.filter(function (t) { return isMine(t.authorUserId, t.authorUsername); }).length
+        + communityTopics.filter(function (t) { return isMine(t.authorUserId, t.authorUsername); }).length;
 
       var repliedTopicIds = {};
       myComments.forEach(function (c) { if (c.topicId) repliedTopicIds[String(c.topicId)] = true; });
+      myCommunityComments.forEach(function (c) { if (c.postId) repliedTopicIds['community:' + String(c.postId)] = true; });
       var repliedCount = Object.keys(repliedTopicIds).length;
 
       var likedCount = myLikes.filter(function (l) { return l.targetType === 'topic' || l.targetType === 'comment'; }).length;
 
       var myCommentIdSet = {};
       myComments.forEach(function (c) { myCommentIdSet[String(c.id)] = true; });
+      myCommunityComments.forEach(function (c) { myCommentIdSet[String(c.id)] = true; });
       var bestAnswerCount = topics.filter(function (t) {
+        return t.bestAnswerCommentId && myCommentIdSet[String(t.bestAnswerCommentId)];
+      }).length + communityTopics.filter(function (t) {
         return t.bestAnswerCommentId && myCommentIdSet[String(t.bestAnswerCommentId)];
       }).length;
 

@@ -371,7 +371,7 @@
           <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
         </summary>
         <div class="el-side-sub">
-          <a href="groups.html" class="el-side-cta" data-guest-block>
+          <a href="groups.html?create=1" class="el-side-cta" data-guest-block>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
             新規コミュニティを作成する
           </a>
@@ -411,11 +411,6 @@
         <span class="lbl">メンバー</span>
       </a>
 
-      <a href="messages.html">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-        <span class="lbl">メッセージ</span>
-      </a>
-
       <a href="mypage.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
         <span class="lbl">マイページ</span>
@@ -433,8 +428,10 @@
       <div class="wrap">
         <nav class="el-breadcrumb el-page-breadcrumb" aria-label="パンくず"><a href="index.html">ホーム</a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg><span>コミュニティTOP</span></nav>
 
-
-        <div class="el-group-hero">
+        <!-- 以前はここに大きな紺色のバナー（.el-group-hero）でボタンだけを表示していたが、
+             見出し文を削除した後は空の帯だけが目立って不要になったため廃止し、
+             小さなボタンをこの場所に直接置く（サイドメニューの「新規コミュニティを作成する」からも同じ作成画面を開ける）。 -->
+        <div style="display:flex;justify-content:flex-end;margin-top:14px;">
           <a href="#" class="el-btn el-btn--mustard" id="createGroupBtn">新しいコミュニティを作る</a>
         </div>
 
@@ -1074,21 +1071,38 @@
       createModal.classList.remove('is-open');
       createModal.setAttribute('aria-hidden', 'true');
     }
-    createBtn.addEventListener('click', function (e) {
-      e.preventDefault();
-      // ゲストは会員登録を促す（elRequireAuthはgroups.html内で既に定義済み）
-      if (window.elRequireAuth && !window.elRequireAuth(e)) return;
+    function openCreateModal(e) {
+      if (e && e.preventDefault) e.preventDefault();
+      // ゲストは会員登録を促す（elRequireAuthはgroups.html内で既に定義済み）。
+      // eがnull（URLパラメータ経由の自動オープン時）でも、elRequireAuth内でe.preventDefault()を
+      // 呼ぼうとして落ちないよう、その場合はundefinedを渡す。
+      if (window.elRequireAuth && !window.elRequireAuth(e || undefined)) return;
       createForm.reset();
       document.getElementById('ccColor').value = 'var(--el-teal)';
       createModal.classList.add('is-open');
       createModal.setAttribute('aria-hidden', 'false');
       document.getElementById('ccTitle').focus();
-    });
+    }
+    createBtn.addEventListener('click', openCreateModal);
     createModal.querySelectorAll('[data-community-create-close]').forEach(function (el) {
       el.addEventListener('click', closeCreateModal);
     });
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape' && createModal.classList.contains('is-open')) closeCreateModal();
+    });
+    // サイドメニューの「新規コミュニティを作成する」（groups.html?create=1）から来た場合、
+    // 自動でこのモーダルを開く。以前は単なるgroups.htmlへのリンクで、既にこのページを見ている人が
+    // 押しても何も起きないように見えていたため、作成モーダルを直接開くようにする。
+    // ※ window.elRequireAuthはこのスクリプトより前にあるDOMContentLoadedハンドラ内で定義されるため、
+    // 　このブロック自体がDOMContentLoaded発火前（パース中）に実行されるとelRequireAuthがまだ
+    // 　undefinedのままとなり、ゲストでも認証チェックをすり抜けてモーダルが開いてしまう。
+    // 　DOMContentLoadedの発火後まで実行を遅らせて、必ずelRequireAuthが定義済みの状態で判定する。
+    document.addEventListener('DOMContentLoaded', function () {
+      try {
+        if (new URLSearchParams(window.location.search).get('create') === '1') {
+          openCreateModal(null);
+        }
+      } catch (e) {}
     });
 
     createForm.addEventListener('submit', function (e) {

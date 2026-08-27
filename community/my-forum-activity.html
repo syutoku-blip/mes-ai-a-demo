@@ -9,6 +9,16 @@
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="../shared/global-header.css">
 <style>
+  /* フォーラム投稿のカテゴリチップ：見た目がハッシュタグに見えてしまう「#」の装飾を外す
+     （style.cssそのものは変更できないため、ここで上書きする）。クリックで絞り込みページへ
+     遷移できるように、forum.html／board.html／topic.html／index.htmlと仕組みを合わせる。 */
+  .badge--cat.el-cat-chip::before{
+    content:"" !important;
+    margin:0 !important;
+  }
+  .badge--cat.el-cat-chip{
+    cursor:pointer;
+  }
   /* 検索ボックス：input要素の初期スタイル（黒枠など）を消して馴染ませる */
   .el-search input[type="search"]{
     border:none !important;
@@ -240,7 +250,7 @@
           <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
         </summary>
         <div class="el-side-sub">
-          <a href="groups.html" class="el-side-cta" data-guest-block>
+          <a href="groups.html?create=1" class="el-side-cta" data-guest-block>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
             新規コミュニティを作成する
           </a>
@@ -278,11 +288,6 @@
       <a href="members.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M6 16c.5-1.6 1.7-2.5 3-2.5s2.5.9 3 2.5"/><path d="M14 9h4M14 13h4"/></svg>
         <span class="lbl">メンバー</span>
-      </a>
-
-      <a href="messages.html">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-        <span class="lbl">メッセージ</span>
       </a>
 
       <a href="mypage.html">
@@ -359,6 +364,7 @@
 </div>
 
 <script src="../shared/global-header.js" defer></script>
+<script src="data.js"></script>
 <script>
   (function () {
     var appShell = document.getElementById('appShell');
@@ -568,9 +574,10 @@
         var catLabel = (window.EL_CATEGORY_LABEL || {})[t.category] || t.category || '';
         var statusBadge = t.status === 'solved' ? '<span class="badge badge--solved">解決</span>' : '<span class="badge badge--unsolved">未解決</span>';
         var note = (noteMap && noteMap[t.id]) ? '<span class="badge badge--cat">' + esc(noteMap[t.id]) + '</span>' : '';
+        var catChipHtml = catLabel ? '<span class="badge badge--cat el-cat-chip" data-category="' + esc(t.category || '') + '" role="link" tabindex="0">' + esc(catLabel) + '</span>' : '';
         return '<a href="topic.html?id=' + encodeURIComponent(t.id) + '" class="el-t-row">' +
           '<div class="el-t-row-main">' +
-          '<div class="el-t-row-badges">' + statusBadge + (catLabel ? '<span class="badge badge--cat">' + esc(catLabel) + '</span>' : '') + note + '</div>' +
+          '<div class="el-t-row-badges">' + statusBadge + catChipHtml + note + '</div>' +
           '<span class="el-t-row-title">' + esc(t.title) + '</span>' +
           '<div class="el-t-row-meta">' + esc(t.authorName || '匿名') + '・' + esc(relativeTime(t.createdAt)) + '</div>' +
           '</div>' +
@@ -579,6 +586,20 @@
           '<div><strong>' + (t.commentCount || 0) + '</strong><span>返信</span></div>' +
           '</div></a>';
       }).join('');
+      // カテゴリチップ：クリックでそのカテゴリの絞り込みページへ遷移する（行全体のリンクとは独立させる）
+      listEl.querySelectorAll('.el-t-row').forEach(function (row, idx) {
+        var t = topics[idx];
+        var catChip = row.querySelector('.el-cat-chip');
+        if (!t || !catChip) return;
+        catChip.addEventListener('click', function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          window.location.href = 'board.html?category=' + encodeURIComponent(t.category || '');
+        });
+        catChip.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); catChip.click(); }
+        });
+      });
     }
 
     apiPost({ action: 'listTopics' }).then(function (topicsRes) {
