@@ -203,6 +203,76 @@
   .el-footer-cols h6{ color:var(--el-navy, #16233F) !important; }
   .el-footer-bottom{ color:var(--el-ink-faint, #8A8478) !important; border-top-color:var(--el-line-soft, #E5DFD2) !important; }
   .el-group-card{ cursor:pointer !important; }
+  /* 新規コミュニティ作成モーダル：community-board.htmlの編集モーダルとデザインを揃えている */
+  .el-community-edit-modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    z-index:900;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+  }
+  .el-community-edit-modal.is-open{ display:flex; }
+  .el-community-edit-modal-backdrop{
+    position:absolute;
+    inset:0;
+    background:rgba(22,35,63,.45);
+  }
+  .el-community-edit-modal-panel{
+    position:relative;
+    background:#fff;
+    border-radius:var(--el-radius-m, 14px);
+    padding:28px 26px;
+    max-width:480px;
+    width:100%;
+    max-height:85vh;
+    overflow-y:auto;
+    box-shadow:0 12px 40px rgba(22,35,63,.25);
+  }
+  .el-community-edit-modal-panel h3{
+    margin:0 0 16px;
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:17px;
+    color:var(--el-navy, #16233F);
+    padding-right:26px;
+  }
+  .el-community-edit-modal-close{
+    position:absolute;
+    top:10px;
+    right:10px;
+    border:none;
+    background:transparent;
+    cursor:pointer;
+    color:var(--el-ink-faint, #8A8478);
+    padding:4px;
+  }
+  .el-community-edit-field{ margin-bottom:14px; }
+  .el-community-edit-field span{
+    display:block;
+    font-weight:700;
+    font-size:12.5px;
+    margin-bottom:6px;
+    color:var(--el-navy, #16233F);
+  }
+  .el-community-edit-field input[type="text"],
+  .el-community-edit-field select,
+  .el-community-edit-field textarea{
+    width:100%;
+    box-sizing:border-box;
+    padding:10px 12px;
+    border:1px solid var(--el-line-soft, #E5DFD2);
+    border-radius:10px;
+    font:inherit;
+    color:inherit;
+  }
+  .el-community-edit-field textarea{ resize:vertical; }
+  .el-community-edit-actions{
+    display:flex;
+    gap:8px;
+    margin-top:6px;
+  }
 </style>
 </head>
 <body data-site="community" data-root="..">
@@ -360,11 +430,7 @@
 
 
         <div class="el-group-hero">
-          <div>
-            <h2>コミュニティ — メンバーだけで話し合える場所</h2>
-            <p>テーマや業種ごとに集まり、フォーラムには出しにくい実務の話や非公開の相談ができます。参加には承認が必要なコミュニティもあります。</p>
-          </div>
-          <a href="#" class="el-btn el-btn--mustard">新しいコミュニティを作る</a>
+          <a href="#" class="el-btn el-btn--mustard" id="createGroupBtn">新しいコミュニティを作る</a>
         </div>
 
         <details class="el-pinned-box" style="margin-top:26px;" id="guideBox" open>
@@ -379,7 +445,6 @@
         <div class="el-section-head" style="margin-top:48px;">
           <div>
             <h2>新着コミュニティ</h2>
-            <div class="sub">最近つくられたコミュニティ</div>
           </div>
         </div>
         <div class="el-group-grid" id="newGroupList">
@@ -389,7 +454,6 @@
         <div class="el-section-head" style="margin-top:52px;">
           <div>
             <h2>人気コミュニティ</h2>
-            <div class="sub">投稿数の多いコミュニティ</div>
           </div>
         </div>
         <div class="el-group-grid" id="hotGroupList">
@@ -940,6 +1004,123 @@
     <div class="el-guide-modal-body" id="guideModalBody"></div>
   </div>
 </div>
+
+<!-- 新規コミュニティ作成モーダル：以前は管理者ページ（admin.html）の「コミュニティ登録」タブでしか
+     登録できなかったが、コミュニティは会員なら誰でも作成できるようにするため、この「新しいコミュニティを
+     作る」ボタンから直接作成できるようにした。フィールド構成はadmin.htmlの登録フォームと同じ。 -->
+<div class="el-community-edit-modal" id="communityCreateModal" aria-hidden="true">
+  <div class="el-community-edit-modal-backdrop" data-community-create-close></div>
+  <div class="el-community-edit-modal-panel" role="dialog" aria-modal="true">
+    <button type="button" class="el-community-edit-modal-close" data-community-create-close aria-label="閉じる">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <h3>新しいコミュニティを作る</h3>
+    <form id="communityCreateForm">
+      <div class="el-community-edit-field">
+        <span>コミュニティ名</span>
+        <input type="text" id="ccTitle" required>
+      </div>
+      <div class="el-community-edit-field">
+        <span>カテゴリ</span>
+        <input type="text" id="ccCategory" placeholder="情報交換・雑談 など">
+      </div>
+      <div class="el-community-edit-field">
+        <span>アイコンの色</span>
+        <select id="ccColor">
+          <option value="var(--el-teal)">ティール</option>
+          <option value="var(--el-sky)">スカイ</option>
+          <option value="var(--el-navy-soft)">ネイビー</option>
+          <option value="var(--el-mustard)">マスタード</option>
+          <option value="var(--el-coral)">コーラル</option>
+          <option value="var(--el-sage)">セージ</option>
+        </select>
+      </div>
+      <div class="el-community-edit-field">
+        <span>紹介文（一覧・見出しに表示されます）</span>
+        <textarea id="ccDescription" rows="3" required></textarea>
+      </div>
+      <div class="el-community-edit-field">
+        <span>詳細説明（任意）</span>
+        <textarea id="ccLongDescription" rows="4"></textarea>
+      </div>
+      <div class="el-community-edit-actions">
+        <button type="submit" class="el-btn el-btn--primary el-btn--sm">作成する</button>
+        <button type="button" class="el-btn el-btn--ghost el-btn--sm" data-community-create-close>キャンセル</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  (function () {
+    var createBtn = document.getElementById('createGroupBtn');
+    var createModal = document.getElementById('communityCreateModal');
+    var createForm = document.getElementById('communityCreateForm');
+    if (!createBtn || !createModal || !createForm) return;
+    var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
+    var myUid = '', myUname = '', myName = '';
+    try {
+      myUid = localStorage.getItem('el-user-id') || '';
+      myUname = localStorage.getItem('el-username') || '';
+      myName = localStorage.getItem('el-user-name') || myUname;
+    } catch (e) {}
+
+    function closeCreateModal() {
+      createModal.classList.remove('is-open');
+      createModal.setAttribute('aria-hidden', 'true');
+    }
+    createBtn.addEventListener('click', function (e) {
+      e.preventDefault();
+      // ゲストは会員登録を促す（elRequireAuthはgroups.html内で既に定義済み）
+      if (window.elRequireAuth && !window.elRequireAuth(e)) return;
+      createForm.reset();
+      document.getElementById('ccColor').value = 'var(--el-teal)';
+      createModal.classList.add('is-open');
+      createModal.setAttribute('aria-hidden', 'false');
+      document.getElementById('ccTitle').focus();
+    });
+    createModal.querySelectorAll('[data-community-create-close]').forEach(function (el) {
+      el.addEventListener('click', closeCreateModal);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && createModal.classList.contains('is-open')) closeCreateModal();
+    });
+
+    createForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var title = document.getElementById('ccTitle').value.trim();
+      var description = document.getElementById('ccDescription').value.trim();
+      if (!title || !description) { alert('コミュニティ名と紹介文を入力してください。'); return; }
+      var submitBtn = createForm.querySelector('button[type="submit"]');
+      submitBtn.disabled = true;
+      fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({
+          action: 'createContent', type: 'communityGroup',
+          title: title,
+          category: document.getElementById('ccCategory').value.trim(),
+          color: document.getElementById('ccColor').value,
+          description: description,
+          longDescription: document.getElementById('ccLongDescription').value.trim(),
+          // 作成者は入力式ではなく、ログイン中の自分自身を使う（他人になりすませないように）
+          creator: myName || '会員',
+          creatorUserId: myUid,
+          requesterUserId: myUid, requesterUsername: myUname
+        })
+      }).then(function (res) { return res.json(); }).then(function (data) {
+        submitBtn.disabled = false;
+        if (!data.ok) { alert(data.error || '作成に失敗しました。'); return; }
+        closeCreateModal();
+        if (data.id) window.location.href = 'community-board.html?id=' + encodeURIComponent(data.id);
+        else location.reload();
+      }).catch(function () {
+        submitBtn.disabled = false;
+        alert('通信エラーが発生しました。');
+      });
+    });
+  })();
+</script>
 
 </body>
 </html>

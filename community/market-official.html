@@ -812,8 +812,8 @@
       document.getElementById('pmTitle').textContent = p.title;
       document.getElementById('pmMeta').textContent = '出品者：' + p.seller;
       document.getElementById('pmPrice').textContent = p.price;
-      document.getElementById('pmRecommend').textContent = p.recommend;
-      document.getElementById('pmDetail').textContent = p.detail;
+      document.getElementById('pmRecommend').innerHTML = p.recommend;
+      document.getElementById('pmDetail').innerHTML = p.detail;
       var badgeEl = document.getElementById('pmBadge');
       if (p.badge) { badgeEl.style.display = ''; badgeEl.textContent = p.badge; } else { badgeEl.style.display = 'none'; }
       var banner = document.getElementById('pmBanner');
