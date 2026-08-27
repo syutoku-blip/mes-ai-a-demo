@@ -9,6 +9,16 @@
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="../shared/global-header.css">
 <style>
+  /* フォーラム投稿のカテゴリチップ：見た目がハッシュタグに見えてしまう「#」の装飾を外す
+     （style.cssそのものは変更できないため、ここで上書きする）。クリックで絞り込みページへ
+     遷移できるように、forum.html／board.html／topic.htmlと同じ仕組みをこのページにも合わせる。 */
+  .badge--cat.el-cat-chip::before{
+    content:"" !important;
+    margin:0 !important;
+  }
+  .badge--cat.el-cat-chip{
+    cursor:pointer;
+  }
   /* 検索ボックス：input要素の初期スタイル（黒枠など）を消して馴染ませる */
   .el-search input[type="search"]{
     border:none !important;
@@ -806,7 +816,18 @@
       try { return localStorage.getItem(ROLE_KEY) || 'guest'; } catch (e) { return 'guest'; }
     }
     function setRole(role) {
-      try { localStorage.setItem(ROLE_KEY, role); } catch (e) {}
+      try {
+        localStorage.setItem(ROLE_KEY, role);
+        // ログアウト時は権限だけでなく、以前ログインしていたユーザーの識別情報も
+        // 消しておかないと、いいね等の「ログイン済みか」の判定がユーザーIDの残存で
+        // 誤って通ってしまうため、あわせて削除する。
+        if (role === 'guest') {
+          localStorage.removeItem('el-user-id');
+          localStorage.removeItem('el-username');
+          localStorage.removeItem('el-user-name');
+          localStorage.removeItem('el-user-profile');
+        }
+      } catch (e) {}
     }
     window.elGetRole = getRole;
 
@@ -930,7 +951,7 @@
       var catLabel = CATEGORY_LABEL[t.category] || t.category;
       return '<a href="topic.html?id=' + t.id + '" class="el-t-row">' +
         '<div class="el-t-row-main">' +
-          '<div class="el-t-row-badges">' + visBadge + '<span class="badge badge--cat">' + catLabel + '</span>' + statusBadge + '</div>' +
+          '<div class="el-t-row-badges">' + visBadge + '<span class="badge badge--cat el-cat-chip" data-category="' + (t.category || '') + '" role="link" tabindex="0">' + catLabel + '</span>' + statusBadge + '</div>' +
           '<span class="el-t-row-title">' + t.title + '</span>' +
           '<div class="el-t-row-meta">' + t.author + '・' + relativeTime(t.date) + '</div>' +
         '</div>' +
@@ -940,17 +961,48 @@
         '</div></a>';
     }
 
+    // カテゴリチップ：クリックでそのカテゴリの絞り込みページへ遷移する（行全体のリンクとは独立させる）
+    function wireCatChips(el, list) {
+      var rows = el.querySelectorAll('.el-t-row');
+      rows.forEach(function (row, idx) {
+        var t = list[idx];
+        if (!t) return;
+        var catChip = row.querySelector('.el-cat-chip');
+        if (!catChip) return;
+        catChip.addEventListener('click', function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          window.location.href = 'board.html?category=' + encodeURIComponent(t.category || '');
+        });
+        catChip.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); catChip.click(); }
+        });
+      });
+    }
+
     var byNew = topics.slice().sort(function(a,b){ return (b.recency||0) - (a.recency||0); }).slice(0, 4);
     var byHot = topics.slice().sort(function(a,b){ return (b.views||0) - (a.views||0); }).slice(0, 4);
     var shiftOnly = topics.filter(function(t){ return t.visibility === 'shift'; })
       .sort(function(a,b){ return (b.views||0) - (a.views||0); }).slice(0, 4);
 
     var newEl = document.getElementById('topNewList');
-    if (newEl && byNew.length) { newEl.parentElement.innerHTML = byNew.map(buildRowHtml).join(''); }
+    if (newEl && byNew.length) {
+      var newParent = newEl.parentElement;
+      newParent.innerHTML = byNew.map(buildRowHtml).join('');
+      wireCatChips(newParent, byNew);
+    }
     var hotEl = document.getElementById('topHotList');
-    if (hotEl && byHot.length) { hotEl.parentElement.innerHTML = byHot.map(buildRowHtml).join(''); }
+    if (hotEl && byHot.length) {
+      var hotParent = hotEl.parentElement;
+      hotParent.innerHTML = byHot.map(buildRowHtml).join('');
+      wireCatChips(hotParent, byHot);
+    }
     var shiftEl = document.getElementById('topShiftList');
-    if (shiftEl && shiftOnly.length) { shiftEl.parentElement.innerHTML = shiftOnly.map(buildRowHtml).join(''); }
+    if (shiftEl && shiftOnly.length) {
+      var shiftParent = shiftEl.parentElement;
+      shiftParent.innerHTML = shiftOnly.map(buildRowHtml).join('');
+      wireCatChips(shiftParent, shiftOnly);
+    }
   }
   if (window.EL_loadLiveTopics) {
     window.EL_loadLiveTopics(renderTopForumLists);

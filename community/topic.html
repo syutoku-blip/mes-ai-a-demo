@@ -3,12 +3,22 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FDA施設登録、2年更新のタイミングと注意点｜Export Lab</title>
+<title>トピック｜Export Lab</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&family=Noto+Sans+JP:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="../shared/global-header.css">
 <style>
+  /* フォーラム投稿のカテゴリチップ：見た目がハッシュタグに見えてしまう「#」の装飾を外す
+     （style.cssそのものは変更できないため、ここで上書きする）。クリックで絞り込みページへ
+     遷移できるように<a>化するため、下線・カーソルも合わせて調整する。 */
+  .badge--cat.el-cat-chip::before{
+    content:"" !important;
+    margin:0 !important;
+  }
+  a.badge--cat.el-cat-chip{
+    cursor:pointer;
+  }
   /* 検索ボックス：input要素の初期スタイル（黒枠など）を消して馴染ませる */
   .el-search input[type="search"]{
     border:none !important;
@@ -255,50 +265,44 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
             <a href="board.html">フォーラム</a>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
-            <span>FDA施設登録、2年更新のタイミングと注意点</span>
+            <span id="threadBreadcrumbTitle">読み込み中…</span>
           </nav>
           <div class="el-t-row-badges" style="margin-bottom:12px;">
-            <span class="badge badge--pin">固定</span>
-            <span class="badge badge--open">公開</span>
-            <span class="badge badge--cat">FDA対応</span>
-            <span class="badge badge--solved">解決</span>
+            <span class="badge badge--open" id="threadLoadingBadge">読み込み中…</span>
           </div>
-          <h1>FDA施設登録、2年更新のタイミングと注意点</h1>
+          <h1 id="threadTitleH1">読み込み中…</h1>
           <div class="el-thread-meta">
-            <div class="el-avatars"><div class="el-avatar">山</div><div class="el-avatar">田</div><div class="el-avatar">佐</div><div class="el-avatar">木</div></div>
-            <span>32件の返信</span><span>・</span><span>1,203回の閲覧</span><span>・</span><span>最終更新：昨日</span>
+            <div class="el-avatars" id="threadAvatars"></div>
+            <span>―件の返信</span><span>・</span><span>―回の閲覧</span><span>・</span><span>最終更新：―</span>
           </div>
         </div>
 
-        <article class="el-post el-post--op" id="op" data-author-username="yamaguchi-boeki">
-          <a class="el-avatar" id="opAvatar" href="#" style="text-decoration:none;">山</a>
+        <article class="el-post el-post--op" id="op" data-author-username="" style="display:none;">
+          <a class="el-avatar" id="opAvatar" href="#" style="text-decoration:none;">…</a>
           <div>
             <div class="el-reply-tag-slot"></div>
               <div class="el-post-head">
-              <span class="name">山口 貿易士</span>
+              <span class="name"></span>
               <span class="role">スレ主</span>
             </div>
-            <div class="el-post-dates">投稿日：2026年6月18日 ・ 最終編集：2026年6月19日</div>
-            <div class="el-post-body">
-              <p>いつもお世話になっています。FDA施設登録の更新について、直近で更新漏れによる出荷停止を経験したので共有します。</p>
-              <p>登録は2年に一度、偶数年の10月1日〜12月31日の間に更新が必要です。この期間を過ぎると登録が失効し、通関時に差し止めを受けるケースがありました。</p>
-              <p>社内でカレンダーリマインドを二重に設定するようにしてから、失念はなくなりました。同じように更新のタイミングで困った方、他に注意点があれば教えてください。</p>
+            <div class="el-post-dates"></div>
+            <div class="el-post-body"></div>
+            <div id="opLockedNotice" class="el-hub-note" style="display:none;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              <span id="opLockedNoticeText"></span>
+              <button type="button" class="el-note-link" id="opLockedUnlockBtn">続きを見る</button>
             </div>
             <div id="opEditForm" style="display:none;">
               <input type="text" id="opEditTitle" class="el-form-input el-form-input--title" style="margin-bottom:10px;">
-              <div id="opEditBody" class="el-post-body" contenteditable="true" style="border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);padding:14px;min-height:120px;"></div>
+              <div id="opEditEditorSlot"></div>
               <div style="display:flex;gap:8px;margin-top:12px;">
                 <button type="button" class="el-btn el-btn--primary el-btn--sm" id="opEditSaveBtn">保存</button>
                 <button type="button" class="el-btn el-btn--ghost el-btn--sm" id="opEditCancelBtn">キャンセル</button>
               </div>
             </div>
-            <div class="el-post-tags">
-              <a href="board.html">#FDA施設登録</a>
-              <a href="board.html">#更新期限</a>
-              <a href="board.html">#通関</a>
-            </div>
+            <div class="el-post-tags"></div>
             <div class="el-post-actions">
-              <button class="el-like-btn" id="opLikeBtn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14Z"/></svg> <span class="el-like-count">12</span></button>
+              <button class="el-like-btn" id="opLikeBtn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14Z"/></svg> <span class="el-like-count">0</span></button>
               <button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H4l2.4-3.6A8.5 8.5 0 1 1 21 11.5Z"/></svg> 返信</button>
               <button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13"/></svg> 共有</button>
               <button id="opEditBtn" style="display:none;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg> 編集</button>
@@ -307,123 +311,14 @@
           </div>
         </article>
 
-        <div class="el-comments-head">
+        <div id="threadLoadingNotice" style="padding:40px 4px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">読み込み中…</div>
+
+        <div class="el-comments-head" id="commentsHead" style="display:none;">
           <h2>コメント</h2>
-          <span class="count">32件</span>
+          <span class="count">―</span>
         </div>
 
-        <div class="el-comments" id="commentsList">
-
-          <article class="el-post" id="c1" data-month="2026-06" data-reply-to="op">
-            <div class="el-avatar">田</div>
-            <div>
-              <div class="el-reply-tag-slot"></div>
-              <div class="el-post-head">
-                <span class="name">田中フーズ</span>
-                <span class="time">2026年6月20日</span>
-              </div>
-              <div class="el-post-body">
-                <p>これ、うちも去年ヒヤッとしました。加えて、登録番号だけでなく緊急連絡先（U.S. Agent）の情報も期限内に見直しておくと安心です。担当者が退職していて連絡がつかず焦った経験があります。</p>
-              </div>
-              <div class="el-post-actions">
-                <button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14Z"/></svg> 5</button>
-                <button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H4l2.4-3.6A8.5 8.5 0 1 1 21 11.5Z"/></svg> 返信</button>
-              </div>
-            </div>
-          </article>
-
-          <article class="el-post" id="c2" data-month="2026-06" data-reply-to="op">
-            <div class="el-avatar">鈴</div>
-            <div>
-              <div class="el-reply-tag-slot"></div>
-              <div class="el-post-head">
-                <span class="name">鈴木ラボ</span>
-                <span class="time">2026年6月25日</span>
-              </div>
-              <div class="el-post-body">
-                <p>横から失礼します。更新申請はオンラインのFURLSシステムからで問題ないでしょうか。紙の書類が必要だった記憶が古く、混乱しています。</p>
-              </div>
-              <div class="el-post-actions">
-                <button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14Z"/></svg> 2</button>
-                <button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H4l2.4-3.6A8.5 8.5 0 1 1 21 11.5Z"/></svg> 返信</button>
-              </div>
-            </div>
-          </article>
-
-          <article class="el-post" id="c3" data-month="2026-07" data-reply-to="c2">
-            <div class="el-avatar">高</div>
-            <div>
-              <div class="el-reply-tag-slot"></div>
-              <div class="el-post-head">
-                <span class="name">高橋物産</span>
-                <span class="time">2026年7月2日</span>
-              </div>
-              <div class="el-post-body">
-                <p>FURLSで問題なく完結します。ログインID・パスワードを紛失しているケースが一番厄介なので、そちらだけ早めに確認しておくのがおすすめです。</p>
-              </div>
-              <div class="el-post-actions">
-                <button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14Z"/></svg> 6</button>
-                <button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H4l2.4-3.6A8.5 8.5 0 1 1 21 11.5Z"/></svg> 返信</button>
-              </div>
-            </div>
-          </article>
-
-          <article class="el-post" id="c4" data-month="2026-07" data-reply-to="op">
-            <div class="el-avatar">佐</div>
-            <div>
-              <div class="el-reply-tag-slot"></div>
-              <div class="el-post-head">
-                <span class="name">佐藤ストア</span>
-                <span class="role">運営メンバー</span>
-                <span class="time">2026年7月28日</span>
-              </div>
-              <div class="el-post-body">
-                <p>補足です。更新期間の詳細はFDAの公式ガイダンスにも記載がありますので、次回セミナーでも取り上げる予定です。開催が決まり次第、お知らせ欄で案内します。</p>
-              </div>
-              <div class="el-post-actions">
-                <button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14Z"/></svg> 8</button>
-                <button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H4l2.4-3.6A8.5 8.5 0 1 1 21 11.5Z"/></svg> 返信</button>
-              </div>
-            </div>
-          </article>
-
-          <article class="el-post" id="c5" data-month="2026-08" data-reply-to="op">
-            <div class="el-avatar">小</div>
-            <div>
-              <div class="el-reply-tag-slot"></div>
-              <div class="el-post-head">
-                <span class="name">小林商店</span>
-                <span class="time">2026年8月3日</span>
-              </div>
-              <div class="el-post-body">
-                <p>今年更新の対象なので助かりました。代理人（U.S. Agent）の見直し、うちも来週やります。</p>
-              </div>
-              <div class="el-post-actions">
-                <button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14Z"/></svg> 3</button>
-                <button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H4l2.4-3.6A8.5 8.5 0 1 1 21 11.5Z"/></svg> 返信</button>
-              </div>
-            </div>
-          </article>
-
-          <article class="el-post" id="c6" data-month="2026-08" data-reply-to="op">
-            <div class="el-avatar">中</div>
-            <div>
-              <div class="el-reply-tag-slot"></div>
-              <div class="el-post-head">
-                <span class="name">中村コスメ</span>
-                <span class="time">昨日</span>
-              </div>
-              <div class="el-post-body">
-                <p>化粧品の登録も同じ流れで大丈夫でしょうか。食品と規制が違う気がして念のため確認させてください。</p>
-              </div>
-              <div class="el-post-actions">
-                <button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14Z"/></svg> 1</button>
-                <button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H4l2.4-3.6A8.5 8.5 0 1 1 21 11.5Z"/></svg> 返信</button>
-              </div>
-            </div>
-          </article>
-
-        </div>
+        <div class="el-comments" id="commentsList"></div>
 
         <div class="el-reply-box" id="replyBox" style="display:none;">
           <div class="el-reply-context" id="replyContext">
@@ -432,8 +327,8 @@
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg>
             </button>
           </div>
-          <div style="font-size:14px;font-weight:700;margin-bottom:10px;">返信を投稿</div>
-          <div class="el-rich-editor">
+          <div style="font-size:14px;font-weight:700;margin-bottom:10px;" id="replyBoxLabel">返信を投稿</div>
+          <div class="el-rich-editor" id="replyRichEditorWrap">
             <div class="el-editor-toolbar" role="toolbar" aria-label="返信の書式">
               <button type="button" data-command="bold" title="太字"><strong>B</strong></button>
               <button type="button" data-command="italic" title="斜体"><em>I</em></button>
@@ -492,20 +387,9 @@
         </div>
 
         <aside class="el-thread-side">
-          <div class="el-side-panel">
+          <div class="el-side-panel" id="relatedTopicsPanel" style="display:none;">
             <h4>関連するトピック</h4>
-            <a href="topic.html" class="el-side-panel-row">
-              <span class="badge badge--cat">FDA対応</span>
-              <span class="title">サプリメントのラベル、栄養成分表示のフォーマット変更点</span>
-            </a>
-            <a href="topic.html" class="el-side-panel-row">
-              <span class="badge badge--cat">FDA対応</span>
-              <span class="title">米国代理人（U.S. Agent）の見直し、皆さんどうしてますか</span>
-            </a>
-            <a href="topic.html" class="el-side-panel-row">
-              <span class="badge badge--cat">通関</span>
-              <span class="title">通関書類のインボイス記載、よくある差し戻し理由まとめ</span>
-            </a>
+            <div id="relatedTopicsList"></div>
           </div>
 
           <div class="el-side-panel">
@@ -596,6 +480,37 @@
   </div>
 </div>
 
+<div class="el-auth-modal" id="authModal" aria-hidden="true">
+  <div class="el-auth-modal-backdrop" data-auth-close></div>
+  <div class="el-auth-modal-panel" role="dialog" aria-modal="true">
+    <button type="button" class="el-auth-modal-close" data-auth-close aria-label="閉じる">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <h3>ユーザー登録してください</h3>
+    <p>この操作を行うには、会員登録（無料）が必要です。登録すると投稿・返信・購入などすべての機能がご利用いただけます。</p>
+    <div class="el-auth-modal-actions">
+      <a href="signup.html" class="el-btn el-btn--primary el-btn--sm">新規登録する</a>
+      <button type="button" class="el-btn el-btn--ghost el-btn--sm" data-auth-close>閉じる</button>
+    </div>
+  </div>
+</div>
+
+<div class="el-auth-modal" id="shiftModal" aria-hidden="true">
+  <div class="el-auth-modal-backdrop" data-shift-close></div>
+  <div class="el-auth-modal-panel" role="dialog" aria-modal="true">
+    <button type="button" class="el-auth-modal-close" data-shift-close aria-label="閉じる">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <h3>SHiFT会員限定です</h3>
+    <p>この内容はSHiFT会員（WorldShiftの各種サービスをご利用中の方）だけが閲覧できます。SHiFT会員の方はサポート窓口までお問い合わせください。</p>
+    <div class="el-auth-modal-actions">
+      <a href="#" class="el-btn el-btn--primary el-btn--sm">SHiFT会員について見る</a>
+      <button type="button" class="el-btn el-btn--ghost el-btn--sm" data-shift-close>閉じる</button>
+    </div>
+  </div>
+</div>
+
+<script src="data.js"></script>
 <script src="../shared/global-header.js" defer></script>
 <script>
   (function () {
@@ -617,6 +532,119 @@
       e.preventDefault();
       window.location.href = summary.dataset.href;
     });
+  });
+
+  // ユーザーモード（ゲスト／登録ユーザー／管理者）の切り替えと共通ゲート処理
+  // （他の一覧ページと同じ仕組みだが、topic.htmlだけこの共通ブロックが欠けており、
+  //  ログイン必須の操作がゲストでも実行できてしまっていたため追加する）
+  function elDriveImgUrl(url) {
+    if (!url) return url;
+    var m = url.match(/drive\.google\.com\/file\/d\/([^/]+)/) || url.match(/[?&]id=([^&]+)/);
+    if (m && m[1]) return 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w1000';
+    return url;
+  }
+  window.elDriveImgUrl = elDriveImgUrl;
+
+  document.addEventListener('DOMContentLoaded', function () {
+    var ROLE_KEY = 'el-user-role';
+    function getRole() {
+      try { return localStorage.getItem(ROLE_KEY) || 'guest'; } catch (e) { return 'guest'; }
+    }
+    function setRole(role) {
+      try {
+        localStorage.setItem(ROLE_KEY, role);
+        if (role === 'guest') {
+          localStorage.removeItem('el-user-id');
+          localStorage.removeItem('el-username');
+          localStorage.removeItem('el-user-name');
+          localStorage.removeItem('el-user-profile');
+        }
+      } catch (e) {}
+    }
+    window.elGetRole = getRole;
+
+    var role = getRole();
+    document.body.setAttribute('data-role', role);
+
+    var bell = document.querySelector('.el-header-bell');
+    if (bell && role === 'guest') bell.style.display = 'none';
+    var headerAvatar = document.getElementById('headerAvatar');
+    if (headerAvatar && role === 'guest') headerAvatar.style.display = 'none';
+    else if (headerAvatar) {
+      try {
+        var hp = JSON.parse(localStorage.getItem('el-user-profile') || '{}');
+        var hUsername = localStorage.getItem('el-username') || hp.username || '';
+        if (hp.photoUrl) headerAvatar.innerHTML = '<img src="' + window.elDriveImgUrl(hp.photoUrl) + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
+        else if (hUsername) headerAvatar.textContent = hUsername.charAt(0);
+      } catch (e) {}
+    }
+
+    var authLinksWrap = document.getElementById('headerAuthLinks');
+    var loginLink = document.getElementById('headerLoginLink');
+    var signupLink = document.getElementById('headerSignupLink');
+    if (role !== 'guest' && authLinksWrap) {
+      if (loginLink) loginLink.remove();
+      if (signupLink) {
+        signupLink.textContent = 'ログアウト';
+        signupLink.href = '#';
+        signupLink.addEventListener('click', function (e) {
+          e.preventDefault();
+          setRole('guest');
+          window.location.href = 'index.html';
+        });
+      }
+    }
+
+    var modal = document.getElementById('authModal');
+    window.elRequireAuth = function (e) {
+      if (getRole() !== 'guest') return true;
+      if (e) e.preventDefault();
+      if (modal) { modal.classList.add('is-open'); modal.setAttribute('aria-hidden', 'false'); }
+      return false;
+    };
+    if (modal) {
+      modal.querySelectorAll('[data-auth-close]').forEach(function (el) {
+        el.addEventListener('click', function () {
+          modal.classList.remove('is-open');
+          modal.setAttribute('aria-hidden', 'true');
+        });
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') { modal.classList.remove('is-open'); modal.setAttribute('aria-hidden', 'true'); }
+      });
+    }
+
+    var shiftModal = document.getElementById('shiftModal');
+    window.elRequireShift = function () {
+      var r = getRole();
+      if (r === 'shift' || r === 'admin') return true;
+      if (shiftModal) { shiftModal.classList.add('is-open'); shiftModal.setAttribute('aria-hidden', 'false'); }
+      return false;
+    };
+    if (shiftModal) {
+      shiftModal.querySelectorAll('[data-shift-close]').forEach(function (el) {
+        el.addEventListener('click', function () {
+          shiftModal.classList.remove('is-open');
+          shiftModal.setAttribute('aria-hidden', 'true');
+        });
+      });
+    }
+
+    if (role === 'admin') {
+      var sideNav = document.querySelector('.el-sidebar nav');
+      if (sideNav && !sideNav.querySelector('a[href="admin.html"]')) {
+        var adminLink = document.createElement('a');
+        adminLink.href = 'admin.html';
+        adminLink.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 3 7v6c0 5 4 9 9 9s9-4 9-9V7l-9-5Z"/><path d="m9 12 2 2 4-4"/></svg><span class="lbl">管理者ページ</span>';
+        sideNav.appendChild(adminLink);
+      }
+    }
+
+    if (role === 'guest') {
+      document.querySelectorAll('[data-guest-block]').forEach(function (el) {
+        el.addEventListener('click', window.elRequireAuth);
+      });
+    }
   });
 
   var ADS = [
@@ -678,7 +706,32 @@
   var replyCtx = document.getElementById('replyContext');
   var replyCtxLink = document.getElementById('replyContextLink');
   var replyCtxClear = document.getElementById('replyContextClear');
+  var replyBoxLabel = document.getElementById('replyBoxLabel');
   var currentReplyToId = 'op';
+
+  // 投稿・コメントの「編集」も、新規投稿と同じリッチエディター（ツールバー付き）を使い回す。
+  // ツールバー自体は#replyBox内に1つしか無いため、編集時はそのDOMノード（#replyRichEditorWrap）
+  // を編集フォーム側へ一時的に移動させ、保存／キャンセルが終わったら元の位置へ戻す。
+  var richEditorWrap = document.getElementById('replyRichEditorWrap');
+  var richEditorHomeParent = richEditorWrap ? richEditorWrap.parentNode : null;
+  var richEditorHomeNextSibling = richEditorWrap ? richEditorWrap.nextSibling : null;
+  var activeEditCancel = null; // 現在リッチエディターを使っている編集を閉じる関数（無ければnull）
+
+  function reclaimRichEditor() {
+    if (activeEditCancel) {
+      var fn = activeEditCancel;
+      activeEditCancel = null;
+      fn();
+    }
+  }
+  function moveRichEditorTo(container, beforeNode) {
+    if (!richEditorWrap || !container) return;
+    container.insertBefore(richEditorWrap, beforeNode || null);
+  }
+  function restoreRichEditorHome() {
+    if (!richEditorWrap || !richEditorHomeParent) return;
+    richEditorHomeParent.insertBefore(richEditorWrap, richEditorHomeNextSibling);
+  }
 
   function setReplyMention(name) {
     if (!replyEditor) return;
@@ -728,6 +781,24 @@
         restoreSelection();
         document.execCommand('styleWithCSS', false, true);
         document.execCommand(cmd, false, value == null ? null : value);
+        if (cmd === 'insertHorizontalRule') {
+          // 区切り線がエディターの末尾に挿入されると、その後ろに文字を置ける場所が
+          // 無くなり「線の下に入力できない」状態になるため、末尾に来た場合は
+          // カーソルを置ける空の行を区切り線の直後に必ず用意する。
+          var hrs = editor.querySelectorAll('hr');
+          var lastHr = hrs[hrs.length - 1];
+          if (lastHr && !lastHr.nextSibling) {
+            var afterHr = document.createElement('div');
+            afterHr.innerHTML = '<br>';
+            lastHr.parentNode.insertBefore(afterHr, lastHr.nextSibling);
+            var hrRange = document.createRange();
+            hrRange.setStart(afterHr, 0);
+            hrRange.collapse(true);
+            var hrSel = window.getSelection();
+            hrSel.removeAllRanges();
+            hrSel.addRange(hrRange);
+          }
+        }
         saveSelection();
       }
       function clearMarkers() {
@@ -872,7 +943,9 @@
             linkPopover.classList.add('is-centered');
           } else {
             var rect = found.range.getBoundingClientRect();
-            var editorRect = document.querySelector('#replyBox .el-rich-editor').getBoundingClientRect();
+            // 編集時はリッチエディター（.el-rich-editor）が#replyBoxの外（編集フォーム側）に
+            // 一時的に移動しているため、#replyBoxに固定したセレクタではなく現在地を直接参照する。
+            var editorRect = (richEditorWrap || document.querySelector('.el-rich-editor')).getBoundingClientRect();
             linkPopover.hidden = false;
             linkPopover.classList.remove('is-centered');
             linkPopover.style.left = Math.max(10, Math.min(rect.left - editorRect.left, editorRect.width - 340)) + 'px';
@@ -957,6 +1030,11 @@
       var nameEl = post.querySelector('.name');
       var name = nameEl ? nameEl.textContent.trim() : '';
       replyBtn.addEventListener('click', function () {
+        if (window.elRequireAuth && !window.elRequireAuth()) return;
+        reclaimRichEditor();
+        restoreRichEditorHome();
+        if (replyBoxLabel) replyBoxLabel.textContent = '返信を投稿';
+        replyBox.querySelector('.el-reply-foot').style.display = '';
         currentReplyToId = post.id;
         setReplyMention(name);
         replyCtxLink.textContent = name + 'さんの投稿に返信中';
@@ -1066,11 +1144,29 @@
   }
   wireReplyTags();
 
-  // ?id= が指定されている場合は、実際の投稿とコメントをスプレッドシートから読み込んで表示する
+  // トピックの表示：常にスプレッドシートから実データを読み込む（デモ・サンプル表示は行わない）
   (function () {
     var params = new URLSearchParams(window.location.search);
     var topicId = params.get('id');
-    if (!topicId) return; // 指定が無ければサンプル表示のまま
+
+    function showTopicNotFound(message) {
+      var notice = document.getElementById('threadLoadingNotice');
+      if (notice) {
+        notice.textContent = message || 'このトピックは見つかりませんでした。削除されたか、URLが正しくない可能性があります。';
+        notice.style.display = '';
+      }
+      var breadcrumbLast = document.getElementById('threadBreadcrumbTitle');
+      if (breadcrumbLast) breadcrumbLast.textContent = 'トピックが見つかりません';
+      var h1 = document.getElementById('threadTitleH1');
+      if (h1) h1.textContent = 'トピックが見つかりません';
+      var loadingBadge = document.getElementById('threadLoadingBadge');
+      if (loadingBadge) loadingBadge.remove();
+      var op = document.getElementById('op');
+      if (op) op.style.display = 'none';
+      if (replyBox) replyBox.style.display = 'none';
+    }
+
+    if (!topicId) { showTopicNotFound(); return; }
     var currentItem = null;
 
     // 検索結果からのキーワードをハイライトして該当箇所までスクロールする
@@ -1144,6 +1240,7 @@
       if (!btn) return;
       applyLikeButtonState(btn, initialLiked, initialCount);
       btn.addEventListener('click', function () {
+        if (window.elRequireAuth && !window.elRequireAuth()) return;
         var uid = elCurrentUserId(), uname = elCurrentUsername();
         if (!uid && !uname) { alert('いいねをするにはログイン（会員登録）してください。'); return; }
         btn.disabled = true;
@@ -1170,11 +1267,14 @@
       var isAuthorNow = !!(currentItem && elIsSameAuthor(currentItem.authorUserId, currentItem.authorUsername));
       refreshBestAnswerUI(currentItem ? currentItem.bestAnswerCommentId : '', isAuthorNow, function (newBestId) {
         apiPost({
-          action: 'updateTopic', id: topicId, bestAnswerCommentId: newBestId,
+          // 一覧ページ（forum.html/board.html）は「解決／未解決」をstatusフィールドから判定しているため、
+          // ベストアンサーの選定・解除にあわせてstatusも一緒に更新する（以前はbestAnswerCommentIdだけを
+          // 送っていたため、詳細ページ内では解決表示になるのに一覧に戻ると未解決のままになっていた）。
+          action: 'updateTopic', id: topicId, bestAnswerCommentId: newBestId, status: newBestId ? 'solved' : 'unsolved',
           requesterUserId: elCurrentUserId(), requesterUsername: elCurrentUsername()
         }).then(function (res) {
           if (!res.ok) { alert(res.error || 'ベストアンサーの更新に失敗しました。'); return; }
-          if (currentItem) currentItem.bestAnswerCommentId = newBestId;
+          if (currentItem) { currentItem.bestAnswerCommentId = newBestId; currentItem.status = newBestId ? 'solved' : 'unsolved'; }
           markThreadSolvedUI(!!newBestId);
           applyBestAnswerUI();
         }).catch(function () { alert('通信エラーが発生しました。'); });
@@ -1193,18 +1293,30 @@
       if (!actions || !elIsSameAuthor(c.authorUserId, c.authorUsername)) return;
       var bodyEl = article.querySelector('.el-post-body');
       var editForm = article.querySelector('.el-comment-edit-form');
-      var editBody = article.querySelector('.el-comment-edit-body');
+      var editSlot = article.querySelector('.el-comment-edit-slot');
       var editBtn = document.createElement('button');
       editBtn.type = 'button';
       editBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg> 編集';
       var deleteBtn = document.createElement('button');
       deleteBtn.type = 'button';
       deleteBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6"/></svg> 削除';
+
+      function closeCommentEdit() {
+        restoreRichEditorHome();
+        editForm.style.display = 'none';
+        bodyEl.style.display = '';
+      }
+
       editBtn.addEventListener('click', function () {
+        reclaimRichEditor();
+        moveRichEditorTo(editSlot);
+        if (replyBoxLabel) replyBoxLabel.textContent = 'コメントを編集';
+        replyBox.querySelector('.el-reply-foot').style.display = 'none';
+        replyEditor.innerHTML = bodyEl.innerHTML;
         bodyEl.style.display = 'none';
         editForm.style.display = '';
-        editBody.innerHTML = bodyEl.innerHTML;
-        editBody.focus();
+        activeEditCancel = closeCommentEdit;
+        replyEditor.focus();
       });
       deleteBtn.addEventListener('click', function () {
         if (!confirm('このコメントを削除しますか？この操作は取り消せません。')) return;
@@ -1219,17 +1331,19 @@
       var saveBtn = article.querySelector('.el-comment-edit-save');
       var cancelBtn = article.querySelector('.el-comment-edit-cancel');
       if (cancelBtn) cancelBtn.addEventListener('click', function () {
-        editForm.style.display = 'none';
-        bodyEl.style.display = '';
+        activeEditCancel = null;
+        closeCommentEdit();
       });
       if (saveBtn) saveBtn.addEventListener('click', function () {
-        var newBody = editBody.innerHTML.trim();
-        if (!editBody.textContent.trim()) { alert('本文を入力してください。'); return; }
+        var newBody = replyEditor.innerHTML.trim();
+        if (!replyEditor.textContent.trim()) { alert('本文を入力してください。'); return; }
         apiPost({
           action: 'updateComment', id: c.id, body: newBody,
           requesterUserId: elCurrentUserId(), requesterUsername: elCurrentUsername()
         }).then(function (res) {
           if (!res.ok) { alert(res.error || '更新に失敗しました。'); return; }
+          activeEditCancel = null;
+          restoreRichEditorHome();
           reloadComments();
         }).catch(function () { alert('通信エラーが発生しました。'); });
       });
@@ -1252,7 +1366,7 @@
           '<div class="el-post-head"><span class="name">' + esc(c.authorName || '匿名') + '</span><span class="time">' + esc(relativeTime(c.createdAt)) + '</span></div>' +
           '<div class="el-post-body">' + (c.body || '') + '</div>' +
           '<div class="el-comment-edit-form" style="display:none;">' +
-          '<div class="el-comment-edit-body el-post-body" contenteditable="true" style="border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);padding:12px;min-height:70px;"></div>' +
+          '<div class="el-comment-edit-slot"></div>' +
           '<div style="display:flex;gap:8px;margin-top:10px;">' +
           '<button type="button" class="el-btn el-btn--primary el-btn--sm el-comment-edit-save">保存</button>' +
           '<button type="button" class="el-btn el-btn--ghost el-btn--sm el-comment-edit-cancel">キャンセル</button>' +
@@ -1270,18 +1384,59 @@
       if (countEl) countEl.textContent = items.length + '件の返信';
       var metaSpans = document.querySelectorAll('.el-thread-meta span');
       if (metaSpans[0]) metaSpans[0].textContent = items.length + '件の返信';
+
+      // 返信者アイコン：実際にコメントした人（重複を除く）だけを、最大4人まで表示する
+      // （以前は「山田佐木」という固定のダミー4人が常に表示されていた）
+      var avatarsEl = document.getElementById('threadAvatars');
+      if (avatarsEl) {
+        var seenAuthors = {};
+        var avatarHtml = '';
+        var avatarCount = 0;
+        for (var i = 0; i < items.length && avatarCount < 4; i++) {
+          var ci = items[i];
+          var authorKey = ci.authorUserId || ci.authorUsername || ci.authorName;
+          if (!authorKey || seenAuthors[authorKey]) continue;
+          seenAuthors[authorKey] = true;
+          avatarHtml += '<div class="el-avatar">' + esc((ci.authorName || '?').charAt(0)) + '</div>';
+          avatarCount++;
+        }
+        avatarsEl.innerHTML = avatarHtml;
+      }
+
       wireReplyButtons();
       wireReplyTags();
       applyBestAnswerUI();
     }
 
+    // 同じカテゴリの他のトピックを「関連するトピック」として表示する（デモの固定リンクは廃止）
+    function loadRelatedTopics(item) {
+      apiPost({ action: 'listTopics' }).then(function (res) {
+        var items = (res.ok && res.items) ? res.items : [];
+        var related = items.filter(function (t) {
+          return t.id !== item.id && t.category === item.category;
+        }).slice(0, 3);
+        if (!related.length) return; // 関連するトピックが無ければパネルごと非表示のまま
+        var panel = document.getElementById('relatedTopicsPanel');
+        var listEl = document.getElementById('relatedTopicsList');
+        if (!panel || !listEl) return;
+        var catLabelFn = function (cat) { return (window.EL_CATEGORY_LABEL || {})[cat] || cat || ''; };
+        listEl.innerHTML = related.map(function (t) {
+          return '<a href="topic.html?id=' + encodeURIComponent(t.id) + '" class="el-side-panel-row">' +
+            '<span class="badge badge--cat">' + esc(catLabelFn(t.category)) + '</span>' +
+            '<span class="title">' + esc(t.title || '') + '</span>' +
+          '</a>';
+        }).join('');
+        panel.style.display = '';
+      }).catch(function () {});
+    }
+
     apiPost({ action: 'getTopic', id: topicId, userId: elCurrentUserId(), username: elCurrentUsername() }).then(function (data) {
-      if (!data.ok || !data.found) return; // 見つからない場合はサンプル表示のまま
+      if (!data.ok || !data.found) { showTopicNotFound(); return; }
       var item = data.item;
       currentItem = item;
       document.title = item.title + '｜Export Lab';
       var catLabel = (window.EL_CATEGORY_LABEL || {})[item.category] || item.category || '';
-      var breadcrumbLast = document.querySelector('.el-breadcrumb span');
+      var breadcrumbLast = document.getElementById('threadBreadcrumbTitle');
       if (breadcrumbLast) breadcrumbLast.textContent = item.title;
 
       var visBadge = (item.visibility === 'shift')
@@ -1293,13 +1448,44 @@
         ? '<span class="badge badge--solved">解決</span>'
         : '<span class="badge badge--unsolved">未解決</span>';
       var badgesEl = document.querySelector('.el-t-row-badges');
-      if (badgesEl) badgesEl.innerHTML = visBadge + '<span class="badge badge--cat">' + esc(catLabel) + '</span>' + statusBadge;
+      if (badgesEl) {
+        badgesEl.innerHTML = visBadge + '<span class="badge badge--cat el-cat-chip" data-category="' + esc(item.category || '') + '" role="link" tabindex="0">' + esc(catLabel) + '</span>' + statusBadge;
+        var catChip = badgesEl.querySelector('.el-cat-chip');
+        if (catChip) {
+          catChip.addEventListener('click', function () {
+            window.location.href = 'board.html?category=' + encodeURIComponent(item.category || '');
+          });
+          catChip.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); catChip.click(); }
+          });
+        }
+      }
 
-      var h1 = document.querySelector('.el-thread-head h1');
+      var h1 = document.getElementById('threadTitleH1');
       if (h1) h1.textContent = item.title;
+
+      var metaSpans = document.querySelectorAll('.el-thread-meta span');
+      if (metaSpans[2]) metaSpans[2].textContent = (item.views || 0) + '回の閲覧';
+      if (metaSpans[4]) metaSpans[4].textContent = '最終更新：' + relativeTime(item.createdAt);
+
+      document.getElementById('threadLoadingNotice').style.display = 'none';
+      loadRelatedTopics(item);
+
+      // 閲覧権限チェック：メンバー限定／SHiFT限定の投稿は、権限のないユーザーには本文を見せない
+      var myRole = window.elGetRole ? window.elGetRole() : 'guest';
+      var authorized = true;
+      var lockMessage = '';
+      if (item.visibility === 'shift' && myRole !== 'shift' && myRole !== 'admin') {
+        authorized = false;
+        lockMessage = 'この投稿はSHiFT会員限定です。SHiFT会員になると続きを閲覧できます。';
+      } else if (item.visibility === 'member' && myRole === 'guest') {
+        authorized = false;
+        lockMessage = 'この投稿はメンバー限定です。ログイン（会員登録）すると続きを閲覧できます。';
+      }
 
       var op = document.getElementById('op');
       if (op) {
+        op.style.display = '';
         op.dataset.authorUsername = item.authorUsername || '';
         op.dataset.authorUserId = item.authorUserId || '';
         var opAvatar = document.getElementById('opAvatar');
@@ -1312,8 +1498,32 @@
         var opDates = op.querySelector('.el-post-dates');
         if (opDates) opDates.textContent = '投稿日：' + relativeTime(item.createdAt);
         var opBody = op.querySelector('.el-post-body');
-        if (opBody) { opBody.innerHTML = item.body || ''; elOpenLinksInNewTab(opBody); }
         var opTags = op.querySelector('.el-post-tags');
+        var opActions = op.querySelector('.el-post-actions');
+
+        if (!authorized) {
+          // 権限が無いユーザーには本文・タグ・操作ボタン・コメント欄・返信フォームを見せない
+          if (opBody) opBody.style.display = 'none';
+          if (opTags) opTags.style.display = 'none';
+          if (opActions) opActions.style.display = 'none';
+          var opLockedNotice = document.getElementById('opLockedNotice');
+          var opLockedNoticeText = document.getElementById('opLockedNoticeText');
+          var opLockedUnlockBtn = document.getElementById('opLockedUnlockBtn');
+          if (opLockedNoticeText) opLockedNoticeText.textContent = lockMessage;
+          if (opLockedUnlockBtn) {
+            opLockedUnlockBtn.addEventListener('click', function () {
+              if (item.visibility === 'shift') { if (window.elRequireShift) window.elRequireShift(); }
+              else if (window.elRequireAuth) window.elRequireAuth();
+            });
+          }
+          if (opLockedNotice) opLockedNotice.style.display = '';
+          var commentsHeadLocked = document.getElementById('commentsHead');
+          if (commentsHeadLocked) commentsHeadLocked.style.display = 'none';
+          if (replyBox) replyBox.style.display = 'none';
+          return;
+        }
+
+        if (opBody) { opBody.innerHTML = item.body || ''; elOpenLinksInNewTab(opBody); }
         if (opTags) {
           var tagLabelFn = window.EL_getTagLabel || function (t) { return '#' + t; };
           opTags.innerHTML = (item.tags || []).map(function (t) {
@@ -1329,31 +1539,47 @@
         var opDeleteBtn = document.getElementById('opDeleteBtn');
         var opEditForm = document.getElementById('opEditForm');
         var opEditTitle = document.getElementById('opEditTitle');
-        var opEditBody = document.getElementById('opEditBody');
+        var opEditEditorSlot = document.getElementById('opEditEditorSlot');
+        var opEditSaveBtn = document.getElementById('opEditSaveBtn');
+        var opEditCancelBtn = document.getElementById('opEditCancelBtn');
         if (isOwnTopic && opEditBtn && opDeleteBtn) {
           opEditBtn.style.display = '';
           opDeleteBtn.style.display = '';
-          opEditBtn.addEventListener('click', function () {
-            opEditTitle.value = item.title || '';
-            opEditBody.innerHTML = opBody ? opBody.innerHTML : '';
-            opBody.style.display = 'none';
-            if (h1) h1.style.display = 'none';
-            opEditForm.style.display = '';
-          });
-          document.getElementById('opEditCancelBtn').addEventListener('click', function () {
+
+          function closeOpEdit() {
+            restoreRichEditorHome();
             opEditForm.style.display = 'none';
             opBody.style.display = '';
             if (h1) h1.style.display = '';
+          }
+
+          opEditBtn.addEventListener('click', function () {
+            reclaimRichEditor();
+            opEditTitle.value = item.title || '';
+            moveRichEditorTo(opEditEditorSlot);
+            if (replyBoxLabel) replyBoxLabel.textContent = '投稿を編集';
+            replyBox.querySelector('.el-reply-foot').style.display = 'none';
+            replyEditor.innerHTML = opBody ? opBody.innerHTML : (item.body || '');
+            opBody.style.display = 'none';
+            if (h1) h1.style.display = 'none';
+            opEditForm.style.display = '';
+            activeEditCancel = closeOpEdit;
+            replyEditor.focus();
           });
-          document.getElementById('opEditSaveBtn').addEventListener('click', function () {
+          opEditCancelBtn.addEventListener('click', function () {
+            activeEditCancel = null;
+            closeOpEdit();
+          });
+          opEditSaveBtn.addEventListener('click', function () {
             var newTitle = opEditTitle.value.trim();
-            var newBody = opEditBody.innerHTML.trim();
-            if (!newTitle || !opEditBody.textContent.trim()) { alert('タイトルと本文を入力してください。'); return; }
+            var newBody = replyEditor.innerHTML.trim();
+            if (!newTitle || !replyEditor.textContent.trim()) { alert('タイトルと本文を入力してください。'); return; }
             apiPost({
               action: 'updateTopic', id: topicId, title: newTitle, body: newBody,
               requesterUserId: elCurrentUserId(), requesterUsername: elCurrentUsername()
             }).then(function (res) {
               if (!res.ok) { alert(res.error || '更新に失敗しました。'); return; }
+              activeEditCancel = null;
               location.reload();
             }).catch(function () { alert('通信エラーが発生しました。'); });
           });
@@ -1368,16 +1594,22 @@
         }
       }
 
+      var commentsHeadEl = document.getElementById('commentsHead');
+      if (commentsHeadEl) commentsHeadEl.style.display = '';
+
       reloadComments().then(function () {
         // OP本文・コメントの描画が終わった時点で、検索キーワードのハイライトを試みる
         highlightAndScroll(hl);
       });
+    }).catch(function () {
+      showTopicNotFound('通信エラーが発生しました。時間をおいて再度お試しください。');
     });
 
     // 返信の送信：スプレッドシート（フォーラムコメント）に保存する
     var sendBtn = replyBox ? replyBox.querySelector('.el-reply-foot button') : null;
     if (sendBtn) {
       sendBtn.addEventListener('click', function () {
+        if (window.elRequireAuth && !window.elRequireAuth()) return;
         var plainText = replyEditor ? (replyEditor.textContent || '').trim() : '';
         if (!plainText) return;
         var body = replyEditor ? replyEditor.innerHTML.trim() : '';
