@@ -642,10 +642,14 @@
             </label>
             <label>
               <span id="adImageLabel" style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">画像</span>
-              <div style="display:flex;align-items:center;gap:14px;">
-                <div id="adImagePreview" style="width:96px;height:96px;border-radius:10px;background:var(--el-cream-deep);border:1px solid var(--el-line-soft);display:flex;align-items:center;justify-content:center;color:var(--el-ink-faint);font-size:11px;overflow:hidden;flex:none;">未設定</div>
+              <div style="display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap;">
+                <!-- 実際のバナー表示（縦横比6:1、正方形広告は約1.7:1）と同じ比率でプレビューする。
+                     以前は96×96pxの正方形で表示していたため、実際にどうトリミングされるかが
+                     この時点では分からなかった（登録して初めて上下が切れているのに気づく、という不具合の原因）。 -->
+                <div id="adImagePreview" style="width:220px;aspect-ratio:1200/200;border-radius:10px;background:var(--el-cream-deep);border:1px solid var(--el-line-soft);display:flex;align-items:center;justify-content:center;color:var(--el-ink-faint);font-size:11px;overflow:hidden;flex:none;">未設定</div>
                 <input type="file" id="adImageInput" accept="image/*" style="font-size:13px;">
               </div>
+              <div id="adRatioWarning" style="display:none;margin-top:8px;padding:10px 12px;background:#FDECEA;border:1px solid #F3B7B0;border-radius:10px;font-size:12.5px;color:#8A2E23;line-height:1.7;"></div>
             </label>
             <label>
               <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">リンク先URL</span>
@@ -1913,7 +1917,47 @@
   var adPreview = document.getElementById('adPreview');
   var adImagePreview = document.getElementById('adImagePreview');
   var adImageDataUrl = '';
+  var adRatioWarningEl = document.getElementById('adRatioWarning');
 
+  // アップロードされた画像の「実際の縦横比」を、圧縮処理とは別に確認するための軽量ヘルパー。
+  // compressImageFile()の戻り値の形（文字列）を変えると他の画像アップロード箇所（イベント／
+  // コンテンツ登録など）にも影響してしまうため、専用の関数として分離している。
+  function getImageNaturalSize(file) {
+    return new Promise(function (resolve, reject) {
+      var reader = new FileReader();
+      reader.onload = function (e) {
+        var img = new Image();
+        img.onload = function () { resolve({ width: img.width, height: img.height }); };
+        img.onerror = reject;
+        img.src = e.target.result;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+  var AD_TARGET_RATIO = { banner: 1200 / 200, square: 520 / 300 };
+  function checkAdImageRatio(width, height) {
+    var type = adForm.querySelector('input[name="adType"]:checked').value;
+    var target = AD_TARGET_RATIO[type] || AD_TARGET_RATIO.banner;
+    var actual = width / height;
+    var diffPct = Math.abs(actual - target) / target * 100;
+    if (diffPct < 3) { adRatioWarningEl.style.display = 'none'; return; }
+    var cropSide = actual > target ? '左右' : '上下';
+    // 表示エリアいっぱいに拡大したうえで、はみ出た分がトリミングされる量を概算する
+    var cropPct = actual > target ? Math.round((1 - target / actual) * 100) : Math.round((1 - actual / target) * 100);
+    adRatioWarningEl.innerHTML =
+      '⚠ この画像は縦横比が ' + actual.toFixed(2) + ':1（' + width + '×' + height + 'px）で、' +
+      '必要な比率（' + target.toFixed(2) + ':1）と異なります。表示時に画像の' + cropSide + 'が約' + cropPct + '%トリミングされます。' +
+      '<br>ロゴや文字が' + cropSide + '寄りに配置されている場合は特に見切れやすいため、' + cropSide + 'を基準に比率を合わせて再度書き出すことをおすすめします。';
+    adRatioWarningEl.style.display = 'block';
+  }
+  document.getElementById('adImageInput').addEventListener('change', function (e) {
+    var file = e.target.files[0];
+    if (!file) return;
+    getImageNaturalSize(file).then(function (size) {
+      checkAdImageRatio(size.width, size.height);
+    }).catch(function () {});
+  });
   // 広告バナーは横長で最大1100px程度の幅で大きく表示されるため、他の画像より高い解像度で保存する
   wireImageUpload(document.getElementById('adImageInput'), adImagePreview, function (dataUrl) { adImageDataUrl = dataUrl; updateAdPreviewFromForm(); }, 1200);
 
@@ -1941,13 +1985,16 @@
   }
 
   var AD_TYPE_INFO = {
-    banner: '<strong>表示場所：</strong>サイトTOP・トピック詳細ページの上部（横長バナー）<br><strong>推奨画像サイズ：</strong>1200 × 200px（アスペクト比 6:1）。表示エリアはパソコンの画面幅いっぱいまで広がる（最大 約1116px）ため、この比率より小さい画像だと引き伸ばされて粗く見えます。1200×200px以上で用意すると、拡大されずきれいに表示されます。この比率からずれる画像は、左右または上下がトリミングされます。',
+    banner: '<strong>表示場所：</strong>サイトTOP・トピック詳細ページの上部（横長バナー）<br><strong>推奨画像サイズ：</strong>1200 × 200px、またはこれと同じ比率（6:1）の画像。1200×900pxのように単に幅だけを合わせても、高さが比率通りでなければ上下がトリミングされます。ロゴや文字は中央付近に配置し、上下の縁ギリギリには置かないでください。画像を選択すると、比率がずれている場合はこの下に警告が表示されます。',
     square: '<strong>表示場所：</strong>新規トピック投稿画面のサイドバー（正方形に近いカード型）<br><strong>推奨画像サイズ：</strong>520 × 300px（アスペクト比 約1.7:1）。カード上部の画像エリアに表示され、下にサービス名・紹介文・CTAボタンが続きます。'
   };
   function updateAdTypeExplain() {
     var type = adForm.querySelector('input[name="adType"]:checked').value;
     document.getElementById('adTypeExplain').innerHTML = AD_TYPE_INFO[type];
     document.getElementById('adImageLabel').textContent = type === 'square' ? '画像（推奨 520×300px）' : '画像（推奨 1200×200px以上）';
+    // タイプ切り替え時、アップロード直後のプレビュー枠の比率も実際の表示に合わせて切り替える
+    adImagePreview.style.aspectRatio = type === 'square' ? '520/300' : '1200/200';
+    adRatioWarningEl.style.display = 'none';
   }
   adForm.querySelectorAll('input[name="adType"]').forEach(function (r) { r.addEventListener('change', function () { updateAdTypeExplain(); updateAdPreviewFromForm(); }); });
   updateAdTypeExplain();
@@ -1989,6 +2036,12 @@
     document.getElementById('adEditBanner').style.display = 'flex';
     document.getElementById('adSubmitBtn').textContent = '広告を更新する';
     updateAdTypeExplain(); updateAdPreviewFromForm();
+    // 既に登録済みの画像についても、比率のズレがあれば編集画面を開いた時点で気づけるようにする
+    if (it.imageUrl) {
+      var checkImg = new Image();
+      checkImg.onload = function () { checkAdImageRatio(checkImg.width, checkImg.height); };
+      checkImg.src = it.imageUrl;
+    }
     adForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
   document.getElementById('adCancelEditBtn').addEventListener('click', resetAdForm);
