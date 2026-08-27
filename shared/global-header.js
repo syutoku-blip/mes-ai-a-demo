@@ -17,7 +17,7 @@
   var sites = [
     { id: 'community', label: 'コミュニティ', href: root + '/community/index.html' },
     { id: 'dev1',      label: 'worldSHiFT member central',       href: root + '/dev1/index.html' },
-    { id: 'dev2',      label: 'Allynair',       href: root + '/dev2/index.html' }
+    { id: 'dev2',      label: 'Allynair',       href: root + '/dev2/index.html' },
     { id: 'dev3',      label: 'test',       href: root + '/dev3/index.html' }
   ];
 
