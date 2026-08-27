@@ -157,10 +157,40 @@
         <input type="search" name="q" placeholder="検索" aria-label="検索" autocomplete="off">
       </form>
       <span id="headerAuthLinks" style="display:flex;gap:6px;white-space:nowrap;"><a href="signup.html" class="el-btn el-btn--ghost el-btn--sm" id="headerSignupLink">新規登録</a><a href="login.html" class="el-btn el-btn--ghost el-btn--sm" id="headerLoginLink">ログイン</a></span>
-      <a href="mypage.html" class="el-header-bell" aria-label="通知">
+      <a href="notifications.html" class="el-header-bell" aria-label="通知">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-        <span class="count">3</span>
+        <span class="count" id="headerBellCount" style="display:none;">0</span>
       </a>
+<script>
+  // 通知ベルの未読件数（全ページ共通）
+  (function () {
+    var uid = '', uname = '';
+    try {
+      uid = localStorage.getItem('el-user-id') || '';
+      uname = localStorage.getItem('el-username') || '';
+    } catch (e) {}
+    if (!uid && !uname) return;
+    var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
+    fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'listNotifications', userId: uid, username: uname })
+    }).then(function (res) { return res.json(); }).then(function (data) {
+      var items = (data.ok && data.items) ? data.items : [];
+      var seenBroadcast = [];
+      try { seenBroadcast = JSON.parse(localStorage.getItem('el-seen-broadcast-notifications') || '[]'); } catch (e) {}
+      var unread = items.filter(function (n) {
+        return n.broadcast ? seenBroadcast.indexOf(n.id) === -1 : !n.isRead;
+      }).length;
+      var countEl = document.getElementById('headerBellCount');
+      if (countEl) {
+        if (unread > 0) { countEl.textContent = unread > 99 ? '99+' : String(unread); countEl.style.display = ''; }
+        else { countEl.style.display = 'none'; }
+      }
+    }).catch(function () {});
+  })();
+</script>
+
       <a href="mypage.html" class="el-avatar" id="headerAvatar" aria-label="マイページ">り</a>
     </div>
   </div>
@@ -242,6 +272,11 @@
       <a href="members.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M6 16c.5-1.6 1.7-2.5 3-2.5s2.5.9 3 2.5"/><path d="M14 9h4M14 13h4"/></svg>
         <span class="lbl">メンバー</span>
+      </a>
+
+      <a href="messages.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <span class="lbl">メッセージ</span>
       </a>
 
       <a href="mypage.html">
@@ -417,7 +452,7 @@
             </label>
             <label>
               <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">価格（円）</span>
-              <input type="number" name="price" min="0" step="100" required style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
+              <input type="text" inputmode="numeric" name="price" id="contentPriceInput" required style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
             </label>
             <div>
               <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">こんな方におすすめ</span>
@@ -1268,21 +1303,43 @@
   });
 
   // ------------------------------------------------------------
-  // 画像を一辺400pxに縮小・JPEG圧縮してBase64データURLに変換する共通ヘルパー
-  // ------------------------------------------------------------
+  // 画像を縮小・JPEG圧縮してBase64データURLに変換する共通ヘルパー。
+  // 以前は一律「長辺400px・画質0.82」に固定していたため、広告バナーのように
+  // 大きく表示される画像がぼやけて見える原因になっていた。
+  // ここでは指定サイズ（maxSize）でできるだけ高画質に変換しつつ、スプレッドシートの
+  // 1セルあたりの文字数上限（50,000文字）を超えないよう、収まらない場合は段階的に
+  // サイズ・画質を落として再試行する（既存の呼び出し側の挙動は変えないよう、
+  // maxSize省略時は従来通り400pxのまま）。
+  var SHEET_CELL_SAFE_LIMIT = 45000; // 50,000文字上限に対する安全マージン
   function compressImageFile(file, maxSize) {
+    var target = maxSize || 400;
     return new Promise(function (resolve, reject) {
       var reader = new FileReader();
       reader.onload = function (e) {
         var img = new Image();
         img.onload = function () {
-          var size = maxSize || 400;
-          var scale = Math.min(1, size / Math.max(img.width, img.height));
-          var canvas = document.createElement('canvas');
-          canvas.width = Math.round(img.width * scale);
-          canvas.height = Math.round(img.height * scale);
-          canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-          resolve(canvas.toDataURL('image/jpeg', 0.82));
+          function render(size, quality) {
+            var scale = Math.min(1, size / Math.max(img.width, img.height));
+            var canvas = document.createElement('canvas');
+            canvas.width = Math.max(1, Math.round(img.width * scale));
+            canvas.height = Math.max(1, Math.round(img.height * scale));
+            canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+            return canvas.toDataURL('image/jpeg', quality);
+          }
+          var attempts = [
+            [target, 0.85],
+            [target, 0.72],
+            [Math.round(target * 0.75), 0.75],
+            [Math.round(target * 0.5), 0.75],
+            [400, 0.72],
+            [300, 0.7]
+          ];
+          var result = '';
+          for (var i = 0; i < attempts.length; i++) {
+            result = render(attempts[i][0], attempts[i][1]);
+            if (result.length <= SHEET_CELL_SAFE_LIMIT) break;
+          }
+          resolve(result);
         };
         img.onerror = reject;
         img.src = e.target.result;
@@ -1291,11 +1348,11 @@
       reader.readAsDataURL(file);
     });
   }
-  function wireImageUpload(inputEl, previewEl, onChange) {
+  function wireImageUpload(inputEl, previewEl, onChange, maxSize) {
     inputEl.addEventListener('change', function () {
       var file = inputEl.files[0];
       if (!file) return;
-      compressImageFile(file).then(function (dataUrl) {
+      compressImageFile(file, maxSize).then(function (dataUrl) {
         previewEl.innerHTML = '<img src="' + dataUrl + '" style="width:100%;height:100%;object-fit:cover;">';
         onChange(dataUrl);
       });
@@ -1361,6 +1418,20 @@
   var contentThumbUrl = '';
   wireImageUpload(document.getElementById('contentThumbInput'), document.getElementById('contentThumbPreview'), function (dataUrl) { contentThumbUrl = dataUrl; });
 
+  // 価格入力：入力しながら自動でカンマ区切り表示にする（保存時は数字のみに戻す）
+  (function () {
+    var priceInput = document.getElementById('contentPriceInput');
+    if (!priceInput) return;
+    priceInput.addEventListener('input', function () {
+      var digitsOnly = priceInput.value.replace(/[^0-9]/g, '');
+      var beforeLen = priceInput.value.length;
+      var caretFromEnd = beforeLen - (priceInput.selectionStart == null ? beforeLen : priceInput.selectionStart);
+      priceInput.value = digitsOnly ? Number(digitsOnly).toLocaleString() : '';
+      var newPos = Math.max(0, priceInput.value.length - caretFromEnd);
+      try { priceInput.setSelectionRange(newPos, newPos); } catch (e) {}
+    });
+  })();
+
   function loadContentAdmin() {
     apiPost({ action: 'listContent', type: 'marketContent' }).then(function (data) {
       if (!data.ok) return;
@@ -1379,7 +1450,8 @@
     var fd = new FormData(e.target);
     apiPost({
       action: 'createContent', type: 'marketContent',
-      title: fd.get('title'), category: fd.get('category'), price: fd.get('price'),
+      title: fd.get('title'), category: fd.get('category'),
+      price: String(fd.get('price') || '').replace(/[^0-9]/g, ''), // カンマ表示を保存前に数字だけへ戻す
       recommendHtml: contentRecommendEditor.getHtml(), detailHtml: contentDetailEditor.getHtml(),
       thumbnailUrl: contentThumbUrl
     }).then(function (data) {
@@ -1637,7 +1709,8 @@
   var adImagePreview = document.getElementById('adImagePreview');
   var adImageDataUrl = '';
 
-  wireImageUpload(document.getElementById('adImageInput'), adImagePreview, function (dataUrl) { adImageDataUrl = dataUrl; updateAdPreviewFromForm(); });
+  // 広告バナーは横長で最大1100px程度の幅で大きく表示されるため、他の画像より高い解像度で保存する
+  wireImageUpload(document.getElementById('adImageInput'), adImagePreview, function (dataUrl) { adImageDataUrl = dataUrl; updateAdPreviewFromForm(); }, 1200);
 
   function renderAdPreview(ad) {
     if (ad.adType === 'square') {

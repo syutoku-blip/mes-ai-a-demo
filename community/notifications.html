@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>コミュニティTOP｜Export Lab</title>
+<title>通知｜Export Lab</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&family=Noto+Sans+JP:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&family=Noto+Sans+JP:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&family=Zen+Kurenaido&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="../shared/global-header.css">
 <style>
@@ -35,9 +35,6 @@
     border-radius:var(--el-radius-m, 14px) !important;
     overflow:hidden !important;
     background:var(--el-cream-deep, #FBF3E3) !important;
-    /* 高さはアスペクト比（1200:200＝6:1）で決める。以前は960:220（4.4:1）にしていたが、
-       表示エリアの実際の横幅（最大1116px程度）だと縦幅が256px程度まで伸びてしまい、
-       バナーとして縦に大きすぎたため、より横長の比率に変更した。 */
     aspect-ratio:1200 / 200;
   }
   .el-ad-banner-v2.is-square{
@@ -128,63 +125,7 @@
     color:var(--el-ink-faint, #8A8478);
     padding:4px;
   }
-  /* ガイドラインモーダル：「ご利用の前にご確認ください」の各項目をクリックすると、本文をここに表示する */
-  .el-guide-modal{
-    display:none;
-    position:fixed;
-    inset:0;
-    z-index:900;
-    align-items:center;
-    justify-content:center;
-    padding:20px;
-  }
-  .el-guide-modal.is-open{ display:flex; }
-  .el-guide-modal-backdrop{
-    position:absolute;
-    inset:0;
-    background:rgba(22,35,63,.45);
-  }
-  .el-guide-modal-panel{
-    position:relative;
-    background:#fff;
-    border-radius:var(--el-radius-m, 14px);
-    padding:28px 26px;
-    max-width:520px;
-    width:100%;
-    max-height:80vh;
-    overflow-y:auto;
-    box-shadow:0 12px 40px rgba(22,35,63,.25);
-  }
-  .el-guide-modal-panel h3{
-    margin:0 0 14px;
-    font-family:var(--font-display);
-    font-weight:600;
-    font-size:17px;
-    color:var(--el-navy, #16233F);
-    padding-right:26px;
-  }
-  .el-guide-modal-body{
-    font-size:13.5px;
-    color:var(--el-ink-faint, #8A8478);
-    line-height:1.8;
-    font-family:inherit;
-  }
-  .el-guide-modal-body *{
-    font-family:inherit !important;
-  }
-  .el-guide-modal-close{
-    position:absolute;
-    top:10px;
-    right:10px;
-    border:none;
-    background:transparent;
-    cursor:pointer;
-    color:var(--el-ink-faint, #8A8478);
-    padding:4px;
-  }
   [data-guest-hide]{ display:none !important; }
-  /* ヘッダーの新規登録／ログイン／ログアウトボタン：背景色に関わらず文字が見えるよう、
-     透過ではなく塗りのボタンにする */
   #headerAuthLinks .el-btn, #headerSignupLink.el-btn, #headerLoginLink.el-btn{
     color:#fff !important;
     background:var(--el-navy, #16233F) !important;
@@ -194,7 +135,6 @@
     background:var(--el-teal-deep, #1E6F63) !important;
     border-color:var(--el-teal-deep, #1E6F63) !important;
   }
-  /* フッターの背景色が正しく当たらない場合の保険（文字が背景と同化して見えなくなるのを防ぐ） */
   .el-footer{ background:#EDE4D0 !important; border-top:1px solid var(--el-line-soft, #E5DFD2) !important; }
   .el-footer .tag{ color:var(--el-ink-faint, #8A8478) !important; }
   .el-footer .el-logo{ color:var(--el-navy, #16233F) !important; }
@@ -202,7 +142,38 @@
   .el-footer-cols a{ color:var(--el-ink-faint, #8A8478) !important; }
   .el-footer-cols h6{ color:var(--el-navy, #16233F) !important; }
   .el-footer-bottom{ color:var(--el-ink-faint, #8A8478) !important; border-top-color:var(--el-line-soft, #E5DFD2) !important; }
-  .el-group-card{ cursor:pointer !important; }
+
+  /* 通知ページ専用スタイル */
+  .el-notif-row{
+    display:flex;
+    gap:12px;
+    align-items:flex-start;
+    padding:16px 18px;
+    background:var(--el-paper, #fff);
+    border:1px solid var(--el-line-soft, #E5DFD2);
+    border-radius:var(--el-radius-m, 14px);
+    text-decoration:none;
+    color:inherit;
+    transition:box-shadow .15s;
+  }
+  .el-notif-row:hover{ box-shadow:var(--el-shadow-lift, 0 4px 14px rgba(22,35,63,.08)); }
+  .el-notif-row.is-unread{ background:var(--el-teal-tint, #E4F1EE); border-color:var(--el-teal, #2F8F82); }
+  .el-notif-icon{
+    width:36px;
+    height:36px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:var(--el-cream-deep, #FBF3E3);
+    color:var(--el-navy, #16233F);
+    flex:none;
+  }
+  .el-notif-main{ flex:1; min-width:0; }
+  .el-notif-title{ font-size:13.5px; font-weight:700; color:var(--el-navy, #16233F); line-height:1.5; }
+  .el-notif-body{ font-size:12.5px; color:var(--el-ink-faint, #8A8478); margin-top:3px; }
+  .el-notif-time{ font-size:11px; color:var(--el-ink-faint, #8A8478); margin-top:6px; }
+  .el-notif-unread-dot{ width:8px; height:8px; border-radius:50%; background:var(--el-coral, #C1553B); flex:none; margin-top:6px; }
 </style>
 </head>
 <body data-site="community" data-root="..">
@@ -223,36 +194,6 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
         <span class="count" id="headerBellCount" style="display:none;">0</span>
       </a>
-<script>
-  // 通知ベルの未読件数（全ページ共通）
-  (function () {
-    var uid = '', uname = '';
-    try {
-      uid = localStorage.getItem('el-user-id') || '';
-      uname = localStorage.getItem('el-username') || '';
-    } catch (e) {}
-    if (!uid && !uname) return;
-    var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
-    fetch(API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({ action: 'listNotifications', userId: uid, username: uname })
-    }).then(function (res) { return res.json(); }).then(function (data) {
-      var items = (data.ok && data.items) ? data.items : [];
-      var seenBroadcast = [];
-      try { seenBroadcast = JSON.parse(localStorage.getItem('el-seen-broadcast-notifications') || '[]'); } catch (e) {}
-      var unread = items.filter(function (n) {
-        return n.broadcast ? seenBroadcast.indexOf(n.id) === -1 : !n.isRead;
-      }).length;
-      var countEl = document.getElementById('headerBellCount');
-      if (countEl) {
-        if (unread > 0) { countEl.textContent = unread > 99 ? '99+' : String(unread); countEl.style.display = ''; }
-        else { countEl.style.display = 'none'; }
-      }
-    }).catch(function () {});
-  })();
-</script>
-
       <a href="mypage.html" class="el-avatar" id="headerAvatar" aria-label="マイページ">り</a>
     </div>
   </div>
@@ -289,8 +230,8 @@
         </div>
       </details>
 
-      <details class="el-side-forum" open>
-        <summary class="is-active" data-href="groups.html">
+      <details class="el-side-forum">
+        <summary data-href="groups.html">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
           <span class="lbl">コミュニティ</span>
           <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
@@ -350,50 +291,17 @@
   </div>
 
   <div class="el-content">
-    <main class="el-section" style="padding-top:0;">
-      <div class="el-catch">
-      <p>ひとりで抱えるより、同じ景色を見ている誰かと。<br>テーマごとに集まって話せる、コミュニティの入り口です。</p>
-    </div>
+    <main class="el-section" style="padding-top:36px;">
+      <div class="wrap" style="max-width:760px;">
 
-      <div class="wrap">
-        <nav class="el-breadcrumb el-page-breadcrumb" aria-label="パンくず"><a href="index.html">ホーム</a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg><span>コミュニティTOP</span></nav>
-
-
-        <div class="el-group-hero">
-          <div>
-            <h2>コミュニティ — メンバーだけで話し合える場所</h2>
-            <p>テーマや業種ごとに集まり、フォーラムには出しにくい実務の話や非公開の相談ができます。参加には承認が必要なコミュニティもあります。</p>
-          </div>
-          <a href="#" class="el-btn el-btn--mustard">新しいコミュニティを作る</a>
+        <div class="el-section-head" style="margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+          <div><h1 style="font-family:var(--font-display);font-size:22px;margin:0;">通知</h1></div>
+          <button type="button" class="el-btn el-btn--ghost el-btn--sm" id="markAllReadBtn" hidden>すべて既読にする</button>
         </div>
 
-        <details class="el-pinned-box" style="margin-top:26px;" id="guideBox" open>
-          <summary class="el-pinned-head">
-            <span class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 17v5M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16h14v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z"/></svg></span>
-            <h2>ご利用の前にご確認ください</h2>
-            <svg class="el-pinned-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
-          </summary>
-          <div class="el-pinned-list" id="guideList"></div>
-        </details>
-
-        <div class="el-section-head" style="margin-top:48px;">
-          <div>
-            <h2>新着コミュニティ</h2>
-            <div class="sub">最近つくられたコミュニティ</div>
-          </div>
-        </div>
-        <div class="el-group-grid" id="newGroupList">
-          <div style="padding:40px 4px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">読み込み中…</div>
-        </div>
-
-        <div class="el-section-head" style="margin-top:52px;">
-          <div>
-            <h2>人気コミュニティ</h2>
-            <div class="sub">投稿数の多いコミュニティ</div>
-          </div>
-        </div>
-        <div class="el-group-grid" id="hotGroupList">
-          <div style="padding:40px 4px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">読み込み中…</div>
+        <div id="notifList" style="display:flex;flex-direction:column;gap:10px;"></div>
+        <div id="notifEmpty" style="padding:60px 20px;text-align:center;color:var(--el-ink-faint);font-size:14px;" hidden>
+          <p id="notifEmptyText">通知はまだありません。</p>
         </div>
 
       </div>
@@ -458,7 +366,6 @@
     });
   })();
 
-  // フォーラム／コミュニティ／マーケットの見出し：矢印以外をクリックしたらページ遷移、矢印は開閉のみ
   document.querySelectorAll('.el-side-forum > summary[data-href]').forEach(function (summary) {
     summary.addEventListener('click', function (e) {
       if (e.target.closest('svg.chev')) return;
@@ -466,8 +373,6 @@
       window.location.href = summary.dataset.href;
     });
   });
-  // ユーザーモード（ゲスト／登録ユーザー／管理者）の切り替えと共通ゲート処理
-  // Googleドライブの共有リンクを、<img>で直接表示できる形式のURLに変換する
   function elDriveImgUrl(url) {
     if (!url) return url;
     var m = url.match(/drive\.google\.com\/file\/d\/([^/]+)/) || url.match(/[?&]id=([^&]+)/);
@@ -489,7 +394,6 @@
     var role = getRole();
     document.body.setAttribute('data-role', role);
 
-    // ゲストは通知ベルとアイコンを非表示
     var bell = document.querySelector('.el-header-bell');
     if (bell && role === 'guest') bell.style.display = 'none';
     var headerAvatar = document.getElementById('headerAvatar');
@@ -503,7 +407,6 @@
       } catch (e) {}
     }
 
-    // ヘッダーの認証リンク：ゲストは「新規登録」「ログイン」、それ以外は「ログアウト」のみ
     var authLinksWrap = document.getElementById('headerAuthLinks');
     var loginLink = document.getElementById('headerLoginLink');
     var signupLink = document.getElementById('headerSignupLink');
@@ -520,7 +423,6 @@
       }
     }
 
-    // 「ユーザー登録してください」モーダル
     var modal = document.getElementById('authModal');
     window.elRequireAuth = function (e) {
       if (getRole() !== 'guest') return true;
@@ -540,7 +442,6 @@
       });
     }
 
-    // SHiFT会員限定コンテンツ用モーダル
     var shiftModal = document.getElementById('shiftModal');
     window.elRequireShift = function () {
       var r = getRole();
@@ -557,19 +458,16 @@
       });
     }
 
-    // 管理者にはサイドバーに管理者ページへのリンクを追加
     if (role === 'admin') {
       var sideNav = document.querySelector('.el-sidebar nav');
       if (sideNav && !sideNav.querySelector('a[href="admin.html"]')) {
         var adminLink = document.createElement('a');
         adminLink.href = 'admin.html';
-        if (window.location.pathname.indexOf('admin.html') !== -1) adminLink.className = 'is-active';
         adminLink.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 3 7v6c0 5 4 9 9 9s9-4 9-9V7l-9-5Z"/><path d="m9 12 2 2 4-4"/></svg><span class="lbl">管理者ページ</span>';
         sideNav.appendChild(adminLink);
       }
     }
 
-    // ゲストには data-guest-hide の要素を隠す（本文はCSSでも隠すが、動的挿入分もここでカバー）
     if (role === 'guest') {
       document.querySelectorAll('[data-guest-block]').forEach(function (el) {
         el.addEventListener('click', window.elRequireAuth);
@@ -577,167 +475,139 @@
     }
   });
 
-  // コミュニティ詳細モーダル：カードをクリックすると開く。カード自体もシート（コミュニティ）から取得して描画する。
-  document.addEventListener('DOMContentLoaded', function () {
-    var GROUP_DETAILS = {};
+  // 通知一覧
+  (function () {
+    var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
+    function apiPost(payload) {
+      return fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      }).then(function (res) { return res.json(); });
+    }
     function esc(s) {
       var d = document.createElement('div');
       d.textContent = s == null ? '' : String(s);
       return d.innerHTML;
     }
+    function relativeTime(dateStr) {
+      var d = new Date(dateStr);
+      if (isNaN(d.getTime())) return '';
+      var diffMs = Date.now() - d.getTime();
+      var diffDays = Math.floor(diffMs / 86400000);
+      if (diffDays <= 0) return '今日';
+      if (diffDays === 1) return '昨日';
+      if (diffDays < 30) return diffDays + '日前';
+      return d.toLocaleDateString('ja-JP');
+    }
+    var TYPE_ICON = {
+      comment: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>',
+      reply: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 5 5v6"/></svg>',
+      dm: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v12H8l-4 4V4z"/></svg>',
+      announcement: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>'
+    };
+    var DEFAULT_ICON = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>';
 
-    // スプレッドシート連携：新着／人気コミュニティをシートから取得して描画する（デモデータは使用しない）
-    (function () {
-      var newList = document.getElementById('newGroupList');
-      var hotList = document.getElementById('hotGroupList');
-      if (!newList && !hotList) return;
-      var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
-      function renderGroupCard(it) {
-        var title = it.title || '';
-        GROUP_DETAILS[title] = {
-          creator: it.creator || '運営メンバー',
-          category: it.category || '未分類',
-          color: it.color || 'var(--el-teal)',
-          longDescription: it.longDescription || '',
-          members: []
-        };
-        var iconColor = it.color || 'var(--el-teal)';
-        var moreLabel = (it.postCount || 0) + '件の投稿';
-        return '<div class="el-group-card" data-group="' + esc(it.id || '') + '" data-state="" data-members="0">' +
-          '<div class="el-group-top">' +
-          '<div class="el-group-icon" style="background:' + iconColor + ';">' +
-          '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20Z"/></svg>' +
-          '</div>' +
-          '<div><h4>' + esc(title) + '</h4><div class="visibility">誰でも参加可</div></div>' +
-          '</div>' +
-          '<p class="desc">' + esc(it.description || '') + '</p>' +
-          '<div class="el-group-foot"><div class="el-group-members"><span class="more">' + esc(moreLabel) + '</span></div>' +
-          '<button class="el-btn el-btn--primary el-btn--sm">参加する</button></div>' +
-          '</div>';
-      }
-      fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({ action: 'listContent', type: 'communityGroup' })
-      })
-        .then(function (res) { return res.json(); })
-        .then(function (data) {
-          var items = (data.ok && data.items) ? data.items : [];
-          var emptyMsg = '<div style="padding:40px 4px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">まだコミュニティがありません。</div>';
-          if (newList) {
-            var byNew = items.slice().sort(function (a, b) {
-              return (Date.parse(b.createdAt || '') || 0) - (Date.parse(a.createdAt || '') || 0);
-            }).slice(0, 3);
-            newList.innerHTML = byNew.map(renderGroupCard).join('') || emptyMsg;
-          }
-          if (hotList) {
-            var byHot = items.slice().sort(function (a, b) { return (+b.postCount || 0) - (+a.postCount || 0); }).slice(0, 3);
-            hotList.innerHTML = byHot.map(renderGroupCard).join('') || emptyMsg;
-          }
-        })
-        .catch(function () {
-          var errMsg = '<div style="padding:40px 4px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">読み込みに失敗しました。</div>';
-          if (newList) newList.innerHTML = errMsg;
-          if (hotList) hotList.innerHTML = errMsg;
-        });
-    })();
+    var uid = '', uname = '';
+    try {
+      uid = localStorage.getItem('el-user-id') || '';
+      uname = localStorage.getItem('el-username') || localStorage.getItem('el-user-name') || '';
+    } catch (e) {}
 
-    var modal = document.getElementById('groupDetailModal');
-    if (!modal) return;
-    var view = document.getElementById('gdmView');
-    var memberView = document.getElementById('gdmMemberView');
+    var listEl = document.getElementById('notifList');
+    var emptyEl = document.getElementById('notifEmpty');
+    var emptyTextEl = document.getElementById('notifEmptyText');
+    var markAllBtn = document.getElementById('markAllReadBtn');
 
-    function openModal(card) {
-      var title = (card.querySelector('h4') || {}).textContent || '';
-      var desc = (card.querySelector('.desc') || {}).textContent || '';
-      var visibility = (card.querySelector('.visibility') || {}).textContent || '';
-      var memberCount = card.dataset.members || '0';
-      var iconColor = (card.querySelector('.el-group-icon') || {}).style.background || 'var(--el-teal)';
-      var iconSvg = (card.querySelector('.el-group-icon svg') || {}).outerHTML || '';
-      var state = card.dataset.state || '';
-      var groupId = card.dataset.group || '';
-      var detail = GROUP_DETAILS[title] || { creator: '運営メンバー', category: '未分類', members: [] };
-
-      var boardBtn = document.getElementById('gdmBoardBtn');
-      if (boardBtn) {
-        if (groupId) {
-          boardBtn.href = 'community-board.html?id=' + encodeURIComponent(groupId);
-          boardBtn.style.display = '';
-        } else {
-          boardBtn.style.display = 'none';
-        }
-      }
-
-      document.getElementById('gdmIcon').style.background = iconColor;
-      document.getElementById('gdmIcon').innerHTML = iconSvg;
-      document.getElementById('gdmTitle').textContent = title;
-      document.getElementById('gdmVisibility').textContent = visibility;
-      var gdmDesc = document.getElementById('gdmDesc');
-      function descBlock(labelText, bodyText, accentColor) {
-        return '<div style="border-top:2px solid ' + accentColor + ';padding-top:11px;margin-bottom:16px;">' +
-          '<div style="font-size:11px;font-weight:700;color:' + accentColor + ';letter-spacing:.09em;margin-bottom:7px;">' + labelText + '</div>' +
-          '<div style="white-space:pre-line;line-height:1.8;color:var(--el-navy-soft);font-size:13.5px;">' + esc(bodyText) + '</div>' +
-        '</div>';
-      }
-      gdmDesc.innerHTML =
-        descBlock('概要', desc, 'var(--el-teal)') +
-        (detail.longDescription ? descBlock('詳細', detail.longDescription, 'var(--el-sky)') : '');
-      document.getElementById('gdmCreator').textContent = detail.creator;
-      document.getElementById('gdmCategory').textContent = detail.category;
-      document.getElementById('gdmMemberCount').textContent = memberCount + '人（クリックで一覧を見る）';
-
-      var joinBtn = document.getElementById('gdmJoinBtn');
-      if (state === 'joined') { joinBtn.textContent = '参加中'; joinBtn.disabled = true; }
-      else if (state === 'pending') { joinBtn.textContent = '承認待ち'; joinBtn.disabled = true; }
-      else if (visibility.indexOf('メンバー限定') !== -1) { joinBtn.textContent = '参加申請'; joinBtn.disabled = false; }
-      else { joinBtn.textContent = '参加する'; joinBtn.disabled = false; }
-
-      modal.dataset.currentGroup = title;
-      modal.dataset.currentCount = memberCount;
-      view.hidden = false;
-      memberView.hidden = true;
-      modal.classList.add('is-open');
-      modal.setAttribute('aria-hidden', 'false');
+    if (!uid && !uname) {
+      emptyTextEl.textContent = 'ログイン（会員登録）すると、あなた宛の通知が表示されます。';
+      emptyEl.hidden = false;
+      return;
     }
 
-    document.addEventListener('click', function (e) {
-      var card = e.target.closest('.el-group-card');
-      if (!card) return;
-      if (e.target.closest('button')) return; // 参加する等のボタンはこれまで通りの動作
-      openModal(card);
-    });
-
-    document.getElementById('gdmMemberBtn').addEventListener('click', function () {
-      var title = modal.dataset.currentGroup;
-      var count = modal.dataset.currentCount;
-      var detail = GROUP_DETAILS[title] || { members: [] };
-      document.getElementById('gdmMemberViewCount').textContent = count + '人が参加しています';
-      var shown = detail.members;
-      var remaining = Math.max(0, (+count) - shown.length);
-      var html = shown.map(function (m) {
-        return '<div style="display:flex;align-items:center;gap:10px;padding:8px 4px;border-bottom:1px solid var(--el-line-soft);">' +
-          '<div class="el-avatar" style="width:32px;height:32px;font-size:13px;flex:none;">' + m.charAt(0) + '</div>' +
-          '<span style="font-size:13.5px;color:var(--el-navy);">' + m + '</span></div>';
-      }).join('');
-      if (remaining > 0) {
-        html += '<div style="padding:10px 4px;font-size:12.5px;color:var(--el-ink-faint);">ほか' + remaining + '人</div>';
+    function getSeenBroadcast() {
+      try { return JSON.parse(localStorage.getItem('el-seen-broadcast-notifications') || '[]'); } catch (e) { return []; }
+    }
+    function markBroadcastSeen(id) {
+      var seen = getSeenBroadcast();
+      if (seen.indexOf(id) === -1) {
+        seen.push(id);
+        try { localStorage.setItem('el-seen-broadcast-notifications', JSON.stringify(seen)); } catch (e) {}
       }
-      document.getElementById('gdmMemberList').innerHTML = html;
-      view.hidden = true;
-      memberView.hidden = false;
-    });
-    document.getElementById('gdmBackBtn').addEventListener('click', function () {
-      view.hidden = false;
-      memberView.hidden = true;
+    }
+
+    function updateBellCount(items, seenBroadcast) {
+      var unread = items.filter(function (n) {
+        return n.broadcast ? seenBroadcast.indexOf(n.id) === -1 : !n.isRead;
+      }).length;
+      var countEl = document.getElementById('headerBellCount');
+      if (countEl) {
+        if (unread > 0) { countEl.textContent = unread > 99 ? '99+' : String(unread); countEl.style.display = ''; }
+        else { countEl.style.display = 'none'; }
+      }
+    }
+
+    function render(items) {
+      var seenBroadcast = getSeenBroadcast();
+      if (!items.length) {
+        emptyTextEl.textContent = '通知はまだありません。';
+        emptyEl.hidden = false;
+        updateBellCount(items, seenBroadcast);
+        return;
+      }
+      markAllBtn.hidden = false;
+      listEl.innerHTML = items.map(function (n) {
+        var isUnread = n.broadcast ? seenBroadcast.indexOf(n.id) === -1 : !n.isRead;
+        var icon = TYPE_ICON[n.type] || DEFAULT_ICON;
+        return '<a class="el-notif-row' + (isUnread ? ' is-unread' : '') + '" data-id="' + esc(n.id) + '" data-broadcast="' + (n.broadcast ? '1' : '0') +
+          '" href="' + esc(n.link || '#') + '">' +
+          '<div class="el-notif-icon">' + icon + '</div>' +
+          '<div class="el-notif-main">' +
+          '<div class="el-notif-title">' + esc(n.title) + '</div>' +
+          (n.body ? '<div class="el-notif-body">' + esc(n.body) + '</div>' : '') +
+          '<div class="el-notif-time">' + esc(relativeTime(n.createdAt)) + '</div>' +
+          '</div>' +
+          (isUnread ? '<span class="el-notif-unread-dot"></span>' : '') +
+          '</a>';
+      }).join('');
+      updateBellCount(items, seenBroadcast);
+
+      Array.prototype.forEach.call(listEl.querySelectorAll('.el-notif-row'), function (row) {
+        row.addEventListener('click', function () {
+          var id = row.dataset.id;
+          var isBroadcast = row.dataset.broadcast === '1';
+          if (isBroadcast) {
+            markBroadcastSeen(id);
+          } else {
+            apiPost({ action: 'markNotificationRead', id: id, userId: uid, username: uname }).catch(function () {});
+          }
+        });
+      });
+    }
+
+    apiPost({ action: 'listNotifications', userId: uid, username: uname }).then(function (data) {
+      var items = (data.ok && data.items) ? data.items : [];
+      render(items);
+    }).catch(function () {
+      emptyTextEl.textContent = '読み込みに失敗しました。';
+      emptyEl.hidden = false;
     });
 
-    modal.querySelectorAll('[data-group-close]').forEach(function (el) {
-      el.addEventListener('click', function () {
-        modal.classList.remove('is-open');
-        modal.setAttribute('aria-hidden', 'true');
+    markAllBtn.addEventListener('click', function () {
+      markAllBtn.disabled = true;
+      // 全員向け通知は、表示中のものをまとめてローカルの既読リストに追加する
+      Array.prototype.forEach.call(listEl.querySelectorAll('.el-notif-row[data-broadcast="1"]'), function (row) {
+        markBroadcastSeen(row.dataset.id);
       });
+      apiPost({ action: 'markAllNotificationsRead', userId: uid, username: uname }).then(function () {
+        markAllBtn.disabled = false;
+        return apiPost({ action: 'listNotifications', userId: uid, username: uname });
+      }).then(function (data) {
+        var items = (data.ok && data.items) ? data.items : [];
+        render(items);
+      }).catch(function () { markAllBtn.disabled = false; });
     });
-  });
+  })();
 
   var ADS = [
     { name: "SLCサービス", desc: "米AmazonFBA納品代行サービス", gradient: "linear-gradient(120deg, var(--el-teal), #1B5A52)" },
@@ -762,7 +632,6 @@
       sponsorEl.textContent = 'スポンサー：' + ad.name;
     }
 
-    // 管理者ページで登録された広告（横長／スクエア）があれば、そちらを優先して表示する
     var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
     fetch(API_URL, {
       method: 'POST',
@@ -791,61 +660,6 @@
       })
       .catch(renderMockAd);
   })();
-
-  // 「ご利用の前にご確認ください」：管理者ページで登録されたガイドラインをクリック→モーダル表示にする（デモは使わない）
-  document.addEventListener('DOMContentLoaded', function () {
-    (function () {
-      var box = document.getElementById('guideBox');
-      var listEl = document.getElementById('guideList');
-      var modal = document.getElementById('guideModal');
-      var modalTitle = document.getElementById('guideModalTitle');
-      var modalBody = document.getElementById('guideModalBody');
-      if (!box || !listEl) return;
-      var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
-
-      function esc(s) {
-        var d = document.createElement('div');
-        d.textContent = s == null ? '' : String(s);
-        return d.innerHTML;
-      }
-      function openGuideModal(title, bodyHtml) {
-        if (!modal) return;
-        modalTitle.textContent = title;
-        modalBody.innerHTML = bodyHtml || '';
-        modal.classList.add('is-open');
-        modal.setAttribute('aria-hidden', 'false');
-      }
-      if (modal) {
-        modal.querySelectorAll('[data-guide-close]').forEach(function (el) {
-          el.addEventListener('click', function () {
-            modal.classList.remove('is-open');
-            modal.setAttribute('aria-hidden', 'true');
-          });
-        });
-      }
-
-      fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({ action: 'listContent', type: 'guideline' })
-      })
-        .then(function (res) { return res.json(); })
-        .then(function (data) {
-          var items = (data.ok && data.items) ? data.items.filter(function (g) { return g.section === 'community'; }) : [];
-          items.sort(function (a, b) { return (Number(a.sortOrder) || 0) - (Number(b.sortOrder) || 0); });
-          if (!items.length) { box.style.display = 'none'; return; }
-          listEl.innerHTML = items.map(function (it, idx) {
-            return '<button type="button" class="el-pinned-item" style="width:100%;background:none;border:none;text-align:left;cursor:pointer;font:inherit;" data-idx="' + idx + '">' +
-              '<span class="dot"></span>' + esc(it.title) +
-              '<svg class="go" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></button>';
-          }).join('');
-          listEl.querySelectorAll('.el-pinned-item').forEach(function (btn, idx) {
-            btn.addEventListener('click', function () { openGuideModal(items[idx].title, items[idx].bodyHtml); });
-          });
-        })
-        .catch(function () { box.style.display = 'none'; });
-    })();
-  });
 </script>
 <div class="el-auth-modal" id="authModal" aria-hidden="true">
   <div class="el-auth-modal-backdrop" data-auth-close></div>
@@ -874,57 +688,6 @@
       <a href="#" class="el-btn el-btn--primary el-btn--sm">SHiFT会員について見る</a>
       <button type="button" class="el-btn el-btn--ghost el-btn--sm" data-shift-close>閉じる</button>
     </div>
-  </div>
-</div>
-
-<div class="el-auth-modal" id="groupDetailModal" aria-hidden="true">
-  <div class="el-auth-modal-backdrop" data-group-close></div>
-  <div class="el-auth-modal-panel" role="dialog" aria-modal="true" style="max-width:480px;text-align:left;">
-    <button type="button" class="el-auth-modal-close" data-group-close aria-label="閉じる">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
-    </button>
-    <div id="gdmView">
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px;">
-        <div id="gdmIcon" style="width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex:none;color:#fff;"></div>
-        <div>
-          <h3 id="gdmTitle" style="margin:0;font-size:17px;"></h3>
-          <div id="gdmVisibility" style="font-size:12px;color:var(--el-ink-faint);margin-top:2px;"></div>
-        </div>
-      </div>
-      <p id="gdmDesc" style="font-size:14px;color:var(--el-navy);line-height:1.8;margin:14px 0;"></p>
-      <div style="display:flex;flex-direction:column;gap:8px;font-size:13.5px;color:var(--el-navy);margin-bottom:16px;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);padding:14px 16px;">
-        <div><strong style="color:var(--el-ink-faint);font-weight:600;">作成者：</strong><span id="gdmCreator"></span></div>
-        <div><strong style="color:var(--el-ink-faint);font-weight:600;">カテゴリ：</strong><span id="gdmCategory"></span></div>
-        <button type="button" id="gdmMemberBtn" style="text-align:left;background:none;border:none;padding:0;cursor:pointer;color:inherit;font:inherit;">
-          <strong style="color:var(--el-ink-faint);font-weight:600;">メンバー：</strong><span id="gdmMemberCount" style="text-decoration:underline;color:var(--el-teal-deep);"></span>
-        </button>
-      </div>
-      <div class="el-auth-modal-actions">
-        <button type="button" class="el-btn el-btn--primary el-btn--sm" id="gdmJoinBtn">参加する</button>
-        <a href="#" class="el-btn el-btn--ghost el-btn--sm" id="gdmBoardBtn">掲示板を見る</a>
-        <button type="button" class="el-btn el-btn--ghost el-btn--sm" data-group-close>閉じる</button>
-      </div>
-    </div>
-    <div id="gdmMemberView" hidden>
-      <h3 style="margin:0 0 4px;font-size:16px;">メンバー一覧</h3>
-      <div style="font-size:12.5px;color:var(--el-ink-faint);margin-bottom:14px;" id="gdmMemberViewCount"></div>
-      <div id="gdmMemberList" style="max-height:320px;overflow-y:auto;display:flex;flex-direction:column;gap:2px;"></div>
-      <div class="el-auth-modal-actions">
-        <button type="button" class="el-btn el-btn--ghost el-btn--sm" id="gdmBackBtn">戻る</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-<div class="el-guide-modal" id="guideModal" aria-hidden="true">
-  <div class="el-guide-modal-backdrop" data-guide-close></div>
-  <div class="el-guide-modal-panel" role="dialog" aria-modal="true">
-    <button type="button" class="el-guide-modal-close" data-guide-close aria-label="閉じる">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
-    </button>
-    <h3 id="guideModalTitle"></h3>
-    <div class="el-guide-modal-body" id="guideModalBody"></div>
   </div>
 </div>
 

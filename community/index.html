@@ -67,13 +67,6 @@
     background-position:center !important;
     background-color:var(--el-teal, #2F8F82) !important;
   }
-  .el-ad-cta-v2{
-    position:absolute !important;
-    right:16px !important;
-    bottom:16px !important;
-    z-index:2 !important;
-    box-shadow:0 3px 10px rgba(0,0,0,.25) !important;
-  }
   .el-ad-sponsor-v2{
     position:absolute !important;
     left:12px !important;
@@ -228,10 +221,40 @@
         <input type="search" name="q" placeholder="検索" aria-label="検索" autocomplete="off">
       </form>
       <span id="headerAuthLinks" style="display:flex;gap:6px;white-space:nowrap;"><a href="signup.html" class="el-btn el-btn--ghost el-btn--sm" id="headerSignupLink">新規登録</a><a href="login.html" class="el-btn el-btn--ghost el-btn--sm" id="headerLoginLink">ログイン</a></span>
-      <a href="mypage.html" class="el-header-bell" aria-label="通知">
+      <a href="notifications.html" class="el-header-bell" aria-label="通知">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-        <span class="count">3</span>
+        <span class="count" id="headerBellCount" style="display:none;">0</span>
       </a>
+<script>
+  // 通知ベルの未読件数（全ページ共通）
+  (function () {
+    var uid = '', uname = '';
+    try {
+      uid = localStorage.getItem('el-user-id') || '';
+      uname = localStorage.getItem('el-username') || '';
+    } catch (e) {}
+    if (!uid && !uname) return;
+    var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
+    fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'listNotifications', userId: uid, username: uname })
+    }).then(function (res) { return res.json(); }).then(function (data) {
+      var items = (data.ok && data.items) ? data.items : [];
+      var seenBroadcast = [];
+      try { seenBroadcast = JSON.parse(localStorage.getItem('el-seen-broadcast-notifications') || '[]'); } catch (e) {}
+      var unread = items.filter(function (n) {
+        return n.broadcast ? seenBroadcast.indexOf(n.id) === -1 : !n.isRead;
+      }).length;
+      var countEl = document.getElementById('headerBellCount');
+      if (countEl) {
+        if (unread > 0) { countEl.textContent = unread > 99 ? '99+' : String(unread); countEl.style.display = ''; }
+        else { countEl.style.display = 'none'; }
+      }
+    }).catch(function () {});
+  })();
+</script>
+
       <a href="mypage.html" class="el-avatar" id="headerAvatar" aria-label="マイページ">り</a>
     </div>
   </div>
@@ -313,6 +336,11 @@
       <a href="members.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M6 16c.5-1.6 1.7-2.5 3-2.5s2.5.9 3 2.5"/><path d="M14 9h4M14 13h4"/></svg>
         <span class="lbl">メンバー</span>
+      </a>
+
+      <a href="messages.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <span class="lbl">メッセージ</span>
       </a>
 
       <a href="mypage.html">
@@ -493,12 +521,11 @@
 
       <section class="el-section" style="padding-top:0;">
         <div class="wrap">
-<div class="el-ad-banner-v2" id="adBanner">
-            <span class="el-ad-tag-v2">AD</span>
-            <div class="el-ad-image-v2" id="adImageV2"></div>
-            <a href="#" class="el-btn el-btn--primary el-btn--sm el-ad-cta-v2" id="adCtaV2">詳しく見る</a>
-            <span class="el-ad-sponsor-v2" id="adSponsorV2"></span>
-          </div>
+<a class="el-ad-banner-v2" id="adBanner" href="#" target="_blank" rel="noopener noreferrer" style="margin-top:32px;">
+          <span class="el-ad-tag-v2">AD</span>
+          <div class="el-ad-image-v2" id="adImageV2"></div>
+          <span class="el-ad-sponsor-v2" id="adSponsorV2"></span>
+        </a>
         </div>
       </section>
     </main>
@@ -626,8 +653,9 @@
   (function () {
     var el = document.getElementById('adBanner');
     if (!el) return;
+    // 実際のリンク先(ctaUrl)が設定されるまでは、バナー全体クリックで# に飛ばないようにする
+    el.addEventListener('click', function (e) { if (!el.dataset.ctaUrl) e.preventDefault(); });
     var imageEl = document.getElementById('adImageV2');
-    var ctaEl = document.getElementById('adCtaV2');
     var sponsorEl = document.getElementById('adSponsorV2');
 
     function renderMockAd() {
@@ -635,7 +663,6 @@
       el.classList.remove('is-square');
       imageEl.style.background = ad.gradient;
       imageEl.style.backgroundImage = 'none';
-      ctaEl.textContent = '詳しく見る';
       sponsorEl.textContent = 'スポンサー：' + ad.name;
     }
 
@@ -658,8 +685,12 @@
           imageEl.style.backgroundImage = 'none';
           imageEl.style.background = 'var(--el-teal)';
         }
-        ctaEl.textContent = ad.ctaText || '詳しく見る';
-        if (ad.ctaUrl) ctaEl.href = ad.ctaUrl;
+        if (ad.ctaUrl) {
+          el.href = ad.ctaUrl;
+          el.target = '_blank';
+          el.rel = 'noopener noreferrer';
+          el.dataset.ctaUrl = ad.ctaUrl;
+        }
         sponsorEl.textContent = 'スポンサー：' + (ad.serviceName || '');
       })
       .catch(renderMockAd);
