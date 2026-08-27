@@ -118,9 +118,9 @@ body{background:
 <div class="quote-shell"><div class="quote-hero"><div class="tag green" style="display:inline-flex;margin-bottom:10px">Allynair</div><h1>お見積り</h1></div>
 <div class="quote-layout"><div>
 <div class="quote-step"><h2>1. 発送条件</h2><div class="step-desc">発送元は日本固定です。発送先国と発送目的を入力してください。</div><div class="form-grid"><div class="field"><label>発送先国 <span class="required">*</span></label><select id="qCountry" onchange="calcQuote()"><option value="">発送先国を読み込み中...</option></select><div id="qCountryStatus" style="font-size:10px;color:var(--muted);margin-top:6px">「見積参照データ」A2以降を参照します。</div></div><div class="field"><label>発送目的 <span class="required">*</span></label><select id="qPurpose"><option value="sale">販売 / Sale</option><option value="gift">贈物 / Gift</option><option value="sample">商品見本 / Commercial Sample</option><option value="return">返送品 / Return</option><option value="repair">修理 / Repair</option><option value="after_repair">修理後の返送 / After Repair</option><option value="replacement">交換品・保証交換 / Replacement</option><option value="personal_use">個人使用 / Personal Use</option><option value="intercompany">社内・関連会社間 / Intercompany</option><option value="temporary">一時輸出 / Temporary Export</option><option value="documents">書類 / Documents</option><option value="other">その他 / Other</option></select><div style="font-size:10px;color:var(--muted);margin-top:6px">通関・インボイスで使用する発送理由を選択してください。</div></div></div></div>
-<div class="quote-step"><h2>2. 荷物情報</h2><div class="step-desc">箱数を入力すると、箱ごとの重量・サイズ入力欄が自動で表示されます。</div><div class="parcel-row"><div class="field"><label>箱数 <span class="required">*</span></label><input id="qBoxes" type="number" min="1" max="50" value="1" oninput="renderBoxInputs()"></div><div class="field"><label>申告価格 合計 (円)</label><input id="qDeclaredValue" type="number" min="0" value="50000"></div></div><div id="qBoxList" class="box-list"></div><div class="quote-note">箱ごとに実重量と容積重量（縦 × 横 × 高さ ÷ 5,000）を比較し、大きい方をその箱の課金重量として計算します。複数箱の場合は、各箱の課金重量を合計します。</div></div>
+<div class="quote-step"><h2>2. 荷物情報</h2><div class="step-desc">箱数を入力すると、箱ごとの重量・サイズ・申告価格の入力欄が自動で表示されます。</div><div class="parcel-row"><div class="field"><label>箱数 <span class="required">*</span></label><input id="qBoxes" type="number" min="1" max="50" value="1" oninput="renderBoxInputs()"></div></div><div id="qBoxList" class="box-list"></div><div class="quote-note">箱ごとに実重量と容積重量（縦 × 横 × 高さ ÷ 5,000）を比較し、大きい方をその箱の課金重量として計算します。申告価格も箱ごとに入力し、複数箱の場合は合計額を自動集計します。</div></div>
 <div class="quote-step"><h2>3. オプション</h2><div class="step-desc">必要な作業を選択してください。</div><label class="checkrow"><input id="qInspection" type="checkbox" onchange="calcQuote()"> 検品・梱包作業を依頼する</label><label class="checkrow" style="margin-top:10px"><input id="qInsurance" type="checkbox" onchange="calcQuote()"> 輸送保険を付ける</label></div>
-</div><aside class="quote-result"><div class="eyebrow">概算お見積り</div><div class="quote-price" id="qTotal">¥32,800</div><div style="font-size:10px;color:#91a4bd">税込・概算</div><hr><div class="quote-line"><span>課金重量</span><b id="qChargeWeight">10.0 kg</b></div><div class="quote-line"><span>国際送料</span><b id="qFreight">¥28,000</b></div><div class="quote-line"><span>Allynair手数料</span><b id="qFee">¥4,800</b></div><div class="quote-line"><span>オプション</span><b id="qOption">¥0</b></div><hr><div class="quote-notice">この金額は概算です。倉庫到着後の実測値、配送会社の料金、追加作業等により最終請求額が変動する場合があります。</div><button class="quote-cta" onclick="alert('次の実装で、この見積内容を保持したまま依頼フォームへ遷移します。')">この内容で依頼する</button><button class="btn ghost" style="width:100%;margin-top:8px;color:#d8e2ef;border-color:#40516a;background:transparent" onclick="alert('見積番号 QT-'+new Date().toISOString().slice(2,10).replaceAll('-','')+'-001 として保存する想定です。')">見積結果を保存</button></aside></div></div></section><script src="config.js"></script><script>
+</div><aside class="quote-result"><div class="eyebrow">概算お見積り</div><div class="quote-price" id="qTotal">¥32,800</div><div style="font-size:10px;color:#91a4bd">税込・概算</div><hr><div class="quote-line"><span>課金重量</span><b id="qChargeWeight">10.0 kg</b></div><div class="quote-line"><span>申告価格合計</span><b id="qDeclaredTotal">¥50,000</b></div><div class="quote-line"><span>国際送料</span><b id="qFreight">¥28,000</b></div><div class="quote-line"><span>Allynair手数料</span><b id="qFee">¥4,800</b></div><div class="quote-line"><span>オプション</span><b id="qOption">¥0</b></div><hr><div class="quote-notice">この金額は概算です。倉庫到着後の実測値、配送会社の料金、追加作業等により最終請求額が変動する場合があります。</div><button class="quote-cta" onclick="alert('次の実装で、この見積内容を保持したまま依頼フォームへ遷移します。')">この内容で依頼する</button><button class="btn ghost" style="width:100%;margin-top:8px;color:#d8e2ef;border-color:#40516a;background:transparent" onclick="alert('見積番号 QT-'+new Date().toISOString().slice(2,10).replaceAll('-','')+'-001 として保存する想定です。')">見積結果を保存</button></aside></div></div></section><script src="config.js"></script><script>
 const boxState=[];
 
 function readCurrentBoxState(){
@@ -129,7 +129,8 @@ function readCurrentBoxState(){
       weight:card.querySelector('[data-field="weight"]')?.value ?? '',
       l:card.querySelector('[data-field="l"]')?.value ?? '',
       w:card.querySelector('[data-field="w"]')?.value ?? '',
-      h:card.querySelector('[data-field="h"]')?.value ?? ''
+      h:card.querySelector('[data-field="h"]')?.value ?? '',
+      declared:card.querySelector('[data-field="declared"]')?.value ?? ''
     };
   });
 }
@@ -144,7 +145,7 @@ function renderBoxInputs(){
 
   list.innerHTML='';
   for(let i=0;i<count;i++){
-    const saved=boxState[i] || (i===0?{weight:'10',l:'40',w:'35',h:'30'}:{weight:'',l:'',w:'',h:''});
+    const saved=boxState[i] || (i===0?{weight:'10',l:'40',w:'35',h:'30',declared:'50000'}:{weight:'',l:'',w:'',h:'',declared:''});
     const card=document.createElement('div');
     card.className='box-card';
     card.dataset.boxIndex=i;
@@ -161,6 +162,7 @@ function renderBoxInputs(){
         <div class="field"><label>縦 (cm)</label><input data-field="l" type="number" min="0" step="0.1" value="${saved.l}" placeholder="例：40" oninput="calcQuote()"></div>
         <div class="field"><label>横 (cm)</label><input data-field="w" type="number" min="0" step="0.1" value="${saved.w}" placeholder="例：35" oninput="calcQuote()"></div>
         <div class="field"><label>高さ (cm)</label><input data-field="h" type="number" min="0" step="0.1" value="${saved.h}" placeholder="例：30" oninput="calcQuote()"></div>
+        <div class="field"><label>申告価格 (円)</label><input data-field="declared" type="number" min="0" step="1" value="${saved.declared}" placeholder="例：50000" oninput="calcQuote()"></div>
       </div>`;
     list.appendChild(card);
   }
@@ -170,11 +172,14 @@ function renderBoxInputs(){
 function calcQuote(){
   const cards=[...document.querySelectorAll('.box-card')];
   let totalCharge=0;
+  let totalDeclared=0;
   cards.forEach(card=>{
     const weight=Math.max(0,+card.querySelector('[data-field="weight"]')?.value||0);
     const l=Math.max(0,+card.querySelector('[data-field="l"]')?.value||0);
     const w=Math.max(0,+card.querySelector('[data-field="w"]')?.value||0);
     const h=Math.max(0,+card.querySelector('[data-field="h"]')?.value||0);
+    const declared=Math.max(0,+card.querySelector('[data-field="declared"]')?.value||0);
+    totalDeclared+=declared;
     const volume=l*w*h/5000;
     const charge=Math.max(weight,volume);
     totalCharge+=charge;
@@ -194,6 +199,7 @@ function calcQuote(){
   const total=freight+fee+option, yen=v=>'¥'+Math.round(v).toLocaleString('ja-JP');
   const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v};
   set('qChargeWeight',totalCharge.toFixed(1)+' kg');
+  set('qDeclaredTotal',yen(totalDeclared));
   set('qFreight',yen(freight));
   set('qFee',yen(fee));
   set('qOption',yen(option));
