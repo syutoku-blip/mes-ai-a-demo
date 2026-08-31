@@ -371,7 +371,7 @@
           <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
         </summary>
         <div class="el-side-sub">
-          <a href="groups.html?create=1" class="el-side-cta" data-guest-block>
+          <a href="community-new.html" class="el-side-cta" data-guest-block>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
             新規コミュニティを作成する
           </a>
@@ -436,11 +436,11 @@
         <!-- 以前はここに大きな紺色のバナー（.el-group-hero）でボタンだけを表示していたが、
              見出し文を削除した後は空の帯だけが目立って不要になったため廃止し、
              小さなボタンをこの場所に直接置いていた（サイドメニューの「新規コミュニティを作成する」からも同じ作成画面を開ける）。
-             ページ上部の重複ボタンは不要とのフィードバックにより非表示にした。ただし#createGroupBtn要素自体は
-             下部スクリプトの createBtn 参照（サイドメニューからの ?create=1 自動オープン処理を含む）が
-             this要素の存在チェックに依存しているため、DOMからは削除せず display:none で隠すだけにする。 -->
+             ページ上部の重複ボタンは不要とのフィードバックにより非表示にした。
+             新規コミュニティ作成はモーダルではなく専用ページ（community-new.html）で行うようになったため、
+             このボタンも同ページへの通常リンクにしている（非表示のまま維持）。 -->
         <div style="display:none;">
-          <a href="#" class="el-btn el-btn--mustard" id="createGroupBtn">新しいコミュニティを作る</a>
+          <a href="community-new.html" class="el-btn el-btn--mustard" id="createGroupBtn" data-guest-block>新しいコミュニティを作る</a>
         </div>
 
         <details class="el-pinned-box" style="margin-top:26px;" id="guideBox" open>
@@ -695,6 +695,19 @@
       var hotList = document.getElementById('hotGroupList');
       if (!newList && !hotList) return;
       var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
+      // コミュニティ作成ページ（community-new.html）で追加した設定を、一覧カードの「参加条件」表示に反映する。
+      // 参加者範囲・参加方法は現状カード上のラベル表示のみ（実際の参加制御は別途の会員管理を要するため対象外）。
+      function groupVisibilityLabel(it) {
+        if (it.visibilityScope === 'members') return 'メンバー限定';
+        if (it.participationScope === 'invited') return '指定メンバーのみ参加可';
+        if (it.joinMethod === 'apply') return '誰でも申請可';
+        return '誰でも参加可';
+      }
+      function groupIconInner(it) {
+        return it.iconUrl
+          ? '<img src="' + esc(it.iconUrl) + '" style="width:100%;height:100%;object-fit:cover;">'
+          : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20Z"/></svg>';
+      }
       function renderGroupCard(it) {
         var title = it.title || '';
         GROUP_DETAILS[title] = {
@@ -708,10 +721,10 @@
         var moreLabel = (it.postCount || 0) + '件の投稿';
         return '<div class="el-group-card" data-group="' + esc(it.id || '') + '" data-state="" data-members="0">' +
           '<div class="el-group-top">' +
-          '<div class="el-group-icon" style="background:' + iconColor + ';">' +
-          '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20Z"/></svg>' +
+          '<div class="el-group-icon" style="background:' + iconColor + ';overflow:hidden;">' +
+          groupIconInner(it) +
           '</div>' +
-          '<div><h4>' + esc(title) + '</h4><div class="visibility">誰でも参加可</div></div>' +
+          '<div><h4>' + esc(title) + '</h4><div class="visibility">' + esc(groupVisibilityLabel(it)) + '</div></div>' +
           '</div>' +
           '<p class="desc">' + esc(it.description || '') + '</p>' +
           '<div class="el-group-foot"><div class="el-group-members"><span class="more">' + esc(moreLabel) + '</span></div>' +
@@ -756,7 +769,9 @@
       var visibility = (card.querySelector('.visibility') || {}).textContent || '';
       var memberCount = card.dataset.members || '0';
       var iconColor = (card.querySelector('.el-group-icon') || {}).style.background || 'var(--el-teal)';
-      var iconSvg = (card.querySelector('.el-group-icon svg') || {}).outerHTML || '';
+      // アイコン画像が設定されているコミュニティはimg、未設定はsvgなので、どちらでもそのまま複製する。
+      var iconEl = card.querySelector('.el-group-icon img') || card.querySelector('.el-group-icon svg');
+      var iconHtml = iconEl ? iconEl.outerHTML : '';
       var state = card.dataset.state || '';
       var groupId = card.dataset.group || '';
       var detail = GROUP_DETAILS[title] || { creator: '運営メンバー', category: '未分類', members: [] };
@@ -772,7 +787,8 @@
       }
 
       document.getElementById('gdmIcon').style.background = iconColor;
-      document.getElementById('gdmIcon').innerHTML = iconSvg;
+      document.getElementById('gdmIcon').style.overflow = 'hidden';
+      document.getElementById('gdmIcon').innerHTML = iconHtml;
       document.getElementById('gdmTitle').textContent = title;
       document.getElementById('gdmVisibility').textContent = visibility;
       var gdmDesc = document.getElementById('gdmDesc');
@@ -1022,140 +1038,6 @@
     <div class="el-guide-modal-body" id="guideModalBody"></div>
   </div>
 </div>
-
-<!-- 新規コミュニティ作成モーダル：以前は管理者ページ（admin.html）の「コミュニティ登録」タブでしか
-     登録できなかったが、コミュニティは会員なら誰でも作成できるようにするため、この「新しいコミュニティを
-     作る」ボタンから直接作成できるようにした。フィールド構成はadmin.htmlの登録フォームと同じ。 -->
-<div class="el-community-edit-modal" id="communityCreateModal" aria-hidden="true">
-  <div class="el-community-edit-modal-backdrop" data-community-create-close></div>
-  <div class="el-community-edit-modal-panel" role="dialog" aria-modal="true">
-    <button type="button" class="el-community-edit-modal-close" data-community-create-close aria-label="閉じる">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
-    </button>
-    <h3>新しいコミュニティを作る</h3>
-    <form id="communityCreateForm">
-      <div class="el-community-edit-field">
-        <span>コミュニティ名</span>
-        <input type="text" id="ccTitle" required>
-      </div>
-      <div class="el-community-edit-field">
-        <span>カテゴリ</span>
-        <input type="text" id="ccCategory" placeholder="情報交換・雑談 など">
-      </div>
-      <div class="el-community-edit-field">
-        <span>アイコンの色</span>
-        <select id="ccColor">
-          <option value="var(--el-teal)">ティール</option>
-          <option value="var(--el-sky)">スカイ</option>
-          <option value="var(--el-navy-soft)">ネイビー</option>
-          <option value="var(--el-mustard)">マスタード</option>
-          <option value="var(--el-coral)">コーラル</option>
-          <option value="var(--el-sage)">セージ</option>
-        </select>
-      </div>
-      <div class="el-community-edit-field">
-        <span>紹介文（一覧・見出しに表示されます）</span>
-        <textarea id="ccDescription" rows="3" required></textarea>
-      </div>
-      <div class="el-community-edit-field">
-        <span>詳細説明（任意）</span>
-        <textarea id="ccLongDescription" rows="4"></textarea>
-      </div>
-      <div class="el-community-edit-actions">
-        <button type="submit" class="el-btn el-btn--primary el-btn--sm">作成する</button>
-        <button type="button" class="el-btn el-btn--ghost el-btn--sm" data-community-create-close>キャンセル</button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<script>
-  (function () {
-    var createBtn = document.getElementById('createGroupBtn');
-    var createModal = document.getElementById('communityCreateModal');
-    var createForm = document.getElementById('communityCreateForm');
-    if (!createBtn || !createModal || !createForm) return;
-    var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
-    var myUid = '', myUname = '', myName = '';
-    try {
-      myUid = localStorage.getItem('el-user-id') || '';
-      myUname = localStorage.getItem('el-username') || '';
-      myName = localStorage.getItem('el-user-name') || myUname;
-    } catch (e) {}
-
-    function closeCreateModal() {
-      createModal.classList.remove('is-open');
-      createModal.setAttribute('aria-hidden', 'true');
-    }
-    function openCreateModal(e) {
-      if (e && e.preventDefault) e.preventDefault();
-      // ゲストは会員登録を促す（elRequireAuthはgroups.html内で既に定義済み）。
-      // eがnull（URLパラメータ経由の自動オープン時）でも、elRequireAuth内でe.preventDefault()を
-      // 呼ぼうとして落ちないよう、その場合はundefinedを渡す。
-      if (window.elRequireAuth && !window.elRequireAuth(e || undefined)) return;
-      createForm.reset();
-      document.getElementById('ccColor').value = 'var(--el-teal)';
-      createModal.classList.add('is-open');
-      createModal.setAttribute('aria-hidden', 'false');
-      document.getElementById('ccTitle').focus();
-    }
-    createBtn.addEventListener('click', openCreateModal);
-    createModal.querySelectorAll('[data-community-create-close]').forEach(function (el) {
-      el.addEventListener('click', closeCreateModal);
-    });
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && createModal.classList.contains('is-open')) closeCreateModal();
-    });
-    // サイドメニューの「新規コミュニティを作成する」（groups.html?create=1）から来た場合、
-    // 自動でこのモーダルを開く。以前は単なるgroups.htmlへのリンクで、既にこのページを見ている人が
-    // 押しても何も起きないように見えていたため、作成モーダルを直接開くようにする。
-    // ※ window.elRequireAuthはこのスクリプトより前にあるDOMContentLoadedハンドラ内で定義されるため、
-    // 　このブロック自体がDOMContentLoaded発火前（パース中）に実行されるとelRequireAuthがまだ
-    // 　undefinedのままとなり、ゲストでも認証チェックをすり抜けてモーダルが開いてしまう。
-    // 　DOMContentLoadedの発火後まで実行を遅らせて、必ずelRequireAuthが定義済みの状態で判定する。
-    document.addEventListener('DOMContentLoaded', function () {
-      try {
-        if (new URLSearchParams(window.location.search).get('create') === '1') {
-          openCreateModal(null);
-        }
-      } catch (e) {}
-    });
-
-    createForm.addEventListener('submit', function (e) {
-      e.preventDefault();
-      var title = document.getElementById('ccTitle').value.trim();
-      var description = document.getElementById('ccDescription').value.trim();
-      if (!title || !description) { alert('コミュニティ名と紹介文を入力してください。'); return; }
-      var submitBtn = createForm.querySelector('button[type="submit"]');
-      submitBtn.disabled = true;
-      fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({
-          action: 'createContent', type: 'communityGroup',
-          title: title,
-          category: document.getElementById('ccCategory').value.trim(),
-          color: document.getElementById('ccColor').value,
-          description: description,
-          longDescription: document.getElementById('ccLongDescription').value.trim(),
-          // 作成者は入力式ではなく、ログイン中の自分自身を使う（他人になりすませないように）
-          creator: myName || '会員',
-          creatorUserId: myUid,
-          requesterUserId: myUid, requesterUsername: myUname
-        })
-      }).then(function (res) { return res.json(); }).then(function (data) {
-        submitBtn.disabled = false;
-        if (!data.ok) { alert(data.error || '作成に失敗しました。'); return; }
-        closeCreateModal();
-        if (data.id) window.location.href = 'community-board.html?id=' + encodeURIComponent(data.id);
-        else location.reload();
-      }).catch(function () {
-        submitBtn.disabled = false;
-        alert('通信エラーが発生しました。');
-      });
-    });
-  })();
-</script>
 
 </body>
 </html>

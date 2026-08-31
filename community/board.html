@@ -10,14 +10,19 @@
 <link rel="stylesheet" href="../shared/global-header.css">
 <style>
   /* フォーラム投稿のカテゴリチップ：見た目がハッシュタグに見えてしまう「#」の装飾を外す
-     （style.cssそのものは変更できないため、ここで上書きする）。クリックで絞り込みページへ
-     遷移できるように<a>化するため、下線・カーソルも合わせて調整する。 */
+     （style.cssそのものは変更できないため、ここで上書きする）。 */
   .badge--cat.el-cat-chip::before{
     content:"" !important;
     margin:0 !important;
   }
-  a.badge--cat.el-cat-chip{
-    cursor:pointer;
+  /* カテゴリ／公開・SHiFT限定・メンバー限定／解決・未解決の3種のチップはすべてクリックで
+     絞り込みページへ遷移できる。要素は<a>ではなく<span role="link">なので、以前のa要素向け
+     セレクタでは効いておらず、カーソルが変わらずクリックできることが伝わっていなかった。 */
+  .el-cat-chip, .el-vis-chip, .el-status-chip{
+    cursor:pointer !important;
+  }
+  .el-cat-chip:hover, .el-vis-chip:hover, .el-status-chip:hover{
+    filter:brightness(0.94) !important;
   }
   /* 検索ボックス：input要素の初期スタイル（黒枠など）を消して馴染ませる */
   .el-search input[type="search"]{
@@ -405,7 +410,7 @@
           <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
         </summary>
         <div class="el-side-sub">
-          <a href="groups.html?create=1" class="el-side-cta" data-guest-block>
+          <a href="community-new.html" class="el-side-cta" data-guest-block>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
             新規コミュニティを作成する
           </a>
@@ -717,13 +722,16 @@
       a.dataset.recency = t.recency != null ? t.recency : 0;
       a.dataset.tags = (t.tags || []).join(' ');
 
+      var visFilterValue = t.visibility === 'shift' ? 'shift' : (t.visibility === 'member' ? 'member' : 'general');
       var visBadge = (t.visibility === 'shift')
-        ? '<span class="badge badge--member">SHiFT限定</span>'
+        ? '<span class="badge badge--member el-vis-chip" data-filter="shift" role="link" tabindex="0">SHiFT限定</span>'
         : (t.visibility === 'member')
-          ? '<span class="badge badge--restricted">メンバー限定</span>'
-          : '<span class="badge badge--open">公開</span>';
-      var statusBadge = effectiveSolved ? '<span class="badge badge--solved">解決</span>'
-        : '<span class="badge badge--unsolved">未解決</span>';
+          ? '<span class="badge badge--restricted el-vis-chip" data-filter="member" role="link" tabindex="0">メンバー限定</span>'
+          : '<span class="badge badge--open el-vis-chip" data-filter="general" role="link" tabindex="0">公開</span>';
+      var statusFilterValue = effectiveSolved ? 'solved' : 'unsolved';
+      var statusBadge = effectiveSolved
+        ? '<span class="badge badge--solved el-status-chip" data-status="solved" role="link" tabindex="0">解決</span>'
+        : '<span class="badge badge--unsolved el-status-chip" data-status="unsolved" role="link" tabindex="0">未解決</span>';
       var catLabel = CATEGORY_LABEL[t.category] || t.category;
 
       a.innerHTML =
@@ -737,18 +745,23 @@
           '<div><strong>' + (t.comments ? t.comments.length : 0) + '</strong><span>返信</span></div>' +
         '</div>';
 
-      // カテゴリチップ：クリックでそのカテゴリの絞り込みページへ遷移する（行全体のリンクとは独立させる）
-      var catChip = a.querySelector('.el-cat-chip');
-      if (catChip) {
-        catChip.addEventListener('click', function (e) {
+      // チップ（公開／SHiFT限定／メンバー限定・カテゴリ・解決／未解決）：クリックでそれぞれの
+      // 絞り込みページへ遷移する（行全体のリンク＝トピックを開く、とは独立させる）
+      function wireChip(selector, buildHref) {
+        var el = a.querySelector(selector);
+        if (!el) return;
+        el.addEventListener('click', function (e) {
           e.preventDefault();
           e.stopPropagation();
-          window.location.href = 'board.html?category=' + encodeURIComponent(t.category || '');
+          window.location.href = buildHref();
         });
-        catChip.addEventListener('keydown', function (e) {
-          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); catChip.click(); }
+        el.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); el.click(); }
         });
       }
+      wireChip('.el-cat-chip', function () { return 'board.html?category=' + encodeURIComponent(t.category || ''); });
+      wireChip('.el-vis-chip', function () { return 'board.html?filter=' + encodeURIComponent(visFilterValue) + '&sort=hot'; });
+      wireChip('.el-status-chip', function () { return 'board.html?status=' + encodeURIComponent(statusFilterValue) + '&sort=hot'; });
 
       // ログイン状態に応じた閲覧制御：SHiFT会員限定／メンバー限定の投稿は、
       // 権限のないユーザーがクリックしても中身が見えないよう遷移前に確認する。
@@ -847,6 +860,7 @@
       var visible = rows.filter(function (r) {
         if (filter === 'shift' && r.dataset.visibility !== 'shift') return false;
         if (filter === 'general' && r.dataset.visibility !== 'general') return false;
+        if (filter === 'member' && r.dataset.visibility !== 'member') return false;
         if (status === 'unsolved' && r.dataset.status !== 'unsolved') return false;
         if (status === 'solved' && r.dataset.status !== 'solved') return false;
         if (categories.length && categories.indexOf(r.dataset.category) === -1) return false;

@@ -250,7 +250,7 @@
           <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
         </summary>
         <div class="el-side-sub">
-          <a href="groups.html?create=1" class="el-side-cta" data-guest-block>
+          <a href="community-new.html" class="el-side-cta" data-guest-block>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
             新規コミュニティを作成する
           </a>
@@ -307,9 +307,7 @@
     <main class="el-section" style="padding-top:36px;">
       <div class="wrap" style="max-width:760px;">
 
-        <div style="font-size:13.5px;color:var(--el-ink-faint);margin-bottom:20px;">
-          <a href="mypage.html" style="color:var(--el-ink-faint);">マイページ</a>
-        </div>
+        <nav class="el-breadcrumb el-page-breadcrumb" aria-label="パンくず"><a href="index.html">ホーム</a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg><a href="mypage.html">マイページ</a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg><span id="breadcrumbLast">投稿したトピック</span></nav>
 
         <div class="el-section-head" style="margin-bottom:20px;">
           <div><h1 id="pageTitle" style="font-family:var(--font-display);font-size:22px;margin:0;">投稿したトピック</h1></div>
@@ -566,6 +564,8 @@
     document.title = (VIEW_TITLES[view] || 'マイ活動') + '｜Export Lab';
     var titleEl = document.getElementById('pageTitle');
     if (titleEl) titleEl.textContent = VIEW_TITLES[view] || 'マイ活動';
+    var breadcrumbLastEl = document.getElementById('breadcrumbLast');
+    if (breadcrumbLastEl) breadcrumbLastEl.textContent = VIEW_TITLES[view] || 'マイ活動';
 
     var listEl = document.getElementById('activityList');
     var emptyEl = document.getElementById('activityEmpty');

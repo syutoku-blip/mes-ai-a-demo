@@ -475,7 +475,7 @@
           <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
         </summary>
         <div class="el-side-sub">
-          <a href="groups.html?create=1" class="el-side-cta" data-guest-block>
+          <a href="community-new.html" class="el-side-cta" data-guest-block>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
             新規コミュニティを作成する
           </a>
@@ -973,15 +973,27 @@
       if (breadcrumb) breadcrumb.innerHTML = '<a href="index.html">ホーム</a>' + CHEV + '<a href="groups.html">コミュニティ</a>' + CHEV + '<span>' + esc(community.title) + '</span>';
       if (headerCard) {
         var iconColor = community.color || 'var(--el-teal)';
+        var iconInner = community.iconUrl
+          ? '<img src="' + esc(community.iconUrl) + '" style="width:100%;height:100%;object-fit:cover;">'
+          : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20Z"/></svg>';
         // 作成者本人（管理画面のcreator入力とユーザーマスタが一致している場合はcreatorUserIdが
         // 補完されているのでID優先で判定、無ければユーザーネームで判定）にのみ編集ボタンを出す。
         var isOwner = isMyGroup_(community.creatorUserId, community.creator);
+        // コミュニティ作成ページ（community-new.html）で追加した設定：既定（フォーラムと同じ・誰でも参加）
+        // 以外の値が入っている場合のみ、追加のバッジとして表示する。
+        var conditionBadges = [];
+        if (community.visibilityScope === 'members') conditionBadges.push('コミュニティメンバーのみ閲覧可');
+        if (community.participationScope === 'invited') conditionBadges.push('指定メンバーのみ参加可');
+        if (community.joinMethod === 'apply') conditionBadges.push('参加は申請制');
+        var conditionHtml = conditionBadges.length
+          ? '<div class="visibility" style="margin-top:4px;">' + conditionBadges.map(esc).join('・') + '</div>'
+          : '';
         headerCard.innerHTML =
           '<div class="el-group-top">' +
-          '<div class="el-group-icon" style="background:' + iconColor + ';">' +
-          '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20Z"/></svg>' +
+          '<div class="el-group-icon" style="background:' + iconColor + ';overflow:hidden;">' +
+          iconInner +
           '</div>' +
-          '<div><h4>' + esc(community.title) + '</h4><div class="visibility">' + esc(community.category || '') + '・運営：' + esc(community.creator || '') + '</div></div>' +
+          '<div><h4>' + esc(community.title) + '</h4><div class="visibility">' + esc(community.category || '') + '・運営：' + esc(community.creator || '') + '</div>' + conditionHtml + '</div>' +
           (isOwner ? '<button type="button" class="el-btn el-btn--ghost el-btn--sm el-community-edit-btn" id="communityEditBtn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg> 編集</button>' : '') +
           '</div>' +
           descBlock('概要', community.description || '', 'var(--el-teal)') +

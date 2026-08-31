@@ -309,7 +309,7 @@
           <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
         </summary>
         <div class="el-side-sub">
-          <a href="groups.html?create=1" class="el-side-cta" data-guest-block>
+          <a href="community-new.html" class="el-side-cta" data-guest-block>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
             新規コミュニティを作成する
           </a>
@@ -733,6 +733,13 @@
         .then(function (res) { return res.json(); })
         .then(function (data) {
           var items = (data.ok && data.items) ? data.items : [];
+          // コミュニティ作成ページ（community-new.html）で追加した設定を、一覧カードの「参加条件」表示に反映する。
+          function groupVisibilityLabel(g) {
+            if (g.visibilityScope === 'members') return 'メンバー限定';
+            if (g.participationScope === 'invited') return '指定メンバーのみ参加可';
+            if (g.joinMethod === 'apply') return '誰でも申請可';
+            return '誰でも参加可';
+          }
           var html = items.map(function (it) {
             var title = it.title || '';
             GROUP_DETAILS[title] = {
@@ -742,14 +749,17 @@
               members: []
             };
             var iconColor = it.color || 'var(--el-teal)';
+            var iconInner = it.iconUrl
+              ? '<img src="' + it.iconUrl + '" style="width:100%;height:100%;object-fit:cover;">'
+              : '<svg fill="none" height="18" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="18"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20Z"></path></svg>';
             var recency = Date.parse(it.createdAt || '') || 0;
             var state = isMyGroup_(it.creatorUserId, it.creator) ? 'created' : '';
             return '<div class="el-group-card" data-group="' + (it.id || '') + '" data-state="' + state + '" data-members="0" data-recency="' + recency + '">' +
               '<div class="el-group-top">' +
-              '<div class="el-group-icon" style="background:' + iconColor + ';">' +
-              '<svg fill="none" height="18" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="18"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20Z"></path></svg>' +
+              '<div class="el-group-icon" style="background:' + iconColor + ';overflow:hidden;">' +
+              iconInner +
               '</div>' +
-              '<div><h4>' + title + '</h4><div class="visibility">誰でも参加可</div></div>' +
+              '<div><h4>' + title + '</h4><div class="visibility">' + groupVisibilityLabel(it) + '</div></div>' +
               '</div>' +
               '<p class="desc">' + (it.description || '') + '</p>' +
               '<div class="el-group-foot"><div class="el-group-members"><span class="more">新規</span></div>' +
@@ -777,12 +787,14 @@
       var visibility = (card.querySelector('.visibility') || {}).textContent || '';
       var memberCount = card.dataset.members || '0';
       var iconColor = (card.querySelector('.el-group-icon') || {}).style.background || 'var(--el-teal)';
-      var iconSvg = (card.querySelector('.el-group-icon svg') || {}).outerHTML || '';
+      var iconEl = card.querySelector('.el-group-icon img') || card.querySelector('.el-group-icon svg');
+      var iconHtml = iconEl ? iconEl.outerHTML : '';
       var state = card.dataset.state || '';
       var detail = GROUP_DETAILS[title] || { creator: '運営メンバー', category: '未分類', members: [] };
 
       document.getElementById('gdmIcon').style.background = iconColor;
-      document.getElementById('gdmIcon').innerHTML = iconSvg;
+      document.getElementById('gdmIcon').style.overflow = 'hidden';
+      document.getElementById('gdmIcon').innerHTML = iconHtml;
       document.getElementById('gdmTitle').textContent = title;
       document.getElementById('gdmVisibility').textContent = visibility;
       document.getElementById('gdmDesc').textContent = desc;

@@ -9,15 +9,73 @@
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="../shared/global-header.css">
 <style>
+  /* ユーザー登録・SHiFT会員限定モーダル（authModal / shiftModal）の表示用CSS。
+     このファイルには元々このスタイル定義が存在せず、モーダルのHTMLがそのまま
+     ページ下部にインライン表示されてしまっていたための追加（他ページと同一の内容）。 */
+  .el-auth-modal{
+    display:none !important;
+    position:fixed !important;
+    inset:0 !important;
+    z-index:900 !important;
+    align-items:center !important;
+    justify-content:center !important;
+  }
+  .el-auth-modal.is-open{ display:flex !important; }
+  .el-auth-modal-backdrop{
+    position:absolute !important;
+    inset:0 !important;
+    background:rgba(22,35,63,.45) !important;
+  }
+  .el-auth-modal-panel{
+    position:relative !important;
+    background:#fff !important;
+    border-radius:var(--el-radius-m, 14px) !important;
+    padding:28px 26px !important;
+    max-width:340px !important;
+    width:90% !important;
+    text-align:center !important;
+    box-shadow:0 12px 40px rgba(22,35,63,.25) !important;
+  }
+  .el-auth-modal-panel h3{
+    margin:0 0 10px !important;
+    font-size:17px !important;
+    color:var(--el-navy, #16233F) !important;
+  }
+  .el-auth-modal-panel p{
+    margin:0 0 20px !important;
+    font-size:13px !important;
+    color:var(--el-ink-faint, #8A8478) !important;
+    line-height:1.7 !important;
+  }
+  .el-auth-modal-actions{
+    display:flex !important;
+    gap:8px !important;
+    justify-content:center !important;
+  }
+  .el-auth-modal-close{
+    position:absolute !important;
+    top:10px !important;
+    right:10px !important;
+    border:none !important;
+    background:transparent !important;
+    cursor:pointer !important;
+    color:var(--el-ink-faint, #8A8478) !important;
+    padding:4px !important;
+  }
   /* フォーラム投稿のカテゴリチップ：見た目がハッシュタグに見えてしまう「#」の装飾を外す
-     （style.cssそのものは変更できないため、ここで上書きする）。クリックで絞り込みページへ
-     遷移できるように<a>化するため、下線・カーソルも合わせて調整する。 */
+     （style.cssそのものは変更できないため、ここで上書きする）。 */
   .badge--cat.el-cat-chip::before{
     content:"" !important;
     margin:0 !important;
   }
-  a.badge--cat.el-cat-chip{
-    cursor:pointer;
+  /* カテゴリ／公開・SHiFT限定・メンバー限定／解決・未解決の3種のチップはすべてクリックで
+     絞り込みページへ遷移できる。要素は<a>ではなく<span role="link">なので、以前のa要素向け
+     セレクタでは効いておらず、カーソルが変わらずクリックできることが伝わっていなかった。 */
+  .el-cat-chip, .el-vis-chip, .el-status-chip{
+    cursor:pointer !important;
+  }
+  .el-cat-chip:hover, .el-vis-chip:hover, .el-status-chip:hover{
+    filter:brightness(0.94) !important;
   }
   /* 検索ボックス：input要素の初期スタイル（黒枠など）を消して馴染ませる */
   .el-search input[type="search"]{
@@ -205,7 +263,7 @@
           <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
         </summary>
         <div class="el-side-sub">
-          <a href="groups.html?create=1" class="el-side-cta" data-guest-block>
+          <a href="community-new.html" class="el-side-cta" data-guest-block>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
             新規コミュニティを作成する
           </a>
@@ -1093,6 +1151,18 @@
   function markThreadSolvedUI(solved) {
     var badgesEl = document.querySelector('.el-t-row-badges');
     if (!badgesEl) return;
+    // 解決／未解決チップ（.el-status-chip）はクリックするとboard.htmlの絞り込みページへ
+    // 遷移する要素のため、ここで作り直す（remove→append）とクリックイベントが失われてしまう。
+    // 既存の要素があれば、見た目とdata-status属性だけをその場で更新する。
+    var chip = badgesEl.querySelector('.el-status-chip');
+    if (chip) {
+      chip.classList.toggle('badge--solved', solved);
+      chip.classList.toggle('badge--unsolved', !solved);
+      chip.dataset.status = solved ? 'solved' : 'unsolved';
+      chip.textContent = solved ? '解決' : '未解決';
+      return;
+    }
+    // チップがまだ描画されていない場合のみ、従来通りの単純なバッジを追加する（保険）
     var existing = badgesEl.querySelector('.badge--solved, .badge--unsolved');
     if (existing) existing.remove();
     var span = document.createElement('span');
@@ -1467,26 +1537,35 @@
       var breadcrumbLast = document.getElementById('threadBreadcrumbTitle');
       if (breadcrumbLast) breadcrumbLast.textContent = item.title;
 
+      var visFilterValue = item.visibility === 'shift' ? 'shift' : (item.visibility === 'member' ? 'member' : 'general');
       var visBadge = (item.visibility === 'shift')
-        ? '<span class="badge badge--member">SHiFT限定</span>'
+        ? '<span class="badge badge--member el-vis-chip" data-filter="shift" role="link" tabindex="0">SHiFT限定</span>'
         : (item.visibility === 'member')
-          ? '<span class="badge badge--restricted">メンバー限定</span>'
-          : '<span class="badge badge--open">公開</span>';
+          ? '<span class="badge badge--restricted el-vis-chip" data-filter="member" role="link" tabindex="0">メンバー限定</span>'
+          : '<span class="badge badge--open el-vis-chip" data-filter="general" role="link" tabindex="0">公開</span>';
+      var statusFilterValue = (item.status === 'solved') ? 'solved' : 'unsolved';
       var statusBadge = (item.status === 'solved')
-        ? '<span class="badge badge--solved">解決</span>'
-        : '<span class="badge badge--unsolved">未解決</span>';
+        ? '<span class="badge badge--solved el-status-chip" data-status="solved" role="link" tabindex="0">解決</span>'
+        : '<span class="badge badge--unsolved el-status-chip" data-status="unsolved" role="link" tabindex="0">未解決</span>';
       var badgesEl = document.querySelector('.el-t-row-badges');
       if (badgesEl) {
         badgesEl.innerHTML = visBadge + '<span class="badge badge--cat el-cat-chip" data-category="' + esc(item.category || '') + '" role="link" tabindex="0">' + esc(catLabel) + '</span>' + statusBadge;
-        var catChip = badgesEl.querySelector('.el-cat-chip');
-        if (catChip) {
-          catChip.addEventListener('click', function () {
-            window.location.href = 'board.html?category=' + encodeURIComponent(item.category || '');
-          });
-          catChip.addEventListener('keydown', function (e) {
-            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); catChip.click(); }
+        // チップ（公開／SHiFT限定／メンバー限定・カテゴリ・解決／未解決）：クリックでそれぞれの
+        // 絞り込みページ（board.html）へ遷移する
+        function wireHeaderChip(selector, buildHref) {
+          var el = badgesEl.querySelector(selector);
+          if (!el) return;
+          // buildHrefにはクリック時点の要素自身を渡す。解決／未解決チップはベストアンサーの
+          // 選定に応じて後から見た目（data-status）が更新されるため、遷移先も
+          // クリック時点の最新のdata属性から組み立てる必要がある。
+          el.addEventListener('click', function () { window.location.href = buildHref(el); });
+          el.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); el.click(); }
           });
         }
+        wireHeaderChip('.el-cat-chip', function (el) { return 'board.html?category=' + encodeURIComponent(el.dataset.category || ''); });
+        wireHeaderChip('.el-vis-chip', function (el) { return 'board.html?filter=' + encodeURIComponent(el.dataset.filter || 'general') + '&sort=hot'; });
+        wireHeaderChip('.el-status-chip', function (el) { return 'board.html?status=' + encodeURIComponent(el.dataset.status || 'unsolved') + '&sort=hot'; });
       }
 
       var h1 = document.getElementById('threadTitleH1');
