@@ -170,6 +170,42 @@
     padding:2px 9px !important;
     border-radius:999px !important;
   }
+  /* 投稿の添付ファイル表示（このファイルには元々スタイル定義が無かったための追加）。 */
+  .el-post-attachments{
+    margin:14px 0 !important;
+    display:flex !important;
+    flex-wrap:wrap !important;
+    gap:10px !important;
+  }
+  .el-post-attachments-label{
+    width:100% !important;
+    font-size:12.5px !important;
+    color:var(--el-ink-faint) !important;
+    margin-bottom:2px !important;
+  }
+  .el-post-attachment-img{
+    width:150px !important;
+    height:150px !important;
+    object-fit:cover !important;
+    border-radius:10px !important;
+    border:1px solid var(--el-line, #e4e0d8) !important;
+    display:block !important;
+  }
+  .el-post-attachment-file{
+    display:flex !important;
+    align-items:center !important;
+    gap:6px !important;
+    padding:8px 12px !important;
+    border:1px solid var(--el-line, #e4e0d8) !important;
+    border-radius:10px !important;
+    font-size:12.5px !important;
+    color:var(--el-ink, #2b2b2b) !important;
+    text-decoration:none !important;
+    background:#fff !important;
+  }
+  .el-post-attachment-file:hover{
+    border-color:var(--el-teal, #2F8F82) !important;
+  }
 </style>
 </head>
 <body data-site="community" data-root="..">
@@ -350,6 +386,7 @@
             </div>
             <div class="el-post-dates"></div>
             <div class="el-post-body"></div>
+            <div class="el-post-attachments" id="opAttachments" style="display:none;"></div>
             <div id="opLockedNotice" class="el-hub-note" style="display:none;">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
               <span id="opLockedNoticeText"></span>
@@ -1609,12 +1646,14 @@
         var opBody = op.querySelector('.el-post-body');
         var opTags = op.querySelector('.el-post-tags');
         var opActions = op.querySelector('.el-post-actions');
+        var opAttachments = document.getElementById('opAttachments');
 
         if (!authorized) {
           // 権限が無いユーザーには本文・タグ・操作ボタン・コメント欄・返信フォームを見せない
           if (opBody) opBody.style.display = 'none';
           if (opTags) opTags.style.display = 'none';
           if (opActions) opActions.style.display = 'none';
+          if (opAttachments) opAttachments.style.display = 'none';
           var opLockedNotice = document.getElementById('opLockedNotice');
           var opLockedNoticeText = document.getElementById('opLockedNoticeText');
           var opLockedUnlockBtn = document.getElementById('opLockedUnlockBtn');
@@ -1638,6 +1677,24 @@
           opTags.innerHTML = (item.tags || []).map(function (t) {
             return '<a href="board.html?tag=' + encodeURIComponent(t) + '">' + esc(tagLabelFn(t)) + '</a>';
           }).join('');
+        }
+        if (opAttachments) {
+          var attachmentList = Array.isArray(item.attachments) ? item.attachments : [];
+          if (attachmentList.length) {
+            opAttachments.innerHTML = '<div class="el-post-attachments-label">添付ファイル（' + attachmentList.length + '件）</div>' +
+              attachmentList.map(function (a) {
+                var isImg = (a.type || '').indexOf('image/') === 0;
+                if (isImg) {
+                  return '<a href="' + a.dataUrl + '" target="_blank" rel="noopener"><img class="el-post-attachment-img" src="' + a.dataUrl + '" alt="' + esc(a.name || '添付画像') + '"></a>';
+                }
+                return '<a class="el-post-attachment-file" href="' + a.dataUrl + '" download="' + esc(a.name || 'file') + '">' +
+                  '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/></svg>' +
+                  esc(a.name || 'ファイル') + '</a>';
+              }).join('');
+            opAttachments.style.display = '';
+          } else {
+            opAttachments.style.display = 'none';
+          }
         }
 
         wireLikeButton(document.getElementById('opLikeBtn'), 'topic', item.id, !!item.likedByMe, item.likeCount || 0);

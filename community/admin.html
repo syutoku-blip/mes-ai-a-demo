@@ -540,7 +540,28 @@
             <div style="display:flex;gap:12px;flex-wrap:wrap;">
               <label style="flex:1;min-width:200px;">
                 <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">カテゴリ</span>
-                <input type="text" name="category" placeholder="情報交換・雑談 など" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
+                <select name="category" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
+                  <option value="">未選択</option>
+                  <option value="amazon-ops">Amazon販売・運用</option>
+                  <option value="fba-inventory">FBA・在庫管理</option>
+                  <option value="amazon-account">Amazon規制・アカウント</option>
+                  <option value="amazon-sourcing">Amazon仕入れ・商品選定</option>
+                  <option value="fba-logistics">FBA物流</option>
+                  <option value="intl-logistics">国際物流・通関</option>
+                  <option value="ior">IOR・輸入者</option>
+                  <option value="overseas-warehouse">海外倉庫・3PL</option>
+                  <option value="fda-food">FDA・食品規制</option>
+                  <option value="fsvp">FSVP</option>
+                  <option value="food-label">食品ラベル・表示</option>
+                  <option value="fda-inspection">FDA査察・違反対応</option>
+                  <option value="food-safety">食品安全・製造管理</option>
+                  <option value="mocra">MoCRA・化粧品規制</option>
+                  <option value="overseas-ec">海外EC・自社EC</option>
+                  <option value="overseas-wholesale">海外卸・BtoB</option>
+                  <option value="overseas-sales">海外営業・販路開拓</option>
+                  <option value="biz-consulting">経営・事業相談</option>
+                  <option value="chat">情報交換・雑談</option>
+                </select>
               </label>
               <label style="flex:1;min-width:200px;">
                 <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">運営者</span>
@@ -829,6 +850,7 @@
 </div>
 
 <script src="../shared/global-header.js" defer></script>
+<script src="data.js"></script>
 <script>
   (function () {
     var appShell = document.getElementById('appShell');
@@ -2226,7 +2248,7 @@
       if (!data.ok) return;
       renderSimpleList('communityAdminList', data.items, function (it) {
         return '<div style="padding:14px 16px;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);">' +
-          '<span class="badge badge--cat">' + (it.category || '未分類') + '</span> <strong>' + it.title + '</strong>' +
+          '<span class="badge badge--cat">' + (it.category ? (window.EL_getCategoryLabel ? window.EL_getCategoryLabel(it.category) : it.category) : '未分類') + '</span> <strong>' + it.title + '</strong>' +
           '<div style="font-size:12.5px;color:var(--el-ink-faint);margin-top:4px;">運営：' + (it.creator || '運営メンバー') + '・' + new Date(it.createdAt).toLocaleString('ja-JP') + '</div>' +
           '<div style="font-size:13px;color:var(--el-navy);margin-top:6px;">' + (it.description || '') + '</div></div>';
       }, 'communityGroup', loadCommunities, loadCommunityIntoForm);

@@ -378,7 +378,28 @@
               <div class="el-form-label-row">
                 <label for="ccCategory">カテゴリ <span class="optional">任意</span></label>
               </div>
-              <input id="ccCategory" name="category" class="el-form-input" maxlength="40" placeholder="情報交換・雑談 など">
+              <select id="ccCategory" name="category" class="el-form-select">
+                <option value="">未選択</option>
+                <option value="amazon-ops">Amazon販売・運用</option>
+                <option value="fba-inventory">FBA・在庫管理</option>
+                <option value="amazon-account">Amazon規制・アカウント</option>
+                <option value="amazon-sourcing">Amazon仕入れ・商品選定</option>
+                <option value="fba-logistics">FBA物流</option>
+                <option value="intl-logistics">国際物流・通関</option>
+                <option value="ior">IOR・輸入者</option>
+                <option value="overseas-warehouse">海外倉庫・3PL</option>
+                <option value="fda-food">FDA・食品規制</option>
+                <option value="fsvp">FSVP</option>
+                <option value="food-label">食品ラベル・表示</option>
+                <option value="fda-inspection">FDA査察・違反対応</option>
+                <option value="food-safety">食品安全・製造管理</option>
+                <option value="mocra">MoCRA・化粧品規制</option>
+                <option value="overseas-ec">海外EC・自社EC</option>
+                <option value="overseas-wholesale">海外卸・BtoB</option>
+                <option value="overseas-sales">海外営業・販路開拓</option>
+                <option value="biz-consulting">経営・事業相談</option>
+                <option value="chat">情報交換・雑談</option>
+              </select>
             </div>
 
             <div class="el-form-block">
@@ -400,16 +421,24 @@
                 <label>コミュニティの公開範囲 <span class="required">必須</span></label>
                 <span class="el-form-hint">誰がこのコミュニティを見られるか</span>
               </div>
-              <div class="el-visibility-options el-cn-2col">
+              <!-- フォーラムの新規投稿ページと全く同じ3つの公開範囲（公開／メンバー限定／SHiFT限定）を
+                   そのまま流用する（以前の「フォーラムと同じ／コミュニティメンバーのみ」という
+                   抽象的な2択ではなく、実際の選択肢そのものを反映する）。 -->
+              <div class="el-visibility-options">
                 <label class="el-visibility-option">
-                  <input type="radio" name="visibilityScope" value="same" checked>
+                  <input type="radio" name="visibilityScope" value="general" checked>
                   <span class="radio-ui"></span>
-                  <span><strong>フォーラムと同じ</strong><small>これまで通り、誰でも見ることができます</small></span>
+                  <span><strong>公開</strong><small>誰でも見ることができます</small></span>
                 </label>
                 <label class="el-visibility-option">
-                  <input type="radio" name="visibilityScope" value="members">
+                  <input type="radio" name="visibilityScope" value="member">
                   <span class="radio-ui"></span>
-                  <span><strong>コミュニティメンバーのみ</strong><small>このコミュニティに参加している人だけが見られます</small></span>
+                  <span><strong>メンバー限定</strong><small>Export Labにユーザー登録している人のみ見られます</small></span>
+                </label>
+                <label class="el-visibility-option">
+                  <input type="radio" name="visibilityScope" value="shift">
+                  <span class="radio-ui"></span>
+                  <span><strong>SHiFT member only</strong><small>SHiFT会員だけが見られます</small></span>
                 </label>
               </div>
             </div>
@@ -475,7 +504,7 @@
               </ul>
             </div>
 
-            <a href="#" class="el-compose-display-ad" id="composeDisplayAd" aria-label="FDA Compliance Partner">
+            <a href="#" class="el-compose-display-ad" id="composeDisplayAd" aria-label="広告">
               <span class="el-display-ad-label">AD</span>
               <div class="el-display-ad-art" id="composeDisplayAdArt" aria-hidden="true">
                 <svg viewBox="0 0 220 150" role="img">
@@ -503,17 +532,6 @@
         </form>
       </div>
     </main>
-    <section class="el-section" style="padding-top:0;padding-bottom:24px;">
-      <div class="wrap">
-
-        <a class="el-ad-banner-v2" id="adBanner" href="#" target="_blank" rel="noopener noreferrer" style="margin-top:32px;">
-          <span class="el-ad-tag-v2">AD</span>
-          <div class="el-ad-image-v2" id="adImageV2"></div>
-          <span class="el-ad-sponsor-v2" id="adSponsorV2"></span>
-        </a>
-
-      </div>
-    </section>
     <footer class="el-footer">
       <div class="wrap">
         <div class="el-footer-grid">
@@ -830,7 +848,7 @@
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify({ action: 'getAllMembers' })
       }).then(function (res) { return res.json(); }).then(function (data) {
-        allMembers = (data.ok && data.items) ? data.items : [];
+        allMembers = (data.ok && data.members) ? data.members : [];
         renderMemberResults();
       }).catch(function () {
         memberResults.innerHTML = '<div class="el-cn-member-empty">メンバー一覧の取得に失敗しました。</div>';
@@ -924,7 +942,7 @@
           iconUrl: iconUrl,
           description: description,
           longDescription: document.getElementById('ccLongDescription').value.trim(),
-          visibilityScope: (form.querySelector('input[name="visibilityScope"]:checked') || {}).value || 'same',
+          visibilityScope: (form.querySelector('input[name="visibilityScope"]:checked') || {}).value || 'general',
           participationScope: participationScope,
           joinMethod: (form.querySelector('input[name="joinMethod"]:checked') || {}).value || 'anyone',
           invitedMembers: participationScope === 'invited' ? JSON.stringify(selectedMembers) : '',
@@ -946,9 +964,13 @@
   })();
 
   // サイドバーのスクエア広告：管理者ページで登録された「スクエア」タイプの広告があれば差し替える
-  // （スクエア広告はフォーラムの新規投稿ページとこのページ（コミュニティの新規作成）にのみ表示する方針）
+  // （スクエア広告はフォーラムの新規投稿ページとこのページ（コミュニティの新規作成）にのみ表示する方針）。
+  // このページは右側にスクエア広告を表示する専用ページのため、下部の横長バナーは置かない
+  // （重複表示を避けるため）。広告が1件も登録されていない場合は、架空のダミー広告を表示したままにせず、
+  // 枠ごと非表示にする。
   (function () {
     var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
+    var widget = document.getElementById('composeDisplayAd');
     fetch(API_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -957,53 +979,16 @@
       .then(function (res) { return res.json(); })
       .then(function (data) {
         var ads = ((data.ok && data.items) ? data.items : []).filter(function (a) { return a.adType === 'square'; });
-        if (!ads.length) return;
+        if (!ads.length) { if (widget) widget.style.display = 'none'; return; }
         var ad = ads[Math.floor(Math.random() * ads.length)];
         var art = document.getElementById('composeDisplayAdArt');
         if (ad.imageUrl) art.innerHTML = '<img src="' + ad.imageUrl + '" style="width:100%;height:100%;object-fit:cover;">';
+        if (widget) widget.setAttribute('aria-label', ad.serviceName || '広告');
         document.getElementById('composeDisplayAdSmall').textContent = 'スポンサー：' + (ad.serviceName || '');
         document.getElementById('composeDisplayAdCta').textContent = ad.ctaText || '詳しく見る';
         if (ad.ctaUrl) document.getElementById('composeDisplayAd').href = ad.ctaUrl;
       })
-      .catch(function () {});
-  })();
-  (function () {
-    var el = document.getElementById('adBanner');
-    if (!el) return;
-    el.addEventListener('click', function (e) { if (!el.dataset.ctaUrl) e.preventDefault(); });
-    var imageEl = document.getElementById('adImageV2');
-    var sponsorEl = document.getElementById('adSponsorV2');
-
-    var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
-    fetch(API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({ action: 'listContent', type: 'ad' })
-    })
-      .then(function (res) { return res.json(); })
-      .then(function (data) {
-        // このバナーは「基本は横長」の広告枠のため、スクエア広告はここでは選ばない
-        var ads = ((data.ok && data.items) ? data.items : []).filter(function (a) { return a.adType !== 'square'; });
-        if (!ads.length) {
-          el.style.display = 'none';
-          return;
-        }
-        var ad = ads[Math.floor(Math.random() * ads.length)];
-        if (ad.imageUrl) {
-          imageEl.style.backgroundImage = 'url(' + ad.imageUrl + ')';
-        } else {
-          imageEl.style.backgroundImage = 'none';
-          imageEl.style.background = 'var(--el-teal)';
-        }
-        if (ad.ctaUrl) {
-          el.href = ad.ctaUrl;
-          el.target = '_blank';
-          el.rel = 'noopener noreferrer';
-          el.dataset.ctaUrl = ad.ctaUrl;
-        }
-        sponsorEl.textContent = 'スポンサー：' + (ad.serviceName || '');
-      })
-      .catch(function () { el.style.display = 'none'; });
+      .catch(function () { if (widget) widget.style.display = 'none'; });
   })();
 </script>
 

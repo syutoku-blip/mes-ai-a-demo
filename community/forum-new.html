@@ -477,6 +477,7 @@
                 <span><strong>ファイルを選択</strong> またはドラッグ＆ドロップ</span>
               </label>
               <div id="fileNames" class="el-file-names"></div>
+              <div id="attachmentStatus" class="el-file-names"></div>
             </div>
           </section>
 
@@ -491,7 +492,7 @@
               </ul>
             </div>
 
-            <a href="#" class="el-compose-display-ad" id="composeDisplayAd" aria-label="FDA Compliance Partner">
+            <a href="#" class="el-compose-display-ad" id="composeDisplayAd" aria-label="広告">
               <span class="el-display-ad-label">AD</span>
               <div class="el-display-ad-art" id="composeDisplayAdArt" aria-hidden="true">
                 <svg viewBox="0 0 220 150" role="img">
@@ -534,17 +535,6 @@
         </div>
       </dialog>
     </main>
-    <section class="el-section" style="padding-top:0;padding-bottom:24px;">
-      <div class="wrap">
-
-        <a class="el-ad-banner-v2" id="adBanner" href="#" target="_blank" rel="noopener noreferrer" style="margin-top:32px;">
-          <span class="el-ad-tag-v2">AD</span>
-          <div class="el-ad-image-v2" id="adImageV2"></div>
-          <span class="el-ad-sponsor-v2" id="adSponsorV2"></span>
-        </a>
-
-      </div>
-    </section>
 <footer class="el-footer">
       <div class="wrap">
         <div class="el-footer-grid">
@@ -1217,9 +1207,109 @@
 
     renderRecommendedTags();
 
+    // --- 添付ファイル：選択した画像・PDFをdata URLとして保持し、投稿時にトピックへ一緒に送信する ---
+    // （以前はファイル名を表示するだけで、実際には投稿データに一切含まれておらず、投稿後どこにも
+    // 表示されない不具合があった。スプレッドシートのセルに直接保存する方式のため、admin.htmlの
+    // 画像アップロードと同じ考え方で、1セルに収まるサイズまで圧縮・制限して保存する。）
+    var ATTACHMENT_SHEET_CELL_LIMIT = 45000; // 全添付ファイル合計でこの文字数に収める
+    var ATTACHMENT_PER_FILE_LIMIT = 15000; // 1ファイルあたりの目安上限（PDFなど圧縮できないファイル用）
+    var attachmentWebpCache = null;
+    function attachmentCanvasSupportsWebp() {
+      if (attachmentWebpCache !== null) return attachmentWebpCache;
+      try {
+        var c = document.createElement('canvas');
+        c.width = c.height = 1;
+        attachmentWebpCache = c.toDataURL('image/webp').indexOf('image/webp') === 5;
+      } catch (e) { attachmentWebpCache = false; }
+      return attachmentWebpCache;
+    }
+    function compressAttachmentImage(file, maxSize) {
+      var target = maxSize || 900;
+      var format = attachmentCanvasSupportsWebp() ? 'image/webp' : 'image/jpeg';
+      return new Promise(function (resolve, reject) {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          var img = new Image();
+          img.onload = function () {
+            function render(size, quality, fmt) {
+              var scale = Math.min(1, size / Math.max(img.width, img.height));
+              var canvas = document.createElement('canvas');
+              canvas.width = Math.max(1, Math.round(img.width * scale));
+              canvas.height = Math.max(1, Math.round(img.height * scale));
+              canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+              return canvas.toDataURL(fmt, quality);
+            }
+            var sizeSteps = [];
+            [1, 0.85, 0.7, 0.55, 0.4, 0.3, 0.22].forEach(function (ratio) {
+              var s = Math.max(200, Math.round(target * ratio));
+              if (sizeSteps.indexOf(s) === -1) sizeSteps.push(s);
+            });
+            var qualitySteps = [0.9, 0.8, 0.7, 0.6, 0.5];
+            var attempts = [];
+            sizeSteps.forEach(function (s) { qualitySteps.forEach(function (q) { attempts.push([s, q]); }); });
+            var result = '';
+            for (var i = 0; i < attempts.length; i++) {
+              result = render(attempts[i][0], attempts[i][1], format);
+              if (result.length <= ATTACHMENT_PER_FILE_LIMIT) break;
+            }
+            if (result.length > ATTACHMENT_PER_FILE_LIMIT && format !== 'image/jpeg') {
+              for (var j = 0; j < attempts.length; j++) {
+                result = render(attempts[j][0], attempts[j][1], 'image/jpeg');
+                if (result.length <= ATTACHMENT_PER_FILE_LIMIT) break;
+              }
+            }
+            resolve(result);
+          };
+          img.onerror = reject;
+          img.src = e.target.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+    function readFileAsDataUrl(file) {
+      return new Promise(function (resolve, reject) {
+        var reader = new FileReader();
+        reader.onload = function (e) { resolve(e.target.result); };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+    var pendingAttachments = [];
+    var attachmentsReadyPromise = Promise.resolve();
+    var MAX_ATTACHMENTS = 5;
     document.getElementById('topicAttachment').addEventListener('change', function () {
-      var names = Array.prototype.map.call(this.files, function (f) { return f.name; });
+      var files = Array.prototype.slice.call(this.files || []);
+      var names = files.map(function (f) { return f.name; });
       document.getElementById('fileNames').textContent = names.join(' / ');
+      var statusEl = document.getElementById('attachmentStatus');
+      pendingAttachments = [];
+      var skipped = [];
+      var overCount = files.length > MAX_ATTACHMENTS ? files.slice(MAX_ATTACHMENTS) : [];
+      if (overCount.length) { files = files.slice(0, MAX_ATTACHMENTS); overCount.forEach(function (f) { skipped.push(f.name + '（一度に添付できるのは' + MAX_ATTACHMENTS + '件までです）'); }); }
+      if (statusEl) statusEl.textContent = files.length ? '添付ファイルを処理中…' : '';
+      attachmentsReadyPromise = files.reduce(function (chain, file) {
+        return chain.then(function () {
+          var isImage = file.type.indexOf('image/') === 0;
+          var task = isImage ? compressAttachmentImage(file, 900) : readFileAsDataUrl(file);
+          return task.then(function (dataUrl) {
+            if (!isImage && dataUrl.length > ATTACHMENT_PER_FILE_LIMIT) {
+              skipped.push(file.name + '（ファイルサイズが大きすぎます）');
+              return;
+            }
+            var used = pendingAttachments.reduce(function (sum, a) { return sum + a.dataUrl.length; }, 0);
+            if (used + dataUrl.length > ATTACHMENT_SHEET_CELL_LIMIT) {
+              skipped.push(file.name + '（添付ファイルの合計サイズの上限を超えました）');
+              return;
+            }
+            pendingAttachments.push({ name: file.name, type: file.type || '', dataUrl: dataUrl });
+          }).catch(function () { skipped.push(file.name + '（読み込みに失敗しました）'); });
+        });
+      }, Promise.resolve()).then(function () {
+        if (statusEl) {
+          statusEl.textContent = skipped.length ? '一部のファイルを添付できませんでした：' + skipped.join('、') : (pendingAttachments.length ? pendingAttachments.length + '件のファイルを添付します。' : '');
+        }
+      });
     });
 
     function syncBody() {
@@ -1287,6 +1377,8 @@
       var visibility = (form.querySelector('[name="visibility"]:checked') || {}).value || 'general';
 
       var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
+      // 添付ファイルの圧縮・読み込み（非同期）が完了してから投稿する
+      attachmentsReadyPromise.then(function () {
       fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -1299,7 +1391,8 @@
           authorUsername: authorUsername,
           authorName: authorName,
           authorUserId: authorUserId,
-          visibility: visibility
+          visibility: visibility,
+          attachments: pendingAttachments
         })
       })
         .then(function (res) { return res.json(); })
@@ -1316,6 +1409,7 @@
           if (submitBtn) { submitBtn.disabled = false; }
           alert('投稿に失敗しました。通信環境をご確認の上、再度お試しください。');
         });
+      });
     });
 
 
@@ -1540,9 +1634,13 @@
     }
   });
 
-  // サイドバーのスクエア広告：管理者ページで登録された「スクエア」タイプの広告があれば差し替える
+  // サイドバーのスクエア広告：管理者ページで登録された「スクエア」タイプの広告があれば差し替える。
+  // このページ（フォーラム新規投稿）は右側にスクエア広告を表示する専用ページのため、下部の横長バナーは
+  // 置かない（重複表示を避けるため）。広告が1件も登録されていない場合は、架空のダミー広告
+  // （デフォルトのイラスト・「WorldShift」の文字）を表示したままにせず、枠ごと非表示にする。
   (function () {
     var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
+    var widget = document.getElementById('composeDisplayAd');
     fetch(API_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -1551,58 +1649,16 @@
       .then(function (res) { return res.json(); })
       .then(function (data) {
         var ads = ((data.ok && data.items) ? data.items : []).filter(function (a) { return a.adType === 'square'; });
-        if (!ads.length) return;
+        if (!ads.length) { if (widget) widget.style.display = 'none'; return; }
         var ad = ads[Math.floor(Math.random() * ads.length)];
         var art = document.getElementById('composeDisplayAdArt');
         if (ad.imageUrl) art.innerHTML = '<img src="' + ad.imageUrl + '" style="width:100%;height:100%;object-fit:cover;">';
+        if (widget) widget.setAttribute('aria-label', ad.serviceName || '広告');
         document.getElementById('composeDisplayAdSmall').textContent = 'スポンサー：' + (ad.serviceName || '');
         document.getElementById('composeDisplayAdCta').textContent = ad.ctaText || '詳しく見る';
         if (ad.ctaUrl) document.getElementById('composeDisplayAd').href = ad.ctaUrl;
       })
-      .catch(function () {});
-  })();
-  (function () {
-    var el = document.getElementById('adBanner');
-    if (!el) return;
-    // 実際のリンク先(ctaUrl)が設定されるまでは、バナー全体クリックで# に飛ばないようにする
-    el.addEventListener('click', function (e) { if (!el.dataset.ctaUrl) e.preventDefault(); });
-    var imageEl = document.getElementById('adImageV2');
-    var sponsorEl = document.getElementById('adSponsorV2');
-
-    var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
-    fetch(API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({ action: 'listContent', type: 'ad' })
-    })
-      .then(function (res) { return res.json(); })
-      .then(function (data) {
-        // このバナーは「基本は横長」の広告枠のため、スクエア広告はここでは選ばない
-        // （スクエア広告はフォーラムの新規投稿ページ／コミュニティの新規作成ページの
-        // 専用サイドバー枠にのみ表示する方針のため）。
-        var ads = ((data.ok && data.items) ? data.items : []).filter(function (a) { return a.adType !== 'square'; });
-        if (!ads.length) {
-          // 広告が1件も登録されていない場合は、架空のダミー広告を表示するのではなく、
-          // バナー自体を表示しない（デモ/モックデータを残さない方針のため）
-          el.style.display = 'none';
-          return;
-        }
-        var ad = ads[Math.floor(Math.random() * ads.length)];
-        if (ad.imageUrl) {
-          imageEl.style.backgroundImage = 'url(' + ad.imageUrl + ')';
-        } else {
-          imageEl.style.backgroundImage = 'none';
-          imageEl.style.background = 'var(--el-teal)';
-        }
-        if (ad.ctaUrl) {
-          el.href = ad.ctaUrl;
-          el.target = '_blank';
-          el.rel = 'noopener noreferrer';
-          el.dataset.ctaUrl = ad.ctaUrl;
-        }
-        sponsorEl.textContent = 'スポンサー：' + (ad.serviceName || '');
-      })
-      .catch(function () { el.style.display = 'none'; });
+      .catch(function () { if (widget) widget.style.display = 'none'; });
   })();
 </script>
 <div class="el-auth-modal" id="authModal" aria-hidden="true">

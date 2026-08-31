@@ -568,7 +568,8 @@
     }
 
     function groupVisibilityLabel(g) {
-      if (g.visibilityScope === 'members') return 'メンバー限定';
+      if (g.visibilityScope === 'shift') return 'SHiFT会員限定';
+            if (g.visibilityScope === 'member' || g.visibilityScope === 'members') return 'メンバー限定';
       if (g.participationScope === 'invited') return '指定メンバーのみ参加可';
       if (g.joinMethod === 'apply') return '誰でも申請可';
       return '誰でも参加可';

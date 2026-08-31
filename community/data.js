@@ -2,6 +2,13 @@
 // このファイルを書き換えるだけで、会員一覧・フォーラムの初期投稿を管理できます。
 window.EL_CATEGORY_LABEL = {"amazon-ops": "Amazon販売・運用", "fba-inventory": "FBA・在庫管理", "amazon-account": "Amazon規制・アカウント", "amazon-sourcing": "Amazon仕入れ・商品選定", "fba-logistics": "FBA物流", "intl-logistics": "国際物流・通関", "ior": "IOR・輸入者", "overseas-warehouse": "海外倉庫・3PL", "fda-food": "FDA・食品規制", "fsvp": "FSVP", "food-label": "食品ラベル・表示", "fda-inspection": "FDA査察・違反対応", "food-safety": "食品安全・製造管理", "mocra": "MoCRA・化粧品規制", "overseas-ec": "海外EC・自社EC", "overseas-wholesale": "海外卸・BtoB", "overseas-sales": "海外営業・販路開拓", "biz-consulting": "経営・事業相談", "chat": "情報交換・雑談"};
 
+// カテゴリのキー→表示ラベル変換（未登録のキー・自由入力の旧データはそのままの文字列を返す＝後方互換）。
+// フォーラム・コミュニティで共通のカテゴリ一覧として使う。
+window.EL_getCategoryLabel = function (key) {
+  if (!key) return '';
+  return window.EL_CATEGORY_LABEL[key] || key;
+};
+
 window.EL_ACCOUNTS = [];
 
 // スプレッドシート連携：フォーラムの投稿データはすべて「フォーラム投稿」シートが唯一のソースです

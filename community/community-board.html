@@ -639,7 +639,28 @@
       </div>
       <div class="el-community-edit-field">
         <span>カテゴリ</span>
-        <input type="text" id="ceCategory" placeholder="情報交換・雑談 など">
+        <select id="ceCategory">
+          <option value="">未選択</option>
+          <option value="amazon-ops">Amazon販売・運用</option>
+          <option value="fba-inventory">FBA・在庫管理</option>
+          <option value="amazon-account">Amazon規制・アカウント</option>
+          <option value="amazon-sourcing">Amazon仕入れ・商品選定</option>
+          <option value="fba-logistics">FBA物流</option>
+          <option value="intl-logistics">国際物流・通関</option>
+          <option value="ior">IOR・輸入者</option>
+          <option value="overseas-warehouse">海外倉庫・3PL</option>
+          <option value="fda-food">FDA・食品規制</option>
+          <option value="fsvp">FSVP</option>
+          <option value="food-label">食品ラベル・表示</option>
+          <option value="fda-inspection">FDA査察・違反対応</option>
+          <option value="food-safety">食品安全・製造管理</option>
+          <option value="mocra">MoCRA・化粧品規制</option>
+          <option value="overseas-ec">海外EC・自社EC</option>
+          <option value="overseas-wholesale">海外卸・BtoB</option>
+          <option value="overseas-sales">海外営業・販路開拓</option>
+          <option value="biz-consulting">経営・事業相談</option>
+          <option value="chat">情報交換・雑談</option>
+        </select>
       </div>
       <div class="el-community-edit-field">
         <span>アイコンの色</span>
@@ -669,6 +690,7 @@
 </div>
 
 <script src="../shared/global-header.js" defer></script>
+<script src="data.js"></script>
 <script>
   (function () {
     var appShell = document.getElementById('appShell');
@@ -984,7 +1006,8 @@
         // コミュニティ作成ページ（community-new.html）で追加した設定：既定（フォーラムと同じ・誰でも参加）
         // 以外の値が入っている場合のみ、追加のバッジとして表示する。
         var conditionBadges = [];
-        if (community.visibilityScope === 'members') conditionBadges.push('コミュニティメンバーのみ閲覧可');
+        if (community.visibilityScope === 'shift') conditionBadges.push('SHiFT会員限定');
+        else if (community.visibilityScope === 'member' || community.visibilityScope === 'members') conditionBadges.push('メンバー限定');
         if (community.participationScope === 'invited') conditionBadges.push('指定メンバーのみ参加可');
         if (community.joinMethod === 'apply') conditionBadges.push('参加は申請制');
         var conditionHtml = conditionBadges.length
@@ -995,7 +1018,7 @@
           '<div class="el-group-icon" style="background:' + iconColor + ';overflow:hidden;">' +
           iconInner +
           '</div>' +
-          '<div><h4>' + esc(community.title) + '</h4><div class="visibility">' + esc(community.category || '') + '・運営：' + esc(community.creator || '') + '</div>' + conditionHtml + '</div>' +
+          '<div><h4>' + esc(community.title) + '</h4><div class="visibility">' + esc((window.EL_getCategoryLabel ? window.EL_getCategoryLabel(community.category) : community.category) || '') + '・運営：' + esc(community.creator || '') + '</div>' + conditionHtml + '</div>' +
           (isOwner ? '<button type="button" class="el-btn el-btn--ghost el-btn--sm el-community-edit-btn" id="communityEditBtn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg> 編集</button>' : '') +
           '</div>' +
           descBlock('概要', community.description || '', 'var(--el-teal)') +

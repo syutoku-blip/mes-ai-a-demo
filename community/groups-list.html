@@ -384,6 +384,31 @@
               <label><input type="checkbox" name="groupSortOpt" value="new"> 新しい順</label>
             </div>
           </details>
+          <details class="el-filter-menu" id="groupCategoryMenu">
+            <summary>カテゴリ <span class="el-filter-summary-value" id="groupCategorySummary">すべて</span></summary>
+            <div class="el-filter-popover">
+              <label><input type="checkbox" name="groupCategoryOpt" value="amazon-ops"> Amazon販売・運用</label>
+              <label><input type="checkbox" name="groupCategoryOpt" value="fba-inventory"> FBA・在庫管理</label>
+              <label><input type="checkbox" name="groupCategoryOpt" value="amazon-account"> Amazon規制・アカウント</label>
+              <label><input type="checkbox" name="groupCategoryOpt" value="amazon-sourcing"> Amazon仕入れ・商品選定</label>
+              <label><input type="checkbox" name="groupCategoryOpt" value="fba-logistics"> FBA物流</label>
+              <label><input type="checkbox" name="groupCategoryOpt" value="intl-logistics"> 国際物流・通関</label>
+              <label><input type="checkbox" name="groupCategoryOpt" value="ior"> IOR・輸入者</label>
+              <label><input type="checkbox" name="groupCategoryOpt" value="overseas-warehouse"> 海外倉庫・3PL</label>
+              <label><input type="checkbox" name="groupCategoryOpt" value="fda-food"> FDA・食品規制</label>
+              <label><input type="checkbox" name="groupCategoryOpt" value="fsvp"> FSVP</label>
+              <label><input type="checkbox" name="groupCategoryOpt" value="food-label"> 食品ラベル・表示</label>
+              <label><input type="checkbox" name="groupCategoryOpt" value="fda-inspection"> FDA査察・違反対応</label>
+              <label><input type="checkbox" name="groupCategoryOpt" value="food-safety"> 食品安全・製造管理</label>
+              <label><input type="checkbox" name="groupCategoryOpt" value="mocra"> MoCRA・化粧品規制</label>
+              <label><input type="checkbox" name="groupCategoryOpt" value="overseas-ec"> 海外EC・自社EC</label>
+              <label><input type="checkbox" name="groupCategoryOpt" value="overseas-wholesale"> 海外卸・BtoB</label>
+              <label><input type="checkbox" name="groupCategoryOpt" value="overseas-sales"> 海外営業・販路開拓</label>
+              <label><input type="checkbox" name="groupCategoryOpt" value="biz-consulting"> 経営・事業相談</label>
+              <label><input type="checkbox" name="groupCategoryOpt" value="chat"> 情報交換・雑談</label>
+              <button type="button" class="el-filter-clear" data-clear="groupCategoryOpt">すべて解除</button>
+            </div>
+          </details>
           <span class="el-result-count el-result-count--plain" id="groupCount">0件</span>
         </div>
         <div class="el-all-groups" id="groupList"><div style="padding:40px 4px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;" id="groupListLoading">読み込み中…</div></div>
@@ -492,6 +517,7 @@
   // カードの絞り込み・並び替えは取得完了後に window.EL_renderGroupList() として実行する。
   (function(){
     var p=new URLSearchParams(window.location.search), filter=p.get('filter')||'', sort=p.get('sort')||'hot', page=Math.max(1,parseInt(p.get('page')||'1',10)), size=30;
+    var categories = (p.get('category')||'').split(',').filter(function(v){return v;});
 
     function setSingleCheck(name, value){
       document.querySelectorAll('input[name="'+name+'"]').forEach(function(cb){ cb.checked = (cb.value === value); });
@@ -500,17 +526,28 @@
     window.EL_renderGroupList = function () {
       var list=document.getElementById('groupList'); if(!list)return;
       var cards=Array.prototype.slice.call(list.querySelectorAll('.el-group-card'));
-      var visible=cards.filter(function(c){return !filter || c.dataset.state===filter;});
+      var visible=cards.filter(function(c){
+        if (filter && c.dataset.state!==filter) return false;
+        if (categories.length && categories.indexOf(c.dataset.category) === -1) return false;
+        return true;
+      });
       visible.sort(function(a,b){return sort==='new'?(+b.dataset.recency)-(+a.dataset.recency):(+b.dataset.members)-(+a.dataset.members);});
       cards.forEach(function(c){c.style.display='none';});
       var pages=Math.max(1,Math.ceil(visible.length/size)); if(page>pages)page=pages;
       visible.slice((page-1)*size,page*size).forEach(function(c){list.appendChild(c);c.style.display='';});
       setSingleCheck('groupFilterOpt', filter);
       setSingleCheck('groupSortOpt', sort);
+      document.querySelectorAll('input[name="groupCategoryOpt"]').forEach(function(cb){ cb.checked = categories.indexOf(cb.value) !== -1; });
       var filterNames = {'':'すべて', joined:'参加中', pending:'申請中', created:'作成した'};
       var sortNames = {hot:'人気順', new:'新しい順'};
       var filterSummaryEl = document.getElementById('groupFilterSummary'); if (filterSummaryEl) filterSummaryEl.textContent = filterNames[filter] || 'すべて';
       var sortSummaryEl = document.getElementById('groupSortSummary'); if (sortSummaryEl) sortSummaryEl.textContent = sortNames[sort] || '人気順';
+      var categorySummaryEl = document.getElementById('groupCategorySummary');
+      if (categorySummaryEl) {
+        if (!categories.length) categorySummaryEl.textContent = 'すべて';
+        else if (categories.length === 1) categorySummaryEl.textContent = (window.EL_getCategoryLabel ? window.EL_getCategoryLabel(categories[0]) : categories[0]);
+        else categorySummaryEl.textContent = categories.length + '件選択';
+      }
       document.getElementById('groupCount').textContent=visible.length+'件';
     };
 
@@ -562,6 +599,29 @@
     }
     wireSingleSelectGroup('groupFilterOpt', function(v){ go(v, sort); });
     wireSingleSelectGroup('groupSortOpt', function(v){ go(filter, v); });
+
+    // カテゴリは複数選択可（フォーラムのカテゴリ絞り込みと同じOR条件）。ページ遷移はせず、
+    // その場でカードを絞り込みつつURLだけ同期する（並び順・状態フィルタは既存通りページ遷移のまま）。
+    function syncCategoryUrl(){
+      var q=new URLSearchParams(window.location.search);
+      if(categories.length) q.set('category', categories.join(',')); else q.delete('category');
+      window.history.replaceState(null, '', 'groups-list.html?'+q.toString());
+    }
+    document.querySelectorAll('input[name="groupCategoryOpt"]').forEach(function(cb){
+      cb.addEventListener('change', function(){
+        categories = Array.prototype.slice.call(document.querySelectorAll('input[name="groupCategoryOpt"]:checked')).map(function(x){return x.value;});
+        syncCategoryUrl();
+        if (window.EL_renderGroupList) window.EL_renderGroupList();
+      });
+    });
+    document.querySelectorAll('.el-filter-clear[data-clear="groupCategoryOpt"]').forEach(function(btn){
+      btn.addEventListener('click', function(e){
+        e.preventDefault();
+        categories = [];
+        syncCategoryUrl();
+        if (window.EL_renderGroupList) window.EL_renderGroupList();
+      });
+    });
   })();
   // ユーザーモード（ゲスト／登録ユーザー／管理者）の切り替えと共通ゲート処理
   // Googleドライブの共有リンクを、<img>で直接表示できる形式のURLに変換する
@@ -792,7 +852,8 @@
           var items = (data.ok && data.items) ? data.items : [];
           // コミュニティ作成ページ（community-new.html）で追加した設定を、一覧カードの「参加条件」表示に反映する。
           function groupVisibilityLabel(g) {
-            if (g.visibilityScope === 'members') return 'メンバー限定';
+            if (g.visibilityScope === 'shift') return 'SHiFT会員限定';
+            if (g.visibilityScope === 'member' || g.visibilityScope === 'members') return 'メンバー限定';
             if (g.participationScope === 'invited') return '指定メンバーのみ参加可';
             if (g.joinMethod === 'apply') return '誰でも申請可';
             return '誰でも参加可';
@@ -807,7 +868,7 @@
             };
             GROUP_DETAILS[title] = {
               creator: it.creator || '運営メンバー',
-              category: it.category || '未分類',
+              category: it.category ? (window.EL_getCategoryLabel ? window.EL_getCategoryLabel(it.category) : it.category) : '未分類',
               color: it.color || 'var(--el-teal)',
               participationScope: joinInfo.participationScope,
               joinMethod: joinInfo.joinMethod,
@@ -821,12 +882,13 @@
             var recency = Date.parse(it.createdAt || '') || 0;
             var state = isMyGroup_(it.creatorUserId, it.creator) ? 'created' : '';
             var joinLabel = communityJoinLabel_(joinInfo, groupId);
-            return '<div class="el-group-card" data-group="' + (it.id || '') + '" data-state="' + state + '" data-members="0" data-recency="' + recency + '">' +
+            var categoryLabel = it.category ? (window.EL_getCategoryLabel ? window.EL_getCategoryLabel(it.category) : it.category) : '';
+            return '<div class="el-group-card" data-group="' + (it.id || '') + '" data-state="' + state + '" data-category="' + esc_(it.category || '') + '" data-members="0" data-recency="' + recency + '">' +
               '<div class="el-group-top">' +
               '<div class="el-group-icon" style="background:' + iconColor + ';overflow:hidden;">' +
               iconInner +
               '</div>' +
-              '<div><h4>' + title + '</h4><div class="visibility">' + groupVisibilityLabel(it) + '</div></div>' +
+              '<div><h4>' + title + '</h4><div class="visibility">' + (categoryLabel ? esc_(categoryLabel) + '・' : '') + groupVisibilityLabel(it) + '</div></div>' +
               '</div>' +
               '<p class="desc">' + (it.description || '') + '</p>' +
               '<div class="el-group-foot"><div class="el-group-members"><span class="more">新規</span></div>' +
