@@ -166,11 +166,10 @@
     border-top-right-radius:var(--el-radius-m, 14px) !important;
   }
   /* 商品モーダルの項目見出し（「こんな方におすすめ」「詳細」等）が本文と見分けにくいため、
-     色付きの左罫線とアイコン風のドットを添えて「見出し」であることが一目でわかるデザインに強化する */
+     太字・ブランドカラー・アイコン風のドットを添えて「見出し」であることが一目でわかるデザインに強化する
+     （縦線を添える案もあったが、不要とのフィードバックがあったため文字の強調のみにしている） */
   .el-product-modal-section{
     margin-bottom:22px !important;
-    padding-left:14px !important;
-    border-left:3px solid var(--el-teal, #2F8F82) !important;
   }
   .el-product-modal-section h4{
     display:flex !important;
@@ -469,151 +468,15 @@
             <div class="el-filter-popover">
               <label><input type="checkbox" name="marketSellerOpt" value="" checked> すべて</label>
               <label><input type="checkbox" name="marketSellerOpt" value="WorldShift公式"> WorldShift公式</label>
-              <label><input type="checkbox" name="marketSellerOpt" value="高橋物産"> 高橋物産</label>
-              <label><input type="checkbox" name="marketSellerOpt" value="山口貿易士"> 山口貿易士</label>
-              <label><input type="checkbox" name="marketSellerOpt" value="鈴木ラボ"> 鈴木ラボ</label>
             </div>
           </details>
-          <span class="el-result-count el-result-count--plain" id="marketResultCount">11件</span>
+          <span class="el-result-count el-result-count--plain" id="marketResultCount">0件</span>
         </div>
         <div class="el-market-empty" id="marketEmptyState" style="display:none;padding:60px 20px;text-align:center;color:var(--el-ink-faint);font-size:14px;">
           <p id="marketEmptyStateText">該当するコンテンツがありません。</p>
         </div>
 
-        <div class="el-market-grid" id="marketGrid">
-          <div class="el-market-card" data-product="official-amazon-allsupport" data-category="amazon" data-seller="WorldShift公式" data-price="12000" data-recency="90">
-            <div class="el-market-thumb" style="background:var(--el-teal);color:#fff;">
-              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z"/></svg>
-            </div>
-            <div class="el-market-body">
-              <span class="badge badge--announce">公式</span>
-              <h3>米Amazon輸出オールサポート</h3>
-              <p>アカウント開設から出品、運用改善まで、まとめて相談できるサポートコンテンツです。</p>
-              <div class="el-market-rating"><span class="stars">★★★★★</span><span class="count">(19)</span></div>
-              <div class="el-market-foot"><strong>¥12,000</strong><div class="el-market-btns"><button type="button" class="el-cart-btn" aria-label="カートに追加" data-cart><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button><button type="button" class="el-btn el-btn--primary el-btn--sm" data-buy>今すぐ購入</button></div></div>
-            </div>
-          </div>
-          <div class="el-market-card" data-product="official-fda-guide" data-category="fda" data-seller="WorldShift公式" data-price="3000" data-recency="88">
-            <div class="el-market-thumb" style="background:var(--el-teal-tint);color:var(--el-teal-deep);">
-              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
-            </div>
-            <div class="el-market-body">
-              <span class="badge badge--announce">公式</span>
-              <h3>FDA施設登録 完全ガイド（PDF）</h3>
-              <p>登録の流れ・更新期限・よくある差し戻し事例までを1冊にまとめました。</p>
-              <div class="el-market-rating"><span class="stars">★★★★★</span><span class="count">(32)</span></div>
-              <div class="el-market-foot"><strong>¥3,000</strong><div class="el-market-btns"><button type="button" class="el-cart-btn" aria-label="カートに追加" data-cart><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button><button type="button" class="el-btn el-btn--primary el-btn--sm" data-buy>今すぐ購入</button></div></div>
-            </div>
-          </div>
-          <div class="el-market-card" data-product="official-slc-seminar" data-category="amazon" data-seller="WorldShift公式" data-price="2000" data-recency="85">
-            <div class="el-market-thumb" style="background:var(--el-mustard-tint);color:var(--el-mustard-deep);">
-              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="m9 10 3 2-3 2z"/></svg>
-            </div>
-            <div class="el-market-body">
-              <span class="badge badge--announce">公式</span>
-              <h3>SLC活用セミナー録画（2026年7月開催分）</h3>
-              <p>FBA納品費用の内訳の見方を、実データを交えて解説した回のアーカイブです。</p>
-              <div class="el-market-rating"><span class="stars">★★★★☆</span><span class="count">(18)</span></div>
-              <div class="el-market-foot"><strong>¥2,000</strong><div class="el-market-btns"><button type="button" class="el-cart-btn" aria-label="カートに追加" data-cart><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button><button type="button" class="el-btn el-btn--primary el-btn--sm" data-buy>今すぐ購入</button></div></div>
-            </div>
-          </div>
-          <div class="el-market-card" data-product="official-profinder" data-category="amazon" data-seller="WorldShift公式" data-price="8000" data-recency="80">
-            <div class="el-market-thumb" style="background:#E8F1F6;color:#3E7EA3;">
-              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-            </div>
-            <div class="el-market-body">
-              <span class="badge badge--announce">公式</span>
-              <h3>ProFinder リサーチ実践講座（動画）</h3>
-              <p>ASINリサーチから仕入れ判断までの流れを、画面共有しながら解説します。</p>
-              <div class="el-market-rating"><span class="stars">★★★★★</span><span class="count">(41)</span></div>
-              <div class="el-market-foot"><strong>¥8,000</strong><div class="el-market-btns"><button type="button" class="el-cart-btn" aria-label="カートに追加" data-cart><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button><button type="button" class="el-btn el-btn--primary el-btn--sm" data-buy>今すぐ購入</button></div></div>
-            </div>
-          </div>
-          <div class="el-market-card" data-product="official-startup-template" data-category="template" data-seller="WorldShift公式" data-price="5000" data-recency="75">
-            <div class="el-market-thumb" style="background:var(--el-sage);color:#fff;">
-              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.6.6 1 1.4 1 2.5h6c0-1.1.4-1.9 1-2.5A6 6 0 0 0 12 3Z"/></svg>
-            </div>
-            <div class="el-market-body">
-              <span class="badge badge--announce">公式</span>
-              <h3>米国輸出 スタートアップテンプレート集</h3>
-              <p>初回輸出に必要な書類・チェックリストをひとまとめにしたスターターキット。</p>
-              <div class="el-market-rating"><span class="stars">★★★★☆</span><span class="count">(26)</span></div>
-              <div class="el-market-foot"><strong>¥5,000</strong><div class="el-market-btns"><button type="button" class="el-cart-btn" aria-label="カートに追加" data-cart><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button><button type="button" class="el-btn el-btn--primary el-btn--sm" data-buy>今すぐ購入</button></div></div>
-            </div>
-          </div>
-          <div class="el-market-card" data-product="official-customs-checklist" data-category="logistics" data-seller="WorldShift公式" data-price="1500" data-recency="70">
-            <div class="el-market-thumb" style="background:var(--el-sky);color:#fff;">
-              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M3 9h6"/></svg>
-            </div>
-            <div class="el-market-body">
-              <span class="badge badge--announce">公式</span>
-              <h3>通関書類チェックリスト</h3>
-              <p>差し戻しの多い記載ミスを、実例ベースでチェックできる一覧表です。</p>
-              <div class="el-market-rating"><span class="stars">★★★★★</span><span class="count">(15)</span></div>
-              <div class="el-market-foot"><strong>¥1,500</strong><div class="el-market-btns"><button type="button" class="el-cart-btn" aria-label="カートに追加" data-cart><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button><button type="button" class="el-btn el-btn--primary el-btn--sm" data-buy>今すぐ購入</button></div></div>
-            </div>
-          </div>
-          <div class="el-market-card" data-product="official-fba-trouble" data-category="amazon" data-seller="WorldShift公式" data-price="4000" data-recency="65">
-            <div class="el-market-thumb" style="background:var(--el-coral);color:#fff;">
-              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 8V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2M3 8v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8M3 8h18"/></svg>
-            </div>
-            <div class="el-market-body">
-              <span class="badge badge--announce">公式</span>
-              <h3>FBA納品トラブル対応事例集</h3>
-              <p>ラベル不備・数量差異など、よくあるトラブルと解決までの流れをまとめました。</p>
-              <div class="el-market-rating"><span class="stars">★★★★☆</span><span class="count">(22)</span></div>
-              <div class="el-market-foot"><strong>¥4,000</strong><div class="el-market-btns"><button type="button" class="el-cart-btn" aria-label="カートに追加" data-cart><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button><button type="button" class="el-btn el-btn--primary el-btn--sm" data-buy>今すぐ購入</button></div></div>
-            </div>
-          </div>
-          <div class="el-market-card" data-product="official-amazon-turnover" data-category="amazon" data-seller="WorldShift公式" data-price="6000" data-recency="60">
-            <div class="el-market-thumb" style="background:var(--el-mustard);color:#fff;">
-              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M23 6l-9.5 9.5-5-5L1 18"/><path d="M17 6h6v6"/></svg>
-            </div>
-            <div class="el-market-body">
-              <span class="badge badge--announce">公式</span>
-              <h3>米Amazon輸出：商品の販売回転数UP</h3>
-              <p>価格設定・広告運用・レビュー獲得の考え方を整理し、回転数を上げる施策をまとめました。</p>
-              <div class="el-market-rating"><span class="stars">★★★★☆</span><span class="count">(14)</span></div>
-              <div class="el-market-foot"><strong>¥6,000</strong><div class="el-market-btns"><button type="button" class="el-cart-btn" aria-label="カートに追加" data-cart><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button><button type="button" class="el-btn el-btn--primary el-btn--sm" data-buy>今すぐ購入</button></div></div>
-            </div>
-          </div>
-          <div class="el-market-card" data-product="member-takahashi-research" data-category="amazon" data-seller="高橋物産" data-price="2500" data-recency="55">
-            <div class="el-market-thumb" style="background:var(--el-cream-deep);color:var(--el-navy-soft);">
-              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 9h18"/></svg>
-            </div>
-            <div class="el-market-body">
-              <span class="badge badge--open">出品者：高橋物産</span>
-              <h3>せどり便乗リサーチ 実践テンプレート</h3>
-              <p>粗利率を自動計算できるスプレッドシート。実際に使っている数式をそのまま公開。</p>
-              <div class="el-market-rating"><span class="stars">★★★★★</span><span class="count">(9)</span></div>
-              <div class="el-market-foot"><strong>¥2,500</strong><div class="el-market-btns"><button type="button" class="el-cart-btn" aria-label="カートに追加" data-cart><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button><button type="button" class="el-btn el-btn--primary el-btn--sm" data-buy>今すぐ購入</button></div></div>
-            </div>
-          </div>
-          <div class="el-market-card" data-product="member-yamaguchi-fda-reminder" data-category="fda" data-seller="山口貿易士" data-price="1200" data-recency="50">
-            <div class="el-market-thumb" style="background:var(--el-cream-deep);color:var(--el-navy-soft);">
-              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
-            </div>
-            <div class="el-market-body">
-              <span class="badge badge--open">出品者：山口貿易士</span>
-              <h3>FDA更新リマインドスプレッドシート</h3>
-              <p>登録番号ごとに更新期限を自動アラートしてくれる、Googleスプレッドシート形式のツール。</p>
-              <div class="el-market-rating"><span class="stars">★★★★☆</span><span class="count">(6)</span></div>
-              <div class="el-market-foot"><strong>¥1,200</strong><div class="el-market-btns"><button type="button" class="el-cart-btn" aria-label="カートに追加" data-cart><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button><button type="button" class="el-btn el-btn--primary el-btn--sm" data-buy>今すぐ購入</button></div></div>
-            </div>
-          </div>
-          <div class="el-market-card" data-product="member-suzuki-cosmetics-checklist" data-category="fda" data-seller="鈴木ラボ" data-price="1800" data-recency="45">
-            <div class="el-market-thumb" style="background:var(--el-cream-deep);color:var(--el-navy-soft);">
-              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
-            </div>
-            <div class="el-market-body">
-              <span class="badge badge--open">出品者：鈴木ラボ</span>
-              <h3>化粧品ラベル作成チェックシート</h3>
-              <p>成分表示・警告文の必須項目を、規制別に一覧化したチェックシートです。</p>
-              <div class="el-market-rating"><span class="stars">★★★★★</span><span class="count">(11)</span></div>
-              <div class="el-market-foot"><strong>¥1,800</strong><div class="el-market-btns"><button type="button" class="el-cart-btn" aria-label="カートに追加" data-cart><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button><button type="button" class="el-btn el-btn--primary el-btn--sm" data-buy>今すぐ購入</button></div></div>
-            </div>
-          </div>
-        </div>
+        <div class="el-market-grid" id="marketGrid"></div>
 
       </div>
     </main>
@@ -689,7 +552,7 @@
     var cards = Array.prototype.slice.call(grid.querySelectorAll('.el-market-card[data-product]'));
     var categoryNames = { fda: 'FDA', amazon: 'Amazon', logistics: '通関・物流', template: 'テンプレート' };
     var sortNames = { hot: '人気順', new: '新着順', 'price-asc': '価格が安い順', 'price-desc': '価格が高い順' };
-    var sellerNames = { '': 'すべて', 'WorldShift公式': 'WorldShift公式', '高橋物産': '高橋物産', '山口貿易士': '山口貿易士', '鈴木ラボ': '鈴木ラボ' };
+    var sellerNames = { '': 'すべて', 'WorldShift公式': 'WorldShift公式' };
 
     var searchInput = document.getElementById('marketSearchInput');
     var resultCount = document.getElementById('marketResultCount');
@@ -756,10 +619,15 @@
       var emptyStateEl = document.getElementById('marketEmptyState');
       var emptyStateTextEl = document.getElementById('marketEmptyStateText');
       if (emptyStateEl) {
-        if (pageFilter && !visible.length) {
+        // 以前はpageFilter（お気に入り／出品）指定時のみ「0件」メッセージを出していたが、
+        // デモ用の固定カードを廃止し完全にシート駆動になったことで、通常の一覧でも
+        // 登録されているコンテンツが1件も無い場合が普通に起こりうるため、その場合も
+        // 空のグリッドではなくメッセージを表示するようにする
+        if (!visible.length) {
           if (emptyStateTextEl) {
             if (pageFilter === 'favorites') emptyStateTextEl.textContent = 'まだお気に入りに追加したコンテンツがありません。';
             else if (pageFilter === 'mine') emptyStateTextEl.textContent = '現在、出品コンテンツと出品者情報の紐づけには対応していないため、表示できるコンテンツがありません。';
+            else if (!cards.length) emptyStateTextEl.textContent = 'まだ登録されているコンテンツがありません。';
             else emptyStateTextEl.textContent = '該当するコンテンツがありません。';
           }
           emptyStateEl.style.display = 'block';
@@ -876,7 +744,7 @@
 </div>
 
 <script>
-  var PRODUCTS = {"official-amazon-allsupport": {"title": "米Amazon輸出オールサポート", "seller": "WorldShift公式", "price": "¥12,000", "badge": "公式", "recommend": "アカウント開設から出品、運用まで、まとめて相談できる窓口が欲しい方におすすめです。", "detail": "米国Amazonへの輸出に関わる、アカウント開設・出品設定・運用改善までをトータルでサポートするコンテンツです。つまずきやすいポイントを工程ごとに整理し、実際のサポートで使っているチェックリストや設定手順もあわせて公開しています。", "bannerColor": "linear-gradient(135deg, var(--el-teal), #1F6E63)", "bannerIcon": "<path d=\"M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z\"/>", "features": [{"title": "アカウント開設サポート", "desc": "出品用アカウントの開設から初期設定までを伴走します", "icon": "<path d=\"M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2\"/><circle cx=\"8.5\" cy=\"7\" r=\"4\"/><path d=\"M20 8v6M23 11h-6\"/>"}, {"title": "出品ページ最適化", "desc": "タイトル・画像・説明文を、売れる構成に整えます", "icon": "<path d=\"M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z\"/>"}, {"title": "広告運用アドバイス", "desc": "PPC広告の設定と改善ポイントをご提案します", "icon": "<path d=\"M3 3v18h18M18.7 8l-5.1 5.1-2.8-2.8L7 14.1\"/>"}, {"title": "月次運用レビュー", "desc": "毎月の販売データをもとに、次の一手を検討します", "icon": "<rect x=\"3\" y=\"4\" width=\"18\" height=\"18\" rx=\"2\"/><path d=\"M16 2v4M8 2v4M3 10h18\"/>"}]}, "official-fda-guide": {"title": "FDA施設登録 完全ガイド（PDF）", "seller": "WorldShift公式", "price": "¥3,000", "badge": "公式", "recommend": "はじめてFDA施設登録を行う方、更新のたびに手続きに不安を感じる方におすすめです。", "detail": "FDA施設登録の申請から2年ごとの更新までの流れを、実際の差し戻し事例を交えて解説したPDFガイドです。登録番号の管理方法や、よくある記載ミスの回避方法もまとめています。", "bannerColor": "linear-gradient(135deg, var(--el-teal-tint), #BFE0DA)", "bannerIcon": "<path d=\"M9 12l2 2 4-4\"/><circle cx=\"12\" cy=\"12\" r=\"9\"/>"}, "official-slc-seminar": {"title": "SLC活用セミナー録画（2026年7月開催分）", "seller": "WorldShift公式", "price": "¥2,000", "badge": "公式", "recommend": "FBA納品費用がなぜこの金額になっているのか、内訳を正しく把握したい方におすすめです。", "detail": "2026年7月に開催したセミナーのアーカイブ動画です。実際のSLC画面を見ながら、納品費用の内訳や削減余地の見つけ方を解説しています。視聴期限はありません。", "bannerColor": "linear-gradient(135deg, var(--el-mustard-tint), #F0D49A)", "bannerIcon": "<rect x=\"3\" y=\"4\" width=\"18\" height=\"14\" rx=\"2\"/><path d=\"m9 10 3 2-3 2z\"/>"}, "official-profinder": {"title": "ProFinder リサーチ実践講座（動画）", "seller": "WorldShift公式", "price": "¥8,000", "badge": "公式", "recommend": "ASINリサーチのやり方が我流になっている方、仕入れ判断の精度を上げたい方におすすめです。", "detail": "ProFinderを使ったASINリサーチから、仕入れ判断までの一連の流れを画面共有しながら解説する実践講座です。実際の判断基準も公開しています。", "bannerColor": "linear-gradient(135deg, #E8F1F6, #B9D6E6)", "bannerIcon": "<circle cx=\"11\" cy=\"11\" r=\"7\"/><path d=\"m20 20-3.5-3.5\"/>"}, "official-startup-template": {"title": "米国輸出 スタートアップテンプレート集", "seller": "WorldShift公式", "price": "¥5,000", "badge": "公式", "recommend": "これから輸出を始める方、最低限そろえるべき書類が分からない方におすすめです。", "detail": "初回輸出に必要な書類・チェックリストをひとまとめにしたスターターキットです。Word・Excel形式で、そのまま自社用に編集してお使いいただけます。", "bannerColor": "linear-gradient(135deg, var(--el-sage), #6C8F58)", "bannerIcon": "<path d=\"M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.6.6 1 1.4 1 2.5h6c0-1.1.4-1.9 1-2.5A6 6 0 0 0 12 3Z\"/>"}, "official-customs-checklist": {"title": "通関書類チェックリスト", "seller": "WorldShift公式", "price": "¥1,500", "badge": "公式", "recommend": "通関書類の差し戻しが多く、原因を特定できていない方におすすめです。", "detail": "差し戻しの多い記載ミスを、実例ベースで一覧化したチェックリストです。提出前にこのリストで確認するだけで、差し戻し率を大きく下げられます。", "bannerColor": "linear-gradient(135deg, var(--el-sky), #4E86AC)", "bannerIcon": "<rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"2\"/><path d=\"M9 3v18M3 9h6\"/>"}, "official-fba-trouble": {"title": "FBA納品トラブル対応事例集", "seller": "WorldShift公式", "price": "¥4,000", "badge": "公式", "recommend": "FBA納品でのトラブル対応に毎回時間がかかっている方におすすめです。", "detail": "ラベル不備・数量差異など、よくあるFBA納品トラブルと、解決までの実際の流れをまとめた事例集です。Amazonサポートとのやり取りテンプレートも収録しています。", "bannerColor": "linear-gradient(135deg, var(--el-coral), #B8593D)", "bannerIcon": "<path d=\"M21 8V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2M3 8v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8M3 8h18\"/>"}, "official-amazon-turnover": {"title": "米Amazon輸出：商品の販売回転数UP", "seller": "WorldShift公式", "price": "¥6,000", "badge": "公式", "recommend": "出品はしているものの、思うように売れ行きが伸びていない方におすすめです。", "detail": "販売回転数を上げるための価格設定・広告運用・レビュー獲得の考え方を整理したコンテンツです。すぐに試せる具体的な改善アクションを中心にまとめています。", "bannerColor": "linear-gradient(135deg, var(--el-mustard), #B57A1F)", "bannerIcon": "<path d=\"M23 6l-9.5 9.5-5-5L1 18\"/><path d=\"M17 6h6v6\"/>"}, "member-takahashi-research": {"title": "せどり便乗リサーチ 実践テンプレート", "seller": "高橋物産", "price": "¥2,500", "badge": null, "recommend": "便乗リサーチの粗利計算を、毎回手計算でやっている方におすすめです。", "detail": "粗利率を自動計算できるスプレッドシートです。実際に出品者本人が使っている数式をそのまま公開しています。ASINと仕入れ値を入力するだけで判断できます。", "bannerColor": "linear-gradient(135deg, var(--el-cream-deep), #DCD0AE)", "bannerIcon": "<rect x=\"3\" y=\"4\" width=\"18\" height=\"14\" rx=\"2\"/><path d=\"M3 9h18\"/>"}, "member-yamaguchi-fda-reminder": {"title": "FDA更新リマインドスプレッドシート", "seller": "山口貿易士", "price": "¥1,200", "badge": null, "recommend": "複数の登録番号を管理していて、更新漏れが心配な方におすすめです。", "detail": "登録番号ごとに更新期限を自動アラートしてくれる、Googleスプレッドシート形式のツールです。設定は数分で完了します。", "bannerColor": "linear-gradient(135deg, var(--el-cream-deep), #DCD0AE)", "bannerIcon": "<path d=\"m3 11 18-5v12L3 14v-3z\"/><path d=\"M11.6 16.8a3 3 0 1 1-5.8-1.6\"/>"}, "member-suzuki-cosmetics-checklist": {"title": "化粧品ラベル作成チェックシート", "seller": "鈴木ラボ", "price": "¥1,800", "badge": null, "recommend": "化粧品のラベル表示に不安がある方、規制ごとの必須項目を把握したい方におすすめです。", "detail": "成分表示・警告文の必須項目を、規制別に一覧化したチェックシートです。作成したラベル案をこのシートと照らし合わせるだけで確認できます。", "bannerColor": "linear-gradient(135deg, var(--el-cream-deep), #DCD0AE)", "bannerIcon": "<path d=\"M9 12l2 2 4-4\"/><circle cx=\"12\" cy=\"12\" r=\"9\"/>"}};
+  var PRODUCTS = {};
 
   var cart = [];
   try { cart = JSON.parse(localStorage.getItem('el-cart') || '[]'); } catch (e) { cart = []; }
@@ -950,7 +818,20 @@
         featuresWrap.style.display = 'none';
       }
       document.getElementById('pmCartBtn').dataset.id = id;
-      document.getElementById('pmBuyBtn').dataset.id = id;
+      var buyBtn = document.getElementById('pmBuyBtn');
+      buyBtn.dataset.id = id;
+      var cartBtn = document.getElementById('pmCartBtn');
+      // 「外部サイトに移動する」設定のコンテンツは、カート（サイト内決済の概念）を持たないため
+      // カートボタンを隠し、購入ボタンを外部サイトへのリンクとして振る舞わせる
+      if (p.buttonType === 'external' && p.externalUrl) {
+        cartBtn.style.display = 'none';
+        buyBtn.textContent = '外部サイトを見る';
+        buyBtn.dataset.externalUrl = p.externalUrl;
+      } else {
+        cartBtn.style.display = '';
+        buyBtn.textContent = '今すぐ購入';
+        delete buyBtn.dataset.externalUrl;
+      }
       var favBtn = document.getElementById('pmFavBtn');
       favBtn.dataset.id = id;
       var favList = [];
@@ -967,7 +848,7 @@
     }
     document.querySelectorAll('.el-market-card[data-product]').forEach(function (card) {
       card.addEventListener('click', function (e) {
-        if (e.target.closest('[data-cart]') || e.target.closest('[data-buy]')) return;
+        if (e.target.closest('[data-cart]') || e.target.closest('[data-buy]') || e.target.closest('[data-external-link]')) return;
         openModal(card.dataset.product);
       });
     });
@@ -979,6 +860,10 @@
       addToCart(this.dataset.id);
     });
     document.getElementById('pmBuyBtn').addEventListener('click', function () {
+      if (this.dataset.externalUrl) {
+        window.open(this.dataset.externalUrl, '_blank', 'noopener,noreferrer');
+        return;
+      }
       goToCheckout(this.dataset.id);
     });
     document.getElementById('pmFavBtn').addEventListener('click', function () {
@@ -1229,10 +1114,13 @@
             ? '<img src="' + it.thumbnailUrl + '" style="width:100%;height:100%;object-fit:cover;">'
             : '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>';
 
+          var isExternal = it.buttonType === 'external' && it.externalUrl;
+
           PRODUCTS[id] = {
             title: it.title, seller: 'WorldShift公式', price: '¥' + priceNum.toLocaleString(), badge: '公式',
             recommend: it.recommendHtml || '', detail: it.detailHtml || '',
             thumbnailUrl: it.thumbnailUrl || '',
+            buttonType: it.buttonType || 'purchase', externalUrl: it.externalUrl || '',
             bannerColor: 'linear-gradient(135deg, var(--el-teal), #1F6E63)',
             bannerIcon: '<path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/>'
           };
@@ -1244,6 +1132,12 @@
           card.dataset.seller = 'WorldShift公式';
           card.dataset.price = priceNum;
           card.dataset.recency = 100;
+          // 「外部サイトに移動する」設定のコンテンツは、カート（サイト内決済の概念）を持たないため
+          // カートボタンを出さず、購入ボタンの代わりに外部リンクボタンを表示する
+          var footBtnsHtml = isExternal
+            ? '<a href="' + it.externalUrl + '" target="_blank" rel="noopener noreferrer" class="el-btn el-btn--primary el-btn--sm" data-external-link>外部サイトを見る</a>'
+            : '<button type="button" class="el-cart-btn" aria-label="カートに追加" data-cart><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button>' +
+              '<button type="button" class="el-btn el-btn--primary el-btn--sm" data-buy>今すぐ購入</button>';
           card.innerHTML =
             '<div class="el-market-thumb" style="background:var(--el-teal);color:#fff;overflow:hidden;">' + thumbHtml + '</div>' +
             '<div class="el-market-body">' +
@@ -1252,25 +1146,28 @@
             '<p>' + (it.recommendHtml || it.detailHtml || '').replace(/<[^>]*>/g, '').slice(0, 60) + '</p>' +
             '<div class="el-market-rating"><span class="stars">★★★★★</span><span class="count">(0)</span></div>' +
             '<div class="el-market-foot"><strong>¥' + priceNum.toLocaleString() + '</strong>' +
-            '<div class="el-market-btns"><button type="button" class="el-cart-btn" aria-label="カートに追加" data-cart><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button>' +
-            '<button type="button" class="el-btn el-btn--primary el-btn--sm" data-buy>今すぐ購入</button></div></div></div>';
+            '<div class="el-market-btns">' + footBtnsHtml + '</div></div></div>';
 
           window.__marketGrid.appendChild(card);
           window.__marketCards.push(card);
           if (window.__marketWireFavButton) window.__marketWireFavButton(card);
 
           card.addEventListener('click', function (e) {
-            if (e.target.closest('[data-cart]') || e.target.closest('[data-buy]')) return;
+            if (e.target.closest('[data-cart]') || e.target.closest('[data-buy]') || e.target.closest('[data-external-link]')) return;
             if (window.__marketOpenModal) window.__marketOpenModal(id);
           });
-          card.querySelector('[data-cart]').addEventListener('click', function (e) {
+          var cartBtnEl = card.querySelector('[data-cart]');
+          if (cartBtnEl) cartBtnEl.addEventListener('click', function (e) {
             e.stopPropagation();
             addToCart(id);
           });
-          card.querySelector('[data-buy]').addEventListener('click', function (e) {
+          var buyBtnEl = card.querySelector('[data-buy]');
+          if (buyBtnEl) buyBtnEl.addEventListener('click', function (e) {
             e.stopPropagation();
             goToCheckout(id);
           });
+          var externalLinkEl = card.querySelector('[data-external-link]');
+          if (externalLinkEl) externalLinkEl.addEventListener('click', function (e) { e.stopPropagation(); });
         });
 
         window.__marketRerender();

@@ -141,6 +141,25 @@
   .el-footer-cols a{ color:var(--el-ink-faint, #8A8478) !important; }
   .el-footer-cols h6{ color:var(--el-navy, #16233F) !important; }
   .el-footer-bottom{ color:var(--el-ink-faint, #8A8478) !important; border-top-color:var(--el-line-soft, #E5DFD2) !important; }
+  /* 登録ユーザー一覧などの横スクロール表：ブラウザ標準のスクロールバー（表の一番下）まで
+     行かないと横スクロールできない不便さを解消するため、表の左右に縦長のクリック用の
+     オーバーレイを重ね、どの高さでクリック／ドラッグしても横スクロールできるようにする */
+  .el-table-scroll-wrap{ position:relative; }
+  .el-table-scroll-edge{
+    position:absolute; top:0; bottom:0; width:34px;
+    border:none; cursor:pointer; z-index:3;
+    display:flex; align-items:center; justify-content:center;
+    color:var(--el-navy, #16233F); opacity:.85;
+    transition:opacity .15s;
+  }
+  .el-table-scroll-edge:hover{ opacity:1; }
+  .el-table-scroll-edge svg{ width:16px; height:16px; pointer-events:none; }
+  .el-table-scroll-edge--left{
+    left:0; background:linear-gradient(to right, rgba(255,255,255,.92), rgba(255,255,255,0));
+  }
+  .el-table-scroll-edge--right{
+    right:0; background:linear-gradient(to left, rgba(255,255,255,.92), rgba(255,255,255,0));
+  }
 </style>
 </head>
 <body data-site="community" data-root="..">
@@ -325,26 +344,34 @@
             <div id="userTableStatus" style="font-size:13px;color:var(--el-ink-faint);">読み込み中…</div>
             <button type="button" class="el-btn el-btn--ghost el-btn--sm" id="exportCsvBtn">CSVでダウンロード</button>
           </div>
-          <div style="overflow-x:auto;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);">
-            <table style="width:100%;min-width:1180px;border-collapse:collapse;font-size:13px;" id="userTable">
-              <thead>
-                <tr style="text-align:left;border-bottom:1px solid var(--el-line-soft);">
-                  <th style="padding:12px 14px;white-space:nowrap;">氏名</th>
-                  <th style="padding:12px 14px;white-space:nowrap;">ユーザーネーム</th>
-                  <th style="padding:12px 14px;white-space:nowrap;">メールアドレス</th>
-                  <th style="padding:12px 14px;white-space:nowrap;">生年月日</th>
-                  <th style="padding:12px 14px;white-space:nowrap;">性別</th>
-                  <th style="padding:12px 14px;white-space:nowrap;">電話番号</th>
-                  <th style="padding:12px 14px;white-space:nowrap;">住所</th>
-                  <th style="padding:12px 14px;white-space:nowrap;">業種</th>
-                  <th style="padding:12px 14px;white-space:nowrap;">区分</th>
-                  <th style="padding:12px 14px;white-space:nowrap;">SHiFT会員番号</th>
-                  <th style="padding:12px 14px;white-space:nowrap;">状態</th>
-                  <th style="padding:12px 14px;white-space:nowrap;"></th>
-                </tr>
-              </thead>
-              <tbody id="userTableBody"></tbody>
-            </table>
+          <div class="el-table-scroll-wrap">
+            <div style="overflow-x:auto;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);" id="userTableScroll">
+              <table style="width:100%;min-width:1180px;border-collapse:collapse;font-size:13px;" id="userTable">
+                <thead>
+                  <tr style="text-align:left;border-bottom:1px solid var(--el-line-soft);">
+                    <th style="padding:12px 14px;white-space:nowrap;">氏名</th>
+                    <th style="padding:12px 14px;white-space:nowrap;">ユーザーネーム</th>
+                    <th style="padding:12px 14px;white-space:nowrap;">メールアドレス</th>
+                    <th style="padding:12px 14px;white-space:nowrap;">生年月日</th>
+                    <th style="padding:12px 14px;white-space:nowrap;">性別</th>
+                    <th style="padding:12px 14px;white-space:nowrap;">電話番号</th>
+                    <th style="padding:12px 14px;white-space:nowrap;">住所</th>
+                    <th style="padding:12px 14px;white-space:nowrap;">業種</th>
+                    <th style="padding:12px 14px;white-space:nowrap;">区分</th>
+                    <th style="padding:12px 14px;white-space:nowrap;">SHiFT会員番号</th>
+                    <th style="padding:12px 14px;white-space:nowrap;">状態</th>
+                    <th style="padding:12px 14px;white-space:nowrap;"></th>
+                  </tr>
+                </thead>
+                <tbody id="userTableBody"></tbody>
+              </table>
+            </div>
+            <button type="button" class="el-table-scroll-edge el-table-scroll-edge--left" id="userTableScrollLeft" aria-label="表を左にスクロール" style="display:none;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m15 6-6 6 6 6"/></svg>
+            </button>
+            <button type="button" class="el-table-scroll-edge el-table-scroll-edge--right" id="userTableScrollRight" aria-label="表を右にスクロール" style="display:none;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
+            </button>
           </div>
         </div>
 
@@ -461,6 +488,22 @@
               <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">価格（円）</span>
               <input type="text" inputmode="numeric" name="price" id="contentPriceInput" required style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
             </label>
+            <div>
+              <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">購入ボタンの動作</span>
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                <label style="display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:400;">
+                  <input type="radio" name="buttonType" value="purchase" id="contentButtonTypePurchase" checked>
+                  購入する（サイト内の決済ページへ進む）
+                </label>
+                <label style="display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:400;">
+                  <input type="radio" name="buttonType" value="external" id="contentButtonTypeExternal">
+                  外部サイトに移動する（URLを指定）
+                </label>
+              </div>
+              <div id="contentExternalUrlWrap" style="display:none;margin-top:8px;">
+                <input type="url" name="externalUrl" id="contentExternalUrlInput" placeholder="https://example.com" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
+              </div>
+            </div>
             <div>
               <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">こんな方におすすめ</span>
               <div id="contentRecommendEditorMount"></div>
@@ -1132,6 +1175,29 @@
   };
   var ROLE_LABELS_ADM = { member: '一般', shift: 'SHiFT会員', admin: '管理者' };
 
+  // 横スクロールする表（登録ユーザー一覧など）の左右に、縦長のクリック用オーバーレイを重ねる。
+  // 表の高さ分（＝どの行の高さでクリックしても）スクロールできるようにすることで、
+  // 表の一番下にあるブラウザ標準の横スクロールバーまで移動しなくても左右にスクロールできるようにする。
+  function wireTableScrollEdges(scrollEl, leftBtn, rightBtn) {
+    if (!scrollEl || !leftBtn || !rightBtn) return function () {};
+    function update() {
+      var needsScroll = scrollEl.scrollWidth > scrollEl.clientWidth + 1;
+      leftBtn.style.display = needsScroll && scrollEl.scrollLeft > 4 ? 'flex' : 'none';
+      rightBtn.style.display = needsScroll && scrollEl.scrollLeft < scrollEl.scrollWidth - scrollEl.clientWidth - 4 ? 'flex' : 'none';
+    }
+    leftBtn.addEventListener('click', function () { scrollEl.scrollBy({ left: -220, behavior: 'smooth' }); });
+    rightBtn.addEventListener('click', function () { scrollEl.scrollBy({ left: 220, behavior: 'smooth' }); });
+    scrollEl.addEventListener('scroll', update);
+    window.addEventListener('resize', update);
+    update();
+    return update;
+  }
+  var updateUserTableScrollEdges = wireTableScrollEdges(
+    document.getElementById('userTableScroll'),
+    document.getElementById('userTableScrollLeft'),
+    document.getElementById('userTableScrollRight')
+  );
+
   var userTableBody = document.getElementById('userTableBody');
   var userTableStatus = document.getElementById('userTableStatus');
   var badgeUserSelect = document.getElementById('badgeUserSelect');
@@ -1170,6 +1236,8 @@
       opt.value = i; opt.textContent = (u.fullname || u.username) + '（' + u.username + '）';
       badgeUserSelect.appendChild(opt);
     });
+    // 行数・列幅が変わることで横スクロールの要否も変わりうるため、描画のたびに再判定する
+    if (updateUserTableScrollEdges) updateUserTableScrollEdges();
   }
 
   function loadUsers() {
@@ -1614,6 +1682,19 @@
     });
   })();
 
+  // 購入ボタンの動作：「外部サイトに移動する」を選んだ時だけURL入力欄を表示する
+  (function () {
+    var wrap = document.getElementById('contentExternalUrlWrap');
+    var urlInput = document.getElementById('contentExternalUrlInput');
+    document.querySelectorAll('input[name="buttonType"]').forEach(function (r) {
+      r.addEventListener('change', function () {
+        var isExternal = document.getElementById('contentButtonTypeExternal').checked;
+        wrap.style.display = isExternal ? '' : 'none';
+        urlInput.required = isExternal;
+      });
+    });
+  })();
+
   function loadContentAdmin() {
     apiPost({ action: 'listContent', type: 'marketContent' }).then(function (data) {
       if (!data.ok) return;
@@ -1634,6 +1715,10 @@
     contentRecommendEditor.clear(); contentDetailEditor.clear();
     contentThumbUrl = '';
     document.getElementById('contentThumbPreview').innerHTML = '未設定';
+    document.getElementById('contentButtonTypePurchase').checked = true;
+    document.getElementById('contentExternalUrlWrap').style.display = 'none';
+    document.getElementById('contentExternalUrlInput').required = false;
+    document.getElementById('contentExternalUrlInput').value = '';
     document.getElementById('contentEditBanner').style.display = 'none';
     document.getElementById('contentSubmitBtn').textContent = 'コンテンツを登録する（WorldShift公式として掲載）';
   }
@@ -1648,6 +1733,12 @@
     contentThumbUrl = it.thumbnailUrl || '';
     document.getElementById('contentThumbPreview').innerHTML = it.thumbnailUrl
       ? '<img src="' + it.thumbnailUrl + '" style="width:100%;height:100%;object-fit:cover;">' : '未設定';
+    var isExternal = it.buttonType === 'external';
+    document.getElementById('contentButtonTypeExternal').checked = isExternal;
+    document.getElementById('contentButtonTypePurchase').checked = !isExternal;
+    document.getElementById('contentExternalUrlWrap').style.display = isExternal ? '' : 'none';
+    document.getElementById('contentExternalUrlInput').required = isExternal;
+    document.getElementById('contentExternalUrlInput').value = it.externalUrl || '';
     document.getElementById('contentEditBanner').style.display = 'flex';
     document.getElementById('contentSubmitBtn').textContent = 'コンテンツを更新する';
     form.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -1658,12 +1749,19 @@
     e.preventDefault();
     var fd = new FormData(e.target);
     var isEditing = !!editingMarketContentId;
+    var buttonType = fd.get('buttonType') === 'external' ? 'external' : 'purchase';
+    var externalUrl = String(fd.get('externalUrl') || '').trim();
+    if (buttonType === 'external' && !externalUrl) {
+      alert('外部サイトに移動する場合は、URLを入力してください。');
+      return;
+    }
     var payload = {
       action: isEditing ? 'updateContent' : 'createContent', type: 'marketContent',
       title: fd.get('title'), category: fd.get('category'),
       price: String(fd.get('price') || '').replace(/[^0-9]/g, ''), // カンマ表示を保存前に数字だけへ戻す
       recommendHtml: contentRecommendEditor.getHtml(), detailHtml: contentDetailEditor.getHtml(),
-      thumbnailUrl: contentThumbUrl
+      thumbnailUrl: contentThumbUrl,
+      buttonType: buttonType, externalUrl: buttonType === 'external' ? externalUrl : ''
     };
     if (isEditing) payload.id = editingMarketContentId;
     apiPost(payload).then(function (data) {
