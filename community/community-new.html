@@ -227,6 +227,21 @@
     margin-top:0 !important;
   }
   .el-display-ad-label{ display:none !important; }
+  /* 参加者範囲＝「指定したメンバーのみ」の時、公開範囲は自動的に「指定したメンバーのみ」に
+     固定される（参加できない人には公開もしない、という一貫した挙動にするため）。ロック中は
+     選べないことが分かるよう、選択できない他の選択肢を淡色化する。 */
+  .el-visibility-option.el-cn-locked-inactive{
+    opacity:.4 !important;
+    pointer-events:none !important;
+  }
+  .el-visibility-option.el-cn-locked-active{
+    cursor:default !important;
+  }
+  .el-cn-visibility-lock-note{
+    margin-top:8px !important;
+    font-size:12px !important;
+    color:var(--el-ink-faint, #8A8478) !important;
+  }
 </style>
 </head>
 <body data-site="community" data-root="..">
@@ -486,7 +501,17 @@
                   <span class="radio-ui"></span>
                   <span><strong>SHiFT member only</strong><small>SHiFT会員だけが見られます</small></span>
                 </label>
+                <!-- 参加者範囲を「指定したメンバーのみ」にした場合、公開範囲もこの選択肢に自動的に
+                     固定される（参加できない人には公開もしない、という一貫した挙動にするため）。 -->
+                <label class="el-visibility-option" id="ccVisibilityInvitedOption">
+                  <input type="radio" name="visibilityScope" value="invited">
+                  <span class="radio-ui"></span>
+                  <span><strong>指定したメンバーのみ</strong><small>参加者範囲で指定した人だけが見られます</small></span>
+                </label>
               </div>
+              <p class="el-cn-visibility-lock-note" id="ccVisibilityLockNote" style="display:none;">
+                参加者範囲を「指定したメンバーのみ」にしているため、公開範囲も自動的に「指定したメンバーのみ」になります。
+              </p>
             </div>
 
             <div class="el-form-block">
@@ -520,7 +545,7 @@
               </div>
             </div>
 
-            <div class="el-form-block el-form-block--compact">
+            <div class="el-form-block el-form-block--compact" id="ccJoinMethodBlock">
               <div class="el-form-label-row">
                 <label>参加方法 <span class="required">必須</span></label>
                 <span class="el-form-hint">参加をどう扱うか</span>
@@ -947,14 +972,61 @@
 
     memberSearch.addEventListener('input', renderMemberResults);
 
-    function syncMemberPickerVisibility() {
+    // --- 公開範囲：参加者範囲が「指定したメンバーのみ」の間は、公開範囲も自動的に
+    //     「指定したメンバーのみ」に固定し、他の選択肢は選べないようにする。参加者範囲を
+    //     「誰でも」に戻したら、ロック前に選ばれていた公開範囲を復元する。 ---
+    var visibilityRadios = form.querySelectorAll('input[name="visibilityScope"]');
+    var joinMethodBlock = document.getElementById('ccJoinMethodBlock');
+    var visibilityLockNote = document.getElementById('ccVisibilityLockNote');
+    var visibilityScopeBeforeLock = null;
+
+    function syncParticipationDependentUI() {
       var checked = form.querySelector('input[name="participationScope"]:checked');
       var isInvited = checked && checked.value === 'invited';
+
+      // 参加できるメンバーを指定する欄の表示
       memberPickerBlock.style.display = isInvited ? '' : 'none';
       if (isInvited) loadMembersOnce();
+
+      // 参加方法：指定したメンバーのみの場合は選択不要なので、欄ごと隠す
+      if (joinMethodBlock) joinMethodBlock.style.display = isInvited ? 'none' : '';
+
+      // 公開範囲のロック／解除
+      if (isInvited) {
+        var currentVisibility = form.querySelector('input[name="visibilityScope"]:checked');
+        if (currentVisibility && currentVisibility.value !== 'invited') {
+          visibilityScopeBeforeLock = currentVisibility.value;
+        }
+        visibilityRadios.forEach(function (r) {
+          if (r.value === 'invited') {
+            r.checked = true;
+            r.disabled = false;
+            r.closest('.el-visibility-option').classList.add('el-cn-locked-active');
+            r.closest('.el-visibility-option').classList.remove('el-cn-locked-inactive');
+          } else {
+            r.disabled = true;
+            r.closest('.el-visibility-option').classList.add('el-cn-locked-inactive');
+            r.closest('.el-visibility-option').classList.remove('el-cn-locked-active');
+          }
+        });
+        if (visibilityLockNote) visibilityLockNote.style.display = '';
+      } else {
+        visibilityRadios.forEach(function (r) {
+          r.disabled = false;
+          r.closest('.el-visibility-option').classList.remove('el-cn-locked-inactive', 'el-cn-locked-active');
+        });
+        // ロック中に「指定したメンバーのみ」のままだった場合は、ロック前の選択（無ければ「公開」）に戻す
+        var stillInvited = form.querySelector('input[name="visibilityScope"]:checked[value="invited"]');
+        if (stillInvited) {
+          var restoreValue = visibilityScopeBeforeLock || 'general';
+          var restoreRadio = form.querySelector('input[name="visibilityScope"][value="' + restoreValue + '"]');
+          if (restoreRadio) restoreRadio.checked = true;
+        }
+        if (visibilityLockNote) visibilityLockNote.style.display = 'none';
+      }
     }
-    participationRadios.forEach(function (r) { r.addEventListener('change', syncMemberPickerVisibility); });
-    syncMemberPickerVisibility();
+    participationRadios.forEach(function (r) { r.addEventListener('change', syncParticipationDependentUI); });
+    syncParticipationDependentUI();
 
     // --- 送信 ---
     form.addEventListener('submit', function (e) {
