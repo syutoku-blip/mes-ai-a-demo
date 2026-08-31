@@ -181,6 +181,16 @@
     padding:0 !important;
     display:flex !important;
     flex-direction:column !important;
+    /* style.css側の元の定義は「画像に文字を重ねる」旧デザイン向けに、カード自体を
+       aspect-ratio:1/1・min-height:250px・overflow:hiddenで正方形に固定していた。
+       画像の下にキャプションとボタンを別要素として追加した新デザインでは、それらが
+       固定された正方形からはみ出し、下のボタンに重なって見えてしまっていたため、
+       カードの高さは中身（画像＋キャプション＋ボタン）に合わせて自動的に伸びるように
+       上書きする（画像自体は下のel-display-ad-artだけを正方形にする）。 */
+    aspect-ratio:auto !important;
+    min-height:0 !important;
+    height:auto !important;
+    overflow:visible !important;
   }
   .el-compose-display-ad .el-display-ad-art{
     position:relative !important;

@@ -87,6 +87,8 @@
   }
   /* スポンサー表記は画像の下の帯に独立して表示する（以前は画像に重ねていたため、
      文字が画像の一部を隠してしまっていた）。 */
+  /* 「前みたいに薄いグレーっぽい感じがいい」というフィードバックを受け、白ではなく
+     薄いグレー寄りのトーン（--el-cream-deep）の帯に変更。 */
   .el-ad-sponsor-v2{
     position:static !important;
     display:block !important;
@@ -95,7 +97,7 @@
     padding:8px 14px !important;
     font-size:11px !important;
     color:var(--el-navy, #16233F) !important;
-    background:var(--el-paper, #fff) !important;
+    background:var(--el-cream-deep, #F0EAD9) !important;
     border-top:1px solid var(--el-line-soft, #e4e0d8) !important;
   }
   .el-auth-modal{
