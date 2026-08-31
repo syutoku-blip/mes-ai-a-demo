@@ -564,12 +564,30 @@
     // 管理者にはサイドバーに管理者ページへのリンクを追加
     if (role === 'admin') {
       var sideNav = document.querySelector('.el-sidebar nav');
-      if (sideNav && !sideNav.querySelector('a[href="admin.html"]')) {
-        var adminLink = document.createElement('a');
-        adminLink.href = 'admin.html';
-        if (window.location.pathname.indexOf('admin.html') !== -1) adminLink.className = 'is-active';
-        adminLink.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 3 7v6c0 5 4 9 9 9s9-4 9-9V7l-9-5Z"/><path d="m9 12 2 2 4-4"/></svg><span class="lbl">管理者ページ</span>';
-        sideNav.appendChild(adminLink);
+      if (sideNav && !sideNav.querySelector('#sideAdminSection')) {
+        var isAdminPage = window.location.pathname.indexOf('admin.html') !== -1;
+        var adminTabs = [
+          ['users', '登録ユーザー一覧'], ['announce', 'お知らせ登録'], ['event', 'イベント登録'],
+          ['content', 'コンテンツ登録'], ['forms', 'フォーム管理'], ['community', 'コミュニティ登録'],
+          ['guideline', 'ガイドライン管理'], ['ads', '広告設定'], ['apply', '出品申請の確認'],
+          ['marketOrders', 'マーケット申込み一覧'], ['badge', 'バッジの付与']
+        ];
+        var adminDetails = document.createElement('details');
+        adminDetails.className = 'el-side-forum';
+        adminDetails.id = 'sideAdminSection';
+        adminDetails.innerHTML = '<summary' + (isAdminPage ? ' class="is-active"' : '') + ' data-href="admin.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 3 7v6c0 5 4 9 9 9s9-4 9-9V7l-9-5Z"/><path d="m9 12 2 2 4-4"/></svg><span class="lbl">管理者ページ</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></summary><div class="el-side-sub">' +
+          adminTabs.map(function (t) { return '<a href="admin.html?tab=' + t[0] + '">' + t[1] + '</a>'; }).join('') +
+          '</div>';
+        sideNav.appendChild(adminDetails);
+        // フォーラム／コミュニティ／マーケットの見出しと同じ「矢印以外は遷移、矢印は開閉のみ」の
+        // 挙動を、動的に追加したこの要素にも個別に設定する（既存のquerySelectorAllによる
+        // 一括設定は、この要素が生成される前に実行済みのため、ここで個別に行う）
+        var adminSummary = adminDetails.querySelector('summary[data-href]');
+        adminSummary.addEventListener('click', function (e) {
+          if (e.target.closest('svg.chev')) return;
+          e.preventDefault();
+          window.location.href = adminSummary.dataset.href;
+        });
       }
     }
 

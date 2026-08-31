@@ -1450,18 +1450,21 @@
           // まずは元のサイズのまま画質だけを段階的に下げていき、なるべく解像度を落とさずセル文字数に
           // 収める。WebP対応ブラウザではさらに小さいファイルサイズで同等の画質が得られるため、
           // フル解像度で収まる可能性が高くなる（＝広告バナー等がぼやけにくくなる）。
-          var attempts = [
-            [target, 0.92],
-            [target, 0.85],
-            [target, 0.78],
-            [target, 0.7],
-            [target, 0.6],
-            [Math.round(target * 0.75), 0.78],
-            [Math.round(target * 0.75), 0.65],
-            [Math.round(target * 0.5), 0.75],
-            [400, 0.72],
-            [300, 0.7]
-          ];
+          // 以前はサイズの刻み幅が粗く（target→0.75target→0.5target→400→300px）、
+          // 実際の写真系バナー画像ではtargetでもtarget*0.75でも収まらず一気に0.5target以下まで
+          // 落ちてしまい、結果的に解像度が大きく失われて画質が荒く見える原因になっていた。
+          // サイズの刻みを細かくし、各サイズごとに画質も何段階か試すことで、文字数制限内に収まる
+          // 範囲でなるべく大きい解像度を選べるようにする。
+          var sizeSteps = [];
+          [1, 0.85, 0.75, 0.65, 0.55, 0.45, 0.35, 0.28].forEach(function (ratio) {
+            var s = Math.max(250, Math.round(target * ratio));
+            if (sizeSteps.indexOf(s) === -1) sizeSteps.push(s);
+          });
+          var qualitySteps = [0.92, 0.85, 0.78, 0.7, 0.62, 0.55];
+          var attempts = [];
+          sizeSteps.forEach(function (s) {
+            qualitySteps.forEach(function (q) { attempts.push([s, q]); });
+          });
           var result = '';
           for (var i = 0; i < attempts.length; i++) {
             result = render(attempts[i][0], attempts[i][1], format);
@@ -1498,7 +1501,9 @@
   // イベント登録
   // ------------------------------------------------------------
   var eventThumbUrl = '';
-  wireImageUpload(document.getElementById('eventThumbInput'), document.getElementById('eventThumbPreview'), function (dataUrl) { eventThumbUrl = dataUrl; });
+  // 第4引数（最大サイズ）を省略すると400pxまでしか使われず、カード表示時にぼやけて見えていたため、
+  // 広告バナーと同様に明示的な値を指定して解像度を確保する
+  wireImageUpload(document.getElementById('eventThumbInput'), document.getElementById('eventThumbPreview'), function (dataUrl) { eventThumbUrl = dataUrl; }, 900);
 
   function loadEvents() {
     apiPost({ action: 'listContent', type: 'event' }).then(function (data) {
@@ -1591,7 +1596,9 @@
   // マーケットコンテンツ登録
   // ------------------------------------------------------------
   var contentThumbUrl = '';
-  wireImageUpload(document.getElementById('contentThumbInput'), document.getElementById('contentThumbPreview'), function (dataUrl) { contentThumbUrl = dataUrl; });
+  // 第4引数（最大サイズ）を省略すると400pxまでしか使われず、カード表示時にぼやけて見えていたため、
+  // 広告バナーと同様に明示的な値を指定して解像度を確保する
+  wireImageUpload(document.getElementById('contentThumbInput'), document.getElementById('contentThumbPreview'), function (dataUrl) { contentThumbUrl = dataUrl; }, 900);
 
   // 価格入力：入力しながら自動でカンマ区切り表示にする（保存時は数字のみに戻す）
   (function () {
@@ -2222,6 +2229,14 @@
       });
     });
   });
+  // 他ページのサイドバー「管理者ページ」展開メニューから ?tab=xxx 付きで遷移してきた場合、
+  // 該当タブを初期選択した状態で開く
+  (function () {
+    var tabParam = new URLSearchParams(window.location.search).get('tab');
+    if (!tabParam) return;
+    var targetTab = document.querySelector('#adminSideTabs a[data-tab="' + tabParam + '"]');
+    if (targetTab) targetTab.click();
+  })();
   // ユーザーモード（ゲスト／登録ユーザー／SHiFT会員／管理者）の切り替えと共通ゲート処理
   // Googleドライブの共有リンクを、<img>で直接表示できる形式のURLに変換する
   function elDriveImgUrl(url) {
@@ -2322,12 +2337,27 @@
 
     if (role === 'admin' && !document.getElementById('sideAdminSection')) {
       var sideNav = document.querySelector('.el-sidebar nav');
-      if (sideNav && !sideNav.querySelector('a[href="admin.html"]')) {
-        var adminLink = document.createElement('a');
-        adminLink.href = 'admin.html';
-        if (window.location.pathname.indexOf('admin.html') !== -1) adminLink.className = 'is-active';
-        adminLink.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 3 7v6c0 5 4 9 9 9s9-4 9-9V7l-9-5Z"/><path d="m9 12 2 2 4-4"/></svg><span class="lbl">管理者ページ</span>';
-        sideNav.appendChild(adminLink);
+      if (sideNav) {
+        var isAdminPage = window.location.pathname.indexOf('admin.html') !== -1;
+        var adminTabs = [
+          ['users', '登録ユーザー一覧'], ['announce', 'お知らせ登録'], ['event', 'イベント登録'],
+          ['content', 'コンテンツ登録'], ['forms', 'フォーム管理'], ['community', 'コミュニティ登録'],
+          ['guideline', 'ガイドライン管理'], ['ads', '広告設定'], ['apply', '出品申請の確認'],
+          ['marketOrders', 'マーケット申込み一覧'], ['badge', 'バッジの付与']
+        ];
+        var adminDetails = document.createElement('details');
+        adminDetails.className = 'el-side-forum';
+        adminDetails.id = 'sideAdminSection';
+        adminDetails.innerHTML = '<summary' + (isAdminPage ? ' class="is-active"' : '') + ' data-href="admin.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 3 7v6c0 5 4 9 9 9s9-4 9-9V7l-9-5Z"/><path d="m9 12 2 2 4-4"/></svg><span class="lbl">管理者ページ</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></summary><div class="el-side-sub">' +
+          adminTabs.map(function (t) { return '<a href="admin.html?tab=' + t[0] + '">' + t[1] + '</a>'; }).join('') +
+          '</div>';
+        sideNav.appendChild(adminDetails);
+        var adminSummary = adminDetails.querySelector('summary[data-href]');
+        adminSummary.addEventListener('click', function (e) {
+          if (e.target.closest('svg.chev')) return;
+          e.preventDefault();
+          window.location.href = adminSummary.dataset.href;
+        });
       }
     }
 

@@ -165,6 +165,33 @@
     border-top-left-radius:var(--el-radius-m, 14px) !important;
     border-top-right-radius:var(--el-radius-m, 14px) !important;
   }
+  /* 商品モーダルの項目見出し（「こんな方におすすめ」「詳細」等）が本文と見分けにくいため、
+     色付きの左罫線とアイコン風のドットを添えて「見出し」であることが一目でわかるデザインに強化する */
+  .el-product-modal-section{
+    margin-bottom:22px !important;
+    padding-left:14px !important;
+    border-left:3px solid var(--el-teal, #2F8F82) !important;
+  }
+  .el-product-modal-section h4{
+    display:flex !important;
+    align-items:center !important;
+    gap:7px !important;
+    font-size:14px !important;
+    font-weight:800 !important;
+    color:var(--el-teal-deep, #1F6E63) !important;
+    text-transform:none !important;
+    letter-spacing:0 !important;
+    margin:0 0 8px !important;
+  }
+  .el-product-modal-section h4::before{
+    content:"" !important;
+    display:inline-block !important;
+    width:6px !important;
+    height:6px !important;
+    border-radius:50% !important;
+    background:var(--el-teal, #2F8F82) !important;
+    flex:none !important;
+  }
   @media (max-width:600px){
     .el-product-modal .el-modal-panel{
       width:94% !important;
@@ -1143,12 +1170,30 @@
     // 管理者にはサイドバーに管理者ページへのリンクを追加
     if (role === 'admin') {
       var sideNav = document.querySelector('.el-sidebar nav');
-      if (sideNav && !sideNav.querySelector('a[href="admin.html"]')) {
-        var adminLink = document.createElement('a');
-        adminLink.href = 'admin.html';
-        if (window.location.pathname.indexOf('admin.html') !== -1) adminLink.className = 'is-active';
-        adminLink.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 3 7v6c0 5 4 9 9 9s9-4 9-9V7l-9-5Z"/><path d="m9 12 2 2 4-4"/></svg><span class="lbl">管理者ページ</span>';
-        sideNav.appendChild(adminLink);
+      if (sideNav && !sideNav.querySelector('#sideAdminSection')) {
+        var isAdminPage = window.location.pathname.indexOf('admin.html') !== -1;
+        var adminTabs = [
+          ['users', '登録ユーザー一覧'], ['announce', 'お知らせ登録'], ['event', 'イベント登録'],
+          ['content', 'コンテンツ登録'], ['forms', 'フォーム管理'], ['community', 'コミュニティ登録'],
+          ['guideline', 'ガイドライン管理'], ['ads', '広告設定'], ['apply', '出品申請の確認'],
+          ['marketOrders', 'マーケット申込み一覧'], ['badge', 'バッジの付与']
+        ];
+        var adminDetails = document.createElement('details');
+        adminDetails.className = 'el-side-forum';
+        adminDetails.id = 'sideAdminSection';
+        adminDetails.innerHTML = '<summary' + (isAdminPage ? ' class="is-active"' : '') + ' data-href="admin.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 3 7v6c0 5 4 9 9 9s9-4 9-9V7l-9-5Z"/><path d="m9 12 2 2 4-4"/></svg><span class="lbl">管理者ページ</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></summary><div class="el-side-sub">' +
+          adminTabs.map(function (t) { return '<a href="admin.html?tab=' + t[0] + '">' + t[1] + '</a>'; }).join('') +
+          '</div>';
+        sideNav.appendChild(adminDetails);
+        // フォーラム／コミュニティ／マーケットの見出しと同じ「矢印以外は遷移、矢印は開閉のみ」の
+        // 挙動を、動的に追加したこの要素にも個別に設定する（既存のquerySelectorAllによる
+        // 一括設定は、この要素が生成される前に実行済みのため、ここで個別に行う）
+        var adminSummary = adminDetails.querySelector('summary[data-href]');
+        adminSummary.addEventListener('click', function (e) {
+          if (e.target.closest('svg.chev')) return;
+          e.preventDefault();
+          window.location.href = adminSummary.dataset.href;
+        });
       }
     }
 
@@ -1272,13 +1317,6 @@
     }, 700);
   })();
 
-  var ADS = [
-    { name: "SLCサービス", desc: "米AmazonFBA納品代行サービス", gradient: "linear-gradient(120deg, var(--el-teal), #1B5A52)" },
-    { name: "FDA Compliance Partner", desc: "FDA規制対応サービス", gradient: "linear-gradient(120deg, var(--el-mustard), #8A5E1A)" },
-    { name: "ProFinder", desc: "米Amazonリサーチツール", gradient: "linear-gradient(120deg, #3E7EA3, #1B3E5C)" },
-    { name: "Allynair", desc: "海外発送代行サービス", gradient: "linear-gradient(120deg, var(--el-sage), #2E5C3E)" },
-    { name: "AmaNavi", desc: "米Amazon進出サポートサービス", gradient: "linear-gradient(120deg, var(--el-coral), #8A3E2E)" }
-  ];
   (function () {
     var el = document.getElementById('adBanner');
     if (!el) return;
@@ -1286,14 +1324,6 @@
     el.addEventListener('click', function (e) { if (!el.dataset.ctaUrl) e.preventDefault(); });
     var imageEl = document.getElementById('adImageV2');
     var sponsorEl = document.getElementById('adSponsorV2');
-
-    function renderMockAd() {
-      var ad = ADS[Math.floor(Math.random() * ADS.length)];
-      el.classList.remove('is-square');
-      imageEl.style.background = ad.gradient;
-      imageEl.style.backgroundImage = 'none';
-      sponsorEl.textContent = 'スポンサー：' + ad.name;
-    }
 
     // 管理者ページで登録された広告（横長／スクエア）があれば、そちらを優先して表示する
     var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
@@ -1305,7 +1335,12 @@
       .then(function (res) { return res.json(); })
       .then(function (data) {
         var ads = (data.ok && data.items) ? data.items : [];
-        if (!ads.length) { renderMockAd(); return; }
+        if (!ads.length) {
+          // 広告が1件も登録されていない場合は、架空のダミー広告を表示するのではなく、
+          // バナー自体を表示しない（デモ/モックデータを残さない方針のため）
+          el.style.display = 'none';
+          return;
+        }
         var ad = ads[Math.floor(Math.random() * ads.length)];
         el.classList.toggle('is-square', ad.adType === 'square');
         if (ad.imageUrl) {
@@ -1322,7 +1357,7 @@
         }
         sponsorEl.textContent = 'スポンサー：' + (ad.serviceName || '');
       })
-      .catch(renderMockAd);
+      .catch(function () { el.style.display = 'none'; });
   })();
 </script>
 <div class="el-auth-modal" id="authModal" aria-hidden="true">
