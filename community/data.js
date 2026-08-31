@@ -49,6 +49,23 @@ window.EL_getTagCounts = function () {
   return counts;
 };
 
+// コミュニティの参加状態（参加中／申請中）：バックエンドにメンバーシップを記録するシートが
+// 無いため、このブラウザでの参加操作をlocalStorageに記録して管理する
+// （マーケットのお気に入り機能（el-market-favorites）と同じ、ブラウザ単位の実データという考え方）。
+// { [groupId]: 'joined' | 'pending' } の形で保持する。
+window.EL_getCommunityMemberships = function () {
+  try { return JSON.parse(localStorage.getItem('el-community-memberships') || '{}'); } catch (e) { return {}; }
+};
+window.EL_setCommunityMembership = function (groupId, status) {
+  if (!groupId) return;
+  try {
+    var map = window.EL_getCommunityMemberships();
+    if (status) map[groupId] = status;
+    else delete map[groupId];
+    localStorage.setItem('el-community-memberships', JSON.stringify(map));
+  } catch (e) {}
+};
+
 // 使われているタグをすべて、件数の多い順で返す
 window.EL_getVisibleTags = function () {
   var counts = window.EL_getTagCounts();

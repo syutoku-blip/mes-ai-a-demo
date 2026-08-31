@@ -281,8 +281,8 @@
           <a href="groups-list.html">すべて</a>
           <a href="groups-list.html?sort=new">新着</a>
           <a href="groups-list.html?sort=hot">人気</a>
-          <a href="groups-list.html?filter=joined&sort=hot">参加中のコミュニティ</a>
-          <a href="groups-list.html?filter=pending&sort=hot">申請中のコミュニティ</a>
+          <a href="my-group-activity.html?view=joined">参加中のコミュニティ</a>
+          <a href="my-group-activity.html?view=pending">申請中のコミュニティ</a>
         </div>
       </details>
 
@@ -474,6 +474,26 @@
                 <li>参加者範囲・参加方法の設定が意図通りか</li>
               </ul>
             </div>
+
+            <a href="#" class="el-compose-display-ad" id="composeDisplayAd" aria-label="FDA Compliance Partner">
+              <span class="el-display-ad-label">AD</span>
+              <div class="el-display-ad-art" id="composeDisplayAdArt" aria-hidden="true">
+                <svg viewBox="0 0 220 150" role="img">
+                  <circle cx="150" cy="48" r="35" fill="#E4F1EE"/>
+                  <path d="M120 48h60M150 18c10 10 10 50 0 60M150 18c-10 10-10 50 0 60M125 35h50M125 60h50"
+                        fill="none" stroke="#2F8F82" stroke-width="3" stroke-linecap="round" opacity=".72"/>
+                  <rect x="24" y="82" width="58" height="42" rx="4" fill="#F0B548"/>
+                  <rect x="31" y="89" width="44" height="35" rx="2" fill="#F7CC75"/>
+                  <path d="M53 82v42M24 103h58" stroke="#C88A24" stroke-width="2" opacity=".55"/>
+                  <path d="M80 110c30-32 52-22 84-37" fill="none" stroke="#2F8F82" stroke-width="2.5" stroke-dasharray="5 6" opacity=".55"/>
+                  <circle cx="164" cy="73" r="5" fill="#EAAA3C"/>
+                </svg>
+              </div>
+              <div class="el-display-ad-copy">
+                <small id="composeDisplayAdSmall">WorldShift</small>
+              </div>
+              <span class="el-display-ad-cta" id="composeDisplayAdCta">詳しく見る</span>
+            </a>
           </aside>
 
           <div class="el-compose-actions">
@@ -483,6 +503,17 @@
         </form>
       </div>
     </main>
+    <section class="el-section" style="padding-top:0;padding-bottom:24px;">
+      <div class="wrap">
+
+        <a class="el-ad-banner-v2" id="adBanner" href="#" target="_blank" rel="noopener noreferrer" style="margin-top:32px;">
+          <span class="el-ad-tag-v2">AD</span>
+          <div class="el-ad-image-v2" id="adImageV2"></div>
+          <span class="el-ad-sponsor-v2" id="adSponsorV2"></span>
+        </a>
+
+      </div>
+    </section>
     <footer class="el-footer">
       <div class="wrap">
         <div class="el-footer-grid">
@@ -912,6 +943,67 @@
         alert('通信エラーが発生しました。');
       });
     });
+  })();
+
+  // サイドバーのスクエア広告：管理者ページで登録された「スクエア」タイプの広告があれば差し替える
+  // （スクエア広告はフォーラムの新規投稿ページとこのページ（コミュニティの新規作成）にのみ表示する方針）
+  (function () {
+    var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
+    fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'listContent', type: 'ad' })
+    })
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        var ads = ((data.ok && data.items) ? data.items : []).filter(function (a) { return a.adType === 'square'; });
+        if (!ads.length) return;
+        var ad = ads[Math.floor(Math.random() * ads.length)];
+        var art = document.getElementById('composeDisplayAdArt');
+        if (ad.imageUrl) art.innerHTML = '<img src="' + ad.imageUrl + '" style="width:100%;height:100%;object-fit:cover;">';
+        document.getElementById('composeDisplayAdSmall').textContent = 'スポンサー：' + (ad.serviceName || '');
+        document.getElementById('composeDisplayAdCta').textContent = ad.ctaText || '詳しく見る';
+        if (ad.ctaUrl) document.getElementById('composeDisplayAd').href = ad.ctaUrl;
+      })
+      .catch(function () {});
+  })();
+  (function () {
+    var el = document.getElementById('adBanner');
+    if (!el) return;
+    el.addEventListener('click', function (e) { if (!el.dataset.ctaUrl) e.preventDefault(); });
+    var imageEl = document.getElementById('adImageV2');
+    var sponsorEl = document.getElementById('adSponsorV2');
+
+    var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
+    fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'listContent', type: 'ad' })
+    })
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        // このバナーは「基本は横長」の広告枠のため、スクエア広告はここでは選ばない
+        var ads = ((data.ok && data.items) ? data.items : []).filter(function (a) { return a.adType !== 'square'; });
+        if (!ads.length) {
+          el.style.display = 'none';
+          return;
+        }
+        var ad = ads[Math.floor(Math.random() * ads.length)];
+        if (ad.imageUrl) {
+          imageEl.style.backgroundImage = 'url(' + ad.imageUrl + ')';
+        } else {
+          imageEl.style.backgroundImage = 'none';
+          imageEl.style.background = 'var(--el-teal)';
+        }
+        if (ad.ctaUrl) {
+          el.href = ad.ctaUrl;
+          el.target = '_blank';
+          el.rel = 'noopener noreferrer';
+          el.dataset.ctaUrl = ad.ctaUrl;
+        }
+        sponsorEl.textContent = 'スポンサー：' + (ad.serviceName || '');
+      })
+      .catch(function () { el.style.display = 'none'; });
   })();
 </script>
 

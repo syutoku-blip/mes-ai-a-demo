@@ -252,8 +252,8 @@
           <a href="groups-list.html">すべて</a>
           <a href="groups-list.html?sort=new">新着</a>
           <a href="groups-list.html?sort=hot">人気</a>
-          <a href="groups-list.html?filter=joined&sort=hot">参加中のコミュニティ</a>
-          <a href="groups-list.html?filter=pending&sort=hot">申請中のコミュニティ</a>
+          <a href="my-group-activity.html?view=joined">参加中のコミュニティ</a>
+          <a href="my-group-activity.html?view=pending">申請中のコミュニティ</a>
         </div>
       </details>
 
@@ -661,7 +661,10 @@
     })
       .then(function (res) { return res.json(); })
       .then(function (data) {
-        var ads = (data.ok && data.items) ? data.items : [];
+        // このバナーは「基本は横長」の広告枠のため、スクエア広告はここでは選ばない
+        // （スクエア広告はフォーラムの新規投稿ページ／コミュニティの新規作成ページの
+        // 専用サイドバー枠にのみ表示する方針のため）。
+        var ads = ((data.ok && data.items) ? data.items : []).filter(function (a) { return a.adType !== 'square'; });
         if (!ads.length) {
           // 広告が1件も登録されていない場合は、架空のダミー広告を表示するのではなく、
           // バナー自体を表示しない（デモ/モックデータを残さない方針のため）
@@ -669,7 +672,6 @@
           return;
         }
         var ad = ads[Math.floor(Math.random() * ads.length)];
-        el.classList.toggle('is-square', ad.adType === 'square');
         if (ad.imageUrl) {
           imageEl.style.backgroundImage = 'url(' + ad.imageUrl + ')';
         } else {

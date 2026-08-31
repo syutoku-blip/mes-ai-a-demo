@@ -378,8 +378,8 @@
           <a href="groups-list.html">すべて</a>
           <a href="groups-list.html?sort=new">新着</a>
           <a href="groups-list.html?sort=hot">人気</a>
-          <a href="groups-list.html?filter=joined&sort=hot">参加中のコミュニティ</a>
-          <a href="groups-list.html?filter=pending&sort=hot">申請中のコミュニティ</a>
+          <a href="my-group-activity.html?view=joined">参加中のコミュニティ</a>
+          <a href="my-group-activity.html?view=pending">申請中のコミュニティ</a>
         </div>
       </details>
 
@@ -519,6 +519,7 @@
 </div>
 
 <script src="../shared/global-header.js" defer></script>
+<script src="data.js"></script>
 <script>
   (function () {
     var appShell = document.getElementById('appShell');
@@ -689,6 +690,59 @@
       return d.innerHTML;
     }
 
+    // ------------------------------------------------------------
+    // コミュニティの参加状態（参加中／申請中）
+    // バックエンドにメンバーシップを記録するシートが無いため、このブラウザでの参加操作を
+    // localStorageに記録して管理する（マーケットのお気に入り機能と同じ考え方）。
+    // ------------------------------------------------------------
+    function communityJoinLabel_(info, groupId) {
+      var map = window.EL_getCommunityMemberships ? window.EL_getCommunityMemberships() : {};
+      var state = map[groupId] || '';
+      if (state === 'joined') return { text: '参加中', disabled: true };
+      if (state === 'pending') return { text: '承認待ち', disabled: true };
+      if (info.participationScope === 'invited') {
+        var uname = '';
+        try { uname = localStorage.getItem('el-username') || ''; } catch (e) {}
+        var invited = [];
+        try { invited = JSON.parse(info.invitedMembers || '[]'); } catch (e) {}
+        if (!uname || invited.indexOf(uname) === -1) return { text: '参加できません', disabled: true };
+      }
+      return { text: info.joinMethod === 'apply' ? '参加を申請する' : '参加する', disabled: false };
+    }
+    function applyCommunityJoin_(info, groupId, btn) {
+      if (window.elGetRole && window.elGetRole() === 'guest') {
+        if (window.elRequireAuth) window.elRequireAuth();
+        return;
+      }
+      if (info.participationScope === 'invited') {
+        var uname = '';
+        try { uname = localStorage.getItem('el-username') || ''; } catch (e) {}
+        var invited = [];
+        try { invited = JSON.parse(info.invitedMembers || '[]'); } catch (e) {}
+        if (!uname || invited.indexOf(uname) === -1) {
+          alert('このコミュニティは指定されたメンバーのみ参加できます。');
+          return;
+        }
+      }
+      var newState = info.joinMethod === 'apply' ? 'pending' : 'joined';
+      if (window.EL_setCommunityMembership) window.EL_setCommunityMembership(groupId, newState);
+      var label = communityJoinLabel_(info, groupId);
+      if (btn) { btn.textContent = label.text; btn.disabled = label.disabled; }
+      // 一覧カード側のボタンも同じ状態に揃える（モーダル経由で参加した場合のため）
+      var card = document.querySelector('.el-group-card[data-group="' + groupId + '"] .el-group-join-btn');
+      if (card && card !== btn) { card.textContent = label.text; card.disabled = label.disabled; }
+    }
+    // 一覧カードの参加ボタン（イベント委譲。カードはinnerHTMLで動的に差し替わるため）
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest('.el-group-join-btn');
+      if (!btn) return;
+      e.preventDefault();
+      e.stopPropagation();
+      var groupId = btn.dataset.groupId || '';
+      var info = GROUP_DETAILS[btn.dataset.groupTitle] || {};
+      applyCommunityJoin_(info, groupId, btn);
+    });
+
     // スプレッドシート連携：新着／人気コミュニティをシートから取得して描画する（デモデータは使用しない）
     (function () {
       var newList = document.getElementById('newGroupList');
@@ -710,16 +764,26 @@
       }
       function renderGroupCard(it) {
         var title = it.title || '';
+        var groupId = it.id || '';
+        var joinInfo = {
+          participationScope: it.participationScope || 'same',
+          joinMethod: it.joinMethod || 'anyone',
+          invitedMembers: it.invitedMembers || ''
+        };
         GROUP_DETAILS[title] = {
           creator: it.creator || '運営メンバー',
           category: it.category || '未分類',
           color: it.color || 'var(--el-teal)',
           longDescription: it.longDescription || '',
+          participationScope: joinInfo.participationScope,
+          joinMethod: joinInfo.joinMethod,
+          invitedMembers: joinInfo.invitedMembers,
           members: []
         };
         var iconColor = it.color || 'var(--el-teal)';
         var moreLabel = (it.postCount || 0) + '件の投稿';
-        return '<div class="el-group-card" data-group="' + esc(it.id || '') + '" data-state="" data-members="0">' +
+        var joinLabel = communityJoinLabel_(joinInfo, groupId);
+        return '<div class="el-group-card" data-group="' + esc(groupId) + '" data-state="" data-members="0">' +
           '<div class="el-group-top">' +
           '<div class="el-group-icon" style="background:' + iconColor + ';overflow:hidden;">' +
           groupIconInner(it) +
@@ -728,7 +792,7 @@
           '</div>' +
           '<p class="desc">' + esc(it.description || '') + '</p>' +
           '<div class="el-group-foot"><div class="el-group-members"><span class="more">' + esc(moreLabel) + '</span></div>' +
-          '<button class="el-btn el-btn--primary el-btn--sm">参加する</button></div>' +
+          '<button type="button" class="el-btn el-btn--primary el-btn--sm el-group-join-btn" data-group-id="' + esc(groupId) + '" data-group-title="' + esc(title) + '"' + (joinLabel.disabled ? ' disabled' : '') + '>' + esc(joinLabel.text) + '</button></div>' +
           '</div>';
       }
       fetch(API_URL, {
@@ -775,6 +839,11 @@
       var state = card.dataset.state || '';
       var groupId = card.dataset.group || '';
       var detail = GROUP_DETAILS[title] || { creator: '運営メンバー', category: '未分類', members: [] };
+      var joinInfo = {
+        participationScope: detail.participationScope || 'same',
+        joinMethod: detail.joinMethod || 'anyone',
+        invitedMembers: detail.invitedMembers || ''
+      };
 
       var boardBtn = document.getElementById('gdmBoardBtn');
       if (boardBtn) {
@@ -806,12 +875,12 @@
       document.getElementById('gdmMemberCount').textContent = memberCount + '人（クリックで一覧を見る）';
 
       var joinBtn = document.getElementById('gdmJoinBtn');
-      if (state === 'joined') { joinBtn.textContent = '参加中'; joinBtn.disabled = true; }
-      else if (state === 'pending') { joinBtn.textContent = '承認待ち'; joinBtn.disabled = true; }
-      else if (visibility.indexOf('メンバー限定') !== -1) { joinBtn.textContent = '参加申請'; joinBtn.disabled = false; }
-      else { joinBtn.textContent = '参加する'; joinBtn.disabled = false; }
+      var joinLabel = communityJoinLabel_(joinInfo, groupId);
+      joinBtn.textContent = joinLabel.text;
+      joinBtn.disabled = joinLabel.disabled;
 
       modal.dataset.currentGroup = title;
+      modal.dataset.currentGroupId = groupId;
       modal.dataset.currentCount = memberCount;
       view.hidden = false;
       memberView.hidden = true;
@@ -824,6 +893,18 @@
       if (!card) return;
       if (e.target.closest('button')) return; // 参加する等のボタンはこれまで通りの動作
       openModal(card);
+    });
+
+    document.getElementById('gdmJoinBtn').addEventListener('click', function () {
+      var title = modal.dataset.currentGroup;
+      var groupId = modal.dataset.currentGroupId || '';
+      var detail = GROUP_DETAILS[title] || {};
+      var joinInfo = {
+        participationScope: detail.participationScope || 'same',
+        joinMethod: detail.joinMethod || 'anyone',
+        invitedMembers: detail.invitedMembers || ''
+      };
+      applyCommunityJoin_(joinInfo, groupId, this);
     });
 
     document.getElementById('gdmMemberBtn').addEventListener('click', function () {
@@ -875,7 +956,10 @@
     })
       .then(function (res) { return res.json(); })
       .then(function (data) {
-        var ads = (data.ok && data.items) ? data.items : [];
+        // このバナーは「基本は横長」の広告枠のため、スクエア広告はここでは選ばない
+        // （スクエア広告はフォーラムの新規投稿ページ／コミュニティの新規作成ページの
+        // 専用サイドバー枠にのみ表示する方針のため）。
+        var ads = ((data.ok && data.items) ? data.items : []).filter(function (a) { return a.adType !== 'square'; });
         if (!ads.length) {
           // 広告が1件も登録されていない場合は、架空のダミー広告を表示するのではなく、
           // バナー自体を表示しない（デモ/モックデータを残さない方針のため）
@@ -883,7 +967,6 @@
           return;
         }
         var ad = ads[Math.floor(Math.random() * ads.length)];
-        el.classList.toggle('is-square', ad.adType === 'square');
         if (ad.imageUrl) {
           imageEl.style.backgroundImage = 'url(' + ad.imageUrl + ')';
         } else {
