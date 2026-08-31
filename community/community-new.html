@@ -1096,6 +1096,8 @@
   // このページは右側にスクエア広告を表示する専用ページのため、下部の横長バナーは置かない
   // （重複表示を避けるため）。広告が1件も登録されていない場合は、架空のダミー広告を表示したままにせず、
   // 枠ごと非表示にする。
+  // ※以前は「取得できたら隠す」（=通信中は初期表示のダミーが見えてしまう）だったため、
+  //   先に必ず非表示にしておき、実際の広告データが取得できた時だけ表示する方式に変更した。
   (function () {
     var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
     var widget = document.getElementById('composeDisplayAd');
@@ -1107,6 +1109,13 @@
       if (widget) widget.style.setProperty('display', 'none', 'important');
       if (adTag) adTag.style.setProperty('display', 'none', 'important');
     }
+    function showAdWidget() {
+      if (widget) widget.style.removeProperty('display');
+      if (adTag) adTag.style.removeProperty('display');
+    }
+    // 通信が完了するまでの間、初期表示のダミーイラスト・「WorldShift」の文字が
+    // 一瞬でも見えてしまわないよう、取得を待たずに最初から非表示にしておく。
+    hideAdWidget();
     fetch(API_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -1115,7 +1124,7 @@
       .then(function (res) { return res.json(); })
       .then(function (data) {
         var ads = ((data.ok && data.items) ? data.items : []).filter(function (a) { return a.adType === 'square'; });
-        if (!ads.length) { hideAdWidget(); return; }
+        if (!ads.length) { return; }
         var ad = ads[Math.floor(Math.random() * ads.length)];
         var art = document.getElementById('composeDisplayAdArt');
         // 管理者ページのプレビューと同じく、画像は切り取らずに全体を表示する（contain）。
@@ -1124,8 +1133,9 @@
         document.getElementById('composeDisplayAdSmall').textContent = 'スポンサー：' + (ad.serviceName || '');
         document.getElementById('composeDisplayAdCta').textContent = ad.ctaText || '詳しく見る';
         if (ad.ctaUrl) document.getElementById('composeDisplayAd').href = ad.ctaUrl;
+        showAdWidget();
       })
-      .catch(function () { hideAdWidget(); });
+      .catch(function () { /* 取得に失敗した場合も非表示のまま（既に非表示済み） */ });
   })();
 </script>
 
