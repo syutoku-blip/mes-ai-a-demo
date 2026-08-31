@@ -616,6 +616,12 @@
       btn.disabled = true;
       if (status) status.textContent = '送信中…';
 
+      var applicantUserId = '', applicantUsername = '';
+      try {
+        applicantUserId = localStorage.getItem('el-user-id') || '';
+        applicantUsername = localStorage.getItem('el-username') || '';
+      } catch (err) {}
+
       fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -629,7 +635,12 @@
           price: fd.get('price') || '',
           overview: fd.get('overview') || '',
           referenceUrl: fd.get('referenceUrl') || '',
-          status: '審査中'
+          status: '審査中',
+          // 申請者本人のアカウントに紐づける（マイページ「申請中のコンテンツ」で
+          // 本人の申請だけを一覧できるようにするため）。ゲストは送信自体ができない
+          // ようになっているので、この時点では必ずログイン済みのはず。
+          applicantUserId: applicantUserId,
+          applicantUsername: applicantUsername
         })
       })
         .then(function (res) { return res.json(); })

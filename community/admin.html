@@ -494,6 +494,11 @@
               <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">価格（円）</span>
               <input type="text" inputmode="numeric" name="price" id="contentPriceInput" required style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
             </label>
+            <label>
+              <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">出品者のユーザーネーム <span style="font-weight:400;color:var(--el-ink-faint);">（該当する会員がいる場合のみ・任意）</span></span>
+              <input type="text" name="sellerUsername" id="contentSellerUsernameInput" placeholder="例：taro_yamada" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
+              <span style="display:block;font-size:12px;color:var(--el-ink-faint);margin-top:6px;line-height:1.6;">登録済みの会員のユーザーネームを入力すると、その会員のマイページ「出品したコンテンツ」にこのコンテンツが表示されます。WorldShift公式コンテンツなど出品者が無い場合は空欄のままにしてください。</span>
+            </label>
             <div>
               <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">購入ボタンの動作</span>
               <div style="display:flex;flex-direction:column;gap:8px;">
@@ -1793,6 +1798,7 @@
     form.title.value = it.title || '';
     form.category.value = it.category || '';
     form.price.value = Number(it.price || 0).toLocaleString();
+    form.sellerUsername.value = it.sellerUsername || '';
     contentRecommendEditor.setHtml(it.recommendHtml || '');
     contentDetailEditor.setHtml(it.detailHtml || '');
     contentThumbUrl = it.thumbnailUrl || '';
@@ -1826,6 +1832,7 @@
       price: String(fd.get('price') || '').replace(/[^0-9]/g, ''), // カンマ表示を保存前に数字だけへ戻す
       recommendHtml: contentRecommendEditor.getHtml(), detailHtml: contentDetailEditor.getHtml(),
       thumbnailUrl: contentThumbUrl,
+      sellerUsername: String(fd.get('sellerUsername') || '').trim(),
       buttonType: buttonType, externalUrl: buttonType === 'external' ? externalUrl : ''
     };
     if (isEditing) payload.id = editingMarketContentId;
@@ -2411,19 +2418,23 @@
 
   // 出品申請の確認（market-apply.html から送信された申請。スプレッドシートに記録される）
   var applyList = document.getElementById('applyList');
+  var lastPendingApplications = [];
   function loadApplications() {
     apiPost({ action: 'listContent', type: 'sellerApplication' }).then(function (data) {
       if (!data.ok) return;
       var pending = data.items.filter(function (a) { return !a.status || a.status === '審査中'; });
+      lastPendingApplications = pending;
       if (!pending.length) {
         applyList.innerHTML = '<div style="padding:32px;text-align:center;color:var(--el-ink-faint);font-size:14px;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);">保留中の申請はありません。</div>';
         return;
       }
       applyList.innerHTML = pending.map(function (a) {
         return '<div style="display:flex;align-items:center;justify-content:space-between;gap:14px;padding:16px 18px;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);">' +
-          '<div><div style="font-weight:700;color:var(--el-navy);">' + a.title + '</div><div style="font-size:12.5px;color:var(--el-ink-faint);margin-top:2px;">出品者：' + a.name + '（' + a.email + '）・' + a.price + '・' + a.category + '</div>' +
+          '<div><div style="font-weight:700;color:var(--el-navy);">' + a.title + '</div><div style="font-size:12.5px;color:var(--el-ink-faint);margin-top:2px;">出品者：' + a.name + '（' + a.email + '）' + (a.applicantUsername ? '・会員：' + a.applicantUsername : '') + '・' + a.price + '・' + a.category + '</div>' +
           '<div style="font-size:12.5px;color:var(--el-ink-faint);margin-top:4px;">' + (a.overview || '') + '</div></div>' +
-          '<div style="display:flex;gap:8px;flex:none;"><button type="button" class="el-btn el-btn--primary el-btn--sm" data-approve="' + a.id + '">承認</button><button type="button" class="el-btn el-btn--ghost el-btn--sm" data-reject="' + a.id + '">却下</button></div></div>';
+          '<div style="display:flex;gap:8px;flex:none;flex-wrap:wrap;justify-content:flex-end;">' +
+          '<button type="button" class="el-btn el-btn--ghost el-btn--sm" data-fill="' + a.id + '">この内容でコンテンツ登録フォームへ</button>' +
+          '<button type="button" class="el-btn el-btn--primary el-btn--sm" data-approve="' + a.id + '">承認</button><button type="button" class="el-btn el-btn--ghost el-btn--sm" data-reject="' + a.id + '">却下</button></div></div>';
       }).join('');
     });
   }
@@ -2431,6 +2442,29 @@
   applyList.addEventListener('click', function (e) {
     var appBtn = e.target.closest('[data-approve]');
     var rejBtn = e.target.closest('[data-reject]');
+    var fillBtn = e.target.closest('[data-fill]');
+    if (fillBtn) {
+      var app = lastPendingApplications.filter(function (a) { return String(a.id) === String(fillBtn.dataset.fill); })[0];
+      if (!app) return;
+      // 出品申請の内容を、そのままマーケットコンテンツ登録フォームへ転記する（出品者の
+      // ユーザーネームも含めるので、そのまま登録すればマイページ「出品したコンテンツ」に
+      // 正しく紐づく）。金額・カテゴリ・詳細文はここで一旦入るだけなので、登録前に内容を
+      // 確認・調整してから「コンテンツを登録する」を押す想定。
+      document.querySelectorAll('#adminSideTabs a[data-tab]').forEach(function (t) { t.classList.toggle('is-active', t.dataset.tab === 'content'); });
+      document.querySelectorAll('.el-admin-panel').forEach(function (p) { p.style.display = p.dataset.panel === 'content' ? '' : 'none'; });
+      var form = document.getElementById('contentForm');
+      resetContentForm();
+      form.title.value = app.title || '';
+      if (app.category && form.category.querySelector('option[value="' + app.category + '"]')) {
+        form.category.value = app.category;
+      }
+      var priceDigits = String(app.price || '').replace(/[^0-9]/g, '');
+      form.price.value = priceDigits ? Number(priceDigits).toLocaleString() : '';
+      form.sellerUsername.value = app.applicantUsername || '';
+      if (app.overview) contentDetailEditor.setHtml('<p>' + escHtml(app.overview) + '</p>');
+      form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
     var id = appBtn ? appBtn.dataset.approve : (rejBtn ? rejBtn.dataset.reject : null);
     if (!id) return;
     apiPost({ action: 'updateContent', type: 'sellerApplication', id: id, status: appBtn ? '承認' : '却下' }).then(function (data) {

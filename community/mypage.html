@@ -364,10 +364,10 @@
             <span>お気に入りコンテンツ</span><span class="count" id="favCountRow">0件</span>
           </a>
           <a href="my-market-activity.html?view=mine" class="el-mypage-list-row">
-            <span>出品したコンテンツ</span><span class="count">0件</span>
+            <span>出品したコンテンツ</span><span class="count" id="mypageSellingCount">0件</span>
           </a>
-          <a href="market-apply.html" class="el-mypage-list-row" style="border-bottom:none;">
-            <span>申請中のコンテンツ</span><span class="count">0件</span>
+          <a href="my-market-activity.html?view=applications" class="el-mypage-list-row" style="border-bottom:none;">
+            <span>申請中のコンテンツ</span><span class="count" id="mypagePendingApplicationsCount">0件</span>
           </a>
         </div>
         </div>
@@ -465,28 +465,30 @@
   // 参加中／申請中は、バックエンドにメンバーシップを記録するシートが無いためlocalStorage
   // （el-community-memberships）に記録された参加状態を参照する
   // （マーケットのお気に入り機能と同じ、ブラウザ単位の実データという考え方）。
+  //
+  // 件数はlocalStorageのキー数をそのまま数えるのではなく、my-group-activity.htmlの一覧と
+  // 必ず同じ計算方法（実際に存在するコミュニティと突き合わせてから数える）にする。
+  // そうしないと、削除済み・存在しないコミュニティIDがlocalStorageに残っている場合に
+  // 「1件」と表示されているのに一覧を開くと0件（まだありません）になる不具合が起きる。
   (function () {
     var createdEl = document.getElementById('mypageCreatedGroupsCount');
     var joinedEl = document.getElementById('mypageJoinedGroupsCount');
     var pendingEl = document.getElementById('mypagePendingGroupsCount');
     if (!createdEl && !joinedEl && !pendingEl) return;
 
-    var memberships = window.EL_getCommunityMemberships ? window.EL_getCommunityMemberships() : {};
-    var joinedCount = 0, pendingCount = 0;
-    Object.keys(memberships).forEach(function (groupId) {
-      if (memberships[groupId] === 'joined') joinedCount++;
-      else if (memberships[groupId] === 'pending') pendingCount++;
-    });
-    if (joinedEl) joinedEl.textContent = joinedCount + '件';
-    if (pendingEl) pendingEl.textContent = pendingCount + '件';
-
-    if (!createdEl) return;
     var uid = '', uname = '';
     try {
       uid = localStorage.getItem('el-user-id') || '';
       uname = localStorage.getItem('el-username') || localStorage.getItem('el-user-name') || '';
     } catch (e) {}
-    if (!uid && !uname) return; // 未ログインなら0件のまま
+
+    var memberships = window.EL_getCommunityMemberships ? window.EL_getCommunityMemberships() : {};
+    var hasMemberships = Object.keys(memberships).length > 0;
+    if (!hasMemberships) {
+      if (joinedEl) joinedEl.textContent = '0件';
+      if (pendingEl) pendingEl.textContent = '0件';
+    }
+    if (!uid && !uname) return; // 未ログインなら0件のまま（作成したコミュニティも取得しない）
 
     var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
     fetch(API_URL, {
@@ -495,11 +497,26 @@
       body: JSON.stringify({ action: 'listContent', type: 'communityGroup' })
     }).then(function (res) { return res.json(); }).then(function (data) {
       var items = (data.ok && data.items) ? data.items : [];
-      var mine = items.filter(function (it) {
-        if (uid && it.creatorUserId) return String(it.creatorUserId) === String(uid);
-        return !!(uname && it.creator && String(it.creator) === String(uname));
-      });
-      createdEl.textContent = mine.length + '件';
+
+      if (joinedEl || pendingEl) {
+        // my-group-activity.html?view=joined／pending と同じロジック：実際に存在する
+        // コミュニティのみを対象に、そのIDのmembershipsの値で数える。
+        var joinedCount = 0, pendingCount = 0;
+        items.forEach(function (it) {
+          if (memberships[it.id] === 'joined') joinedCount++;
+          else if (memberships[it.id] === 'pending') pendingCount++;
+        });
+        if (joinedEl) joinedEl.textContent = joinedCount + '件';
+        if (pendingEl) pendingEl.textContent = pendingCount + '件';
+      }
+
+      if (createdEl) {
+        var mine = items.filter(function (it) {
+          if (uid && it.creatorUserId) return String(it.creatorUserId) === String(uid);
+          return !!(uname && it.creator && String(it.creator) === String(uname));
+        });
+        createdEl.textContent = mine.length + '件';
+      }
     }).catch(function () {});
   })();
 
@@ -526,6 +543,60 @@
           (email && o.email && String(o.email) === String(email));
       });
       purchaseEl.textContent = mine.length + '件';
+    }).catch(function () {});
+  })();
+
+  // 「出品したコンテンツ」件数の表示：マーケットコンテンツのsellerUserId／sellerUsernameを
+  // 自分のアカウントで絞り込む（管理者ページで出品者として指定された会員のみ対象）。
+  (function () {
+    var sellingEl = document.getElementById('mypageSellingCount');
+    if (!sellingEl) return;
+    var uid = '', uname = '';
+    try {
+      uid = localStorage.getItem('el-user-id') || '';
+      uname = localStorage.getItem('el-username') || localStorage.getItem('el-user-name') || '';
+    } catch (e) {}
+    if (!uid && !uname) return; // 未ログインなら0件のまま
+
+    var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
+    fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'listContent', type: 'marketContent' })
+    }).then(function (res) { return res.json(); }).then(function (data) {
+      var items = (data.ok && data.items) ? data.items : [];
+      var mine = items.filter(function (it) {
+        if (uid && it.sellerUserId) return String(it.sellerUserId) === String(uid);
+        return !!(uname && it.sellerUsername && String(it.sellerUsername) === String(uname));
+      });
+      sellingEl.textContent = mine.length + '件';
+    }).catch(function () {});
+  })();
+
+  // 「申請中のコンテンツ」件数の表示：出品申請シートを自分のapplicantUserId／applicantUsernameで
+  // 絞り込み、審査中のものだけを数える（承認・却下は「申請中」に含めない）。
+  (function () {
+    var pendingEl = document.getElementById('mypagePendingApplicationsCount');
+    if (!pendingEl) return;
+    var uid = '', uname = '';
+    try {
+      uid = localStorage.getItem('el-user-id') || '';
+      uname = localStorage.getItem('el-username') || localStorage.getItem('el-user-name') || '';
+    } catch (e) {}
+    if (!uid && !uname) return; // 未ログインなら0件のまま
+
+    var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
+    fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'listContent', type: 'sellerApplication' })
+    }).then(function (res) { return res.json(); }).then(function (data) {
+      var items = (data.ok && data.items) ? data.items : [];
+      var mine = items.filter(function (a) {
+        var isMine = (uid && a.applicantUserId) ? String(a.applicantUserId) === String(uid) : !!(uname && a.applicantUsername && String(a.applicantUsername) === String(uname));
+        return isMine && (!a.status || a.status === '審査中');
+      });
+      pendingEl.textContent = mine.length + '件';
     }).catch(function () {});
   })();
 

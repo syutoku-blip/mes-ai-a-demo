@@ -572,10 +572,9 @@
 
     // マイページからの絞り込み（?filter=favorites／?filter=mine）。
     // favorites：お気に入りに追加したコンテンツ（localStorageの el-market-favorites を参照、既存のお気に入り機能と同じキー）。
-    // mine：自分が出品したコンテンツ。ただし現状、マーケットコンテンツ（管理者が登録するシート）には
-    // 出品者をユーザーIDで紐づける列が無く、出品申請（sellerApplication）が承認されても自動連携されないため、
-    // 実データでは判定できない。ここでは data-seller-user-id（現状どのカードにも設定されない）を
-    // ログイン中のユーザーIDと比較するだけにとどめ、データを捏造せず常に「該当なし」を正直に表示する。
+    // mine：自分が出品したコンテンツ。マーケットコンテンツのsellerUserId（管理者ページで
+    // 出品者のユーザーネームを指定すると自動補完される）とログイン中のユーザーIDが一致するものだけを表示する。
+    // 出品者が指定されていないコンテンツ（WorldShiftが直接登録した公式コンテンツ等）はここには出ない。
     var pageParams = new URLSearchParams(window.location.search);
     var pageFilter = pageParams.get('filter') || '';
     var myUserId = '';
@@ -631,7 +630,7 @@
         if (!visible.length) {
           if (emptyStateTextEl) {
             if (pageFilter === 'favorites') emptyStateTextEl.textContent = 'まだお気に入りに追加したコンテンツがありません。';
-            else if (pageFilter === 'mine') emptyStateTextEl.textContent = '現在、出品コンテンツと出品者情報の紐づけには対応していないため、表示できるコンテンツがありません。';
+            else if (pageFilter === 'mine') emptyStateTextEl.textContent = 'まだ出品したコンテンツがありません。';
             else if (!cards.length) emptyStateTextEl.textContent = 'まだ登録されているコンテンツがありません。';
             else emptyStateTextEl.textContent = '該当するコンテンツがありません。';
           }
@@ -1120,9 +1119,13 @@
             : '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>';
 
           var isExternal = it.buttonType === 'external' && it.externalUrl;
+          // sellerUsername（管理者ページで出品者として指定した会員）が設定されていれば
+          // その会員名を出品者として扱う。未設定（従来通りWorldShiftが直接登録した公式コンテンツ）
+          // の場合は「WorldShift公式」のまま。
+          var sellerLabel = it.sellerUsername ? it.sellerUsername : 'WorldShift公式';
 
           PRODUCTS[id] = {
-            title: it.title, seller: 'WorldShift公式', price: '¥' + priceNum.toLocaleString(), badge: '公式',
+            title: it.title, seller: sellerLabel, price: '¥' + priceNum.toLocaleString(), badge: it.sellerUsername ? '出品' : '公式',
             recommend: it.recommendHtml || '', detail: it.detailHtml || '',
             thumbnailUrl: it.thumbnailUrl || '',
             buttonType: it.buttonType || 'purchase', externalUrl: it.externalUrl || '',
@@ -1134,7 +1137,9 @@
           card.className = 'el-market-card';
           card.dataset.product = id;
           card.dataset.category = it.category || 'template';
-          card.dataset.seller = 'WorldShift公式';
+          card.dataset.seller = sellerLabel;
+          // マイページ「出品したコンテンツ」（?filter=mine）の絞り込みで使う、出品者のユーザーID。
+          card.dataset.sellerUserId = it.sellerUserId || '';
           card.dataset.price = priceNum;
           card.dataset.recency = 100;
           // 「外部サイトに移動する」設定のコンテンツは、カート（サイト内決済の概念）を持たないため
@@ -1146,7 +1151,7 @@
           card.innerHTML =
             '<div class="el-market-thumb" style="background:var(--el-teal);color:#fff;overflow:hidden;">' + thumbHtml + '</div>' +
             '<div class="el-market-body">' +
-            '<span class="badge badge--announce">公式</span>' +
+            '<span class="badge badge--announce">' + (it.sellerUsername ? '出品' : '公式') + '</span>' +
             '<h3>' + it.title + '</h3>' +
             '<p>' + (it.recommendHtml || it.detailHtml || '').replace(/<[^>]*>/g, '').slice(0, 60) + '</p>' +
             '<div class="el-market-rating"><span class="stars">★★★★★</span><span class="count">(0)</span></div>' +

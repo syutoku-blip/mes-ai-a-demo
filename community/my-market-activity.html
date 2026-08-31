@@ -59,6 +59,34 @@
     background-position:center !important;
     background-color:var(--el-teal, #2F8F82) !important;
   }
+  /* 「申請中のコンテンツ」一覧：カードグリッドではなく縦積みの行リストで表示する
+     （このファイルには元々この表示パターンが無かったための追加）。 */
+  #activityList.el-application-list{
+    display:flex !important;
+    flex-direction:column !important;
+    gap:12px !important;
+  }
+  .el-application-row{
+    display:flex !important;
+    align-items:center !important;
+    justify-content:space-between !important;
+    gap:14px !important;
+    padding:16px 18px !important;
+    background:var(--el-paper, #fff) !important;
+    border:1px solid var(--el-line-soft, #e4e0d8) !important;
+    border-radius:var(--el-radius-m, 14px) !important;
+  }
+  .el-application-status{
+    flex:none !important;
+    font-size:12px !important;
+    font-weight:700 !important;
+    padding:4px 12px !important;
+    border-radius:999px !important;
+    white-space:nowrap !important;
+  }
+  .el-application-status--pending{ background:#FBF0DC !important; color:#9A6B1E !important; }
+  .el-application-status--approved{ background:#E3F1EC !important; color:#1F7A5C !important; }
+  .el-application-status--rejected{ background:#F3E4E1 !important; color:#B8593D !important; }
   .el-ad-sponsor-v2{
     position:absolute !important;
     left:12px !important;
@@ -494,10 +522,11 @@
     }
   });
 
-  // マイページの「マーケット」活動一覧（お気に入り／出品したコンテンツ）
+  // マイページの「マーケット」活動一覧（お気に入り／出品したコンテンツ／申請中のコンテンツ）
   // ※ favorites はマーケット一覧ページと同じ el-market-favorites（localStorage）を参照する実データ。
-  // mine は、マーケットコンテンツに出品者をユーザーIDで紐づける列が無く実データとして判定できないため、
-  // market-list.html と同様にデータを捏造せず常に「該当なし」を正直に表示する。
+  // mine は、マーケットコンテンツのsellerUserId（管理者ページで出品者のユーザーネームを指定すると
+  // 自動補完される）が自分と一致するものだけを表示する実データ。
+  // applications は、自分がmarket-apply.htmlから送った出品申請（審査中／承認／却下）の一覧。
   (function () {
     var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
     function esc(s) {
@@ -508,11 +537,13 @@
 
     var VIEW_TITLES = {
       favorites: 'お気に入りコンテンツ',
-      mine: '出品したコンテンツ'
+      mine: '出品したコンテンツ',
+      applications: '申請中のコンテンツ'
     };
     var VIEW_EMPTY = {
       favorites: 'まだお気に入りに追加したコンテンツがありません。',
-      mine: '現在、出品コンテンツと出品者情報の紐づけには対応していないため、表示できるコンテンツがありません。'
+      mine: 'まだ出品したコンテンツがありません。',
+      applications: 'まだ出品申請がありません。'
     };
 
     var params = new URLSearchParams(window.location.search);
@@ -540,16 +571,13 @@
       return;
     }
 
-    // 出品したコンテンツ（mine）は、現状のデータモデルでは判定不能なため、
-    // 常に「該当なし」を正直に表示する（market-list.html?filter=mine と同じ既存の挙動）。
-    if (view === 'mine') {
-      emptyTextEl.textContent = VIEW_EMPTY.mine;
-      emptyEl.hidden = false;
-      return;
-    }
-
     function getMarketFavorites_() {
       try { return JSON.parse(localStorage.getItem('el-market-favorites') || '[]'); } catch (e) { return []; }
+    }
+
+    function isMine_(sellerUserId, sellerUsername) {
+      if (uid && sellerUserId) return String(sellerUserId) === String(uid);
+      return !!(uname && sellerUsername && String(sellerUsername) === String(uname));
     }
 
     function renderCards(items) {
@@ -558,19 +586,85 @@
         emptyEl.hidden = false;
         return;
       }
+      listEl.classList.remove('el-application-list');
       listEl.innerHTML = items.map(function (it) {
         var priceNum = Number(it.price || 0);
         var thumbHtml = it.thumbnailUrl
           ? '<img src="' + it.thumbnailUrl + '" style="width:100%;height:100%;object-fit:cover;">'
           : '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>';
-        return '<a class="el-market-card" href="market-list.html?filter=favorites" style="text-decoration:none;color:inherit;">' +
+        var href = 'market-list.html?filter=' + (view === 'mine' ? 'mine' : 'favorites');
+        return '<a class="el-market-card" href="' + href + '" style="text-decoration:none;color:inherit;">' +
           '<div class="el-market-thumb" style="background:var(--el-teal);color:#fff;overflow:hidden;">' + thumbHtml + '</div>' +
           '<div class="el-market-body">' +
-          '<span class="badge badge--announce">公式</span>' +
+          '<span class="badge badge--announce">' + (view === 'mine' && it.sellerUsername ? '出品' : '公式') + '</span>' +
           '<h3>' + esc(it.title || '') + '</h3>' +
           '<div class="el-market-foot"><strong>¥' + priceNum.toLocaleString() + '</strong></div>' +
           '</div></a>';
       }).join('');
+    }
+
+    function renderApplications(items) {
+      if (!items.length) {
+        emptyTextEl.textContent = VIEW_EMPTY.applications;
+        emptyEl.hidden = false;
+        return;
+      }
+      listEl.classList.add('el-application-list');
+      var STATUS_INFO = {
+        '審査中': { cls: 'el-application-status--pending', label: '審査中' },
+        '承認': { cls: 'el-application-status--approved', label: '承認済み' },
+        '却下': { cls: 'el-application-status--rejected', label: '却下' }
+      };
+      listEl.innerHTML = items.map(function (a) {
+        var st = STATUS_INFO[a.status] || STATUS_INFO['審査中'];
+        return '<div class="el-application-row">' +
+          '<div><div style="font-weight:700;color:var(--el-navy);">' + esc(a.title || '') + '</div>' +
+          '<div style="font-size:12.5px;color:var(--el-ink-faint);margin-top:4px;">' +
+          (a.price ? '¥' + Number(a.price || 0).toLocaleString() + '・' : '') + esc(a.category || '') +
+          '</div></div>' +
+          '<span class="el-application-status ' + st.cls + '">' + st.label + '</span>' +
+          '</div>';
+      }).join('');
+    }
+
+    if (view === 'applications') {
+      fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: 'listContent', type: 'sellerApplication' })
+      })
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+          var items = (data.ok && data.items) ? data.items : [];
+          var mine = items.filter(function (a) {
+            if (uid && a.applicantUserId) return String(a.applicantUserId) === String(uid);
+            return !!(uname && a.applicantUsername && String(a.applicantUsername) === String(uname));
+          });
+          renderApplications(mine);
+        })
+        .catch(function () {
+          emptyTextEl.textContent = '読み込みに失敗しました。';
+          emptyEl.hidden = false;
+        });
+      return;
+    }
+
+    if (view === 'mine') {
+      fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: 'listContent', type: 'marketContent' })
+      })
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+          var items = (data.ok && data.items) ? data.items : [];
+          renderCards(items.filter(function (it) { return isMine_(it.sellerUserId, it.sellerUsername); }));
+        })
+        .catch(function () {
+          emptyTextEl.textContent = '読み込みに失敗しました。';
+          emptyEl.hidden = false;
+        });
+      return;
     }
 
     var favorites = getMarketFavorites_();
