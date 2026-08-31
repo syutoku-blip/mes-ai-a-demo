@@ -415,6 +415,11 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
         <span class="lbl">マイページ</span>
       </a>
+
+      <a href="operator-info.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        <span class="lbl">運営者情報</span>
+      </a>
     </nav>
   </aside>
   </div>
@@ -430,8 +435,11 @@
 
         <!-- 以前はここに大きな紺色のバナー（.el-group-hero）でボタンだけを表示していたが、
              見出し文を削除した後は空の帯だけが目立って不要になったため廃止し、
-             小さなボタンをこの場所に直接置く（サイドメニューの「新規コミュニティを作成する」からも同じ作成画面を開ける）。 -->
-        <div style="display:flex;justify-content:flex-end;margin-top:14px;">
+             小さなボタンをこの場所に直接置いていた（サイドメニューの「新規コミュニティを作成する」からも同じ作成画面を開ける）。
+             ページ上部の重複ボタンは不要とのフィードバックにより非表示にした。ただし#createGroupBtn要素自体は
+             下部スクリプトの createBtn 参照（サイドメニューからの ?create=1 自動オープン処理を含む）が
+             this要素の存在チェックに依存しているため、DOMからは削除せず display:none で隠すだけにする。 -->
+        <div style="display:none;">
           <a href="#" class="el-btn el-btn--mustard" id="createGroupBtn">新しいコミュニティを作る</a>
         </div>
 
@@ -643,7 +651,7 @@
           ['users', '登録ユーザー一覧'], ['announce', 'お知らせ登録'], ['event', 'イベント登録'],
           ['content', 'コンテンツ登録'], ['forms', 'フォーム管理'], ['community', 'コミュニティ登録'],
           ['guideline', 'ガイドライン管理'], ['ads', '広告設定'], ['apply', '出品申請の確認'],
-          ['marketOrders', 'マーケット申込み一覧'], ['badge', 'バッジの付与']
+          ['marketOrders', 'マーケット申込み一覧'], ['badge', 'バッジの付与'], ['operator', '運営者情報']
         ];
         var adminDetails = document.createElement('details');
         adminDetails.className = 'el-side-forum';

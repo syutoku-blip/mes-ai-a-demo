@@ -290,6 +290,11 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
         <span class="lbl">マイページ</span>
       </a>
+
+      <a href="operator-info.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        <span class="lbl">運営者情報</span>
+      </a>
     </nav>
   </aside>
   </div>
@@ -531,7 +536,7 @@
           ['users', '登録ユーザー一覧'], ['announce', 'お知らせ登録'], ['event', 'イベント登録'],
           ['content', 'コンテンツ登録'], ['forms', 'フォーム管理'], ['community', 'コミュニティ登録'],
           ['guideline', 'ガイドライン管理'], ['ads', '広告設定'], ['apply', '出品申請の確認'],
-          ['marketOrders', 'マーケット申込み一覧'], ['badge', 'バッジの付与']
+          ['marketOrders', 'マーケット申込み一覧'], ['badge', 'バッジの付与'], ['operator', '運営者情報']
         ];
         var adminDetails = document.createElement('details');
         adminDetails.className = 'el-side-forum';
@@ -563,6 +568,38 @@
         applyForm.style.pointerEvents = 'none';
         window.elRequireAuth();
       }
+    }
+  });
+
+  // 【出品申請の一時停止】現在は新規の出品募集を行っていない旨をモーダルで案内し、
+  // 送信もブロックする。募集を再開する際は、下の SELLER_APPLICATIONS_OPEN を true に
+  // 変更するだけで、モーダル表示・送信ブロックの両方が解除される（このブロック自体を
+  // 削除する必要はない）。
+  var SELLER_APPLICATIONS_OPEN = false;
+  document.addEventListener('DOMContentLoaded', function () {
+    if (SELLER_APPLICATIONS_OPEN) return;
+    var modal = document.getElementById('applyPausedModal');
+    var btn = document.getElementById('applySubmitBtn');
+    var form = document.getElementById('applyForm');
+    if (modal) {
+      modal.classList.add('is-open');
+      modal.setAttribute('aria-hidden', 'false');
+      modal.querySelectorAll('[data-apply-paused-close]').forEach(function (el) {
+        el.addEventListener('click', function () {
+          modal.classList.remove('is-open');
+          modal.setAttribute('aria-hidden', 'true');
+        });
+      });
+    }
+    if (btn) { btn.disabled = true; btn.textContent = '現在、募集を停止しています'; }
+    // 万一ボタンの disabled が外れても実際には送信されないよう、フォーム側でも二重にブロックする。
+    // capture フェーズかつ stopImmediatePropagation で、後段（実際の送信処理）のsubmitハンドラ
+    // 自体が呼ばれないようにする。
+    if (form) {
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+      }, true);
     }
   });
 
@@ -654,6 +691,23 @@
       .catch(function () { el.style.display = 'none'; });
   })();
 </script>
+<!-- 出品募集の一時停止中モーダル：SELLER_APPLICATIONS_OPEN が false の間だけ表示される。
+     募集を再開する際は、上のスクリプト内の SELLER_APPLICATIONS_OPEN を true にすれば
+     このモーダル自体は残したままで非表示になる（削除は不要）。 -->
+<div class="el-auth-modal" id="applyPausedModal" aria-hidden="true">
+  <div class="el-auth-modal-backdrop" data-apply-paused-close></div>
+  <div class="el-auth-modal-panel" role="dialog" aria-modal="true">
+    <button type="button" class="el-auth-modal-close" data-apply-paused-close aria-label="閉じる">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <h3>現在、出品の募集は行っておりません</h3>
+    <p>大変申し訳ございませんが、只今マーケットへの出品申請は一時的に受け付けを停止しております。募集を再開する際は、あらためてお知らせいたします。</p>
+    <div class="el-auth-modal-actions">
+      <button type="button" class="el-btn el-btn--ghost el-btn--sm" data-apply-paused-close>閉じる</button>
+    </div>
+  </div>
+</div>
+
 <div class="el-auth-modal" id="authModal" aria-hidden="true">
   <div class="el-auth-modal-backdrop" data-auth-close></div>
   <div class="el-auth-modal-panel" role="dialog" aria-modal="true">

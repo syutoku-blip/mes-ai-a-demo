@@ -3,12 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ログイン｜Export Lab</title>
+<title>運営者情報｜Export Lab</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&family=Noto+Sans+JP:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="../shared/global-header.css">
 <style>
+  /* 検索ボックス：input要素の初期スタイル（黒枠など）を消して馴染ませる */
   .el-search input[type="search"]{
     border:none !important;
     outline:none !important;
@@ -26,6 +27,7 @@
     -webkit-appearance:none;
     display:none;
   }
+  [data-guest-hide]{ display:none !important; }
   /* ヘッダーの新規登録／ログイン／ログアウトボタン：背景色に関わらず文字が見えるよう、
      透過ではなく塗りのボタンにする */
   #headerAuthLinks .el-btn, #headerSignupLink.el-btn, #headerLoginLink.el-btn{
@@ -45,6 +47,22 @@
   .el-footer-cols a{ color:var(--el-ink-faint, #8A8478) !important; }
   .el-footer-cols h6{ color:var(--el-navy, #16233F) !important; }
   .el-footer-bottom{ color:var(--el-ink-faint, #8A8478) !important; border-top-color:var(--el-line-soft, #E5DFD2) !important; }
+  /* 運営者情報：.el-notice-fact は本来「日時／会場」のような短い2文字ラベル向けに
+     ラベル幅が44pxで固定されているため、「運営会社名」「お問い合わせ先」等の長いラベルに
+     合わせて、このページだけラベル幅と行の縦位置を調整する（style.css自体は変更しない）。 */
+  .el-operator-fact span{
+    width:132px !important;
+    flex-shrink:0 !important;
+  }
+  .el-operator-fact div{
+    align-items:flex-start !important;
+    padding:10px 0 !important;
+  }
+  .el-operator-fact b{
+    font-weight:500 !important;
+    color:var(--el-navy) !important;
+    white-space:pre-wrap !important;
+  }
 </style>
 </head>
 <body data-site="community" data-root="..">
@@ -60,7 +78,7 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
         <input type="search" name="q" placeholder="検索" aria-label="検索" autocomplete="off">
       </form>
-      <a href="signup.html" class="el-btn el-btn--ghost el-btn--sm" id="headerSignupLink" style="white-space:nowrap;">新規登録</a>
+      <span id="headerAuthLinks" style="display:flex;gap:6px;white-space:nowrap;"><a href="signup.html" class="el-btn el-btn--ghost el-btn--sm" id="headerSignupLink">新規登録</a><a href="login.html" class="el-btn el-btn--ghost el-btn--sm" id="headerLoginLink">ログイン</a></span>
       <a href="notifications.html" class="el-header-bell" aria-label="通知">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
         <span class="count" id="headerBellCount" style="display:none;">0</span>
@@ -183,42 +201,40 @@
         <span class="lbl">マイページ</span>
       </a>
 
-      <a href="operator-info.html">
+      <a href="operator-info.html" class="is-active">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
         <span class="lbl">運営者情報</span>
       </a>
     </nav>
   </aside>
   </div>
-  <div class="el-content">
-    <main class="el-section" style="padding-top:0;">
-      <div class="wrap" style="max-width:480px;">
-        <nav class="el-breadcrumb el-page-breadcrumb" aria-label="パンくず"><a href="index.html">ホーム</a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg><span>ログイン</span></nav>
 
-        <div class="el-section-head" style="margin-top:8px;margin-bottom:20px;">
+  <div class="el-content">
+    <main class="el-section" style="padding-top:32px;">
+      <div class="wrap" style="max-width:680px;">
+        <nav class="el-breadcrumb el-page-breadcrumb" aria-label="パンくず"><a href="index.html">ホーム</a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg><span>運営者情報</span></nav>
+
+        <div class="el-section-head" style="margin-bottom:16px;">
           <div>
-            <h2>ログイン</h2>
-            <div class="sub">登録済みのメールアドレスとパスワードでログインします。</div>
+            <h2>運営者情報</h2>
+            <div class="sub">Export Labを運営する事業者についての情報です。</div>
           </div>
         </div>
 
-        <div id="loginError" style="display:none;background:#FBEAE6;border:1px solid var(--el-coral);color:var(--el-coral);font-size:13px;font-weight:600;padding:12px 14px;border-radius:10px;margin-bottom:16px;"></div>
+        <div class="el-notice" id="operatorInfoCard">
+          <div class="el-notice-head" style="margin-bottom:0;">
+            <span class="el-notice-icon" style="background:var(--el-teal, #2F8F82);">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+            </span>
+            <div>
+              <h1 style="font-size:17px;">運営会社について</h1>
+            </div>
+          </div>
 
-        <form id="loginForm" style="display:flex;flex-direction:column;gap:18px;">
-          <label style="display:block;">
-            <span style="display:block;font-weight:700;font-size:13px;color:var(--el-navy);margin-bottom:6px;">メールアドレス</span>
-            <input type="email" name="email" required style="width:100%;box-sizing:border-box;padding:11px 14px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
-          </label>
-          <label style="display:block;">
-            <span style="display:block;font-weight:700;font-size:13px;color:var(--el-navy);margin-bottom:6px;">パスワード</span>
-            <input type="password" name="password" required style="width:100%;box-sizing:border-box;padding:11px 14px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
-          </label>
-          <button type="submit" class="el-btn el-btn--primary" id="loginSubmitBtn">ログイン</button>
-        </form>
+          <div id="operatorInfoEmpty" style="display:none;padding:24px 4px 4px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">運営者情報はまだ登録されていません。</div>
 
-        <p style="margin-top:20px;font-size:13px;color:var(--el-ink-faint);text-align:center;">
-          アカウントをお持ちでない方は <a href="signup.html" style="color:var(--el-teal-deep);font-weight:700;">新規登録</a>
-        </p>
+          <div class="el-notice-fact el-operator-fact" id="operatorInfoFact" style="display:none;"></div>
+        </div>
 
       </div>
     </main>
@@ -258,15 +274,6 @@
 
 <script src="../shared/global-header.js" defer></script>
 <script>
-  // Googleドライブの共有リンクを、<img>で直接表示できる形式のURLに変換する
-  function elDriveImgUrl(url) {
-    if (!url) return url;
-    var m = url.match(/drive\.google\.com\/file\/d\/([^/]+)/) || url.match(/[?&]id=([^&]+)/);
-    if (m && m[1]) return 'https://drive.google.com/uc?export=view&id=' + m[1];
-    return url;
-  }
-  window.elDriveImgUrl = elDriveImgUrl;
-
   (function () {
     var appShell = document.getElementById('appShell');
     var STORAGE_KEY = 'el-sidebar-collapsed';
@@ -279,18 +286,33 @@
     });
   })();
 
-  document.querySelectorAll('.el-side-forum > summary[data-href]').forEach(function (summary) {
-    summary.addEventListener('click', function (e) {
-      if (e.target.closest('svg.chev')) return;
-      e.preventDefault();
-      window.location.href = summary.dataset.href;
-    });
+  // フォーラム／コミュニティ／マーケットのラベルをクリックしたときは開閉させず、そのままページ遷移させる
+  document.querySelectorAll('.el-side-label-link').forEach(function (el) {
+    el.addEventListener('click', function (e) { e.stopPropagation(); });
   });
+  // ユーザーモード（ゲスト／登録ユーザー／管理者）の切り替えと共通ゲート処理
+  document.addEventListener('DOMContentLoaded', function () {
+    var ROLE_KEY = 'el-user-role';
+    function getRole() {
+      try { return localStorage.getItem(ROLE_KEY) || 'guest'; } catch (e) { return 'guest'; }
+    }
+    function setRole(role) {
+      try {
+        localStorage.setItem(ROLE_KEY, role);
+        if (role === 'guest') {
+          localStorage.removeItem('el-user-id');
+          localStorage.removeItem('el-username');
+          localStorage.removeItem('el-user-name');
+          localStorage.removeItem('el-user-profile');
+        }
+      } catch (e) {}
+    }
+    window.elGetRole = getRole;
 
-  // ゲスト用に通知ベルを隠す（ログイン前は必ずゲスト状態）
-  (function () {
-    var role = 'guest';
-    try { role = localStorage.getItem('el-user-role') || 'guest'; } catch (e) {}
+    var role = getRole();
+    document.body.setAttribute('data-role', role);
+
+    // ゲストは通知ベルとアイコンを非表示
     var bell = document.querySelector('.el-header-bell');
     if (bell && role === 'guest') bell.style.display = 'none';
     var headerAvatar = document.getElementById('headerAvatar');
@@ -299,84 +321,102 @@
       try {
         var hp = JSON.parse(localStorage.getItem('el-user-profile') || '{}');
         var hUsername = localStorage.getItem('el-username') || hp.username || '';
-        if (hp.photoUrl) headerAvatar.innerHTML = '<img src="' + window.elDriveImgUrl(hp.photoUrl) + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
+        if (hp.photoUrl) headerAvatar.innerHTML = '<img src="' + hp.photoUrl + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
         else if (hUsername) headerAvatar.textContent = hUsername.charAt(0);
       } catch (e) {}
     }
-    var authLink = document.getElementById('headerSignupLink');
-    if (authLink && role !== 'guest') {
-      authLink.textContent = 'ログアウト';
-      authLink.href = '#';
-      authLink.addEventListener('click', function (e) {
-        e.preventDefault();
-        try {
-          localStorage.setItem('el-user-role', 'guest');
-          localStorage.removeItem('el-user-id');
-          localStorage.removeItem('el-username');
-          localStorage.removeItem('el-user-name');
-          localStorage.removeItem('el-user-profile');
-        } catch (err) {}
-        window.location.href = 'index.html';
+
+    // ヘッダーの認証リンク：ゲストは「新規登録」「ログイン」、それ以外は「ログアウト」のみ
+    var authLinksWrap = document.getElementById('headerAuthLinks');
+    var loginLink = document.getElementById('headerLoginLink');
+    var signupLink = document.getElementById('headerSignupLink');
+    if (role !== 'guest' && authLinksWrap) {
+      if (loginLink) loginLink.remove();
+      if (signupLink) {
+        signupLink.textContent = 'ログアウト';
+        signupLink.href = '#';
+        signupLink.addEventListener('click', function (e) {
+          e.preventDefault();
+          setRole('guest');
+          window.location.href = 'index.html';
+        });
+      }
+    }
+
+    // 管理者にはサイドバーに管理者ページへのリンクを追加
+    if (role === 'admin') {
+      var sideNav = document.querySelector('.el-sidebar nav');
+      if (sideNav && !sideNav.querySelector('#sideAdminSection')) {
+        var isAdminPage = window.location.pathname.indexOf('admin.html') !== -1;
+        var adminTabs = [
+          ['users', '登録ユーザー一覧'], ['announce', 'お知らせ登録'], ['event', 'イベント登録'],
+          ['content', 'コンテンツ登録'], ['forms', 'フォーム管理'], ['community', 'コミュニティ登録'],
+          ['guideline', 'ガイドライン管理'], ['ads', '広告設定'], ['apply', '出品申請の確認'],
+          ['marketOrders', 'マーケット申込み一覧'], ['badge', 'バッジの付与'], ['operator', '運営者情報']
+        ];
+        var adminDetails = document.createElement('details');
+        adminDetails.className = 'el-side-forum';
+        adminDetails.id = 'sideAdminSection';
+        adminDetails.innerHTML = '<summary' + (isAdminPage ? ' class="is-active"' : '') + ' data-href="admin.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 3 7v6c0 5 4 9 9 9s9-4 9-9V7l-9-5Z"/><path d="m9 12 2 2 4-4"/></svg><span class="lbl">管理者ページ</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></summary><div class="el-side-sub">' +
+          adminTabs.map(function (t) { return '<a href="admin.html?tab=' + t[0] + '">' + t[1] + '</a>'; }).join('') +
+          '</div>';
+        sideNav.appendChild(adminDetails);
+        var adminSummary = adminDetails.querySelector('summary[data-href]');
+        adminSummary.addEventListener('click', function (e) {
+          if (e.target.closest('svg.chev')) return;
+          e.preventDefault();
+          window.location.href = adminSummary.dataset.href;
+        });
+      }
+    }
+  });
+
+  // 運営者情報：管理者ページ（運営者情報タブ）で登録された内容を取得して表示する
+  (function () {
+    var emptyEl = document.getElementById('operatorInfoEmpty');
+    var factEl = document.getElementById('operatorInfoFact');
+    if (!emptyEl || !factEl) return;
+    var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
+    var FIELD_LABELS = [
+      ['companyName', '運営会社名'],
+      ['representative', '代表者'],
+      ['address', '所在地'],
+      ['established', '設立'],
+      ['business', '事業内容'],
+      ['contactEmail', 'お問い合わせ先']
+    ];
+    function esc(s) {
+      return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
       });
     }
-  })();
-
-  // ------------------------------------------------------------
-  // Google Apps Script（会員シート連携）のウェブアプリURL。
-  // ------------------------------------------------------------
-  var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
-
-  var form = document.getElementById('loginForm');
-  var errorBox = document.getElementById('loginError');
-  var submitBtn = document.getElementById('loginSubmitBtn');
-
-  form.addEventListener('submit', function (e) {
-    e.preventDefault();
-    errorBox.style.display = 'none';
-
-    var email = form.email.value.trim();
-    var password = form.password.value;
-
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'ログイン中…';
-
-    // Content-Type: text/plain で送ることで、Apps Script側でのCORSプリフライトを回避する
+    function render(items) {
+      // 常に1件のみ運用する想定。複数登録されていた場合は、最新（末尾）の1件を採用する。
+      var it = items.length ? items[items.length - 1] : null;
+      var rowsHtml = it ? FIELD_LABELS
+        .filter(function (f) { return it[f[0]]; })
+        .map(function (f) { return '<div><span>' + esc(f[1]) + '</span><b>' + esc(it[f[0]]) + '</b></div>'; })
+        .join('') : '';
+      if (!it || !rowsHtml) {
+        emptyEl.style.display = '';
+        factEl.style.display = 'none';
+        factEl.innerHTML = '';
+      } else {
+        emptyEl.style.display = 'none';
+        factEl.style.display = '';
+        factEl.innerHTML = rowsHtml;
+      }
+    }
     fetch(API_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({ action: 'login', email: email, password: password })
+      body: JSON.stringify({ action: 'listContent', type: 'operatorInfo' })
     })
       .then(function (res) { return res.json(); })
-      .then(function (data) {
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'ログイン';
-
-        if (!data.ok) {
-          errorBox.textContent = data.error || 'ログインに失敗しました';
-          errorBox.style.display = 'block';
-          return;
-        }
-        try {
-          localStorage.setItem('el-user-role', data.role);
-          localStorage.setItem('el-user-name', (data.profile && data.profile.fullname) || (data.profile && data.profile.username) || '');
-          localStorage.setItem('el-username', (data.profile && data.profile.username) || '');
-          // ユーザーID（シートの登録ID）：投稿者・コメント者の判別や、今後の通知機能のために保存しておく
-          localStorage.setItem('el-user-id', (data.profile && data.profile.userId) || '');
-          localStorage.setItem('el-user-email', email);
-          localStorage.setItem('el-user-password', password);
-          localStorage.setItem('el-user-profile', JSON.stringify(data.profile || {}));
-        } catch (err) {}
-
-        if (data.role === 'admin') window.location.href = 'admin.html';
-        else window.location.href = 'index.html';
-      })
-      .catch(function () {
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'ログイン';
-        errorBox.textContent = '通信エラーが発生しました。時間をおいて再度お試しください。';
-        errorBox.style.display = 'block';
-      });
-  });
+      .then(function (data) { render((data.ok && data.items) ? data.items : []); })
+      .catch(function () { render([]); });
+  })();
 </script>
+
 </body>
 </html>
