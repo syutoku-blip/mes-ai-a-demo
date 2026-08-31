@@ -217,7 +217,6 @@
         <div class="el-section-head" style="margin-bottom:16px;">
           <div>
             <h2>運営者情報</h2>
-            <div class="sub">Export Labを運営する事業者についての情報です。</div>
           </div>
         </div>
 
@@ -390,12 +389,24 @@
         return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
       });
     }
+    // 「設立」は西暦・月・日だけを表示する（時刻は表示しない）。"YYYY-MM-DD" 形式の
+    // 文字列を渡される想定だが、万一時刻付きの文字列が来ても年月日だけを取り出して整形する。
+    // 日付として解釈できない自由記述（例：旧データの「2018年4月」等）は、そのまま表示する。
+    function formatEstablished(v) {
+      if (!v) return '';
+      var m = String(v).match(/^(\d{4})-(\d{2})-(\d{2})/);
+      if (m) return Number(m[1]) + '年' + Number(m[2]) + '月' + Number(m[3]) + '日';
+      return v;
+    }
     function render(items) {
       // 常に1件のみ運用する想定。複数登録されていた場合は、最新（末尾）の1件を採用する。
       var it = items.length ? items[items.length - 1] : null;
       var rowsHtml = it ? FIELD_LABELS
         .filter(function (f) { return it[f[0]]; })
-        .map(function (f) { return '<div><span>' + esc(f[1]) + '</span><b>' + esc(it[f[0]]) + '</b></div>'; })
+        .map(function (f) {
+          var val = f[0] === 'established' ? formatEstablished(it[f[0]]) : it[f[0]];
+          return '<div><span>' + esc(f[1]) + '</span><b>' + esc(val) + '</b></div>';
+        })
         .join('') : '';
       if (!it || !rowsHtml) {
         emptyEl.style.display = '';

@@ -765,7 +765,7 @@
             </label>
             <label>
               <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">設立</span>
-              <input type="text" name="established" placeholder="例：2018年4月" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
+              <input type="date" name="established" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
             </label>
             <label>
               <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">事業内容</span>
@@ -2346,7 +2346,10 @@
         form.companyName.value = it.companyName || '';
         form.representative.value = it.representative || '';
         form.address.value = it.address || '';
-        form.established.value = it.established || '';
+        // established は <input type="date"> のため、値は必ず "YYYY-MM-DD" 形式でなければ
+        // ならない。バックエンド側で時刻付きの文字列に変換されて返ってきた場合（古いデータ等）
+        // でも安全なように、先頭10文字（YYYY-MM-DD部分）だけを取り出して設定する。
+        form.established.value = (it.established || '').slice(0, 10);
         form.business.value = it.business || '';
         form.contactEmail.value = it.contactEmail || '';
       }).catch(function () {});
