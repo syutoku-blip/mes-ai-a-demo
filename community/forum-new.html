@@ -158,6 +158,52 @@
     padding:2px 9px !important;
     border-radius:999px !important;
   }
+  /* スクエア広告：管理者ページのプレビュー（画像全体が見えるcontain表示＋下に説明欄）と
+     見た目を揃える。以前は画像をカードいっぱいにcover（はみ出た部分を切り取る）で表示して
+     おり、プレビューと大きく異なって見えていた。また「AD」表示が画像に重なっていたため、
+     枠の外（右上）に出す。 */
+  .el-compose-display-ad-tag{
+    display:flex !important;
+    justify-content:flex-end !important;
+    margin:16px 0 4px !important;
+  }
+  .el-compose-display-ad-tag span{
+    font:700 9px/1.2 var(--font-mono, monospace) !important;
+    letter-spacing:.08em !important;
+    color:var(--el-ink-faint, #8A8478) !important;
+    padding:2px 8px !important;
+    border:1px solid rgba(22,35,63,.1) !important;
+    border-radius:999px !important;
+    background:#fff !important;
+  }
+  .el-compose-display-ad{
+    margin-top:0 !important;
+    padding:0 !important;
+    display:flex !important;
+    flex-direction:column !important;
+  }
+  .el-compose-display-ad .el-display-ad-art{
+    position:relative !important;
+    aspect-ratio:1/1 !important;
+    height:auto !important;
+    margin:0 !important;
+    background:var(--el-teal, #2F8F82) !important;
+  }
+  .el-compose-display-ad .el-display-ad-copy{
+    margin-top:0 !important;
+    padding:12px 14px 4px !important;
+  }
+  .el-compose-display-ad .el-display-ad-copy small{
+    color:var(--el-ink-faint, #8A8478) !important;
+    font:400 11px/1.5 inherit !important;
+    letter-spacing:normal !important;
+    text-transform:none !important;
+  }
+  .el-compose-display-ad .el-display-ad-cta{
+    padding:0 14px 14px !important;
+    margin-top:0 !important;
+  }
+  .el-display-ad-label{ display:none !important; }
 </style>
 </head>
 <body data-site="community" data-root="..">
@@ -492,8 +538,8 @@
               </ul>
             </div>
 
+            <div class="el-compose-display-ad-tag"><span>AD</span></div>
             <a href="#" class="el-compose-display-ad" id="composeDisplayAd" aria-label="広告">
-              <span class="el-display-ad-label">AD</span>
               <div class="el-display-ad-art" id="composeDisplayAdArt" aria-hidden="true">
                 <svg viewBox="0 0 220 150" role="img">
                   <circle cx="150" cy="48" r="35" fill="#E4F1EE"/>
@@ -1641,6 +1687,14 @@
   (function () {
     var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
     var widget = document.getElementById('composeDisplayAd');
+    var adTag = widget ? widget.previousElementSibling : null;
+    // 枠外に出したAD表示（.el-compose-display-ad-tag）にはCSS側で display:flex !important
+    // を付けているため、通常のstyle.displayではなくsetProperty(...,'important')で上書きする
+    // 必要がある（そうしないと広告が無い場合でも枠だけ・AD表示だけが残ってしまう）。
+    function hideAdWidget() {
+      if (widget) widget.style.setProperty('display', 'none', 'important');
+      if (adTag) adTag.style.setProperty('display', 'none', 'important');
+    }
     fetch(API_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -1649,16 +1703,17 @@
       .then(function (res) { return res.json(); })
       .then(function (data) {
         var ads = ((data.ok && data.items) ? data.items : []).filter(function (a) { return a.adType === 'square'; });
-        if (!ads.length) { if (widget) widget.style.display = 'none'; return; }
+        if (!ads.length) { hideAdWidget(); return; }
         var ad = ads[Math.floor(Math.random() * ads.length)];
         var art = document.getElementById('composeDisplayAdArt');
-        if (ad.imageUrl) art.innerHTML = '<img src="' + ad.imageUrl + '" style="width:100%;height:100%;object-fit:cover;">';
+        // 管理者ページのプレビューと同じく、画像は切り取らずに全体を表示する（contain）。
+        if (ad.imageUrl) art.innerHTML = '<img src="' + ad.imageUrl + '" style="width:100%;height:100%;object-fit:contain;">';
         if (widget) widget.setAttribute('aria-label', ad.serviceName || '広告');
         document.getElementById('composeDisplayAdSmall').textContent = 'スポンサー：' + (ad.serviceName || '');
         document.getElementById('composeDisplayAdCta').textContent = ad.ctaText || '詳しく見る';
         if (ad.ctaUrl) document.getElementById('composeDisplayAd').href = ad.ctaUrl;
       })
-      .catch(function () { if (widget) widget.style.display = 'none'; });
+      .catch(function () { hideAdWidget(); });
   })();
 </script>
 <div class="el-auth-modal" id="authModal" aria-hidden="true">
