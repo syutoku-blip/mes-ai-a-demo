@@ -225,6 +225,38 @@
   .el-post-attachment-file:hover{
     border-color:var(--el-teal, #2F8F82) !important;
   }
+  /* 返信ボタンを使わない、控えめなコメント欄（あまり使わない想定のため小さく・目立たせない） */
+  .el-quick-comment{
+    display:flex !important;
+    align-items:center !important;
+    gap:8px !important;
+    margin:8px 0 18px !important;
+    opacity:.8 !important;
+  }
+  .el-quick-comment input[type="text"]{
+    flex:1 1 auto !important;
+    min-width:0 !important;
+    box-sizing:border-box !important;
+    padding:6px 10px !important;
+    border:1px solid var(--el-line-soft, #E5DFD2) !important;
+    border-radius:8px !important;
+    font:inherit !important;
+    font-size:12.5px !important;
+    background:transparent !important;
+    color:inherit !important;
+  }
+  .el-quick-comment .el-btn{ flex:none !important; font-size:12px !important; }
+  /* 権限なし／トピックが見つからない等の非表示制御は、上のdisplay:flex !importantより
+     詳細度が高い複合セレクタでなければ、要素のstyle.displayでの上書きが効かない。 */
+  .el-quick-comment.is-hidden{ display:none !important; }
+  /* 通知からのリンク（例：topic.html?id=xxx#コメントID）で該当箇所へスクロールしたときの
+     一時的なハイライト。コメントはAJAXで後から描画されるため、ブラウザ標準のハッシュ
+     スクロールでは間に合わず、描画完了後にJSで明示的にスクロールする必要がある。 */
+  .el-anchor-highlight{ animation: elAnchorFlash 2.2s ease !important; border-radius:var(--el-radius-m, 12px); }
+  @keyframes elAnchorFlash{
+    0%{ background:rgba(255,229,138,.55); }
+    100%{ background:transparent; }
+  }
 </style>
 </head>
 <body data-site="community" data-root="..">
@@ -272,6 +304,52 @@
         else { countEl.style.display = 'none'; }
       }
     }).catch(function () {});
+  })();
+</script>
+<script>
+  // なりすまし（管理者がユーザーとしてログイン中の状態を体験する機能）バナー。
+  // 通知ベル未読件数の取得と同じく全ページ共通で読み込まれるこのブロックに追記することで、
+  // サイト全体のどのページからでも「なりすまし中」であることが分かり、いつでも終了できるようにする。
+  // なりすまし開始そのものはadmin.htmlのユーザー管理からのみ行える（このIIFEはバナー表示専用）。
+  (function () {
+    var STASH_KEY = 'el-impersonate-stash';
+    var stash = null;
+    try { stash = JSON.parse(localStorage.getItem(STASH_KEY) || 'null'); } catch (e) {}
+    if (!stash) return; // なりすまし中でなければ何もしない
+
+    var impUsername = '';
+    try { impUsername = localStorage.getItem('el-username') || localStorage.getItem('el-user-name') || ''; } catch (e) {}
+
+    function escBanner(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+    var bar = document.createElement('div');
+    bar.id = 'elImpersonationBar';
+    bar.setAttribute('style', 'position:fixed !important;left:0 !important;right:0 !important;bottom:0 !important;top:auto !important;z-index:2147483000 !important;background:#1f1147 !important;color:#fff !important;padding:10px 16px !important;display:flex !important;align-items:center !important;justify-content:center !important;gap:12px !important;font-size:13px !important;line-height:1.4 !important;font-family:inherit !important;box-shadow:0 -2px 10px rgba(0,0,0,.25) !important;');
+    bar.innerHTML = '<span>「' + escBanner(impUsername) + '」としてログイン中です（管理者によるなりすまし）</span>' +
+      '<button type="button" id="elImpersonationExitBtn" style="background:#fff !important;color:#1f1147 !important;border:none !important;border-radius:6px !important;padding:6px 14px !important;font-weight:700 !important;font-size:13px !important;cursor:pointer !important;white-space:nowrap !important;">なりすましを終了</button>';
+
+    function mountBar() {
+      if (document.getElementById('elImpersonationBar')) return;
+      document.body.appendChild(bar);
+      document.body.style.paddingBottom = '52px';
+      var exitBtn = document.getElementById('elImpersonationExitBtn');
+      if (exitBtn) {
+        exitBtn.addEventListener('click', function () {
+          try {
+            localStorage.setItem('el-user-id', stash.userId || '');
+            localStorage.setItem('el-username', stash.username || '');
+            localStorage.setItem('el-user-name', stash.name || '');
+            localStorage.setItem('el-user-email', stash.email || '');
+            localStorage.setItem('el-user-role', stash.role || 'guest');
+            localStorage.setItem('el-user-profile', stash.profile || '{}');
+            localStorage.removeItem(STASH_KEY);
+          } catch (e) {}
+          window.location.href = 'admin.html';
+        });
+      }
+    }
+    if (document.body) mountBar();
+    else document.addEventListener('DOMContentLoaded', mountBar);
   })();
 </script>
 
@@ -438,6 +516,13 @@
         </div>
 
         <div class="el-comments" id="commentsList"></div>
+
+        <!-- 返信ボタンを押さなくても投稿できる、控えめなコメント欄。基本は各投稿の「返信」マーク
+             （↑の仕組み）を使う想定のため、目立たせずリッチエディターより小さく配置する。 -->
+        <div class="el-quick-comment" id="quickCommentBox">
+          <input type="text" id="quickCommentInput" placeholder="返信先を指定せずコメントする" maxlength="2000">
+          <button type="button" class="el-btn el-btn--ghost el-btn--sm" id="quickCommentSendBtn">コメントする</button>
+        </div>
 
         <div class="el-reply-box" id="replyBox" style="display:none;">
           <div class="el-reply-context" id="replyContext">
@@ -885,18 +970,11 @@
     richEditorHomeParent.insertBefore(richEditorWrap, richEditorHomeNextSibling);
   }
 
-  function setReplyMention(name) {
-    if (!replyEditor) return;
-    replyEditor.innerHTML = '';
-    replyEditor.appendChild(document.createTextNode('@' + name + ' '));
-    var r = document.createRange();
-    r.selectNodeContents(replyEditor);
-    r.collapse(false);
-    var sel = window.getSelection();
-    sel.removeAllRanges();
-    sel.addRange(r);
-  }
-
+  // 以前は「返信」を押すと本文の先頭に「@ユーザー名 」を自動挿入していたが、これは見た目だけの
+  // 飾りで実際には何の機能も持っていなかった（通知・返信先の判定はすべてcurrentReplyToId＝
+  // parentIdというIDベースの仕組みで行っており、本文中の@表記は一切参照していない）。
+  // 「↩ 返信 〇〇さん」のタグと返信先パネル（replyCtxLink）ですでに返信先が分かるため、
+  // 本文を自動的に書き換えるこの挙動は廃止し、エディターは空のまま返信を始められるようにする。
   function clearReplyEditor() {
     if (replyEditor) replyEditor.innerHTML = '';
   }
@@ -1188,7 +1266,7 @@
         if (replyBoxLabel) replyBoxLabel.textContent = '返信を投稿';
         replyBox.querySelector('.el-reply-foot').style.display = '';
         currentReplyToId = post.id;
-        setReplyMention(name);
+        clearReplyEditor();
         replyCtxLink.textContent = name + 'さんの投稿に返信中';
         replyCtxLink.href = '#' + post.id;
         replyCtx.classList.add('is-visible');
@@ -1328,6 +1406,8 @@
       var op = document.getElementById('op');
       if (op) op.style.display = 'none';
       if (replyBox) replyBox.style.display = 'none';
+      var quickCommentBoxNF = document.getElementById('quickCommentBox');
+      if (quickCommentBoxNF) quickCommentBoxNF.classList.add('is-hidden');
     }
 
     if (!topicId) { showTopicNotFound(); return; }
@@ -1450,6 +1530,23 @@
         var items = (cdata.ok && cdata.items) ? cdata.items : [];
         renderComments(items);
       });
+    }
+
+    // 通知（例：「〇〇さんがあなたのコメントに返信しました」）のリンク先はtopic.html?id=xxx#コメントID
+    // という形式だが、コメントはAJAXで後から描画されるため、ページ読み込み直後のブラウザ標準の
+    // ハッシュスクロールでは対象がまだDOMに無く効かない。初回のコメント描画が終わったタイミングで
+    // 改めてURLのハッシュを見て、該当箇所まで手動でスクロール＋一時ハイライトする。
+    var anchorScrollDone = false;
+    function scrollToHashAnchor_() {
+      if (anchorScrollDone) return;
+      var hash = window.location.hash ? window.location.hash.slice(1) : '';
+      if (!hash) return;
+      var target = document.getElementById(hash);
+      if (!target) return;
+      anchorScrollDone = true;
+      target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      target.classList.add('el-anchor-highlight');
+      setTimeout(function () { target.classList.remove('el-anchor-highlight'); }, 2200);
     }
 
     function wireCommentEditDelete(article, c) {
@@ -1744,6 +1841,8 @@
           var commentsHeadLocked = document.getElementById('commentsHead');
           if (commentsHeadLocked) commentsHeadLocked.style.display = 'none';
           if (replyBox) replyBox.style.display = 'none';
+          var quickCommentBoxLocked = document.getElementById('quickCommentBox');
+          if (quickCommentBoxLocked) quickCommentBoxLocked.classList.add('is-hidden');
           return;
         }
 
@@ -1842,10 +1941,39 @@
       reloadComments().then(function () {
         // OP本文・コメントの描画が終わった時点で、検索キーワードのハイライトを試みる
         highlightAndScroll(hl);
+        // 通知から来た場合は、URLのハッシュが示すコメントまでスクロールする
+        scrollToHashAnchor_();
       });
     }).catch(function () {
       showTopicNotFound('通信エラーが発生しました。時間をおいて再度お試しください。');
     });
+
+    // コメント送信の共通処理（返信ボタン経由のリッチエディター、返信先を指定しない控えめな
+    // コメント欄のどちらからも呼び出す。parentIdが'op'ならトピック本文への直接コメントになる）。
+    function submitTopicComment_(parentId, bodyHtml) {
+      if (window.elRequireAuth && !window.elRequireAuth()) return Promise.resolve(false);
+      var profile = {};
+      try { profile = JSON.parse(localStorage.getItem('el-user-profile') || '{}'); } catch (e) {}
+      var authorUsername = localStorage.getItem('el-username') || profile.username || '';
+      var authorName = localStorage.getItem('el-user-name') || authorUsername || 'ゲスト';
+      var authorUserId = localStorage.getItem('el-user-id') || profile.userId || '';
+      return apiPost({
+        action: 'createComment',
+        topicId: topicId,
+        parentId: parentId,
+        authorUsername: authorUsername,
+        authorName: authorName,
+        authorUserId: authorUserId,
+        body: bodyHtml
+      }).then(function (data) {
+        if (!data.ok) { alert('送信に失敗しました。時間をおいて再度お試しください。'); return false; }
+        reloadComments();
+        return true;
+      }).catch(function () {
+        alert('通信エラーが発生しました。');
+        return false;
+      });
+    }
 
     // 返信の送信：スプレッドシート（フォーラムコメント）に保存する
     var sendBtn = replyBox ? replyBox.querySelector('.el-reply-foot button') : null;
@@ -1855,32 +1983,35 @@
         var plainText = replyEditor ? (replyEditor.textContent || '').trim() : '';
         if (!plainText) return;
         var body = replyEditor ? replyEditor.innerHTML.trim() : '';
-        var profile = {};
-        try { profile = JSON.parse(localStorage.getItem('el-user-profile') || '{}'); } catch (e) {}
-        var authorUsername = localStorage.getItem('el-username') || profile.username || '';
-        var authorName = localStorage.getItem('el-user-name') || authorUsername || 'ゲスト';
-        var authorUserId = localStorage.getItem('el-user-id') || profile.userId || '';
         sendBtn.disabled = true;
-        apiPost({
-          action: 'createComment',
-          topicId: topicId,
-          parentId: currentReplyToId,
-          authorUsername: authorUsername,
-          authorName: authorName,
-          authorUserId: authorUserId,
-          body: body
-        }).then(function (data) {
+        submitTopicComment_(currentReplyToId, body).then(function (sent) {
           sendBtn.disabled = false;
-          if (!data.ok) { alert('送信に失敗しました。時間をおいて再度お試しください。'); return; }
+          if (!sent) return;
           clearReplyEditor();
           currentReplyToId = 'op';
           if (replyCtx) replyCtx.classList.remove('is-visible');
           if (replyBox) replyBox.style.display = 'none';
-          reloadComments();
-        }).catch(function () {
-          sendBtn.disabled = false;
-          alert('通信エラーが発生しました。');
         });
+      });
+    }
+
+    // 返信先を指定しない、控えめなコメント欄：常時表示し、返信ボタンを押さなくてもコメントできる。
+    var quickCommentInput = document.getElementById('quickCommentInput');
+    var quickCommentSendBtn = document.getElementById('quickCommentSendBtn');
+    if (quickCommentSendBtn) {
+      var sendQuickComment = function () {
+        if (window.elRequireAuth && !window.elRequireAuth()) return;
+        var text = (quickCommentInput.value || '').trim();
+        if (!text) return;
+        quickCommentSendBtn.disabled = true;
+        submitTopicComment_('op', esc(text)).then(function (sent) {
+          quickCommentSendBtn.disabled = false;
+          if (sent) quickCommentInput.value = '';
+        });
+      };
+      quickCommentSendBtn.addEventListener('click', sendQuickComment);
+      quickCommentInput.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') { e.preventDefault(); sendQuickComment(); }
       });
     }
   })();

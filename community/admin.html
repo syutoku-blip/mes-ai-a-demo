@@ -228,6 +228,52 @@
     }).catch(function () {});
   })();
 </script>
+<script>
+  // なりすまし（管理者がユーザーとしてログイン中の状態を体験する機能）バナー。
+  // 通知ベル未読件数の取得と同じく全ページ共通で読み込まれるこのブロックに追記することで、
+  // サイト全体のどのページからでも「なりすまし中」であることが分かり、いつでも終了できるようにする。
+  // なりすまし開始そのものはadmin.htmlのユーザー管理からのみ行える（このIIFEはバナー表示専用）。
+  (function () {
+    var STASH_KEY = 'el-impersonate-stash';
+    var stash = null;
+    try { stash = JSON.parse(localStorage.getItem(STASH_KEY) || 'null'); } catch (e) {}
+    if (!stash) return; // なりすまし中でなければ何もしない
+
+    var impUsername = '';
+    try { impUsername = localStorage.getItem('el-username') || localStorage.getItem('el-user-name') || ''; } catch (e) {}
+
+    function escBanner(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+    var bar = document.createElement('div');
+    bar.id = 'elImpersonationBar';
+    bar.setAttribute('style', 'position:fixed !important;left:0 !important;right:0 !important;bottom:0 !important;top:auto !important;z-index:2147483000 !important;background:#1f1147 !important;color:#fff !important;padding:10px 16px !important;display:flex !important;align-items:center !important;justify-content:center !important;gap:12px !important;font-size:13px !important;line-height:1.4 !important;font-family:inherit !important;box-shadow:0 -2px 10px rgba(0,0,0,.25) !important;');
+    bar.innerHTML = '<span>「' + escBanner(impUsername) + '」としてログイン中です（管理者によるなりすまし）</span>' +
+      '<button type="button" id="elImpersonationExitBtn" style="background:#fff !important;color:#1f1147 !important;border:none !important;border-radius:6px !important;padding:6px 14px !important;font-weight:700 !important;font-size:13px !important;cursor:pointer !important;white-space:nowrap !important;">なりすましを終了</button>';
+
+    function mountBar() {
+      if (document.getElementById('elImpersonationBar')) return;
+      document.body.appendChild(bar);
+      document.body.style.paddingBottom = '52px';
+      var exitBtn = document.getElementById('elImpersonationExitBtn');
+      if (exitBtn) {
+        exitBtn.addEventListener('click', function () {
+          try {
+            localStorage.setItem('el-user-id', stash.userId || '');
+            localStorage.setItem('el-username', stash.username || '');
+            localStorage.setItem('el-user-name', stash.name || '');
+            localStorage.setItem('el-user-email', stash.email || '');
+            localStorage.setItem('el-user-role', stash.role || 'guest');
+            localStorage.setItem('el-user-profile', stash.profile || '{}');
+            localStorage.removeItem(STASH_KEY);
+          } catch (e) {}
+          window.location.href = 'admin.html';
+        });
+      }
+    }
+    if (document.body) mountBar();
+    else document.addEventListener('DOMContentLoaded', mountBar);
+  })();
+</script>
 
       <a href="mypage.html" class="el-avatar" id="headerAvatar" aria-label="マイページ">り</a>
     </div>
@@ -843,7 +889,9 @@
             <div id="modMemberAddRow" style="display:none;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:flex-end;">
               <label style="flex:1;min-width:200px;">
                 <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">追加するユーザーネーム</span>
-                <input type="text" id="modMemberAddInput" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;" placeholder="ユーザーネーム">
+                <input type="text" id="modMemberAddInput" list="modMemberUserList" autocomplete="off" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;" placeholder="ユーザーネームを入力（候補から選択できます）">
+                <datalist id="modMemberUserList"></datalist>
+                <span id="modMemberAddHint" style="display:block;font-size:11.5px;color:var(--el-ink-faint);margin-top:4px;">候補に出てくる、実在するユーザーネームのみ登録できます。</span>
               </label>
               <button type="button" class="el-btn el-btn--primary el-btn--sm" id="modMemberAddBtn">メンバーを追加</button>
             </div>
@@ -1411,7 +1459,8 @@
         '<td style="padding:10px 14px;white-space:nowrap;">' + (u.status === 'ブロック中' ? '<span class="badge badge--coral" style="background:var(--el-coral);color:#fff;">ブロック中</span>' : '<span class="badge badge--open">有効</span>') + '</td>' +
         '<td style="padding:10px 14px;white-space:nowrap;">' +
         '<button type="button" class="el-btn el-btn--ghost el-btn--sm" data-action="view" data-i="' + i + '">詳細</button> ' +
-        '<button type="button" class="el-btn el-btn--ghost el-btn--sm" data-action="block" data-i="' + i + '">' + (u.status === 'ブロック中' ? '解除' : 'ブロック') + '</button>' +
+        '<button type="button" class="el-btn el-btn--ghost el-btn--sm" data-action="block" data-i="' + i + '">' + (u.status === 'ブロック中' ? '解除' : 'ブロック') + '</button> ' +
+        '<button type="button" class="el-btn el-btn--ghost el-btn--sm" data-action="impersonate" data-i="' + i + '">なりすます</button>' +
         '</td>';
       userTableBody.appendChild(tr);
 
@@ -1433,6 +1482,7 @@
       USERS = data.members || [];
       userTableStatus.textContent = USERS.length + '人の登録ユーザー';
       renderUsers();
+      if (typeof populateMemberUserDatalist_ === 'function') populateMemberUserDatalist_();
     }).catch(function () {
       userTableStatus.textContent = 'サーバーへの接続に失敗しました。';
     });
@@ -1469,8 +1519,54 @@
         if (data.ok) { u.status = newStatus; renderUsers(); }
         else alert(data.error || '更新に失敗しました');
       });
+    } else if (btn.dataset.action === 'impersonate') {
+      startImpersonation_(u);
     }
   });
+
+  // ------------------------------------------------------------
+  // ユーザーへのなりすまし（管理者が対象ユーザーとしてログインした状態を体験する）。
+  // 開始時は現在の管理者情報を退避しておき（既になりすまし中の場合は退避済みのものを保持し
+  // 上書きしない＝入れ子になりすましても必ず「本来の管理者」に戻れるようにする）、
+  // 対象ユーザーのプロフィール（USERS配列＝getAllMembersAdminの応答）でログイン状態を置き換える。
+  // 終了は全ページ共通で表示されるバナー（なりすましを終了ボタン）から行う。
+  // ------------------------------------------------------------
+  var IMPERSONATE_STASH_KEY = 'el-impersonate-stash';
+  function startImpersonation_(u) {
+    if (!u || !u.username) return;
+    var currentUsername = '';
+    try { currentUsername = localStorage.getItem('el-username') || ''; } catch (e) {}
+    var alreadyStashed = null;
+    try { alreadyStashed = localStorage.getItem(IMPERSONATE_STASH_KEY); } catch (e) {}
+    if (!alreadyStashed && currentUsername && currentUsername === u.username) {
+      alert('自分自身にはなりすませません。');
+      return;
+    }
+    if (!confirm('「' + (u.fullname || u.username) + '」（' + u.username + '）としてログインした状態にします。\nよろしいですか？')) return;
+
+    if (!alreadyStashed) {
+      // まだなりすまし中でない場合のみ、現在（本来）の管理者情報を退避する
+      var stashObj = {
+        userId: localStorage.getItem('el-user-id') || '',
+        username: localStorage.getItem('el-username') || '',
+        name: localStorage.getItem('el-user-name') || '',
+        email: localStorage.getItem('el-user-email') || '',
+        role: localStorage.getItem('el-user-role') || 'admin',
+        profile: localStorage.getItem('el-user-profile') || '{}'
+      };
+      try { localStorage.setItem(IMPERSONATE_STASH_KEY, JSON.stringify(stashObj)); } catch (e) {}
+    }
+
+    try {
+      localStorage.setItem('el-user-id', u.userId || '');
+      localStorage.setItem('el-username', u.username || '');
+      localStorage.setItem('el-user-name', u.fullname || u.username || '');
+      localStorage.setItem('el-user-email', u.email || '');
+      localStorage.setItem('el-user-role', u.role || 'member');
+      localStorage.setItem('el-user-profile', JSON.stringify(u));
+    } catch (e) {}
+    window.location.href = 'index.html';
+  }
 
   // CSVダウンロード
   document.getElementById('exportCsvBtn').addEventListener('click', function () {
@@ -2264,6 +2360,16 @@
     return type === 'square' ? 800 : 1200;
   }, 'contain');
 
+  // AD表示・スポンサー表記の帯（実際の公開ページ側・.el-ad-footer-v2 / .el-compose-display-ad-footer
+  // と全く同じ配色・レイアウトにする）。以前はここだけAD・スポンサーとも画像に重ねる古いデザインの
+  // ままになっており、実際の公開ページ（画像の下にグレーの帯でまとめる新デザイン）とプレビューが
+  // 食い違っていたため、共通の見た目に統一する。
+  function renderAdFooterHtml_(ad) {
+    return '<div style="display:flex;align-items:center;gap:10px;width:100%;box-sizing:border-box;padding:8px 14px;background:#EDEDED;border-top:1px solid #DDDDDD;">' +
+      '<span style="flex:none;font:700 9px/1.2 var(--font-mono,monospace);letter-spacing:.08em;color:var(--el-ink-faint);padding:2px 8px;border:1px solid rgba(22,35,63,.1);border-radius:999px;background:#fff;">AD</span>' +
+      '<span style="flex:1;min-width:0;font-size:11px;color:var(--el-navy);">' + (ad.serviceName ? 'スポンサー：' + ad.serviceName : 'スポンサー名') + '</span>' +
+      '</div>';
+  }
   function renderAdPreview(ad) {
     // 「推奨サイズ」通りの画像でも圧縮時の丸め誤差で比率が完全一致しないことがあり、
     // background-size:coverだと必ずどこかがトリミングされてしまっていたため、
@@ -2272,21 +2378,18 @@
       var sqBg = ad.imageUrl
         ? 'background-image:url(' + ad.imageUrl + ');background-size:contain;background-repeat:no-repeat;background-position:center;background-color:var(--el-teal);'
         : 'background:var(--el-teal);';
-      return '<div style="position:relative;border-radius:var(--el-radius-m);overflow:hidden;border:1px solid var(--el-line-soft);width:260px;">' +
-        '<div style="position:relative;aspect-ratio:1/1;' + sqBg + '">' +
-        '<span style="position:absolute;top:10px;left:10px;background:rgba(0,0,0,.55);color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:999px;">AD</span>' +
-        '</div>' +
-        '<div style="padding:12px 14px;background:var(--el-paper);">' +
-        '<small style="display:block;font-size:11px;color:var(--el-ink-faint);">' + (ad.serviceName ? 'スポンサー：' + ad.serviceName : 'スポンサー名') + '</small>' +
-        '</div></div>';
+      return '<div style="position:relative;display:flex;flex-direction:column;border-radius:var(--el-radius-m);overflow:hidden;width:260px;">' +
+        '<div style="position:relative;aspect-ratio:1/1;' + sqBg + '"></div>' +
+        renderAdFooterHtml_(ad) +
+        '</div>';
     }
     var bg = ad.imageUrl
       ? 'background-image:url(' + ad.imageUrl + ');background-size:contain;background-repeat:no-repeat;background-position:center;background-color:var(--el-teal);'
       : 'background:var(--el-teal);';
-    // 実際の表示（バナー全体がリンクで、CTAボタンは無し）に合わせたプレビュー
-    return '<div style="position:relative;border-radius:var(--el-radius-m);overflow:hidden;aspect-ratio:1200/200;' + bg + '">' +
-      '<span style="position:absolute;top:12px;left:12px;background:rgba(0,0,0,.55);color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:999px;">AD</span>' +
-      '<span style="position:absolute;left:12px;bottom:10px;font-size:11px;color:rgba(255,255,255,.85);background:rgba(0,0,0,.35);padding:2px 9px;border-radius:999px;">スポンサー：' + (ad.serviceName || 'サービス名') + '</span>' +
+    // 実際の表示（バナー全体がリンクで、CTAボタンは無し。画像の下にAD・スポンサーの帯）に合わせたプレビュー
+    return '<div style="position:relative;display:flex;flex-direction:column;border-radius:var(--el-radius-m);overflow:hidden;">' +
+      '<div style="position:relative;aspect-ratio:1200/200;' + bg + '"></div>' +
+      renderAdFooterHtml_(ad) +
       '</div>';
   }
 
@@ -2883,12 +2986,31 @@
     if (modMemberGroupSelect) {
       modMemberGroupSelect.addEventListener('change', function () { loadMembersForGroup(this.value); });
     }
+    // 追加できるのは実在するユーザーネームだけにする：以前はここが自由入力のままだったため、
+    // 正確なユーザーネームを入力しても実際には存在しない/綴りを間違えたユーザーでも登録できて
+    // しまっていた（サーバー側は該当ユーザーが見つからなくてもuserId空のまま行を作ってしまう）。
+    // ユーザー管理タブ用に取得済みのUSERS（handleGetAllMembersAdmin）を候補として<datalist>に
+    // 出し、実際にUSERSの中に完全一致するユーザーネームがある場合のみ送信を許可する。
+    function populateMemberUserDatalist_() {
+      var datalist = document.getElementById('modMemberUserList');
+      if (!datalist) return;
+      datalist.innerHTML = USERS.map(function (u) {
+        return '<option value="' + escHtml(u.username || '') + '"></option>';
+      }).join('');
+    }
+    function findExistingUsername_(username) {
+      return USERS.some(function (u) { return u.username === username; });
+    }
     var modMemberAddBtn = document.getElementById('modMemberAddBtn');
     if (modMemberAddBtn) {
       modMemberAddBtn.addEventListener('click', function () {
         var groupId = modMemberGroupSelect.value;
         var username = document.getElementById('modMemberAddInput').value.trim();
         if (!groupId || !username) { alert('コミュニティとユーザーネームを指定してください。'); return; }
+        if (!findExistingUsername_(username)) {
+          alert('「' + username + '」というユーザーネームの登録ユーザーが見つかりません。候補一覧から実在するユーザーネームを選択してください。');
+          return;
+        }
         apiPost({
           action: 'adminAddMember', groupId: groupId, username: username,
           requesterUserId: adminReqUserId(), requesterUsername: adminReqUsername()
@@ -2899,6 +3021,7 @@
         }).catch(function () { alert('通信エラーが発生しました。'); });
       });
     }
+    populateMemberUserDatalist_();
     var modMemberList = document.getElementById('modMemberList');
     if (modMemberList) {
       modMemberList.addEventListener('click', function (e) {

@@ -228,6 +228,52 @@
     }).catch(function () {});
   })();
 </script>
+<script>
+  // なりすまし（管理者がユーザーとしてログイン中の状態を体験する機能）バナー。
+  // 通知ベル未読件数の取得と同じく全ページ共通で読み込まれるこのブロックに追記することで、
+  // サイト全体のどのページからでも「なりすまし中」であることが分かり、いつでも終了できるようにする。
+  // なりすまし開始そのものはadmin.htmlのユーザー管理からのみ行える（このIIFEはバナー表示専用）。
+  (function () {
+    var STASH_KEY = 'el-impersonate-stash';
+    var stash = null;
+    try { stash = JSON.parse(localStorage.getItem(STASH_KEY) || 'null'); } catch (e) {}
+    if (!stash) return; // なりすまし中でなければ何もしない
+
+    var impUsername = '';
+    try { impUsername = localStorage.getItem('el-username') || localStorage.getItem('el-user-name') || ''; } catch (e) {}
+
+    function escBanner(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+    var bar = document.createElement('div');
+    bar.id = 'elImpersonationBar';
+    bar.setAttribute('style', 'position:fixed !important;left:0 !important;right:0 !important;bottom:0 !important;top:auto !important;z-index:2147483000 !important;background:#1f1147 !important;color:#fff !important;padding:10px 16px !important;display:flex !important;align-items:center !important;justify-content:center !important;gap:12px !important;font-size:13px !important;line-height:1.4 !important;font-family:inherit !important;box-shadow:0 -2px 10px rgba(0,0,0,.25) !important;');
+    bar.innerHTML = '<span>「' + escBanner(impUsername) + '」としてログイン中です（管理者によるなりすまし）</span>' +
+      '<button type="button" id="elImpersonationExitBtn" style="background:#fff !important;color:#1f1147 !important;border:none !important;border-radius:6px !important;padding:6px 14px !important;font-weight:700 !important;font-size:13px !important;cursor:pointer !important;white-space:nowrap !important;">なりすましを終了</button>';
+
+    function mountBar() {
+      if (document.getElementById('elImpersonationBar')) return;
+      document.body.appendChild(bar);
+      document.body.style.paddingBottom = '52px';
+      var exitBtn = document.getElementById('elImpersonationExitBtn');
+      if (exitBtn) {
+        exitBtn.addEventListener('click', function () {
+          try {
+            localStorage.setItem('el-user-id', stash.userId || '');
+            localStorage.setItem('el-username', stash.username || '');
+            localStorage.setItem('el-user-name', stash.name || '');
+            localStorage.setItem('el-user-email', stash.email || '');
+            localStorage.setItem('el-user-role', stash.role || 'guest');
+            localStorage.setItem('el-user-profile', stash.profile || '{}');
+            localStorage.removeItem(STASH_KEY);
+          } catch (e) {}
+          window.location.href = 'admin.html';
+        });
+      }
+    }
+    if (document.body) mountBar();
+    else document.addEventListener('DOMContentLoaded', mountBar);
+  })();
+</script>
 
       <a href="mypage.html" class="el-avatar" id="headerAvatar" aria-label="マイページ">り</a>
     </div>
@@ -625,7 +671,9 @@
         var statusBadge = t.status === 'solved' ? '<span class="badge badge--solved">解決</span>' : '<span class="badge badge--unsolved">未解決</span>';
         var note = (noteMap && noteMap[t.id]) ? '<span class="badge badge--cat">' + esc(noteMap[t.id]) + '</span>' : '';
         var catChipHtml = catLabel ? '<span class="badge badge--cat el-cat-chip" data-category="' + esc(t.category || '') + '" role="link" tabindex="0">' + esc(catLabel) + '</span>' : '';
-        return '<a href="topic.html?id=' + encodeURIComponent(t.id) + '" class="el-t-row">' +
+        // コミュニティ内の投稿（groupIdを持つ）はcommunity-topic.htmlへ、フォーラムの投稿はtopic.htmlへ
+        var rowHref = t.groupId ? 'community-topic.html?id=' + encodeURIComponent(t.id) : 'topic.html?id=' + encodeURIComponent(t.id);
+        return '<a href="' + rowHref + '" class="el-t-row">' +
           '<div class="el-t-row-main">' +
           '<div class="el-t-row-badges">' + statusBadge + catChipHtml + note + '</div>' +
           '<span class="el-t-row-title">' + esc(t.title) + '</span>' +
@@ -652,20 +700,35 @@
       });
     }
 
-    apiPost({ action: 'listTopics', userId: uid, username: uname }).then(function (topicsRes) {
-      var topics = (topicsRes.ok && topicsRes.items) ? topicsRes.items : [];
+    // マイページの件数表示（投稿・返信・いいね・ベストアンサー）はフォーラムだけでなく
+    // コミュニティ内の投稿・コメントも合算して数えているため、このページ（内訳の一覧）も
+    // 同じくフォーラム＋コミュニティ両方を対象にする（以前はフォーラム分しか見ておらず、
+    // コミュニティにしか投稿・返信・いいねしていない会員は、マイページには「1件」等と出るのに
+    // このページを開くと「ありません」になってしまっていた）。
+    Promise.all([
+      apiPost({ action: 'listTopics', userId: uid, username: uname }),
+      apiPost({ action: 'listCommunityTopics', userId: uid, username: uname }) // groupId未指定＝全コミュニティの投稿
+    ]).then(function (results) {
+      var topics = (results[0] && results[0].ok && results[0].items) ? results[0].items : [];
+      var communityTopics = (results[1] && results[1].ok && results[1].items) ? results[1].items : [];
+      var allTopics = topics.concat(communityTopics);
       var topicById = {};
-      topics.forEach(function (t) { topicById[String(t.id)] = t; });
+      allTopics.forEach(function (t) { topicById[String(t.id)] = t; });
 
       if (view === 'posted') {
-        var mine = topics.filter(function (t) { return isMine(t.authorUserId, t.authorUsername); });
+        var mine = allTopics.filter(function (t) { return isMine(t.authorUserId, t.authorUsername); });
+        mine.sort(function (a, b) { return new Date(b.createdAt) - new Date(a.createdAt); });
         renderRows(mine);
         return;
       }
 
       if (view === 'replied' || view === 'bestAnswer') {
-        apiPost({ action: 'listComments', authorUserId: uid, authorUsername: uname, userId: uid, username: uname }).then(function (cRes) {
-          var myComments = (cRes.ok && cRes.items) ? cRes.items : [];
+        Promise.all([
+          apiPost({ action: 'listComments', authorUserId: uid, authorUsername: uname, userId: uid, username: uname }),
+          apiPost({ action: 'listCommunityComments', authorUserId: uid, authorUsername: uname })
+        ]).then(function (cResults) {
+          var myComments = (cResults[0] && cResults[0].ok && cResults[0].items) ? cResults[0].items : [];
+          var myCommunityComments = (cResults[1] && cResults[1].ok && cResults[1].items) ? cResults[1].items : [];
           if (view === 'replied') {
             var seen = {};
             var repliedTopics = [];
@@ -673,12 +736,17 @@
               var t = topicById[String(c.topicId)];
               if (t && !seen[t.id]) { seen[t.id] = true; repliedTopics.push(t); }
             });
+            myCommunityComments.forEach(function (c) {
+              var t = topicById[String(c.postId)];
+              if (t && !seen[t.id]) { seen[t.id] = true; repliedTopics.push(t); }
+            });
             repliedTopics.sort(function (a, b) { return new Date(b.createdAt) - new Date(a.createdAt); });
             renderRows(repliedTopics);
           } else {
             var myCommentIdSet = {};
             myComments.forEach(function (c) { myCommentIdSet[String(c.id)] = true; });
-            var bestTopics = topics.filter(function (t) { return t.bestAnswerCommentId && myCommentIdSet[String(t.bestAnswerCommentId)]; });
+            myCommunityComments.forEach(function (c) { myCommentIdSet[String(c.id)] = true; });
+            var bestTopics = allTopics.filter(function (t) { return t.bestAnswerCommentId && myCommentIdSet[String(t.bestAnswerCommentId)]; });
             renderRows(bestTopics);
           }
         }).catch(function () {
@@ -690,9 +758,12 @@
 
       if (view === 'liked') {
         apiPost({ action: 'listMyLikes', userId: uid, username: uname }).then(function (lRes) {
-          var likes = (lRes.ok && lRes.items) ? lRes.items.filter(function (l) { return l.targetType === 'topic' || l.targetType === 'comment'; }) : [];
-          var topicLikeIds = likes.filter(function (l) { return l.targetType === 'topic'; }).map(function (l) { return l.targetId; });
+          var likes = (lRes.ok && lRes.items) ? lRes.items.filter(function (l) {
+            return l.targetType === 'topic' || l.targetType === 'comment' || l.targetType === 'communityTopic' || l.targetType === 'communityComment';
+          }) : [];
+          var topicLikeIds = likes.filter(function (l) { return l.targetType === 'topic' || l.targetType === 'communityTopic'; }).map(function (l) { return l.targetId; });
           var commentLikeIds = likes.filter(function (l) { return l.targetType === 'comment'; }).map(function (l) { return l.targetId; });
+          var communityCommentLikeIds = likes.filter(function (l) { return l.targetType === 'communityComment'; }).map(function (l) { return l.targetId; });
 
           var resultTopics = [];
           var noteMap = {};
@@ -702,19 +773,33 @@
             if (t && !seen[t.id]) { seen[t.id] = true; resultTopics.push(t); }
           });
 
-          if (!commentLikeIds.length) {
+          if (!commentLikeIds.length && !communityCommentLikeIds.length) {
             renderRows(resultTopics, noteMap);
             return;
           }
-          // コメントへのいいねは、そのコメントがどのトピックに属するかを全コメントから調べる
-          apiPost({ action: 'listComments' }).then(function (allCRes) {
-            var allComments = (allCRes.ok && allCRes.items) ? allCRes.items : [];
+          // コメントへのいいねは、そのコメントがどのトピック／コミュニティ投稿に属するかを
+          // 全コメントから調べる（フォーラム・コミュニティそれぞれのコメント一覧を必要な分だけ取得）。
+          Promise.all([
+            commentLikeIds.length ? apiPost({ action: 'listComments' }) : Promise.resolve({ ok: true, items: [] }),
+            communityCommentLikeIds.length ? apiPost({ action: 'listCommunityComments' }) : Promise.resolve({ ok: true, items: [] })
+          ]).then(function (lookupResults) {
+            var allCRes = lookupResults[0], allCommunityCRes = lookupResults[1];
             var commentById = {};
-            allComments.forEach(function (c) { commentById[String(c.id)] = c; });
+            ((allCRes.ok && allCRes.items) ? allCRes.items : []).forEach(function (c) { commentById[String(c.id)] = c; });
             commentLikeIds.forEach(function (cid) {
               var c = commentById[String(cid)];
               if (!c) return;
               var t = topicById[String(c.topicId)];
+              if (!t) return;
+              if (!seen[t.id]) { seen[t.id] = true; resultTopics.push(t); }
+              noteMap[t.id] = 'コメントへのいいね';
+            });
+            var communityCommentById = {};
+            ((allCommunityCRes.ok && allCommunityCRes.items) ? allCommunityCRes.items : []).forEach(function (c) { communityCommentById[String(c.id)] = c; });
+            communityCommentLikeIds.forEach(function (cid) {
+              var c = communityCommentById[String(cid)];
+              if (!c) return;
+              var t = topicById[String(c.postId)];
               if (!t) return;
               if (!seen[t.id]) { seen[t.id] = true; resultTopics.push(t); }
               noteMap[t.id] = 'コメントへのいいね';
