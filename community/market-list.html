@@ -1251,7 +1251,20 @@
     var el = document.getElementById('adBanner');
     if (!el) return;
     // 実際のリンク先(ctaUrl)が設定されるまでは、バナー全体クリックで# に飛ばないようにする
-    el.addEventListener('click', function (e) { if (!el.dataset.ctaUrl) e.preventDefault(); });
+    el.addEventListener('click', function (e) {
+      if (!el.dataset.ctaUrl) e.preventDefault();
+      // クリック数・クリックユーザーの記録（広告管理②のデータ用）。表示回数と違い、
+      // クリックは母数が少なく1件ずつ記録しても書き込み負荷は小さいため、都度記録する。
+      if (el.dataset.adId) {
+        fetch(API_URL, {
+          method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: 'logAdEvent', adId: el.dataset.adId, eventType: 'click',
+            userId: (localStorage.getItem('el-user-id') || ''), username: (localStorage.getItem('el-username') || '')
+          })
+        }).catch(function () {});
+      }
+    });
     var imageEl = document.getElementById('adImageV2');
     var sponsorEl = document.getElementById('adSponsorV2');
 
@@ -1275,6 +1288,22 @@
           return;
         }
         var ad = ads[Math.floor(Math.random() * ads.length)];
+        el.dataset.adId = ad.id;
+        // 表示回数の記録：書き込みを抑えるため、同じブラウザタブ（セッション）内で同じ広告IDは
+        // 1回だけ記録する（sessionStorageで重複防止する簡易カウント。Firebase等は使わず、
+        // 引き続きスプレッドシートのまま運用するための対応）。
+        (function () {
+          var seenKey = 'el-ad-impression-seen';
+          var seen = [];
+          try { seen = JSON.parse(sessionStorage.getItem(seenKey) || '[]'); } catch (e) {}
+          if (seen.indexOf(ad.id) !== -1) return;
+          seen.push(ad.id);
+          try { sessionStorage.setItem(seenKey, JSON.stringify(seen)); } catch (e) {}
+          fetch(API_URL, {
+            method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: 'logAdEvent', adId: ad.id, eventType: 'impression' })
+          }).catch(function () {});
+        })();
         if (ad.imageUrl) {
           imageEl.style.backgroundImage = 'url(' + ad.imageUrl + ')';
         } else {

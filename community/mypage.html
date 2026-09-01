@@ -638,10 +638,10 @@
     // 集計に含める（以前はフォーラム分しか見ておらず、コミュニティにしか投稿していない会員は
     // 実際は投稿しているのに0件と表示されてしまっていた）。
     Promise.all([
-      apiPost({ action: 'listTopics' }),
-      apiPost({ action: 'listComments', authorUserId: uid, authorUsername: uname }),
+      apiPost({ action: 'listTopics', userId: uid, username: uname }),
+      apiPost({ action: 'listComments', authorUserId: uid, authorUsername: uname, userId: uid, username: uname }),
       apiPost({ action: 'listMyLikes', userId: uid, username: uname }),
-      apiPost({ action: 'listCommunityTopics' }), // groupId未指定＝全コミュニティの投稿を取得
+      apiPost({ action: 'listCommunityTopics', userId: uid, username: uname }), // groupId未指定＝全コミュニティの投稿を取得
       apiPost({ action: 'listCommunityComments', authorUserId: uid, authorUsername: uname })
     ]).then(function (results) {
       var topics = (results[0] && results[0].ok && results[0].items) ? results[0].items : [];

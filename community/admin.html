@@ -160,6 +160,25 @@
   .el-table-scroll-edge--right{
     right:0; background:linear-gradient(to left, rgba(255,255,255,.92), rgba(255,255,255,0));
   }
+  /* モデレーション管理パネルのサブタブ（フォーラム投稿／コメント／コミュニティ／コミュニティ投稿／
+     メンバー管理の切り替えボタン）。選択中のものが分かるよう、既存の.el-btn--ghostに強調色を重ねる。 */
+  .el-mod-subtab.is-active{
+    background:var(--el-navy, #16233F) !important; color:#fff !important; border-color:var(--el-navy, #16233F) !important;
+  }
+  /* 広告設定パネルのサブタブ（①新規登録／②登録済み広告のデータ）。モデレーションのサブタブと
+     見た目を揃えるため同じ強調スタイルを使う（クリック時の挙動は別のJSで扱うためクラス名は分ける）。 */
+  .el-ad-subtab.is-active{
+    background:var(--el-navy, #16233F) !important; color:#fff !important; border-color:var(--el-navy, #16233F) !important;
+  }
+  /* 登録済み広告データ：表示回数・クリック数・クリックユーザーの集計表示まわり */
+  .el-ad-stats-box{
+    margin-top:14px; padding:14px 16px; background:var(--el-cream-deep); border-radius:10px;
+  }
+  .el-ad-stats-nums{ display:flex; gap:18px; margin-bottom:10px; }
+  .el-ad-stats-num strong{ display:block; font-size:20px; color:var(--el-navy); }
+  .el-ad-stats-num span{ font-size:11.5px; color:var(--el-ink-faint); }
+  .el-ad-stats-filter{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:10px; font-size:12.5px; }
+  .el-ad-stats-filter input[type="date"]{ padding:6px 8px; border:1px solid var(--el-line-soft); border-radius:8px; font:inherit; }
 </style>
 </head>
 <body data-site="community" data-root="..">
@@ -321,6 +340,8 @@
           <a href="#" data-tab="apply">出品申請の確認</a>
           <a href="#" data-tab="marketOrders">マーケット申込み一覧</a>
           <a href="#" data-tab="badge">バッジの付与</a>
+          <a href="#" data-tab="moderation">モデレーション管理</a>
+          <a href="#" data-tab="modlog">モデレーション履歴</a>
           <a href="#" data-tab="operator">運営者情報</a>
         </div>
       </details>
@@ -687,6 +708,12 @@
 
         <!-- 広告設定 -->
         <div class="el-admin-panel" data-panel="ads" style="display:none;">
+          <div style="display:flex;gap:10px;margin-bottom:20px;">
+            <button type="button" class="el-btn el-btn--ghost el-btn--sm el-ad-subtab is-active" data-adtab="new">①新規登録</button>
+            <button type="button" class="el-btn el-btn--ghost el-btn--sm el-ad-subtab" data-adtab="list">②登録済み広告のデータ</button>
+          </div>
+
+          <div class="el-ad-subpanel" id="adSubpanel-new">
           <div id="adEditBanner" style="display:none;padding:10px 14px;background:var(--el-cream-deep);border-radius:10px;font-size:12.5px;color:var(--el-navy);align-items:center;justify-content:space-between;gap:10px;margin-bottom:16px;">
             <span>この項目を編集しています</span>
             <button type="button" id="adCancelEditBtn" class="el-btn el-btn--ghost el-btn--sm">キャンセル</button>
@@ -731,7 +758,11 @@
             <h3 style="font-size:14px;margin:0 0 12px;">プレビュー</h3>
             <div id="adPreview" style="max-width:400px;"></div>
           </div>
-          <div id="adList" style="margin-top:32px;"></div>
+          </div>
+
+          <div class="el-ad-subpanel" id="adSubpanel-list" style="display:none;">
+            <div id="adStatsList"></div>
+          </div>
         </div>
 
         <!-- 出品申請の確認 -->
@@ -767,6 +798,65 @@
             </label>
             <button type="submit" class="el-btn el-btn--primary" style="align-self:flex-start;">バッジを付与する</button>
           </form>
+        </div>
+
+        <!-- モデレーション管理：フォーラム投稿／コメント、コミュニティ、コミュニティ投稿の削除・非公開、
+             コミュニティメンバーの追加・除名。削除・非公開・メンバーの削除は理由の入力が必須で、
+             対象ユーザーへDM通知される。取り消し（復活）は「モデレーション履歴」タブから行う。 -->
+        <div class="el-admin-panel" data-panel="moderation" style="display:none;">
+          <p style="font-size:13px;color:var(--el-ink-faint);margin:0 0 20px;line-height:1.8;">
+            フォーラムの投稿・コメント、コミュニティ本体、コミュニティ内の投稿の削除・非公開と、コミュニティメンバーの追加・除名を行います。削除・非公開にしたコンテンツは一覧・詳細から完全に除外されます（投稿者本人と管理者のみ引き続き閲覧できます）。削除・非公開・メンバーの削除には理由の入力が必須で、対象ユーザーへDMで通知が届きます。取り消し（復活）は「モデレーション履歴」タブから行えます。
+          </p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;">
+            <button type="button" class="el-btn el-btn--ghost el-btn--sm el-mod-subtab is-active" data-modtab="forumTopic">フォーラム投稿</button>
+            <button type="button" class="el-btn el-btn--ghost el-btn--sm el-mod-subtab" data-modtab="forumComment">フォーラムコメント</button>
+            <button type="button" class="el-btn el-btn--ghost el-btn--sm el-mod-subtab" data-modtab="communityGroup">コミュニティ</button>
+            <button type="button" class="el-btn el-btn--ghost el-btn--sm el-mod-subtab" data-modtab="communityTopic">コミュニティ投稿</button>
+            <button type="button" class="el-btn el-btn--ghost el-btn--sm el-mod-subtab" data-modtab="members">メンバー管理</button>
+          </div>
+
+          <div id="modSubpanel-forumTopic" class="el-mod-subpanel">
+            <div id="modList-forumTopic" style="display:flex;flex-direction:column;gap:10px;"></div>
+          </div>
+          <div id="modSubpanel-forumComment" class="el-mod-subpanel" style="display:none;">
+            <div id="modList-forumComment" style="display:flex;flex-direction:column;gap:10px;"></div>
+          </div>
+          <div id="modSubpanel-communityGroup" class="el-mod-subpanel" style="display:none;">
+            <div id="modList-communityGroup" style="display:flex;flex-direction:column;gap:10px;"></div>
+          </div>
+          <div id="modSubpanel-communityTopic" class="el-mod-subpanel" style="display:none;">
+            <label style="display:block;max-width:360px;margin-bottom:14px;">
+              <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">コミュニティで絞り込み</span>
+              <select id="modCommunityTopicGroupSelect" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
+                <option value="">すべてのコミュニティ</option>
+              </select>
+            </label>
+            <div id="modList-communityTopic" style="display:flex;flex-direction:column;gap:10px;"></div>
+          </div>
+          <div id="modSubpanel-members" class="el-mod-subpanel" style="display:none;">
+            <label style="display:block;max-width:360px;margin-bottom:14px;">
+              <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">コミュニティを選択</span>
+              <select id="modMemberGroupSelect" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;">
+                <option value="">選択してください</option>
+              </select>
+            </label>
+            <div id="modMemberAddRow" style="display:none;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:flex-end;">
+              <label style="flex:1;min-width:200px;">
+                <span style="display:block;font-weight:700;font-size:13px;margin-bottom:6px;">追加するユーザーネーム</span>
+                <input type="text" id="modMemberAddInput" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;" placeholder="ユーザーネーム">
+              </label>
+              <button type="button" class="el-btn el-btn--primary el-btn--sm" id="modMemberAddBtn">メンバーを追加</button>
+            </div>
+            <div id="modMemberList" style="display:flex;flex-direction:column;gap:10px;"></div>
+          </div>
+        </div>
+
+        <!-- モデレーション履歴：非公開・削除・メンバー除名の操作記録。ここから取り消し（復活）できる。 -->
+        <div class="el-admin-panel" data-panel="modlog" style="display:none;">
+          <p style="font-size:13px;color:var(--el-ink-faint);margin:0 0 20px;line-height:1.8;">
+            管理者が行った削除・非公開・メンバー除名の記録です。新しいものが上に表示されます。「取り消す」を押すと、その操作を取り消して元の状態（表示・メンバー参加）に復元します。
+          </p>
+          <div id="modLogList" style="display:flex;flex-direction:column;gap:10px;"></div>
         </div>
 
         <!-- 運営者情報：サイドメニュー「運営者情報」（operator-info.html）に表示される内容。
@@ -854,6 +944,23 @@
   </div>
 </div>
 
+<!-- モデレーション操作（非公開・削除・メンバー除名）の理由入力モーダル。共通で使い回す。 -->
+<div class="el-modal" id="modReasonModal" aria-hidden="true">
+  <div class="el-modal-backdrop" data-mod-reason-close></div>
+  <div class="el-modal-panel" role="dialog" aria-modal="true">
+    <button type="button" class="el-modal-close" data-mod-reason-close aria-label="閉じる">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <h2 id="modReasonTitle">操作の理由</h2>
+    <p style="font-size:12.5px;color:var(--el-ink-faint);margin:0 0 12px;">対象ユーザーにDMで通知されます。理由の入力は必須です。</p>
+    <textarea id="modReasonInput" rows="3" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--el-line-soft);border-radius:10px;font:inherit;resize:vertical;" placeholder="理由を入力してください"></textarea>
+    <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:16px;">
+      <button type="button" class="el-btn el-btn--ghost el-btn--sm" data-mod-reason-close>キャンセル</button>
+      <button type="button" class="el-btn el-btn--primary el-btn--sm" id="modReasonConfirmBtn">実行する</button>
+    </div>
+  </div>
+</div>
+
 <script src="../shared/global-header.js" defer></script>
 <script src="data.js"></script>
 <script>
@@ -897,6 +1004,12 @@
       body: JSON.stringify(payload)
     }).then(function (res) { return res.json(); });
   }
+
+  // モデレーション機能（フォーラム／コミュニティの削除・非公開・メンバー管理・履歴）で使う、
+  // 今ログインしている管理者自身のID／ユーザーネーム（サーバー側でこのIDが実際に管理者かどうかを
+  // ユーザーマスタと照合してから実行される。requesterRole:'admin'のような自己申告は信用されない）。
+  function adminReqUserId() { try { return localStorage.getItem('el-user-id') || ''; } catch (e) { return ''; } }
+  function adminReqUsername() { try { return localStorage.getItem('el-username') || ''; } catch (e) { return ''; } }
 
 
   // ------------------------------------------------------------
@@ -2203,10 +2316,88 @@
   function loadAds() {
     apiPost({ action: 'listContent', type: 'ad' }).then(function (data) {
       if (!data.ok) return;
-      renderSimpleList('adList', data.items, function (it) { return renderAdPreview(it); }, 'ad', loadAds, loadAdIntoForm);
+      renderSimpleList('adStatsList', data.items, function (it) { return renderAdPreview(it) + renderAdStatsBox(it); }, 'ad', loadAds, function (it) { switchAdSubtab('new'); loadAdIntoForm(it); });
+      data.items.forEach(function (it) { wireAdStatsBox(it.id); });
     });
   }
   loadAds();
+
+  // 広告設定パネルのサブタブ切り替え（①新規登録／②登録済み広告のデータ）。
+  // ②を開いた時点で最新の一覧・集計を読み直す。
+  function switchAdSubtab(tab) {
+    document.querySelectorAll('.el-ad-subtab').forEach(function (b) { b.classList.toggle('is-active', b.dataset.adtab === tab); });
+    document.querySelectorAll('.el-ad-subpanel').forEach(function (p) { p.style.display = p.id === 'adSubpanel-' + tab ? '' : 'none'; });
+  }
+  document.querySelectorAll('.el-ad-subtab').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      switchAdSubtab(btn.dataset.adtab);
+      if (btn.dataset.adtab === 'list') loadAds();
+    });
+  });
+
+  // 表示回数・クリック数・クリックユーザーの表示＋期間絞り込み（広告1件ごとに1ブロック）。
+  // 書き込みを抑えるためのsessionStorage重複防止はクライアント側（各ページ）で行っており、
+  // ここは記録済みの「広告ログ」シートを集計するだけの読み取り専用UI。
+  function renderAdStatsBox(it) {
+    var safeId = escHtml(it.id);
+    return '<div class="el-ad-stats-box" data-ad-stats-box="' + safeId + '">' +
+      '<div class="el-ad-stats-filter">' +
+      '<label>期間：<input type="date" data-ad-stats-from="' + safeId + '"></label>' +
+      '〜' +
+      '<label><input type="date" data-ad-stats-to="' + safeId + '"></label>' +
+      '<button type="button" class="el-btn el-btn--ghost el-btn--sm" data-ad-stats-filter-btn="' + safeId + '">絞り込む</button>' +
+      '<button type="button" class="el-btn el-btn--ghost el-btn--sm" data-ad-stats-clear-btn="' + safeId + '">期間指定なし</button>' +
+      '</div>' +
+      '<div class="el-ad-stats-nums" data-ad-stats-nums="' + safeId + '">' +
+      '<div class="el-ad-stats-num"><strong>—</strong><span>表示回数</span></div>' +
+      '<div class="el-ad-stats-num"><strong>—</strong><span>クリック数</span></div>' +
+      '</div>' +
+      '<div style="font-size:12.5px;font-weight:700;margin-bottom:6px;">クリックユーザー</div>' +
+      '<div data-ad-stats-users="' + safeId + '" style="font-size:12.5px;color:var(--el-ink-faint);">読み込み中…</div>' +
+      '</div>';
+  }
+  function refreshAdStats(adId) {
+    var box = document.querySelector('[data-ad-stats-box="' + adId + '"]');
+    if (!box) return;
+    var fromVal = box.querySelector('[data-ad-stats-from]').value;
+    var toVal = box.querySelector('[data-ad-stats-to]').value;
+    var payload = { action: 'getAdStats', adId: adId, requesterUserId: adminReqUserId(), requesterUsername: adminReqUsername() };
+    if (fromVal) payload.from = fromVal;
+    if (toVal) payload.to = toVal;
+    apiPost(payload).then(function (data) {
+      var numsEl = box.querySelector('[data-ad-stats-nums]');
+      var usersEl = box.querySelector('[data-ad-stats-users]');
+      if (!data.ok) {
+        numsEl.innerHTML = '<div class="el-ad-stats-num"><strong>—</strong><span>表示回数</span></div><div class="el-ad-stats-num"><strong>—</strong><span>クリック数</span></div>';
+        usersEl.textContent = data.error || '集計の取得に失敗しました。';
+        return;
+      }
+      numsEl.innerHTML =
+        '<div class="el-ad-stats-num"><strong>' + data.impressionCount + '</strong><span>表示回数</span></div>' +
+        '<div class="el-ad-stats-num"><strong>' + data.clickCount + '</strong><span>クリック数</span></div>';
+      if (!data.clickUsers.length) {
+        usersEl.textContent = 'クリックはまだありません。';
+        return;
+      }
+      usersEl.innerHTML = '<div style="display:flex;flex-direction:column;gap:4px;">' + data.clickUsers.map(function (u) {
+        var who = u.username ? escHtml(u.username) : '（ゲスト・未ログイン）';
+        return '<div>' + who + '　<span style="color:var(--el-ink-faint);">' + new Date(u.createdAt).toLocaleString('ja-JP') + '</span></div>';
+      }).join('') + '</div>';
+    }).catch(function () {
+      box.querySelector('[data-ad-stats-users]').textContent = '通信エラーが発生しました。';
+    });
+  }
+  function wireAdStatsBox(adId) {
+    var box = document.querySelector('[data-ad-stats-box="' + adId + '"]');
+    if (!box) return;
+    box.querySelector('[data-ad-stats-filter-btn]').addEventListener('click', function () { refreshAdStats(adId); });
+    box.querySelector('[data-ad-stats-clear-btn]').addEventListener('click', function () {
+      box.querySelector('[data-ad-stats-from]').value = '';
+      box.querySelector('[data-ad-stats-to]').value = '';
+      refreshAdStats(adId);
+    });
+    refreshAdStats(adId);
+  }
 
   var editingAdId = '';
   function resetAdForm() {
@@ -2262,7 +2453,7 @@
   // （コミュニティ一覧はデモを持たず、ここで登録したものだけが表示される）
   // ------------------------------------------------------------
   function loadCommunities() {
-    apiPost({ action: 'listContent', type: 'communityGroup' }).then(function (data) {
+    apiPost({ action: 'listContent', type: 'communityGroup', userId: adminReqUserId(), username: adminReqUsername() }).then(function (data) {
       if (!data.ok) return;
       renderSimpleList('communityAdminList', data.items, function (it) {
         return '<div style="padding:14px 16px;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);">' +
@@ -2484,6 +2675,314 @@
     }).catch(function () { alert('通信エラーが発生しました。'); });
   });
 
+  // ------------------------------------------------------------
+  // モデレーション管理：フォーラム投稿／コメント、コミュニティ、コミュニティ投稿の削除・非公開、
+  // コミュニティメンバーの追加・除名。削除・非公開・メンバーの削除は理由の入力が必須で、
+  // バックエンド（handleModerateContent／handleAdminRemoveMember）が対象ユーザーへDM通知し、
+  // モデレーション履歴（handleListModerationLog）に記録する。取り消しは「モデレーション履歴」タブから。
+  // ------------------------------------------------------------
+  (function () {
+    var modReasonModal = document.getElementById('modReasonModal');
+    var modReasonInput = document.getElementById('modReasonInput');
+    var modReasonTitle = document.getElementById('modReasonTitle');
+    var modReasonConfirmBtn = document.getElementById('modReasonConfirmBtn');
+    var modReasonPendingAction = null;
+
+    function openReasonModal(titleText, onConfirm) {
+      if (!modReasonModal) return;
+      modReasonTitle.textContent = titleText;
+      modReasonInput.value = '';
+      modReasonPendingAction = onConfirm;
+      modReasonModal.classList.add('is-open');
+      modReasonModal.setAttribute('aria-hidden', 'false');
+      modReasonInput.focus();
+    }
+    function closeReasonModal() {
+      if (!modReasonModal) return;
+      modReasonModal.classList.remove('is-open');
+      modReasonModal.setAttribute('aria-hidden', 'true');
+      modReasonPendingAction = null;
+    }
+    if (modReasonModal) {
+      modReasonModal.querySelectorAll('[data-mod-reason-close]').forEach(function (el) {
+        el.addEventListener('click', closeReasonModal);
+      });
+      modReasonConfirmBtn.addEventListener('click', function () {
+        var reason = modReasonInput.value.trim();
+        if (!reason) { modReasonInput.focus(); return; }
+        var action = modReasonPendingAction;
+        closeReasonModal();
+        if (action) action(reason);
+      });
+    }
+
+    // サブタブ切り替え（モデレーション管理パネル内：フォーラム投稿／コメント／コミュニティ／
+    // コミュニティ投稿／メンバー管理）。他のタブ切り替えと同じ「表示・非表示の切り替えのみ」方式。
+    document.querySelectorAll('.el-mod-subtab').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        document.querySelectorAll('.el-mod-subtab').forEach(function (b) { b.classList.remove('is-active'); });
+        btn.classList.add('is-active');
+        document.querySelectorAll('.el-mod-subpanel').forEach(function (p) {
+          p.style.display = p.id === 'modSubpanel-' + btn.dataset.modtab ? '' : 'none';
+        });
+      });
+    });
+
+    function modStatusBadge(modStatus) {
+      if (modStatus === 'hidden') return '<span class="badge" style="background:#F4E3C4;color:#8A5A1F;">非公開</span>';
+      if (modStatus === 'deleted') return '<span class="badge" style="background:#F4C9C0;color:#8A2F1F;">削除済み</span>';
+      return '';
+    }
+
+    function modActionButtons(targetType, id, modStatus) {
+      if (modStatus) {
+        return '<span style="font-size:12px;color:var(--el-ink-faint);">「モデレーション履歴」タブから復元できます</span>';
+      }
+      return '<button type="button" class="el-btn el-btn--ghost el-btn--sm" data-mod-hide="' + escHtml(id) + '" data-mod-target="' + targetType + '">非公開にする</button>' +
+        '<button type="button" class="el-btn el-btn--ghost el-btn--sm" data-mod-delete="' + escHtml(id) + '" data-mod-target="' + targetType + '" style="color:#B8593D;">削除する</button>';
+    }
+
+    function reloadModList(targetType) {
+      if (targetType === 'forumTopic') loadForumTopicsForMod();
+      else if (targetType === 'forumComment') loadForumCommentsForMod();
+      else if (targetType === 'communityGroup') loadCommunityGroupsForMod();
+      else if (targetType === 'communityTopic') loadCommunityTopicsForMod(document.getElementById('modCommunityTopicGroupSelect').value);
+    }
+
+    function runModerate(targetType, targetId, actionType) {
+      var actionLabel = actionType === 'hide' ? '非公開にする理由' : '削除する理由';
+      openReasonModal(actionLabel, function (reason) {
+        apiPost({
+          action: 'moderateContent', targetType: targetType, targetId: targetId, actionType: actionType, reason: reason,
+          requesterUserId: adminReqUserId(), requesterUsername: adminReqUsername()
+        }).then(function (data) {
+          if (!data.ok) { alert(data.error || '操作に失敗しました。'); return; }
+          reloadModList(targetType);
+          loadModerationLog();
+        }).catch(function () { alert('通信エラーが発生しました。'); });
+      });
+    }
+
+    document.querySelector('.el-admin-panel[data-panel="moderation"]').addEventListener('click', function (e) {
+      var hideBtn = e.target.closest('[data-mod-hide]');
+      var delBtn = e.target.closest('[data-mod-delete]');
+      var btn = hideBtn || delBtn;
+      if (!btn) return;
+      var targetType = btn.dataset.modTarget;
+      var targetId = hideBtn ? hideBtn.dataset.modHide : delBtn.dataset.modDelete;
+      runModerate(targetType, targetId, hideBtn ? 'hide' : 'delete');
+    });
+
+    // --- フォーラム投稿（新しいものが先頭。最大50件） ---
+    function loadForumTopicsForMod() {
+      apiPost({ action: 'listTopics', userId: adminReqUserId(), username: adminReqUsername() }).then(function (data) {
+        var list = document.getElementById('modList-forumTopic');
+        if (!list || !data.ok) return;
+        var items = data.items.slice(0, 50);
+        if (!items.length) { list.innerHTML = '<div style="padding:24px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">投稿がありません。</div>'; return; }
+        list.innerHTML = items.map(function (t) {
+          return '<div style="padding:14px 16px;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;">' +
+            '<div><strong>' + escHtml(t.title) + '</strong> ' + modStatusBadge(t.modStatus) +
+            '<div style="font-size:12.5px;color:var(--el-ink-faint);margin-top:4px;">投稿者：' + escHtml(t.authorName || t.authorUsername || '不明') + '・' + new Date(t.createdAt).toLocaleString('ja-JP') + '</div></div>' +
+            '<div style="display:flex;gap:8px;flex-wrap:wrap;">' + modActionButtons('forumTopic', t.id, t.modStatus) + '</div></div>';
+        }).join('');
+      });
+    }
+
+    // --- フォーラムコメント（新しいものが先頭。最大50件） ---
+    function loadForumCommentsForMod() {
+      apiPost({ action: 'listComments', userId: adminReqUserId(), username: adminReqUsername() }).then(function (data) {
+        var list = document.getElementById('modList-forumComment');
+        if (!list || !data.ok) return;
+        var items = data.items.slice(-50).reverse();
+        if (!items.length) { list.innerHTML = '<div style="padding:24px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">コメントがありません。</div>'; return; }
+        list.innerHTML = items.map(function (c) {
+          return '<div style="padding:14px 16px;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;">' +
+            '<div><div style="font-size:13.5px;color:var(--el-navy);">' + escHtml((c.body || '').replace(/<[^>]*>/g, '').slice(0, 80)) + '</div> ' + modStatusBadge(c.modStatus) +
+            '<div style="font-size:12.5px;color:var(--el-ink-faint);margin-top:4px;">投稿者：' + escHtml(c.authorName || c.authorUsername || '不明') + '・' + new Date(c.createdAt).toLocaleString('ja-JP') + '</div></div>' +
+            '<div style="display:flex;gap:8px;flex-wrap:wrap;">' + modActionButtons('forumComment', c.id, c.modStatus) + '</div></div>';
+        }).join('');
+      });
+    }
+
+    // --- コミュニティ本体。同じ取得結果を、コミュニティ投稿の絞り込み用セレクトと
+    // メンバー管理用セレクトの選択肢としても使い回す（APIの呼び出し回数を抑えるため）。 ---
+    function loadCommunityGroupsForMod() {
+      apiPost({ action: 'listContent', type: 'communityGroup', userId: adminReqUserId(), username: adminReqUsername() }).then(function (data) {
+        var list = document.getElementById('modList-communityGroup');
+        if (!list || !data.ok) return;
+        var items = data.items;
+        if (!items.length) {
+          list.innerHTML = '<div style="padding:24px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">コミュニティがありません。</div>';
+        } else {
+          list.innerHTML = items.map(function (g) {
+            return '<div style="padding:14px 16px;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;">' +
+              '<div><strong>' + escHtml(g.title) + '</strong> ' + modStatusBadge(g.modStatus) +
+              '<div style="font-size:12.5px;color:var(--el-ink-faint);margin-top:4px;">運営：' + escHtml(g.creator || '運営メンバー') + '</div></div>' +
+              '<div style="display:flex;gap:8px;flex-wrap:wrap;">' + modActionButtons('communityGroup', g.id, g.modStatus) + '</div></div>';
+          }).join('');
+        }
+        var topicSelect = document.getElementById('modCommunityTopicGroupSelect');
+        var memberSelect = document.getElementById('modMemberGroupSelect');
+        var optionsHtml = items.map(function (g) { return '<option value="' + escHtml(g.id) + '">' + escHtml(g.title) + '</option>'; }).join('');
+        if (topicSelect) {
+          var prevTopicVal = topicSelect.value;
+          topicSelect.innerHTML = '<option value="">すべてのコミュニティ</option>' + optionsHtml;
+          topicSelect.value = prevTopicVal;
+        }
+        if (memberSelect) {
+          var prevMemberVal = memberSelect.value;
+          memberSelect.innerHTML = '<option value="">選択してください</option>' + optionsHtml;
+          memberSelect.value = prevMemberVal;
+        }
+      });
+    }
+
+    // --- コミュニティ投稿（groupId絞り込み対応。新しいものが先頭。最大80件） ---
+    function loadCommunityTopicsForMod(groupIdFilter) {
+      var payload = { action: 'listCommunityTopics', userId: adminReqUserId(), username: adminReqUsername() };
+      if (groupIdFilter) payload.groupId = groupIdFilter;
+      apiPost(payload).then(function (data) {
+        var list = document.getElementById('modList-communityTopic');
+        if (!list || !data.ok) return;
+        var items = data.items.slice(0, 80);
+        if (!items.length) { list.innerHTML = '<div style="padding:24px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">投稿がありません。</div>'; return; }
+        list.innerHTML = items.map(function (t) {
+          return '<div style="padding:14px 16px;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;">' +
+            '<div><strong>' + escHtml(t.title) + '</strong> ' + modStatusBadge(t.modStatus) +
+            '<div style="font-size:12.5px;color:var(--el-ink-faint);margin-top:4px;">投稿者：' + escHtml(t.authorName || t.authorUsername || '不明') + '・' + new Date(t.createdAt).toLocaleString('ja-JP') + '</div></div>' +
+            '<div style="display:flex;gap:8px;flex-wrap:wrap;">' + modActionButtons('communityTopic', t.id, t.modStatus) + '</div></div>';
+        }).join('');
+      });
+    }
+    var modCommunityTopicGroupSelect = document.getElementById('modCommunityTopicGroupSelect');
+    if (modCommunityTopicGroupSelect) {
+      modCommunityTopicGroupSelect.addEventListener('change', function () { loadCommunityTopicsForMod(this.value); });
+    }
+
+    // --- コミュニティメンバー管理（追加は理由・DM通知の対象外、削除は理由必須＋DM通知） ---
+    function loadMembersForGroup(groupId) {
+      var listEl = document.getElementById('modMemberList');
+      var addRow = document.getElementById('modMemberAddRow');
+      if (!listEl || !addRow) return;
+      if (!groupId) { listEl.innerHTML = ''; addRow.style.display = 'none'; return; }
+      addRow.style.display = 'flex';
+      apiPost({ action: 'listContent', type: 'communityMembership' }).then(function (data) {
+        if (!data.ok) return;
+        var items = data.items.filter(function (m) { return String(m.groupId) === String(groupId); });
+        if (!items.length) { listEl.innerHTML = '<div style="padding:24px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">メンバーがいません。</div>'; return; }
+        listEl.innerHTML = items.map(function (m) {
+          var statusLabel = m.status === 'active' ? '参加中' : (m.status === 'pending' ? '申請中' : m.status);
+          return '<div style="padding:12px 16px;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">' +
+            '<div><strong>' + escHtml(m.username || '匿名') + '</strong> <span style="font-size:12px;color:var(--el-ink-faint);">' + escHtml(statusLabel) + '</span></div>' +
+            '<button type="button" class="el-btn el-btn--ghost el-btn--sm" data-mod-remove-member="' + escHtml(m.id) + '" style="color:#B8593D;">削除する</button></div>';
+        }).join('');
+      });
+    }
+    var modMemberGroupSelect = document.getElementById('modMemberGroupSelect');
+    if (modMemberGroupSelect) {
+      modMemberGroupSelect.addEventListener('change', function () { loadMembersForGroup(this.value); });
+    }
+    var modMemberAddBtn = document.getElementById('modMemberAddBtn');
+    if (modMemberAddBtn) {
+      modMemberAddBtn.addEventListener('click', function () {
+        var groupId = modMemberGroupSelect.value;
+        var username = document.getElementById('modMemberAddInput').value.trim();
+        if (!groupId || !username) { alert('コミュニティとユーザーネームを指定してください。'); return; }
+        apiPost({
+          action: 'adminAddMember', groupId: groupId, username: username,
+          requesterUserId: adminReqUserId(), requesterUsername: adminReqUsername()
+        }).then(function (data) {
+          if (!data.ok) { alert(data.error || '追加に失敗しました。'); return; }
+          document.getElementById('modMemberAddInput').value = '';
+          loadMembersForGroup(groupId);
+        }).catch(function () { alert('通信エラーが発生しました。'); });
+      });
+    }
+    var modMemberList = document.getElementById('modMemberList');
+    if (modMemberList) {
+      modMemberList.addEventListener('click', function (e) {
+        var btn = e.target.closest('[data-mod-remove-member]');
+        if (!btn) return;
+        openReasonModal('メンバーを削除する理由', function (reason) {
+          apiPost({
+            action: 'adminRemoveMember', id: btn.dataset.modRemoveMember, reason: reason,
+            requesterUserId: adminReqUserId(), requesterUsername: adminReqUsername()
+          }).then(function (data) {
+            if (!data.ok) { alert(data.error || '削除に失敗しました。'); return; }
+            loadMembersForGroup(modMemberGroupSelect.value);
+            loadModerationLog();
+          }).catch(function () { alert('通信エラーが発生しました。'); });
+        });
+      });
+    }
+
+    loadForumTopicsForMod();
+    loadForumCommentsForMod();
+    loadCommunityGroupsForMod();
+    loadCommunityTopicsForMod('');
+
+    // ------------------------------------------------------------
+    // モデレーション履歴：非公開・削除・メンバー除名の操作記録。取り消し（復活）はここから。
+    // ------------------------------------------------------------
+    function actionTypeLabel(a) {
+      if (a === 'hide') return '非公開';
+      if (a === 'delete') return '削除';
+      if (a === 'memberRemove') return 'メンバー除名';
+      return a;
+    }
+    function targetTypeLabel(t) {
+      if (t === 'forumTopic') return 'フォーラム投稿';
+      if (t === 'forumComment') return 'フォーラムコメント';
+      if (t === 'communityGroup') return 'コミュニティ';
+      if (t === 'communityTopic') return 'コミュニティ投稿';
+      if (t === 'communityMembership') return 'コミュニティメンバー';
+      return t;
+    }
+    function loadModerationLog() {
+      apiPost({ action: 'listModerationLog', requesterUserId: adminReqUserId(), requesterUsername: adminReqUsername() }).then(function (data) {
+        var list = document.getElementById('modLogList');
+        if (!list) return;
+        if (!data.ok) { list.innerHTML = '<div style="padding:24px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">読み込みに失敗しました。</div>'; return; }
+        var items = data.items;
+        if (!items.length) { list.innerHTML = '<div style="padding:32px;text-align:center;color:var(--el-ink-faint);font-size:14px;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);">操作履歴はまだありません。</div>'; return; }
+        list.innerHTML = items.map(function (l) {
+          var isReversed = l.status === 'reversed';
+          return '<div style="padding:14px 16px;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;' + (isReversed ? 'opacity:.55;' : '') + '">' +
+            '<div>' +
+            '<span class="badge">' + escHtml(actionTypeLabel(l.actionType)) + '</span> ' +
+            '<strong>' + escHtml(targetTypeLabel(l.targetType)) + '</strong>' + (l.targetTitle ? '「' + escHtml(l.targetTitle) + '」' : '') +
+            (isReversed ? ' <span style="font-size:12px;color:var(--el-ink-faint);">（取り消し済み）</span>' : '') +
+            '<div style="font-size:12.5px;color:var(--el-ink-faint);margin-top:4px;">対象：' + escHtml(l.targetUsername || '不明') + '・理由：' + escHtml(l.reason || '') + '</div>' +
+            '<div style="font-size:12px;color:var(--el-ink-faint);margin-top:2px;">実行：' + escHtml(l.adminUsername || '') + '・' + new Date(l.createdAt).toLocaleString('ja-JP') + '</div>' +
+            '</div>' +
+            (isReversed ? '' : '<button type="button" class="el-btn el-btn--ghost el-btn--sm" data-mod-reverse="' + escHtml(l.id) + '">取り消す</button>') +
+            '</div>';
+        }).join('');
+      });
+    }
+    loadModerationLog();
+    // モデレーション履歴タブへ切り替えた際は、他のタブで行った操作を反映するため毎回読み直す。
+    document.querySelectorAll('#adminSideTabs a[data-tab="modlog"]').forEach(function (t) {
+      t.addEventListener('click', loadModerationLog);
+    });
+    var modLogList = document.getElementById('modLogList');
+    if (modLogList) {
+      modLogList.addEventListener('click', function (e) {
+        var btn = e.target.closest('[data-mod-reverse]');
+        if (!btn) return;
+        if (!confirm('この操作を取り消しますか？')) return;
+        apiPost({
+          action: 'reverseModeration', id: btn.dataset.modReverse,
+          requesterUserId: adminReqUserId(), requesterUsername: adminReqUsername()
+        }).then(function (data) {
+          if (!data.ok) { alert(data.error || '取り消しに失敗しました。'); return; }
+          loadModerationLog();
+        }).catch(function () { alert('通信エラーが発生しました。'); });
+      });
+    }
+  })();
+
   // タブ切り替え（サイドメニューの「管理者ページ」展開内から切り替える）
   document.querySelectorAll('#adminSideTabs a[data-tab]').forEach(function (tab) {
     tab.addEventListener('click', function (e) {
@@ -2609,7 +3108,8 @@
           ['users', '登録ユーザー一覧'], ['announce', 'お知らせ登録'], ['event', 'イベント登録'],
           ['content', 'コンテンツ登録'], ['forms', 'フォーム管理'], ['community', 'コミュニティ登録'],
           ['guideline', 'ガイドライン管理'], ['ads', '広告設定'], ['apply', '出品申請の確認'],
-          ['marketOrders', 'マーケット申込み一覧'], ['badge', 'バッジの付与'], ['operator', '運営者情報']
+          ['marketOrders', 'マーケット申込み一覧'], ['badge', 'バッジの付与'],
+          ['moderation', 'モデレーション管理'], ['modlog', 'モデレーション履歴'], ['operator', '運営者情報']
         ];
         var adminDetails = document.createElement('details');
         adminDetails.className = 'el-side-forum';

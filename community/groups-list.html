@@ -826,6 +826,16 @@
       });
     }).catch(function () {});
 
+    // 公開範囲（visibilityScope）のティアに対して、今のロール（ゲスト／メンバー／SHiFT会員／
+    // 管理者）で参加できるかを判定する。公開範囲＝参加者範囲に統一したため、「見られるが参加は
+    // できない／参加できるが見られない」という矛盾が起きないよう、サーバー側（communitygas.txt）
+    // と同じロジックをここでも使う。
+    function isRoleEligibleForVisibility_(visibilityScope, role) {
+      if (role === 'admin') return true;
+      if (visibilityScope === 'member') return role === 'member' || role === 'shift';
+      if (visibilityScope === 'shift') return role === 'shift';
+      return true;
+    }
     function communityJoinLabel_(info, groupId) {
       var mine = MY_MEMBERSHIPS[groupId];
       if (mine && mine.status === 'active') return { text: '参加中', disabled: true };
@@ -836,6 +846,11 @@
         var invited = [];
         try { invited = JSON.parse(info.invitedMembers || '[]'); } catch (e) {}
         if (!uname || invited.indexOf(uname) === -1) return { text: '参加できません', disabled: true };
+      } else {
+        var role = window.elGetRole ? window.elGetRole() : 'guest';
+        if (role !== 'guest' && !isRoleEligibleForVisibility_(info.visibilityScope, role)) {
+          return { text: '参加できません', disabled: true };
+        }
       }
       return { text: info.joinMethod === 'apply' ? '参加を申請する' : '参加する', disabled: false };
     }
@@ -851,6 +866,12 @@
         try { invited = JSON.parse(info.invitedMembers || '[]'); } catch (e) {}
         if (!uname || invited.indexOf(uname) === -1) {
           alert('このコミュニティは指定されたメンバーのみ参加できます。');
+          return;
+        }
+      } else {
+        var role2 = window.elGetRole ? window.elGetRole() : 'guest';
+        if (!isRoleEligibleForVisibility_(info.visibilityScope, role2)) {
+          alert('このコミュニティは参加条件を満たすメンバーのみ参加できます。');
           return;
         }
       }
@@ -907,7 +928,7 @@
         fetch(API_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({ action: 'listContent', type: 'communityGroup' })
+          body: JSON.stringify({ action: 'listContent', type: 'communityGroup', userId: myUid, username: myUname })
         }).then(function (res) { return res.json(); }),
         membershipsReady
       ])
@@ -928,7 +949,8 @@
             var joinInfo = {
               participationScope: it.participationScope || 'same',
               joinMethod: it.joinMethod || 'anyone',
-              invitedMembers: it.invitedMembers || ''
+              invitedMembers: it.invitedMembers || '',
+              visibilityScope: it.visibilityScope || 'general'
             };
             var activeMembers = ACTIVE_MEMBERS_BY_GROUP[groupId] || [];
             GROUP_DETAILS[title] = {
@@ -938,6 +960,7 @@
               participationScope: joinInfo.participationScope,
               joinMethod: joinInfo.joinMethod,
               invitedMembers: joinInfo.invitedMembers,
+              visibilityScope: joinInfo.visibilityScope,
               members: activeMembers
             };
             var iconColor = it.color || 'var(--el-teal)';
@@ -993,7 +1016,8 @@
       var joinInfo = {
         participationScope: detail.participationScope || 'same',
         joinMethod: detail.joinMethod || 'anyone',
-        invitedMembers: detail.invitedMembers || ''
+        invitedMembers: detail.invitedMembers || '',
+        visibilityScope: detail.visibilityScope || 'general'
       };
 
       document.getElementById('gdmIcon').style.background = iconColor;
@@ -1034,7 +1058,8 @@
       var joinInfo = {
         participationScope: detail.participationScope || 'same',
         joinMethod: detail.joinMethod || 'anyone',
-        invitedMembers: detail.invitedMembers || ''
+        invitedMembers: detail.invitedMembers || '',
+        visibilityScope: detail.visibilityScope || 'general'
       };
       applyCommunityJoin_(joinInfo, groupId, this);
     });
@@ -1115,7 +1140,20 @@
     var el = document.getElementById('adBanner');
     if (!el) return;
     // 実際のリンク先(ctaUrl)が設定されるまでは、バナー全体クリックで# に飛ばないようにする
-    el.addEventListener('click', function (e) { if (!el.dataset.ctaUrl) e.preventDefault(); });
+    el.addEventListener('click', function (e) {
+      if (!el.dataset.ctaUrl) e.preventDefault();
+      // クリック数・クリックユーザーの記録（広告管理②のデータ用）。表示回数と違い、
+      // クリックは母数が少なく1件ずつ記録しても書き込み負荷は小さいため、都度記録する。
+      if (el.dataset.adId) {
+        fetch(API_URL, {
+          method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: 'logAdEvent', adId: el.dataset.adId, eventType: 'click',
+            userId: (localStorage.getItem('el-user-id') || ''), username: (localStorage.getItem('el-username') || '')
+          })
+        }).catch(function () {});
+      }
+    });
     var imageEl = document.getElementById('adImageV2');
     var sponsorEl = document.getElementById('adSponsorV2');
 
@@ -1139,6 +1177,22 @@
           return;
         }
         var ad = ads[Math.floor(Math.random() * ads.length)];
+        el.dataset.adId = ad.id;
+        // 表示回数の記録：書き込みを抑えるため、同じブラウザタブ（セッション）内で同じ広告IDは
+        // 1回だけ記録する（sessionStorageで重複防止する簡易カウント。Firebase等は使わず、
+        // 引き続きスプレッドシートのまま運用するための対応）。
+        (function () {
+          var seenKey = 'el-ad-impression-seen';
+          var seen = [];
+          try { seen = JSON.parse(sessionStorage.getItem(seenKey) || '[]'); } catch (e) {}
+          if (seen.indexOf(ad.id) !== -1) return;
+          seen.push(ad.id);
+          try { sessionStorage.setItem(seenKey, JSON.stringify(seen)); } catch (e) {}
+          fetch(API_URL, {
+            method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: 'logAdEvent', adId: ad.id, eventType: 'impression' })
+          }).catch(function () {});
+        })();
         if (ad.imageUrl) {
           imageEl.style.backgroundImage = 'url(' + ad.imageUrl + ')';
         } else {

@@ -184,32 +184,24 @@
   /* スクエア広告：管理者ページのプレビュー（画像全体が見えるcontain表示＋下に説明欄）と
      見た目を揃える。以前は画像をカードいっぱいにcover（はみ出た部分を切り取る）で表示して
      おり、プレビューと大きく異なって見えていた。また「AD」表示が画像に重なっていたため、
-     枠の外（右上）に出す。 */
-  .el-compose-display-ad-tag{
-    display:flex !important;
-    justify-content:flex-end !important;
-    margin:16px 0 4px !important;
-  }
-  .el-compose-display-ad-tag span{
-    font:700 9px/1.2 var(--font-mono, monospace) !important;
-    letter-spacing:.08em !important;
-    color:var(--el-ink-faint, #8A8478) !important;
-    padding:2px 8px !important;
-    border:1px solid rgba(22,35,63,.1) !important;
-    border-radius:999px !important;
-    background:#fff !important;
-  }
+     枠の外（右上）に出す。
+     ※さらに、横長広告（.el-ad-banner-v2）と見た目・配置を揃えるため、ADタグとスポンサー名を
+     画像の下の1つの帯（footer）にまとめる形に統一した（以前はADタグが画像の上に独立して、
+     スポンサー名が画像の中の別要素として、それぞれ別の場所にあった）。 */
   .el-compose-display-ad{
     margin-top:0 !important;
     padding:0 !important;
     display:flex !important;
     flex-direction:column !important;
+    border-radius:var(--el-radius-m, 14px) !important;
+    overflow:hidden !important;
+    background:var(--el-cream-deep, #FBF3E3) !important;
     /* style.css側の元の定義は「画像に文字を重ねる」旧デザイン向けに、カード自体を
        aspect-ratio:1/1・min-height:250px・overflow:hiddenで正方形に固定していた。
        画像の下にキャプションとボタンを別要素として追加した新デザインでは、それらが
        固定された正方形からはみ出し、下のボタンに重なって見えてしまっていたため、
-       カードの高さは中身（画像＋キャプション＋ボタン）に合わせて自動的に伸びるように
-       上書きする（画像自体は下のel-display-ad-artだけを正方形にする）。 */
+       カードの高さは中身（画像＋帯）に合わせて自動的に伸びるように上書きする
+       （画像自体は下のel-display-ad-artだけを正方形にする）。 */
     aspect-ratio:auto !important;
     min-height:0 !important;
     height:auto !important;
@@ -222,17 +214,33 @@
     margin:0 !important;
     background:var(--el-teal, #2F8F82) !important;
   }
-  .el-compose-display-ad .el-display-ad-copy{
-    margin-top:0 !important;
-    /* 「詳しく見る」ボタンを廃止したため、キャプションがカードの最後の要素になる。
-       ボタン用に空けていた下の余白を、キャプション自体の下余白として使う。 */
-    padding:12px 14px 14px !important;
+  /* ADタグとスポンサー名を1つの帯にまとめて同じ行に表示する（横長広告の.el-ad-footer-v2と
+     同じ配色・レイアウト）。 */
+  .el-compose-display-ad-footer{
+    display:flex !important;
+    align-items:center !important;
+    gap:10px !important;
+    width:100% !important;
+    box-sizing:border-box !important;
+    padding:8px 14px !important;
+    background:#EDEDED !important;
+    border-top:1px solid #DDDDDD !important;
   }
-  .el-compose-display-ad .el-display-ad-copy small{
+  .el-compose-display-ad-tag-v2{
+    flex:none !important;
+    font:700 9px/1.2 var(--font-mono, monospace) !important;
+    letter-spacing:.08em !important;
     color:var(--el-ink-faint, #8A8478) !important;
-    font:400 11px/1.5 inherit !important;
-    letter-spacing:normal !important;
-    text-transform:none !important;
+    padding:2px 8px !important;
+    border:1px solid rgba(22,35,63,.1) !important;
+    border-radius:999px !important;
+    background:#fff !important;
+  }
+  .el-compose-display-ad-sponsor{
+    flex:1 !important;
+    min-width:0 !important;
+    font-size:11px !important;
+    color:var(--el-navy, #16233F) !important;
   }
   .el-display-ad-label{ display:none !important; }
   /* 参加者範囲＝「指定したメンバーのみ」の時、公開範囲は自動的に「指定したメンバーのみ」に
@@ -498,57 +506,38 @@
             <div class="el-form-block">
               <div class="el-form-label-row">
                 <label>コミュニティの公開範囲 <span class="required">必須</span></label>
-                <span class="el-form-hint">誰がこのコミュニティを見られるか</span>
+                <span class="el-form-hint">誰がこのコミュニティを見られる／参加できるか</span>
               </div>
-              <!-- フォーラムの新規投稿ページと全く同じ3つの公開範囲（公開／メンバー限定／SHiFT限定）を
-                   そのまま流用する（以前の「フォーラムと同じ／コミュニティメンバーのみ」という
-                   抽象的な2択ではなく、実際の選択肢そのものを反映する）。 -->
+              <!-- 「公開範囲（誰が見られるか）」と「参加者範囲（誰が参加できるか）」を別々に選べる
+                   仕様だと、「公開だが参加は指定メンバーのみ」のような矛盾した組み合わせが選べて
+                   しまっていた。見られる人と参加できる人は常に同じであるべきなので、公開範囲を
+                   選ぶと参加できる人の範囲も自動的に決まる、1つの設定に統一した
+                   （参加者範囲は独立した選択肢としては廃止し、この値からサーバー側で導出する）。 -->
               <div class="el-visibility-options">
                 <label class="el-visibility-option">
                   <input type="radio" name="visibilityScope" value="general" checked>
                   <span class="radio-ui"></span>
-                  <span><strong>公開</strong><small>誰でも見ることができます</small></span>
+                  <span><strong>公開</strong><small>誰でも見ることができ、誰でも参加できます</small></span>
                 </label>
                 <label class="el-visibility-option">
                   <input type="radio" name="visibilityScope" value="member">
                   <span class="radio-ui"></span>
-                  <span><strong>メンバー限定</strong><small>Export Labにユーザー登録している人のみ見られます</small></span>
+                  <span><strong>メンバー限定</strong><small>Export Labにユーザー登録している人だけが見られ、参加できます</small></span>
                 </label>
                 <label class="el-visibility-option">
                   <input type="radio" name="visibilityScope" value="shift">
                   <span class="radio-ui"></span>
-                  <span><strong>SHiFT member only</strong><small>SHiFT会員だけが見られます</small></span>
+                  <span><strong>SHiFT member only</strong><small>SHiFT会員だけが見られ、参加できます</small></span>
                 </label>
-                <!-- 参加者範囲を「指定したメンバーのみ」にした場合、公開範囲もこの選択肢に自動的に
-                     固定される（参加できない人には公開もしない、という一貫した挙動にするため）。 -->
                 <label class="el-visibility-option" id="ccVisibilityInvitedOption">
                   <input type="radio" name="visibilityScope" value="invited">
                   <span class="radio-ui"></span>
-                  <span><strong>指定したメンバーのみ</strong><small>参加者範囲で指定した人だけが見られます</small></span>
+                  <span><strong>指定したメンバーのみ</strong><small>下で指定した人だけが見られ、参加できます</small></span>
                 </label>
               </div>
               <p class="el-cn-visibility-lock-note" id="ccVisibilityLockNote" style="display:none;">
-                参加者範囲を「指定したメンバーのみ」にしているため、公開範囲も自動的に「指定したメンバーのみ」になります。
+                「指定したメンバーのみ」を選んでいるため、参加方法は管理者による個別指定のみになります（下のメンバー指定欄で選んでください）。
               </p>
-            </div>
-
-            <div class="el-form-block">
-              <div class="el-form-label-row">
-                <label>コミュニティの参加者範囲 <span class="required">必須</span></label>
-                <span class="el-form-hint">誰がこのコミュニティに参加できるか</span>
-              </div>
-              <div class="el-visibility-options el-cn-2col">
-                <label class="el-visibility-option">
-                  <input type="radio" name="participationScope" value="same" checked>
-                  <span class="radio-ui"></span>
-                  <span><strong>誰でも</strong><small>人数の制限なく、誰でも参加できます</small></span>
-                </label>
-                <label class="el-visibility-option">
-                  <input type="radio" name="participationScope" value="invited">
-                  <span class="radio-ui"></span>
-                  <span><strong>指定したメンバーのみ</strong><small>下で指定した人だけが参加できます</small></span>
-                </label>
-              </div>
             </div>
 
             <div class="el-form-block" id="ccMemberPickerBlock" style="display:none;">
@@ -593,7 +582,6 @@
               </ul>
             </div>
 
-            <div class="el-compose-display-ad-tag"><span>AD</span></div>
             <a href="#" class="el-compose-display-ad" id="composeDisplayAd" aria-label="広告">
               <div class="el-display-ad-art" id="composeDisplayAdArt" aria-hidden="true">
                 <svg viewBox="0 0 220 150" role="img">
@@ -607,8 +595,9 @@
                   <circle cx="164" cy="73" r="5" fill="#EAAA3C"/>
                 </svg>
               </div>
-              <div class="el-display-ad-copy">
-                <small id="composeDisplayAdSmall">WorldShift</small>
+              <div class="el-compose-display-ad-footer">
+                <span class="el-compose-display-ad-tag-v2">AD</span>
+                <span class="el-compose-display-ad-sponsor" id="composeDisplayAdSmall">WorldShift</span>
               </div>
             </a>
           </aside>
@@ -912,8 +901,7 @@
       iconClear.style.display = 'none';
     });
 
-    // --- 参加者範囲：「指定したメンバーのみ」を選んだ場合だけメンバー指定欄を表示する ---
-    var participationRadios = form.querySelectorAll('input[name="participationScope"]');
+    // --- 公開範囲が「指定したメンバーのみ」を選んだ場合だけメンバー指定欄を表示する ---
     var memberPickerBlock = document.getElementById('ccMemberPickerBlock');
     var memberSearch = document.getElementById('ccMemberSearch');
     var memberResults = document.getElementById('ccMemberResults');
@@ -989,16 +977,16 @@
 
     memberSearch.addEventListener('input', renderMemberResults);
 
-    // --- 公開範囲：参加者範囲が「指定したメンバーのみ」の間は、公開範囲も自動的に
-    //     「指定したメンバーのみ」に固定し、他の選択肢は選べないようにする。参加者範囲を
-    //     「誰でも」に戻したら、ロック前に選ばれていた公開範囲を復元する。 ---
+    // --- 公開範囲＝参加者範囲に統一：公開範囲で「指定したメンバーのみ」を選んだ場合だけ、
+    //     メンバー指定欄を表示し、参加方法（誰でも／申請制）の選択欄は隠す（参加方法は
+    //     管理者による個別指定のみになるため）。それ以外の公開範囲（公開／メンバー限定／
+    //     SHiFT限定）では、見られる人の範囲＝参加できる人の範囲になり、参加方法だけを選べる。 ---
     var visibilityRadios = form.querySelectorAll('input[name="visibilityScope"]');
     var joinMethodBlock = document.getElementById('ccJoinMethodBlock');
     var visibilityLockNote = document.getElementById('ccVisibilityLockNote');
-    var visibilityScopeBeforeLock = null;
 
-    function syncParticipationDependentUI() {
-      var checked = form.querySelector('input[name="participationScope"]:checked');
+    function syncVisibilityDependentUI() {
+      var checked = form.querySelector('input[name="visibilityScope"]:checked');
       var isInvited = checked && checked.value === 'invited';
 
       // 参加できるメンバーを指定する欄の表示
@@ -1008,42 +996,10 @@
       // 参加方法：指定したメンバーのみの場合は選択不要なので、欄ごと隠す
       if (joinMethodBlock) joinMethodBlock.style.display = isInvited ? 'none' : '';
 
-      // 公開範囲のロック／解除
-      if (isInvited) {
-        var currentVisibility = form.querySelector('input[name="visibilityScope"]:checked');
-        if (currentVisibility && currentVisibility.value !== 'invited') {
-          visibilityScopeBeforeLock = currentVisibility.value;
-        }
-        visibilityRadios.forEach(function (r) {
-          if (r.value === 'invited') {
-            r.checked = true;
-            r.disabled = false;
-            r.closest('.el-visibility-option').classList.add('el-cn-locked-active');
-            r.closest('.el-visibility-option').classList.remove('el-cn-locked-inactive');
-          } else {
-            r.disabled = true;
-            r.closest('.el-visibility-option').classList.add('el-cn-locked-inactive');
-            r.closest('.el-visibility-option').classList.remove('el-cn-locked-active');
-          }
-        });
-        if (visibilityLockNote) visibilityLockNote.style.display = '';
-      } else {
-        visibilityRadios.forEach(function (r) {
-          r.disabled = false;
-          r.closest('.el-visibility-option').classList.remove('el-cn-locked-inactive', 'el-cn-locked-active');
-        });
-        // ロック中に「指定したメンバーのみ」のままだった場合は、ロック前の選択（無ければ「公開」）に戻す
-        var stillInvited = form.querySelector('input[name="visibilityScope"]:checked[value="invited"]');
-        if (stillInvited) {
-          var restoreValue = visibilityScopeBeforeLock || 'general';
-          var restoreRadio = form.querySelector('input[name="visibilityScope"][value="' + restoreValue + '"]');
-          if (restoreRadio) restoreRadio.checked = true;
-        }
-        if (visibilityLockNote) visibilityLockNote.style.display = 'none';
-      }
+      if (visibilityLockNote) visibilityLockNote.style.display = isInvited ? '' : 'none';
     }
-    participationRadios.forEach(function (r) { r.addEventListener('change', syncParticipationDependentUI); });
-    syncParticipationDependentUI();
+    visibilityRadios.forEach(function (r) { r.addEventListener('change', syncVisibilityDependentUI); });
+    syncVisibilityDependentUI();
 
     // --- 送信 ---
     form.addEventListener('submit', function (e) {
@@ -1054,7 +1010,9 @@
         alert('コミュニティ名と紹介文を入力してください。');
         return;
       }
-      var participationScope = (form.querySelector('input[name="participationScope"]:checked') || {}).value || 'same';
+      // 参加者範囲は独立した選択肢ではなく、公開範囲から導出する（見られる人＝参加できる人）。
+      var visibilityScopeForSubmit = (form.querySelector('input[name="visibilityScope"]:checked') || {}).value || 'general';
+      var participationScope = visibilityScopeForSubmit === 'invited' ? 'invited' : 'same';
       if (participationScope === 'invited' && !selectedMembers.length) {
         alert('参加できるメンバーを1人以上指定してください。');
         memberPickerBlock.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -1108,17 +1066,30 @@
   (function () {
     var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
     var widget = document.getElementById('composeDisplayAd');
-    var adTag = widget ? widget.previousElementSibling : null;
-    // 枠外に出したAD表示（.el-compose-display-ad-tag）にはCSS側で display:flex !important
-    // を付けているため、通常のstyle.displayではなくsetProperty(...,'important')で上書きする
-    // 必要がある（そうしないと広告が無い場合でも枠だけ・AD表示だけが残ってしまう）。
+    // クリック数・クリックユーザーの記録（広告管理②のデータ用）。横長広告と同じく、
+    // クリックは母数が少なく1件ずつ記録しても書き込み負荷は小さいため、都度記録する。
+    if (widget && !widget.dataset.adClickBound) {
+      widget.dataset.adClickBound = '1';
+      widget.addEventListener('click', function () {
+        if (widget.dataset.adId) {
+          fetch(API_URL, {
+            method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({
+              action: 'logAdEvent', adId: widget.dataset.adId, eventType: 'click',
+              userId: (localStorage.getItem('el-user-id') || ''), username: (localStorage.getItem('el-username') || '')
+            })
+          }).catch(function () {});
+        }
+      });
+    }
+    // ADタグは横長広告と同じく画像下の帯（.el-compose-display-ad-footer）にまとめたため、
+    // 以前のように別要素（隣接するAD表示だけの枠）を個別に隠す必要はなく、widget自体の
+    // 表示・非表示だけで済む。
     function hideAdWidget() {
       if (widget) widget.style.setProperty('display', 'none', 'important');
-      if (adTag) adTag.style.setProperty('display', 'none', 'important');
     }
     function showAdWidget() {
       if (widget) widget.style.removeProperty('display');
-      if (adTag) adTag.style.removeProperty('display');
     }
     // 通信が完了するまでの間、初期表示のダミーイラスト・「WorldShift」の文字が
     // 一瞬でも見えてしまわないよう、取得を待たずに最初から非表示にしておく。
@@ -1133,6 +1104,22 @@
         var ads = ((data.ok && data.items) ? data.items : []).filter(function (a) { return a.adType === 'square'; });
         if (!ads.length) { return; }
         var ad = ads[Math.floor(Math.random() * ads.length)];
+        if (widget) widget.dataset.adId = ad.id;
+        // 表示回数の記録：書き込みを抑えるため、同じブラウザタブ（セッション）内で同じ広告IDは
+        // 1回だけ記録する（sessionStorageで重複防止する簡易カウント。Firebase等は使わず、
+        // 引き続きスプレッドシートのまま運用するための対応）。
+        (function () {
+          var seenKey = 'el-ad-impression-seen';
+          var seen = [];
+          try { seen = JSON.parse(sessionStorage.getItem(seenKey) || '[]'); } catch (e) {}
+          if (seen.indexOf(ad.id) !== -1) return;
+          seen.push(ad.id);
+          try { sessionStorage.setItem(seenKey, JSON.stringify(seen)); } catch (e) {}
+          fetch(API_URL, {
+            method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: 'logAdEvent', adId: ad.id, eventType: 'impression' })
+          }).catch(function () {});
+        })();
         var art = document.getElementById('composeDisplayAdArt');
         // 管理者ページのプレビューと同じく、画像は切り取らずに全体を表示する（contain）。
         if (ad.imageUrl) art.innerHTML = '<img src="' + ad.imageUrl + '" style="width:100%;height:100%;object-fit:contain;">';

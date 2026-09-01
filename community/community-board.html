@@ -871,7 +871,20 @@
     var el = document.getElementById('adBanner');
     if (!el) return;
     // 実際のリンク先(ctaUrl)が設定されるまでは、バナー全体クリックで# に飛ばないようにする
-    el.addEventListener('click', function (e) { if (!el.dataset.ctaUrl) e.preventDefault(); });
+    el.addEventListener('click', function (e) {
+      if (!el.dataset.ctaUrl) e.preventDefault();
+      // クリック数・クリックユーザーの記録（広告管理②のデータ用）。表示回数と違い、
+      // クリックは母数が少なく1件ずつ記録しても書き込み負荷は小さいため、都度記録する。
+      if (el.dataset.adId) {
+        fetch(API_URL, {
+          method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: 'logAdEvent', adId: el.dataset.adId, eventType: 'click',
+            userId: (localStorage.getItem('el-user-id') || ''), username: (localStorage.getItem('el-username') || '')
+          })
+        }).catch(function () {});
+      }
+    });
     var imageEl = document.getElementById('adImageV2');
     var sponsorEl = document.getElementById('adSponsorV2');
 
@@ -894,6 +907,22 @@
           return;
         }
         var ad = ads[Math.floor(Math.random() * ads.length)];
+        el.dataset.adId = ad.id;
+        // 表示回数の記録：書き込みを抑えるため、同じブラウザタブ（セッション）内で同じ広告IDは
+        // 1回だけ記録する（sessionStorageで重複防止する簡易カウント。Firebase等は使わず、
+        // 引き続きスプレッドシートのまま運用するための対応）。
+        (function () {
+          var seenKey = 'el-ad-impression-seen';
+          var seen = [];
+          try { seen = JSON.parse(sessionStorage.getItem(seenKey) || '[]'); } catch (e) {}
+          if (seen.indexOf(ad.id) !== -1) return;
+          seen.push(ad.id);
+          try { sessionStorage.setItem(seenKey, JSON.stringify(seen)); } catch (e) {}
+          fetch(API_URL, {
+            method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: 'logAdEvent', adId: ad.id, eventType: 'impression' })
+          }).catch(function () {});
+        })();
         if (ad.imageUrl) {
           imageEl.style.backgroundImage = 'url(' + ad.imageUrl + ')';
         } else {
@@ -1022,7 +1051,7 @@
       return;
     }
 
-    apiPost({ action: 'listContent', type: 'communityGroup' }).then(function (data) {
+    apiPost({ action: 'listContent', type: 'communityGroup', userId: myUid, username: myUname }).then(function (data) {
       var items = (data.ok && data.items) ? data.items : [];
       var community = null;
       for (var i = 0; i < items.length; i++) { if (String(items[i].id) === String(groupId)) { community = items[i]; break; } }
@@ -1042,11 +1071,16 @@
         var isOwner = isMyGroup_(community.creatorUserId, community.creator);
         // コミュニティ作成ページ（community-new.html）で追加した設定：既定（フォーラムと同じ・誰でも参加）
         // 以外の値が入っている場合のみ、追加のバッジとして表示する。
+        // 公開範囲＝参加者範囲に統一したため、visibilityScope（唯一の判定基準）を元にバッジを出す。
+        // 「指定したメンバーのみ」は参加方法が管理者指定のみのため、参加は申請制バッジは重ねて出さない。
         var conditionBadges = [];
-        if (community.visibilityScope === 'shift') conditionBadges.push('SHiFT会員限定');
-        else if (community.visibilityScope === 'member' || community.visibilityScope === 'members') conditionBadges.push('メンバー限定');
-        if (community.participationScope === 'invited') conditionBadges.push('指定メンバーのみ参加可');
-        if (community.joinMethod === 'apply') conditionBadges.push('参加は申請制');
+        if (community.visibilityScope === 'invited') {
+          conditionBadges.push('指定メンバーのみ参加可');
+        } else {
+          if (community.visibilityScope === 'shift') conditionBadges.push('SHiFT会員限定');
+          else if (community.visibilityScope === 'member' || community.visibilityScope === 'members') conditionBadges.push('メンバー限定');
+          if (community.joinMethod === 'apply') conditionBadges.push('参加は申請制');
+        }
         var conditionHtml = conditionBadges.length
           ? '<div class="visibility" style="margin-top:4px;">' + conditionBadges.map(esc).join('・') + '</div>'
           : '';
@@ -1115,6 +1149,14 @@
       // シート（communityMembership）の実データで判定し、参加／申請／退会を行えるようにする。
       // 作成者本人には表示しない（自分のコミュニティなので参加操作は不要）。
       // ------------------------------------------------------------
+      // 公開範囲（visibilityScope）のティアに対して、今のロールで参加できるかを判定する。
+      // サーバー側（communitygas.txt）と同じロジックをここでも使い、見た目と実際の参加可否を一致させる。
+      function isRoleEligibleForVisibility_(visibilityScope, role) {
+        if (role === 'admin') return true;
+        if (visibilityScope === 'member') return role === 'member' || role === 'shift';
+        if (visibilityScope === 'shift') return role === 'shift';
+        return true;
+      }
       var joinPanel = document.getElementById('communityJoinPanel');
       var role = window.elGetRole ? window.elGetRole() : 'guest';
       if (joinPanel && !isOwner) {
@@ -1137,6 +1179,10 @@
               joinPanel.innerHTML = '<div style="font-size:13.5px;color:var(--el-ink-faint);">このコミュニティは指定されたメンバーのみ参加できます。</div>';
               return;
             }
+          } else if (!membership && !isRoleEligibleForVisibility_(community.visibilityScope, role)) {
+            var tierLabel = community.visibilityScope === 'shift' ? 'SHiFT会員限定' : (community.visibilityScope === 'member' ? 'メンバー限定' : '');
+            joinPanel.innerHTML = '<div style="font-size:13.5px;color:var(--el-ink-faint);">このコミュニティは' + esc(tierLabel || '参加条件を満たすメンバー') + 'です。</div>';
+            return;
           }
           if (membership && membership.status === 'active') {
             joinPanel.innerHTML =
@@ -1178,6 +1224,10 @@
             '</div>';
           var joinBtn = document.getElementById('joinPanelJoinBtn');
           if (joinBtn) joinBtn.addEventListener('click', function () {
+            if (community.participationScope !== 'invited' && !isRoleEligibleForVisibility_(community.visibilityScope, role)) {
+              alert('このコミュニティは参加条件を満たすメンバーのみ参加できます。');
+              return;
+            }
             joinBtn.disabled = true;
             apiPost({ action: 'createContent', type: 'communityMembership', groupId: community.id, userId: myUid, username: myUname })
               .then(function (res) {
