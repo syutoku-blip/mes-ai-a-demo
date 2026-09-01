@@ -873,8 +873,10 @@
         : (t.visibility === 'member')
           ? '<span class="badge badge--restricted">メンバー限定</span>'
           : '<span class="badge badge--open">公開</span>';
-      var statusBadge = t.status === 'solved' ? '<span class="badge badge--solved">解決</span>'
-        : t.status === 'unsolved' ? '<span class="badge badge--unsolved">未解決</span>' : '';
+      // ベストアンサーが選ばれていれば、statusの値（未同期の既存投稿を含む）に関わらず解決扱いにする。
+      var effectiveSolvedFH = t.status === 'solved' || !!t.bestAnswerCommentId;
+      var statusBadge = effectiveSolvedFH ? '<span class="badge badge--solved">解決</span>'
+        : '<span class="badge badge--unsolved">未解決</span>';
       var catLabel = CATEGORY_LABEL[t.category] || t.category;
       return '<a href="topic.html?id=' + t.id + '" class="el-t-row" data-visibility="' + (t.visibility || 'general') + '">' +
         '<div class="el-t-row-main">' +

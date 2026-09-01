@@ -785,7 +785,8 @@
       a.className = 'el-t-row';
       a.dataset.category = t.category;
       a.dataset.visibility = t.visibility || 'general';
-      var effectiveSolved = t.status === 'solved' || isLocallySolved(t.id);
+      // ベストアンサーが選ばれていれば、statusの値（未同期の既存投稿を含む）に関わらず解決扱いにする。
+      var effectiveSolved = t.status === 'solved' || !!t.bestAnswerCommentId || isLocallySolved(t.id);
       a.dataset.status = effectiveSolved ? 'solved' : 'unsolved';
       a.dataset.views = t.views || 0;
       a.dataset.recency = t.recency != null ? t.recency : 0;

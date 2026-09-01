@@ -668,7 +668,9 @@
       }
       listEl.innerHTML = topics.map(function (t) {
         var catLabel = (window.EL_CATEGORY_LABEL || {})[t.category] || t.category || '';
-        var statusBadge = t.status === 'solved' ? '<span class="badge badge--solved">解決</span>' : '<span class="badge badge--unsolved">未解決</span>';
+        // ベストアンサーが選ばれていれば、statusの値（未同期の既存投稿を含む）に関わらず解決扱いにする。
+        var effectiveSolvedMFA = t.status === 'solved' || !!t.bestAnswerCommentId;
+        var statusBadge = effectiveSolvedMFA ? '<span class="badge badge--solved">解決</span>' : '<span class="badge badge--unsolved">未解決</span>';
         var note = (noteMap && noteMap[t.id]) ? '<span class="badge badge--cat">' + esc(noteMap[t.id]) + '</span>' : '';
         var catChipHtml = catLabel ? '<span class="badge badge--cat el-cat-chip" data-category="' + esc(t.category || '') + '" role="link" tabindex="0">' + esc(catLabel) + '</span>' : '';
         // コミュニティ内の投稿（groupIdを持つ）はcommunity-topic.htmlへ、フォーラムの投稿はtopic.htmlへ

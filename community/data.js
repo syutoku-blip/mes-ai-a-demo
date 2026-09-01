@@ -29,6 +29,10 @@ window.EL_loadLiveTopics = function (callback) {
           id: t.id, title: t.title, body: t.body, category: t.category, tags: t.tags || [],
           author: t.authorName || 'ゲスト', date: (t.createdAt || '').slice(0, 10),
           views: t.views || 0, recency: Date.parse(t.createdAt || '') || 0, status: t.status || 'unsolved',
+          // ベストアンサーが選ばれているのにstatusが古いまま（未同期）の既存投稿でも「解決」と
+          // 判定できるよう、bestAnswerCommentIdも一緒に持ち回す（board.html/forum.html/index.htmlの
+          // 各解決バッジ表示側で、statusだけでなくこちらもフォールバックとして見る）。
+          bestAnswerCommentId: t.bestAnswerCommentId || '',
           visibility: t.visibility || 'general', comments: new Array(t.commentCount || 0)
         };
       });
