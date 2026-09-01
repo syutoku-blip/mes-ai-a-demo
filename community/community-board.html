@@ -457,6 +457,18 @@
     flex-wrap:wrap;
   }
   .el-members-modal-row:first-child{ border-top:none; }
+  /* 参加メンバー一覧：アイコン付きでプロフィールへのリンクにする */
+  .el-members-modal-link{
+    display:flex !important;
+    align-items:center !important;
+    gap:10px !important;
+    text-decoration:none !important;
+    color:inherit !important;
+    min-width:0 !important;
+  }
+  .el-members-modal-link .el-avatar{ width:32px !important; height:32px !important; font-size:13px !important; flex:none !important; overflow:hidden !important; }
+  .el-members-modal-link .el-avatar img{ width:100% !important; height:100% !important; object-fit:cover !important; }
+  .el-members-modal-link span.el-members-modal-name{ font-size:13.5px !important; }
 </style>
 </head>
 <body data-site="community" data-root="..">
@@ -1285,13 +1297,37 @@
           membersModalList.innerHTML = '読み込み中...';
           membersModal.classList.add('is-open');
           membersModal.setAttribute('aria-hidden', 'false');
-          apiPost({ action: 'listContent', type: 'communityMembership' }).then(function (mdata) {
+          // アイコン表示用に、公開プロフィール（getAllMembers）のphotoUrlをユーザーネームで突き合わせる。
+          Promise.all([
+            apiPost({ action: 'listContent', type: 'communityMembership' }),
+            apiPost({ action: 'getAllMembers' })
+          ]).then(function (results) {
+            var mdata = results[0];
+            var pdata = results[1];
             var members = ((mdata.ok && mdata.items) ? mdata.items : []).filter(function (m) {
               return String(m.groupId) === String(community.id) && m.status === 'active';
             });
-            var ownerRow = '<div class="el-members-modal-row"><span style="font-size:13.5px;">' + esc(community.creator || '匿名') + '<span class="el-role-badge el-role-badge--owner">管理者</span></span></div>';
+            var photoByUsername = {};
+            ((pdata.ok && pdata.members) ? pdata.members : []).forEach(function (p) {
+              if (p.username) photoByUsername[p.username] = p.photoUrl || '';
+            });
+            function memberRowHtml(username, badgeClass, badgeLabel) {
+              var name = username || '匿名';
+              var photoUrl = photoByUsername[username];
+              var avatarInner = photoUrl
+                ? '<img src="' + esc(elDriveImgUrl(photoUrl)) + '" alt="">'
+                : esc(name.charAt(0));
+              return '<div class="el-members-modal-row">' +
+                '<a class="el-members-modal-link" href="profile.html?user=' + encodeURIComponent(username || '') + '">' +
+                '<span class="el-avatar">' + avatarInner + '</span>' +
+                '<span class="el-members-modal-name">' + esc(name) + '</span>' +
+                '</a>' +
+                '<span class="el-role-badge ' + badgeClass + '">' + badgeLabel + '</span>' +
+                '</div>';
+            }
+            var ownerRow = memberRowHtml(community.creator || '', 'el-role-badge--owner', '管理者');
             var memberRows = members.map(function (m) {
-              return '<div class="el-members-modal-row"><span style="font-size:13.5px;">' + esc(m.username || '匿名') + '<span class="el-role-badge el-role-badge--member">メンバー</span></span></div>';
+              return memberRowHtml(m.username, 'el-role-badge--member', 'メンバー');
             }).join('');
             membersModalList.innerHTML = ownerRow + memberRows;
           }).catch(function () {
@@ -1586,7 +1622,10 @@
         // ベストアンサーの有無という実データそのものを見た方が確実）。ラベルはフォーラムや
         // この投稿自身の詳細ページ（community-topic.html）と同じ「未解決／解決」に統一する
         // （以前はここだけ「未回答」という別の表現になっていた）。
-        var isSolved = !!t.bestAnswerCommentId || t.status === 'solved';
+        // 本物のベストアンサーIDはUUID（"["で始まることは無い）。フォーラム投稿シート側で
+        // 過去に発生していたのと同種の列ズレ汚染データを将来的に踏んでも誤判定しないよう、
+        // JSON配列らしき値は本物の回答IDとして扱わない防御を、こちらにも念のため入れておく。
+        var isSolved = (!!t.bestAnswerCommentId && String(t.bestAnswerCommentId).charAt(0) !== '[') || t.status === 'solved';
         var pill = '<span class="el-sns-pill ' + (isSolved ? 'is-solved' : 'is-unsolved') + '">' + (isSolved ? '解決' : '未解決') + '</span>';
         var initial = (t.authorName || '匿名').charAt(0);
         var excerpt = excerptText(t.body);

@@ -179,6 +179,18 @@
   .el-ad-stats-num span{ font-size:11.5px; color:var(--el-ink-faint); }
   .el-ad-stats-filter{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:10px; font-size:12.5px; }
   .el-ad-stats-filter input[type="date"]{ padding:6px 8px; border:1px solid var(--el-line-soft); border-radius:8px; font:inherit; }
+  /* モデレーション管理のコミュニティメンバー一覧：誰が管理者（作成者）／メンバーかのバッジ
+     （community-board.htmlの参加メンバー一覧と同じ見た目に揃える） */
+  .el-role-badge{
+    display:inline-block;
+    font-size:10.5px;
+    font-weight:700;
+    padding:2px 8px;
+    border-radius:999px;
+    vertical-align:middle;
+  }
+  .el-role-badge--owner{ background:rgba(185,129,42,.15); color:var(--el-mustard-deep, #B9812A); }
+  .el-role-badge--member{ background:rgba(22,35,63,.08); color:var(--el-navy, #16233F); }
 </style>
 </head>
 <body data-site="community" data-root="..">
@@ -2910,11 +2922,15 @@
 
     // --- コミュニティ本体。同じ取得結果を、コミュニティ投稿の絞り込み用セレクトと
     // メンバー管理用セレクトの選択肢としても使い回す（APIの呼び出し回数を抑えるため）。 ---
+    // groupId→作成者情報。メンバー管理（loadMembersForGroup）で「誰が管理者か」のバッジ判定に使う。
+    var MOD_GROUPS_BY_ID = {};
     function loadCommunityGroupsForMod() {
       apiPost({ action: 'listContent', type: 'communityGroup', userId: adminReqUserId(), username: adminReqUsername() }).then(function (data) {
         var list = document.getElementById('modList-communityGroup');
         if (!list || !data.ok) return;
         var items = data.items;
+        MOD_GROUPS_BY_ID = {};
+        items.forEach(function (g) { MOD_GROUPS_BY_ID[g.id] = g; });
         if (!items.length) {
           list.innerHTML = '<div style="padding:24px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">コミュニティがありません。</div>';
         } else {
@@ -2973,12 +2989,31 @@
       apiPost({ action: 'listContent', type: 'communityMembership' }).then(function (data) {
         if (!data.ok) return;
         var items = data.items.filter(function (m) { return String(m.groupId) === String(groupId); });
-        if (!items.length) { listEl.innerHTML = '<div style="padding:24px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">メンバーがいません。</div>'; return; }
-        listEl.innerHTML = items.map(function (m) {
+        var group = MOD_GROUPS_BY_ID[groupId] || {};
+        // 誰が「管理者」（作成者）で誰が「メンバー」かをバッジで分かるようにする。作成者は
+        // 「コミュニティ参加者」シートに明示的な行を持たないことが多いため、実際の行に見当たらない
+        // 場合は先頭に作成者の行を補って表示する（groups.html等の参加人数表示と同じ考え方）。
+        function isCreatorRow(m) {
+          if (group.creatorUserId && m.userId) return String(m.userId) === String(group.creatorUserId);
+          return !!(group.creator && m.username && String(m.username) === String(group.creator));
+        }
+        var hasCreatorRow = items.some(isCreatorRow);
+        var rows = items.slice();
+        if (!hasCreatorRow && group.creator) {
+          rows = [{ id: '', username: group.creator, userId: group.creatorUserId || '', status: 'active', __synthesizedOwner: true }].concat(rows);
+        }
+        if (!rows.length) { listEl.innerHTML = '<div style="padding:24px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">メンバーがいません。</div>'; return; }
+        listEl.innerHTML = rows.map(function (m) {
           var statusLabel = m.status === 'active' ? '参加中' : (m.status === 'pending' ? '申請中' : m.status);
+          var roleBadge = isCreatorRow(m)
+            ? '<span class="el-role-badge el-role-badge--owner">管理者</span>'
+            : '<span class="el-role-badge el-role-badge--member">メンバー</span>';
+          var removeBtn = m.__synthesizedOwner
+            ? ''
+            : '<button type="button" class="el-btn el-btn--ghost el-btn--sm" data-mod-remove-member="' + escHtml(m.id) + '" style="color:#B8593D;">削除する</button>';
           return '<div style="padding:12px 16px;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">' +
-            '<div><strong>' + escHtml(m.username || '匿名') + '</strong> <span style="font-size:12px;color:var(--el-ink-faint);">' + escHtml(statusLabel) + '</span></div>' +
-            '<button type="button" class="el-btn el-btn--ghost el-btn--sm" data-mod-remove-member="' + escHtml(m.id) + '" style="color:#B8593D;">削除する</button></div>';
+            '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;"><strong>' + escHtml(m.username || '匿名') + '</strong>' + roleBadge + ' <span style="font-size:12px;color:var(--el-ink-faint);">' + escHtml(statusLabel) + '</span></div>' +
+            removeBtn + '</div>';
         }).join('');
       });
     }

@@ -660,6 +660,14 @@
       return !!(uname && authorUsername && String(authorUsername) === String(uname));
     }
 
+    // フォーラム投稿シートの古い投稿には、以前の不具合（添付ファイルJSONが1列ズレて
+    // bestAnswerCommentId列に書き込まれてしまっていた）により、実際にはベストアンサーが
+    // 選ばれていないのにbestAnswerCommentIdが空でない投稿が存在しうる。本物のIDはUUID
+    // （"["で始まることは無い）なので、JSON配列らしき値は本物の回答IDとして扱わない。
+    function hasRealBestAnswer_(id) {
+      return !!id && String(id).charAt(0) !== '[';
+    }
+
     function renderRows(topics, noteMap) {
       if (!topics.length) {
         emptyTextEl.textContent = VIEW_EMPTY[view] || 'データがありません。';
@@ -669,7 +677,7 @@
       listEl.innerHTML = topics.map(function (t) {
         var catLabel = (window.EL_CATEGORY_LABEL || {})[t.category] || t.category || '';
         // ベストアンサーが選ばれていれば、statusの値（未同期の既存投稿を含む）に関わらず解決扱いにする。
-        var effectiveSolvedMFA = t.status === 'solved' || !!t.bestAnswerCommentId;
+        var effectiveSolvedMFA = t.status === 'solved' || hasRealBestAnswer_(t.bestAnswerCommentId);
         var statusBadge = effectiveSolvedMFA ? '<span class="badge badge--solved">解決</span>' : '<span class="badge badge--unsolved">未解決</span>';
         var note = (noteMap && noteMap[t.id]) ? '<span class="badge badge--cat">' + esc(noteMap[t.id]) + '</span>' : '';
         var catChipHtml = catLabel ? '<span class="badge badge--cat el-cat-chip" data-category="' + esc(t.category || '') + '" role="link" tabindex="0">' + esc(catLabel) + '</span>' : '';

@@ -1022,7 +1022,13 @@
               invitedMembers: it.invitedMembers || '',
               visibilityScope: it.visibilityScope || 'general'
             };
-            var activeMembers = ACTIVE_MEMBERS_BY_GROUP[groupId] || [];
+            // 作成者は「コミュニティ参加者」シートに明示的な行を持たないことが多いが、実質的に
+            // コミュニティにいる人数としては常に最低1人（作成者自身）とみなす（既に参加者側にも
+            // 同じ人の行がある場合の二重カウントは避ける）。
+            var activeMembers = (ACTIVE_MEMBERS_BY_GROUP[groupId] || []).slice();
+            if (it.creator && activeMembers.indexOf(it.creator) === -1) {
+              activeMembers = [it.creator].concat(activeMembers);
+            }
             GROUP_DETAILS[title] = {
               creator: it.creator || '運営メンバー',
               category: it.category ? (window.EL_getCategoryLabel ? window.EL_getCategoryLabel(it.category) : it.category) : '未分類',

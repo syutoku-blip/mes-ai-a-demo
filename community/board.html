@@ -779,6 +779,15 @@
       try { return localStorage.getItem('el-best-answer-' + topicId) !== null; } catch (e) { return false; }
     }
 
+    // フォーラム投稿シートには、以前の不具合（添付ファイルJSONが1列ズレてbestAnswerCommentId列に
+    // 書き込まれてしまっていた時期がある。上のhandleCreateTopic側は既に修正済みだが、修正前に
+    // 作成された古い投稿のセルには "[]" のようなJSON文字列がそのまま残っている）により、実際には
+    // ベストアンサーが選ばれていないのにbestAnswerCommentIdが空でない投稿が存在しうる。
+    // 本物のIDはUUID（"["で始まることは無い）なので、JSON配列らしき値は本物の回答IDとして扱わない。
+    function hasRealBestAnswer_(id) {
+      return !!id && String(id).charAt(0) !== '[';
+    }
+
     function buildRow(t){
       var a = document.createElement('a');
       a.href = 'topic.html?id=' + t.id;
@@ -786,7 +795,7 @@
       a.dataset.category = t.category;
       a.dataset.visibility = t.visibility || 'general';
       // ベストアンサーが選ばれていれば、statusの値（未同期の既存投稿を含む）に関わらず解決扱いにする。
-      var effectiveSolved = t.status === 'solved' || !!t.bestAnswerCommentId || isLocallySolved(t.id);
+      var effectiveSolved = t.status === 'solved' || hasRealBestAnswer_(t.bestAnswerCommentId) || isLocallySolved(t.id);
       a.dataset.status = effectiveSolved ? 'solved' : 'unsolved';
       a.dataset.views = t.views || 0;
       a.dataset.recency = t.recency != null ? t.recency : 0;

@@ -867,6 +867,14 @@
       return months + 'ヶ月前';
     }
 
+    // フォーラム投稿シートの古い投稿には、以前の不具合（添付ファイルJSONが1列ズレて
+    // bestAnswerCommentId列に書き込まれてしまっていた）により、実際にはベストアンサーが
+    // 選ばれていないのにbestAnswerCommentIdが空でない投稿が存在しうる。本物のIDはUUID
+    // （"["で始まることは無い）なので、JSON配列らしき値は本物の回答IDとして扱わない。
+    function hasRealBestAnswer_(id) {
+      return !!id && String(id).charAt(0) !== '[';
+    }
+
     function buildRowHtml(t){
       var visBadge = (t.visibility === 'shift')
         ? '<span class="badge badge--member">SHiFT限定</span>'
@@ -874,7 +882,7 @@
           ? '<span class="badge badge--restricted">メンバー限定</span>'
           : '<span class="badge badge--open">公開</span>';
       // ベストアンサーが選ばれていれば、statusの値（未同期の既存投稿を含む）に関わらず解決扱いにする。
-      var effectiveSolvedFH = t.status === 'solved' || !!t.bestAnswerCommentId;
+      var effectiveSolvedFH = t.status === 'solved' || hasRealBestAnswer_(t.bestAnswerCommentId);
       var statusBadge = effectiveSolvedFH ? '<span class="badge badge--solved">解決</span>'
         : '<span class="badge badge--unsolved">未解決</span>';
       var catLabel = CATEGORY_LABEL[t.category] || t.category;
