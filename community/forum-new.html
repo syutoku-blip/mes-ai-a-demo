@@ -201,17 +201,15 @@
   }
   .el-compose-display-ad .el-display-ad-copy{
     margin-top:0 !important;
-    padding:12px 14px 4px !important;
+    /* 「詳しく見る」ボタンを廃止したため、キャプションがカードの最後の要素になる。
+       ボタン用に空けていた下の余白を、キャプション自体の下余白として使う。 */
+    padding:12px 14px 14px !important;
   }
   .el-compose-display-ad .el-display-ad-copy small{
     color:var(--el-ink-faint, #8A8478) !important;
     font:400 11px/1.5 inherit !important;
     letter-spacing:normal !important;
     text-transform:none !important;
-  }
-  .el-compose-display-ad .el-display-ad-cta{
-    padding:0 14px 14px !important;
-    margin-top:0 !important;
   }
   .el-display-ad-label{ display:none !important; }
 </style>
@@ -565,7 +563,6 @@
               <div class="el-display-ad-copy">
                 <small id="composeDisplayAdSmall">WorldShift</small>
               </div>
-              <span class="el-display-ad-cta" id="composeDisplayAdCta">詳しく見る</span>
             </a>
           </aside>
 
@@ -1729,7 +1726,8 @@
         if (ad.imageUrl) art.innerHTML = '<img src="' + ad.imageUrl + '" style="width:100%;height:100%;object-fit:contain;">';
         if (widget) widget.setAttribute('aria-label', ad.serviceName || '広告');
         document.getElementById('composeDisplayAdSmall').textContent = 'スポンサー：' + (ad.serviceName || '');
-        document.getElementById('composeDisplayAdCta').textContent = ad.ctaText || '詳しく見る';
+        // 「詳しく見る」ボタンは廃止し、横長バナーと同じくカード（画像）自体のクリックで
+        // 遷移させる（composeDisplayAd自体がaタグなので、ボタンが無くても機能する）。
         if (ad.ctaUrl) document.getElementById('composeDisplayAd').href = ad.ctaUrl;
         showAdWidget();
       })

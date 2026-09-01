@@ -1628,7 +1628,10 @@
     inputEl.addEventListener('change', function () {
       var file = inputEl.files[0];
       if (!file) return;
-      compressImageFile(file, maxSize).then(function (dataUrl) {
+      // maxSizeは固定値だけでなく、呼び出し時点の状況（広告の種別など）に応じて
+      // 決めたい場合があるため、関数も受け付けられるようにする。
+      var resolvedMaxSize = (typeof maxSize === 'function') ? maxSize() : maxSize;
+      compressImageFile(file, resolvedMaxSize).then(function (dataUrl) {
         previewEl.innerHTML = '<img src="' + dataUrl + '" style="width:100%;height:100%;object-fit:' + (fit || 'cover') + ';">';
         onChange(dataUrl);
       });
@@ -2138,7 +2141,15 @@
   // 広告バナーは横長で最大1100px程度の幅で大きく表示されるため、他の画像より高い解像度で保存する
   // プレビューはobject-fit:containにし、実際の公開ページ（後述のcontain表示）と同じく、
   // 画像が欠けずに全体表示される見た目を管理画面の時点から正しく確認できるようにする。
-  wireImageUpload(document.getElementById('adImageInput'), adImagePreview, function (dataUrl) { adImageDataUrl = dataUrl; updateAdPreviewFromForm(); }, 1200, 'contain');
+  // スクエア広告（1:1）は横長バナー（6:1）と同じ最大1200pxを使うと、同じシートのセル文字数
+  // 上限の中で圧縮しなければならない総ピクセル数が約6倍になり、結果的に横長バナーよりずっと
+  // 粗く（低画質に）見えてしまっていた。スクエア広告は表示サイズも横長バナーよりずっと小さい
+  // （サイドバーの1カード分）ため、最大サイズを小さめにして、その分1ピクセルあたりの画質を
+  // 優先する。
+  wireImageUpload(document.getElementById('adImageInput'), adImagePreview, function (dataUrl) { adImageDataUrl = dataUrl; updateAdPreviewFromForm(); }, function () {
+    var type = adForm.querySelector('input[name="adType"]:checked').value;
+    return type === 'square' ? 800 : 1200;
+  }, 'contain');
 
   function renderAdPreview(ad) {
     // 「推奨サイズ」通りの画像でも圧縮時の丸め誤差で比率が完全一致しないことがあり、
