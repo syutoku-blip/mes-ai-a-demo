@@ -171,6 +171,30 @@
     color:var(--el-ink-faint, #8A8478);
     padding:4px;
   }
+  /* このページ専用：公開範囲によるぼかし表示。タイトルは見せたまま、本文・コメントのみをぼかす。
+     実際の閲覧制限ではなく、参加を促すためのソフトなUI表現（このサイト全体がクライアント側の
+     ログイン情報を信頼する設計のため、他のページの管理者判定などと同じ考え方）。 */
+  .el-content-blurred{
+    filter: blur(6px);
+    user-select: none;
+    pointer-events: none;
+  }
+  .el-visibility-gate-notice{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    background:var(--el-cream-deep, #F0EAD9);
+    border:1px solid var(--el-line-soft, #E5DFD2);
+    border-radius:var(--el-radius-m, 12px);
+    padding:18px 20px;
+    margin:0 0 20px;
+    color:var(--el-navy, #16233F);
+    flex-wrap:wrap;
+  }
+  .el-visibility-gate-notice svg{ flex:none; color:var(--el-mustard-deep, #B9812A); }
+  .el-visibility-gate-notice strong{ display:block; font-size:14px; margin-bottom:4px; }
+  .el-visibility-gate-notice p{ margin:0; font-size:12.5px; color:var(--el-ink-faint, #8A8478); }
+  .el-visibility-gate-notice .el-btn{ flex:none; margin-left:auto; white-space:nowrap; text-decoration:none; }
 </style>
 </head>
 <body data-site="community" data-root="..">
@@ -1314,6 +1338,60 @@
       if (it.joinMethod === 'apply') return '誰でも申請可';
       return '誰でも参加可';
     }
+    // ------------------------------------------------------------
+    // 公開範囲によるぼかし表示：このコミュニティの visibilityScope が「公開」以外の場合、
+    // 「コミュニティ参加者」シート（communityMembership）に基づいて、閲覧者が実際に
+    // このコミュニティに参加しているか（作成者本人・管理者は常に閲覧可）を確認し、
+    // 参加していなければ本文・コメントをぼかして参加を促す。タイトルは常に表示したまま。
+    // ------------------------------------------------------------
+    function elSamePerson_(idA, nameA, idB, nameB) {
+      if (idA && idB) return String(idA) === String(idB);
+      return !!(nameA && nameB && String(nameA) === String(nameB));
+    }
+    function showCommunityVisibilityGate_(groupId) {
+      var opBody = document.getElementById('opBody');
+      var commentsList = document.getElementById('commentsList');
+      var replyBox = document.getElementById('replyBox');
+      var op = document.getElementById('op');
+      if (opBody) opBody.classList.add('el-content-blurred');
+      if (commentsList) commentsList.classList.add('el-content-blurred');
+      if (replyBox) replyBox.style.display = 'none';
+      if (op && op.parentNode && !document.getElementById('ctVisibilityGateNotice')) {
+        var notice = document.createElement('div');
+        notice.id = 'ctVisibilityGateNotice';
+        notice.className = 'el-visibility-gate-notice';
+        notice.innerHTML =
+          '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>' +
+          '<div><strong>このコミュニティに参加すると閲覧できます</strong><p>本文・コメントは参加しているメンバーのみ表示されます。</p></div>' +
+          '<a href="community-board.html?id=' + encodeURIComponent(groupId || '') + '" class="el-btn el-btn--primary el-btn--sm">コミュニティに参加する</a>';
+        op.parentNode.insertBefore(notice, op);
+      }
+    }
+    function applyCommunityVisibilityGate_(groupId) {
+      if (!groupId) return;
+      apiPost({ action: 'listContent', type: 'communityGroup' }).then(function (gdata) {
+        var groups = (gdata.ok && gdata.items) ? gdata.items : [];
+        var community = null;
+        for (var i = 0; i < groups.length; i++) { if (String(groups[i].id) === String(groupId)) { community = groups[i]; break; } }
+        if (!community || community.visibilityScope === 'general') return; // 公開範囲の制限なし＝ぼかし不要
+
+        var myId = elCurrentUserId(), myName = elCurrentUsername();
+        var isOwner = elSamePerson_(myId, myName, community.creatorUserId, community.creator);
+        var isAdmin = window.elGetRole && window.elGetRole() === 'admin';
+        if (isOwner || isAdmin) return;
+
+        apiPost({ action: 'listContent', type: 'communityMembership' }).then(function (mdata) {
+          var items = (mdata.ok && mdata.items) ? mdata.items : [];
+          var isMember = items.some(function (m) {
+            if (String(m.groupId) !== String(groupId) || m.status !== 'active') return false;
+            return elSamePerson_(myId, myName, m.userId, m.username);
+          });
+          if (isMember) return; // 実際に参加しているので閲覧可能
+          showCommunityVisibilityGate_(groupId);
+        }).catch(function () {});
+      }).catch(function () {});
+    }
+
     function loadRecommendedCommunities(currentGroupId) {
       apiPost({ action: 'listContent', type: 'communityGroup' }).then(function (res) {
         var items = (res.ok && res.items) ? res.items : [];
@@ -1455,6 +1533,7 @@
 
       loadOtherTopics(item.groupId);
       loadRecommendedCommunities(item.groupId);
+      applyCommunityVisibilityGate_(item.groupId);
 
       apiPost({ action: 'listContent', type: 'communityGroup' }).then(function (gdata) {
         var groups = (gdata.ok && gdata.items) ? gdata.items : [];

@@ -462,14 +462,9 @@
 
   // 「作成したコミュニティ」「参加中のコミュニティ」「申請中のコミュニティ」件数の表示：
   // 作成したコミュニティはコミュニティ概要シートを自分のユーザーID／ユーザーネームで絞り込み、
-  // 参加中／申請中は、バックエンドにメンバーシップを記録するシートが無いためlocalStorage
-  // （el-community-memberships）に記録された参加状態を参照する
-  // （マーケットのお気に入り機能と同じ、ブラウザ単位の実データという考え方）。
-  //
-  // 件数はlocalStorageのキー数をそのまま数えるのではなく、my-group-activity.htmlの一覧と
-  // 必ず同じ計算方法（実際に存在するコミュニティと突き合わせてから数える）にする。
-  // そうしないと、削除済み・存在しないコミュニティIDがlocalStorageに残っている場合に
-  // 「1件」と表示されているのに一覧を開くと0件（まだありません）になる不具合が起きる。
+  // 参加中／申請中は「コミュニティ参加者」シート（communityMembership）を自分の
+  // ユーザーID／ユーザーネームで絞り込んだ実データを参照する（以前はバックエンドに
+  // メンバーシップを記録するシートが無くlocalStorage頼みだったが、実装済みになったため置き換え）。
   (function () {
     var createdEl = document.getElementById('mypageCreatedGroupsCount');
     var joinedEl = document.getElementById('mypageJoinedGroupsCount');
@@ -482,29 +477,42 @@
       uname = localStorage.getItem('el-username') || localStorage.getItem('el-user-name') || '';
     } catch (e) {}
 
-    var memberships = window.EL_getCommunityMemberships ? window.EL_getCommunityMemberships() : {};
-    var hasMemberships = Object.keys(memberships).length > 0;
-    if (!hasMemberships) {
-      if (joinedEl) joinedEl.textContent = '0件';
-      if (pendingEl) pendingEl.textContent = '0件';
-    }
+    if (joinedEl) joinedEl.textContent = '0件';
+    if (pendingEl) pendingEl.textContent = '0件';
     if (!uid && !uname) return; // 未ログインなら0件のまま（作成したコミュニティも取得しない）
 
     var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
-    fetch(API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({ action: 'listContent', type: 'communityGroup' })
-    }).then(function (res) { return res.json(); }).then(function (data) {
-      var items = (data.ok && data.items) ? data.items : [];
+    function isMe_(rowUserId, rowUsername) {
+      if (uid && rowUserId) return String(rowUserId) === String(uid);
+      return !!(uname && rowUsername && String(rowUsername) === String(uname));
+    }
+
+    Promise.all([
+      fetch(API_URL, {
+        method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: 'listContent', type: 'communityGroup' })
+      }).then(function (res) { return res.json(); }),
+      fetch(API_URL, {
+        method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: 'listContent', type: 'communityMembership' })
+      }).then(function (res) { return res.json(); })
+    ]).then(function (results) {
+      var groupData = results[0], memberData = results[1];
+      var items = (groupData.ok && groupData.items) ? groupData.items : [];
+      var memberships = (memberData.ok && memberData.items) ? memberData.items : [];
 
       if (joinedEl || pendingEl) {
-        // my-group-activity.html?view=joined／pending と同じロジック：実際に存在する
-        // コミュニティのみを対象に、そのIDのmembershipsの値で数える。
+        // 参加先のコミュニティが削除済みなどで実在しない「幽霊」メンバーシップ行は数えない
+        // （以前のlocalStorage版で問題になっていた「件数は1件なのに一覧を開くと0件」という
+        // 表示の食い違いを、実データに切り替えた後も再現しないようにするため）。
+        var existingGroupIds = {};
+        items.forEach(function (it) { existingGroupIds[it.id] = true; });
         var joinedCount = 0, pendingCount = 0;
-        items.forEach(function (it) {
-          if (memberships[it.id] === 'joined') joinedCount++;
-          else if (memberships[it.id] === 'pending') pendingCount++;
+        memberships.forEach(function (m) {
+          if (!isMe_(m.userId, m.username)) return;
+          if (!existingGroupIds[m.groupId]) return;
+          if (m.status === 'active') joinedCount++;
+          else if (m.status === 'pending') pendingCount++;
         });
         if (joinedEl) joinedEl.textContent = joinedCount + '件';
         if (pendingEl) pendingEl.textContent = pendingCount + '件';
