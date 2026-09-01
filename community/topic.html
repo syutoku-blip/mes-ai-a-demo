@@ -515,20 +515,9 @@
             <div id="relatedTopicsList"></div>
           </div>
 
-          <div class="el-side-panel">
+          <div class="el-side-panel" id="recommendedCommunitiesPanel" style="display:none;">
             <h4>おすすめのコミュニティ</h4>
-            <a href="groups.html" class="el-side-mini-card">
-              <span class="ic" style="background:var(--el-teal);">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z"/></svg>
-              </span>
-              <span class="txt"><strong>FDA対応 実務者の会</strong><span>メンバー限定・126人</span></span>
-            </a>
-            <a href="groups.html" class="el-side-mini-card">
-              <span class="ic" style="background:var(--el-sky);">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20Z"/></svg>
-              </span>
-              <span class="txt"><strong>初めての輸出 相談室</strong><span>誰でも参加可・203人</span></span>
-            </a>
+            <div id="recommendedCommunitiesList"></div>
           </div>
 
           <div class="el-side-panel">
@@ -1554,6 +1543,40 @@
       applyBestAnswerUI();
     }
 
+    // サイドバーの「おすすめのコミュニティ」：以前は実在しないダミーのコミュニティ名・人数を
+    // 固定表示していたが、実際に登録されているコミュニティ（communityGroup）から表示する。
+    // 「指定したメンバーのみ」参加のコミュニティは一般には参加できないため、おすすめには出さない。
+    // 該当するコミュニティが1件も無ければ、パネルごと非表示にする（架空のダミーは出さない）。
+    function groupVisibilityLabelForRecommend_(it) {
+      if (it.visibilityScope === 'shift') return 'SHiFT会員限定';
+      if (it.visibilityScope === 'member' || it.visibilityScope === 'members') return 'メンバー限定';
+      if (it.joinMethod === 'apply') return '誰でも申請可';
+      return '誰でも参加可';
+    }
+    function loadRecommendedCommunities() {
+      apiPost({ action: 'listContent', type: 'communityGroup' }).then(function (res) {
+        var items = (res.ok && res.items) ? res.items : [];
+        var candidates = items.filter(function (it) { return it.participationScope !== 'invited'; });
+        candidates.sort(function (a, b) { return (b.postCount || 0) - (a.postCount || 0); });
+        var picks = candidates.slice(0, 2);
+        if (!picks.length) return; // 実在するおすすめが無ければパネルごと非表示のまま
+        var panel = document.getElementById('recommendedCommunitiesPanel');
+        var listEl = document.getElementById('recommendedCommunitiesList');
+        if (!panel || !listEl) return;
+        listEl.innerHTML = picks.map(function (it) {
+          var iconInner = it.iconUrl
+            ? '<img src="' + esc(it.iconUrl) + '" style="width:100%;height:100%;object-fit:cover;">'
+            : '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20Z"/></svg>';
+          var meta = groupVisibilityLabelForRecommend_(it) + '・' + (it.postCount || 0) + '件の投稿';
+          return '<a href="community-board.html?id=' + encodeURIComponent(it.id || '') + '" class="el-side-mini-card">' +
+            '<span class="ic" style="background:' + esc(it.color || 'var(--el-teal)') + ';overflow:hidden;">' + iconInner + '</span>' +
+            '<span class="txt"><strong>' + esc(it.title || '') + '</strong><span>' + esc(meta) + '</span></span>' +
+          '</a>';
+        }).join('');
+        panel.style.display = '';
+      }).catch(function () { /* 取得に失敗した場合もパネルは非表示のまま */ });
+    }
+
     // 同じカテゴリの他のトピックを「関連するトピック」として表示する（デモの固定リンクは廃止）
     function loadRelatedTopics(item) {
       apiPost({ action: 'listTopics' }).then(function (res) {
@@ -1639,6 +1662,7 @@
 
       document.getElementById('threadLoadingNotice').style.display = 'none';
       loadRelatedTopics(item);
+      loadRecommendedCommunities();
 
       // 閲覧権限チェック：メンバー限定／SHiFT限定の投稿は、権限のないユーザーには本文を見せない
       var myRole = window.elGetRole ? window.elGetRole() : 'guest';
