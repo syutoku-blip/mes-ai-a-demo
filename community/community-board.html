@@ -571,6 +571,8 @@
 
         <div class="el-group-card" id="communityApplicationsPanel" style="display:none;"></div>
 
+        <div class="el-group-card" id="communityMemberPanel" style="display:none;"></div>
+
         <details class="el-pinned-box" style="margin-top:0;" id="guideBox" open>
           <summary class="el-pinned-head">
             <span class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 17v5M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16h14v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z"/></svg></span>
@@ -584,6 +586,9 @@
           <div>
             <h2 style="font-size:16px;">このコミュニティの投稿</h2>
           </div>
+          <a href="#" id="communityNewTopicBtn" class="el-btn el-btn--primary el-btn--sm" style="display:none;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:-2px;margin-right:4px;"><path d="M12 5v14M5 12h14"/></svg>新規投稿する
+          </a>
         </div>
 
         <div id="topicList" class="el-sns-feed">
@@ -1069,6 +1074,10 @@
         // 作成者本人（管理画面のcreator入力とユーザーマスタが一致している場合はcreatorUserIdが
         // 補完されているのでID優先で判定、無ければユーザーネームで判定）にのみ編集ボタンを出す。
         var isOwner = isMyGroup_(community.creatorUserId, community.creator);
+        // このコミュニティの「管理者」＝作成者本人（isOwner）。コミュニティの編集・参加申請の確認は
+        // 既存どおりこの判定を使い、今回追加するメンバーの編集（追加・削除）・新規投稿ボタンの
+        // 表示制御も同じ isOwner に揃える（サイト全体の管理者は引き続きadmin.htmlのモデレーション
+        // 機能から全コミュニティを横断して管理できるため、こちらでは対象外のまま変更しない）。
         // コミュニティ作成ページ（community-new.html）で追加した設定：既定（フォーラムと同じ・誰でも参加）
         // 以外の値が入っている場合のみ、追加のバッジとして表示する。
         // 公開範囲＝参加者範囲に統一したため、visibilityScope（唯一の判定基準）を元にバッジを出す。
@@ -1145,6 +1154,22 @@
       }
 
       // ------------------------------------------------------------
+      // 「新規投稿する」ボタン：メンバー（実際に参加している人）と作成者本人が投稿できるようにする。
+      // 参加していない人（未参加・承認待ち・参加条件を満たさない等）には表示しない。
+      // ------------------------------------------------------------
+      var newTopicBtn = document.getElementById('communityNewTopicBtn');
+      function setNewTopicBtnVisible_(visible) {
+        if (!newTopicBtn) return;
+        if (visible) {
+          newTopicBtn.href = 'community-topic-new.html?groupId=' + encodeURIComponent(community.id);
+          newTopicBtn.style.display = '';
+        } else {
+          newTopicBtn.style.display = 'none';
+        }
+      }
+      if (isOwner) setNewTopicBtnVisible_(true);
+
+      // ------------------------------------------------------------
       // 参加状態パネル：このコミュニティに実際に参加しているかどうかを「コミュニティ参加者」
       // シート（communityMembership）の実データで判定し、参加／申請／退会を行えるようにする。
       // 作成者本人には表示しない（自分のコミュニティなので参加操作は不要）。
@@ -1162,6 +1187,7 @@
       if (joinPanel && !isOwner) {
         function renderJoinPanel(membership) {
           joinPanel.style.display = '';
+          setNewTopicBtnVisible_(!!(membership && membership.status === 'active'));
           if (role === 'guest') {
             joinPanel.innerHTML =
               '<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">' +
@@ -1298,6 +1324,71 @@
           });
           renderApplications(pending);
         }).catch(function () {});
+      }
+
+      // ------------------------------------------------------------
+      // メンバーの編集（作成者のみ）：このコミュニティに実際に参加しているメンバー一覧を表示し、
+      // ユーザーネームを指定しての追加、既存メンバーの削除（除名）ができるようにする。
+      // 追加・削除はadmin.htmlのモデレーション管理と同じサーバー処理（adminAddMember／
+      // adminRemoveMember）を使う。これらはこのコミュニティの作成者本人からの呼び出しも
+      // 許可するようサーバー側を拡張済み（サイト管理者はこれまで通りadmin.html側から利用可）。
+      // 除名は理由の入力を必須とし、対象ユーザーへDMで通知され、モデレーション履歴にも記録される
+      // （admin.html側の「モデレーション履歴」タブから取り消しも可能）。
+      // ------------------------------------------------------------
+      var memberPanel = document.getElementById('communityMemberPanel');
+      if (memberPanel && isOwner) {
+        function renderMemberPanel(members) {
+          memberPanel.style.display = '';
+          memberPanel.innerHTML =
+            '<h4 style="margin:0 0 12px;font-size:14px;">メンバーの編集（' + members.length + '人）</h4>' +
+            (members.length ? members.map(function (m) {
+              return '<div class="el-application-row" data-membership-id="' + esc(m.id) + '" style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px solid var(--el-line-soft);flex-wrap:wrap;">' +
+                '<span style="font-size:13.5px;">' + esc(m.username || '匿名') + '</span>' +
+                '<button type="button" class="el-btn el-btn--ghost el-btn--sm el-member-remove-btn">削除</button>' +
+                '</div>';
+            }).join('') : '<div style="font-size:12.5px;color:var(--el-ink-faint);padding:6px 0;">まだメンバーがいません。</div>') +
+            '<div style="display:flex;gap:8px;margin-top:14px;">' +
+            '<input type="text" id="memberAddInput" placeholder="ユーザーネームを入力" style="flex:1;box-sizing:border-box;padding:8px 10px;border:1px solid var(--el-line-soft);border-radius:8px;font:inherit;font-size:13px;">' +
+            '<button type="button" class="el-btn el-btn--primary el-btn--sm" id="memberAddBtn">追加</button>' +
+            '</div>';
+          memberPanel.querySelectorAll('.el-member-remove-btn').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+              var row = btn.closest('.el-application-row');
+              var id = row.dataset.membershipId;
+              var reason = prompt('削除の理由を入力してください（対象ユーザーへ通知されます）');
+              if (reason === null) return;
+              reason = reason.trim();
+              if (!reason) { alert('理由を入力してください。'); return; }
+              apiPost({ action: 'adminRemoveMember', id: id, reason: reason, requesterUserId: myUid, requesterUsername: myUname })
+                .then(function (res) {
+                  if (!res.ok) { alert(res.error || '削除に失敗しました。'); return; }
+                  loadMembers();
+                }).catch(function () { alert('通信エラーが発生しました。'); });
+            });
+          });
+          var addBtn = document.getElementById('memberAddBtn');
+          if (addBtn) addBtn.addEventListener('click', function () {
+            var input = document.getElementById('memberAddInput');
+            var username = (input.value || '').trim();
+            if (!username) { alert('ユーザーネームを入力してください。'); return; }
+            addBtn.disabled = true;
+            apiPost({ action: 'adminAddMember', groupId: community.id, username: username, requesterUserId: myUid, requesterUsername: myUname })
+              .then(function (res) {
+                addBtn.disabled = false;
+                if (!res.ok) { alert(res.error || '追加に失敗しました。'); return; }
+                loadMembers();
+              }).catch(function () { addBtn.disabled = false; alert('通信エラーが発生しました。'); });
+          });
+        }
+        function loadMembers() {
+          apiPost({ action: 'listContent', type: 'communityMembership' }).then(function (mdata) {
+            var members = ((mdata.ok && mdata.items) ? mdata.items : []).filter(function (m) {
+              return String(m.groupId) === String(community.id) && m.status === 'active';
+            });
+            renderMemberPanel(members);
+          }).catch(function () {});
+        }
+        loadMembers();
       }
     });
 

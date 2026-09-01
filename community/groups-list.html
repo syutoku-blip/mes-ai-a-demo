@@ -836,6 +836,12 @@
       if (visibilityScope === 'shift') return role === 'shift';
       return true;
     }
+    // 自分がそのコミュニティにすでに参加済み（active）かどうか。カード・詳細モーダル共通で、
+    // 「参加する」ボタンの表示要否と「掲示板を見る／のぞく」のラベル切り替えに使う。
+    function isActiveMember_(groupId) {
+      var mine = MY_MEMBERSHIPS[groupId];
+      return !!(mine && mine.status === 'active');
+    }
     function communityJoinLabel_(info, groupId) {
       var mine = MY_MEMBERSHIPS[groupId];
       if (mine && mine.status === 'active') return { text: '参加中', disabled: true };
@@ -887,10 +893,28 @@
           return;
         }
         MY_MEMBERSHIPS[groupId] = { id: result.id, status: result.status };
+        var isNowActive = result.status === 'active';
         var label = communityJoinLabel_(info, groupId);
-        if (btn) { btn.textContent = label.text; btn.disabled = label.disabled; }
+        // 参加方法が「誰でも参加可」で即座にactiveになった場合は、「参加する」ボタン自体を
+        // 消し、掲示板ボタンのラベルも「掲示板を見る」に切り替える（カード・モーダル共通の仕様）。
+        if (btn) {
+          if (isNowActive) { btn.style.display = 'none'; }
+          else { btn.textContent = label.text; btn.disabled = label.disabled; }
+        }
         var card = document.querySelector('.el-group-card[data-group="' + groupId + '"] .el-group-join-btn');
-        if (card && card !== btn) { card.textContent = label.text; card.disabled = label.disabled; }
+        if (card && card !== btn) {
+          if (isNowActive) { card.style.display = 'none'; }
+          else { card.textContent = label.text; card.disabled = label.disabled; }
+        }
+        if (isNowActive) {
+          var cardBoardBtn = document.querySelector('.el-group-card[data-group="' + groupId + '"] .el-group-board-btn');
+          if (cardBoardBtn) cardBoardBtn.textContent = '掲示板を見る';
+          var modalBoardBtn = document.getElementById('gdmBoardBtn');
+          var groupDetailModalEl = document.getElementById('groupDetailModal');
+          if (modalBoardBtn && groupDetailModalEl && groupDetailModalEl.dataset.currentGroupId === groupId) {
+            modalBoardBtn.textContent = '掲示板を見る';
+          }
+        }
       }).catch(function () {
         alert('通信エラーが発生しました。');
         var resetLabel2 = communityJoinLabel_(info, groupId);
@@ -975,6 +999,12 @@
             if (state === 'active') state = 'joined';
             var joinLabel = communityJoinLabel_(joinInfo, groupId);
             var categoryLabel = it.category ? (window.EL_getCategoryLabel ? window.EL_getCategoryLabel(it.category) : it.category) : '';
+            // カード表示のボタン仕様：参加する（もしくは参加申請する）／掲示板をのぞく（未参加の場合）／
+            // 掲示板を見る（参加中の場合）。すでに参加済みのコミュニティには「参加する」ボタン自体を出さない。
+            var isActive = isActiveMember_(groupId);
+            var joinBtnHtml = isActive ? '' :
+              '<button type="button" class="el-btn el-btn--primary el-btn--sm el-group-join-btn" data-group-id="' + esc_(groupId) + '" data-group-title="' + esc_(title) + '"' + (joinLabel.disabled ? ' disabled' : '') + '>' + esc_(joinLabel.text) + '</button>';
+            var boardBtnHtml = '<a href="community-board.html?id=' + esc_(groupId) + '" class="el-btn el-btn--ghost el-btn--sm el-group-board-btn">' + (isActive ? '掲示板を見る' : '掲示板をのぞく') + '</a>';
             return '<div class="el-group-card" data-group="' + (it.id || '') + '" data-state="' + state + '" data-category="' + esc_(it.category || '') + '" data-members="' + activeMembers.length + '" data-recency="' + recency + '">' +
               '<div class="el-group-top">' +
               '<div class="el-group-icon" style="background:' + iconColor + ';overflow:hidden;">' +
@@ -984,7 +1014,7 @@
               '</div>' +
               '<p class="desc">' + (it.description || '') + '</p>' +
               '<div class="el-group-foot"><div class="el-group-members"><span class="more">' + activeMembers.length + '人が参加</span></div>' +
-              '<button type="button" class="el-btn el-btn--primary el-btn--sm el-group-join-btn" data-group-id="' + esc_(groupId) + '" data-group-title="' + esc_(title) + '"' + (joinLabel.disabled ? ' disabled' : '') + '>' + esc_(joinLabel.text) + '</button></div>' +
+              '<div style="display:flex;gap:8px;align-items:center;">' + boardBtnHtml + joinBtnHtml + '</div></div>' +
               '</div>';
           }).join('');
           listEl.innerHTML = html || '<div style="padding:40px 4px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">まだコミュニティがありません。</div>';
@@ -1030,10 +1060,27 @@
       document.getElementById('gdmCategory').textContent = detail.category;
       document.getElementById('gdmMemberCount').textContent = memberCount + '人（クリックで一覧を見る）';
 
+      var boardBtn = document.getElementById('gdmBoardBtn');
+      if (boardBtn) {
+        if (groupId) {
+          boardBtn.href = 'community-board.html?id=' + encodeURIComponent(groupId);
+          boardBtn.style.display = '';
+          boardBtn.textContent = isActiveMember_(groupId) ? '掲示板を見る' : '掲示板をのぞく';
+        } else {
+          boardBtn.style.display = 'none';
+        }
+      }
+
       var joinBtn = document.getElementById('gdmJoinBtn');
-      var joinLabel = communityJoinLabel_(joinInfo, groupId);
-      joinBtn.textContent = joinLabel.text;
-      joinBtn.disabled = joinLabel.disabled;
+      // すでに参加済みのコミュニティは「参加する」ボタン自体を表示しない（カードと同じ仕様）。
+      if (isActiveMember_(groupId)) {
+        joinBtn.style.display = 'none';
+      } else {
+        var joinLabel = communityJoinLabel_(joinInfo, groupId);
+        joinBtn.style.display = '';
+        joinBtn.textContent = joinLabel.text;
+        joinBtn.disabled = joinLabel.disabled;
+      }
 
       modal.dataset.currentGroup = title;
       modal.dataset.currentGroupId = groupId;
@@ -1047,7 +1094,7 @@
     document.addEventListener('click', function (e) {
       var card = e.target.closest('.el-group-card');
       if (!card) return;
-      if (e.target.closest('button')) return; // 参加する等のボタンはこれまで通りの動作
+      if (e.target.closest('button') || e.target.closest('a')) return; // 参加する・掲示板を見る等のボタンはこれまで通りの動作
       openModal(card);
     });
 
@@ -1264,6 +1311,7 @@
       </div>
       <div class="el-auth-modal-actions">
         <button type="button" class="el-btn el-btn--primary el-btn--sm" id="gdmJoinBtn">参加する</button>
+        <a href="#" class="el-btn el-btn--ghost el-btn--sm" id="gdmBoardBtn">掲示板を見る</a>
         <button type="button" class="el-btn el-btn--ghost el-btn--sm" data-group-close>閉じる</button>
       </div>
     </div>
