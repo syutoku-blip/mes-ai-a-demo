@@ -646,9 +646,9 @@
       try { return JSON.parse(localStorage.getItem('el-market-favorites') || '[]'); } catch (e) { return []; }
     }
 
+    // ユーザー認識は必ずユーザーIDのみで行う(ユーザーネームでのフォールバックは廃止)。
     function isMine_(sellerUserId, sellerUsername) {
-      if (uid && sellerUserId) return String(sellerUserId) === String(uid);
-      return !!(uname && sellerUsername && String(sellerUsername) === String(uname));
+      return !!(uid && sellerUserId && String(sellerUserId) === String(uid));
     }
 
     function renderCards(items) {

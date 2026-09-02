@@ -3009,9 +3009,9 @@
         // 誰が「管理者」（作成者）で誰が「メンバー」かをバッジで分かるようにする。作成者は
         // 「コミュニティ参加者」シートに明示的な行を持たないことが多いため、実際の行に見当たらない
         // 場合は先頭に作成者の行を補って表示する（groups.html等の参加人数表示と同じ考え方）。
+        // ユーザー認識は必ずユーザーIDのみで行う(ユーザーネームでのフォールバックは廃止)。
         function isCreatorRow(m) {
-          if (group.creatorUserId && m.userId) return String(m.userId) === String(group.creatorUserId);
-          return !!(group.creator && m.username && String(m.username) === String(group.creator));
+          return !!(group.creatorUserId && m.userId && String(m.userId) === String(group.creatorUserId));
         }
         var hasCreatorRow = items.some(isCreatorRow);
         var rows = items.slice();

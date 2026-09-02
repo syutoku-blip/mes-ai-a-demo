@@ -801,7 +801,8 @@
           if (!ACTIVE_MEMBERS_BY_GROUP[it.groupId]) ACTIVE_MEMBERS_BY_GROUP[it.groupId] = [];
           ACTIVE_MEMBERS_BY_GROUP[it.groupId].push(it.username || '匿名');
         }
-        var isMe = (myUid && it.userId) ? String(it.userId) === String(myUid) : (myUnameForJoin && String(it.username) === String(myUnameForJoin));
+        // ユーザー認識は必ずユーザーIDのみで行う(ユーザーネームでのフォールバックは廃止)。
+        var isMe = !!(myUid && it.userId && String(it.userId) === String(myUid));
         if (isMe) MY_MEMBERSHIPS[it.groupId] = { id: it.id, status: it.status };
       });
     }).catch(function () {});
@@ -826,15 +827,10 @@
     // 作成者は「コミュニティ参加者」シートに明示的な参加行を持たないことが多く（特に
     // このメンバーシップ機能を追加する前に作られたコミュニティ）、その場合MY_MEMBERSHIPSに
     // 該当行が無いため、作成者本人にまで「参加する」ボタンが出てしまう不具合があった。
+    // ユーザー認識は必ずユーザーIDのみで行う(ユーザーネーム・氏名でのフォールバックは廃止)。
     function isCreatorOfCommunity_(it) {
       if (!it) return false;
-      if (myUid && it.creatorUserId && String(it.creatorUserId) === String(myUid)) return true;
-      if (myUnameForJoin && it.creator && String(it.creator) === String(myUnameForJoin)) return true;
-      // 以前はコミュニティ作成時にユーザーネームではなく氏名を保存してしまっていた時期があり、
-      // その頃に作られたコミュニティはcreatorUserIdが空でcreator列に氏名が残ったままになっている。
-      // ユーザーネームでの比較だけでは本人と判定できないため、氏名でも一致すれば本人とみなす
-      // （creatorUserIdによる判定が使えるコミュニティには影響しない、あくまで最後のフォールバック）。
-      return !!(myFullnameForJoin && it.creator && String(it.creator) === String(myFullnameForJoin));
+      return !!(myUid && it.creatorUserId && String(it.creatorUserId) === String(myUid));
     }
     function communityJoinLabel_(info, groupId) {
       var mine = MY_MEMBERSHIPS[groupId];

@@ -1400,16 +1400,13 @@
   function elCurrentUsername() {
     try { return localStorage.getItem('el-username') || ''; } catch (e) { return ''; }
   }
-  // 投稿者本人かどうかの判定はユーザーIDで行う（ユーザーネームは変更されうるため）。
-  // ただしユーザーID未設定の古い投稿も表示に残るため、その場合だけユーザーネームで判定する。
+  // 投稿者本人かどうかの判定は必ずユーザーIDのみで行う（ユーザーネームでのフォールバックは廃止）。
   function elCurrentUserId() {
     try { return localStorage.getItem('el-user-id') || ''; } catch (e) { return ''; }
   }
   function elIsSameAuthor(authorUserId, authorUsername) {
     var myId = elCurrentUserId();
-    if (myId && authorUserId) return myId === authorUserId;
-    var myUsername = elCurrentUsername();
-    return !!(myUsername && authorUsername && myUsername === authorUsername);
+    return !!(myId && authorUserId && myId === authorUserId);
   }
   // コミュニティ投稿のbestAnswerCommentIdはhandleCreateCommunityTopicで常に正しく列が
   // 揃っており、フォーラム投稿のような列ズレの実例は無いが、他の判定箇所（community-board.html
@@ -1773,9 +1770,9 @@
     // このコミュニティに参加しているか（作成者本人・管理者は常に閲覧可）を確認し、
     // 参加していなければ本文・コメントをぼかして参加を促す。タイトルは常に表示したまま。
     // ------------------------------------------------------------
+    // ユーザー認識は必ずユーザーIDのみで行う(ユーザーネームでのフォールバックは廃止)。
     function elSamePerson_(idA, nameA, idB, nameB) {
-      if (idA && idB) return String(idA) === String(idB);
-      return !!(nameA && nameB && String(nameA) === String(nameB));
+      return !!(idA && idB && String(idA) === String(idB));
     }
     function showCommunityVisibilityGate_(groupId) {
       var opBody = document.getElementById('opBody');

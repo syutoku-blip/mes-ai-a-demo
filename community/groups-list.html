@@ -883,7 +883,8 @@
           if (!ACTIVE_MEMBERS_BY_GROUP[it.groupId]) ACTIVE_MEMBERS_BY_GROUP[it.groupId] = [];
           ACTIVE_MEMBERS_BY_GROUP[it.groupId].push(it.username || '匿名');
         }
-        var isMe = (myUidForJoin && it.userId) ? String(it.userId) === String(myUidForJoin) : (myUnameForJoin && String(it.username) === String(myUnameForJoin));
+        // ユーザー認識は必ずユーザーIDのみで行う(ユーザーネームでのフォールバックは廃止)。
+        var isMe = !!(myUidForJoin && it.userId && String(it.userId) === String(myUidForJoin));
         if (isMe) MY_MEMBERSHIPS[it.groupId] = { id: it.id, status: it.status };
       });
     }).catch(function () {});
@@ -1001,19 +1002,14 @@
       // 「作成した」絞り込み：コミュニティ概要シートの creatorUserId（無ければ creator 名）を
       // ログイン中のユーザーID／ユーザーネームと突き合わせて判定する。
       // ※ 参加中／申請中はメンバーシップを記録するシートが無いため、判定できず常に0件になる（既存の挙動）。
-      var myUid = '', myUname = '', myFullname = '';
+      var myUid = '', myUname = '';
       try {
         myUid = localStorage.getItem('el-user-id') || '';
         myUname = localStorage.getItem('el-username') || localStorage.getItem('el-user-name') || '';
-        myFullname = localStorage.getItem('el-user-name') || '';
       } catch (e) {}
+      // ユーザー認識は必ずユーザーIDのみで行う(ユーザーネーム・氏名でのフォールバックは廃止)。
       function isMyGroup_(creatorUserId, creatorName) {
-        if (myUid && creatorUserId && String(creatorUserId) === String(myUid)) return true;
-        if (myUname && creatorName && String(creatorName) === String(myUname)) return true;
-        // 以前はコミュニティ作成時にユーザーネームではなく氏名を保存してしまっていた時期があり、
-        // その頃に作られたコミュニティはcreatorUserIdが空でcreator列に氏名が残ったままになっている。
-        // ユーザーネームでの比較だけでは本人と判定できないため、氏名でも一致すれば本人とみなす。
-        return !!(myFullname && creatorName && String(creatorName) === String(myFullname));
+        return !!(myUid && creatorUserId && String(creatorUserId) === String(myUid));
       }
       Promise.all([
         fetch(API_URL, {

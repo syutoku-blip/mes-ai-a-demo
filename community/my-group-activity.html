@@ -633,15 +633,9 @@
       return;
     }
 
+    // ユーザー認識は必ずユーザーIDのみで行う(ユーザーネーム・氏名でのフォールバックは廃止)。
     function isMyGroup_(creatorUserId, creatorName) {
-      if (uid && creatorUserId && String(creatorUserId) === String(uid)) return true;
-      if (uname && creatorName && String(creatorName) === String(uname)) return true;
-      // 以前はコミュニティ作成時にユーザーネームではなく氏名を保存してしまっていた時期があり、
-      // その頃に作られたコミュニティはcreatorUserIdが空でcreator列に氏名が残ったままになっている。
-      // ユーザーネームでの比較だけでは本人と判定できないため、氏名でも一致すれば本人とみなす。
-      var fullname = '';
-      try { fullname = localStorage.getItem('el-user-name') || ''; } catch (e) {}
-      return !!(fullname && creatorName && String(creatorName) === String(fullname));
+      return !!(uid && creatorUserId && String(creatorUserId) === String(uid));
     }
 
     function groupVisibilityLabel(g) {
@@ -677,9 +671,9 @@
       }).join('');
     }
 
+    // ユーザー認識は必ずユーザーIDのみで行う(ユーザーネームでのフォールバックは廃止)。
     function isMe_(rowUserId, rowUsername) {
-      if (uid && rowUserId) return String(rowUserId) === String(uid);
-      return !!(uname && rowUsername && String(rowUsername) === String(uname));
+      return !!(uid && rowUserId && String(rowUserId) === String(uid));
     }
 
     if (view === 'created') {

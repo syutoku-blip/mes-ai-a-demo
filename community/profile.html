@@ -756,6 +756,8 @@
       // 統計バッジ（投稿数・コメント数・ベストアンサー数）：
       // マイページ（自分自身）ではなく、「自分以外のユーザー」のプロフィール画面に
       // そのユーザーの実績として表示する。
+      // ユーザー認識はユーザーネームではなく必ずユーザーIDで行うため、対象ユーザーのuserIdを
+      // getPublicProfileで解決してから、それを条件に投稿・コメントを絞り込む。
       (function () {
         var badgesEl = document.getElementById('profileStatBadges');
         if (!badgesEl) return;
@@ -768,19 +770,22 @@
             body: JSON.stringify(payload)
           }).then(function (res) { return res.json(); });
         }
-        Promise.all([
-          apiPost({ action: 'listTopics', userId: myUserId, username: ownUsername }),
-          apiPost({ action: 'listComments', authorUsername: targetUsername, userId: myUserId, username: ownUsername }),
-          apiPost({ action: 'listCommunityTopics', userId: myUserId, username: ownUsername }),
-          apiPost({ action: 'listCommunityComments', authorUsername: targetUsername, userId: myUserId, username: ownUsername })
-        ]).then(function (results) {
+        apiPost({ action: 'getPublicProfile', username: targetUsername }).then(function (profileRes) {
+          var targetUserId = (profileRes.ok && profileRes.profile && profileRes.profile.userId) || '';
+          if (!targetUserId) return; // IDが解決できない相手の統計は表示しない(ユーザーネームでは絞り込まない)
+          return Promise.all([
+            apiPost({ action: 'listTopics', userId: myUserId, username: ownUsername }),
+            apiPost({ action: 'listComments', authorUserId: targetUserId, userId: myUserId, username: ownUsername }),
+            apiPost({ action: 'listCommunityTopics', userId: myUserId, username: ownUsername }),
+            apiPost({ action: 'listCommunityComments', authorUserId: targetUserId, userId: myUserId, username: ownUsername })
+          ]).then(function (results) {
           var topics = (results[0] && results[0].ok && results[0].items) ? results[0].items : [];
           var targetComments = (results[1] && results[1].ok && results[1].items) ? results[1].items : [];
           var communityTopics = (results[2] && results[2].ok && results[2].items) ? results[2].items : [];
           var targetCommunityComments = (results[3] && results[3].ok && results[3].items) ? results[3].items : [];
 
-          var postedCount = topics.filter(function (t) { return String(t.authorUsername) === String(targetUsername); }).length
-            + communityTopics.filter(function (t) { return String(t.authorUsername) === String(targetUsername); }).length;
+          var postedCount = topics.filter(function (t) { return String(t.authorUserId) === String(targetUserId); }).length
+            + communityTopics.filter(function (t) { return String(t.authorUserId) === String(targetUserId); }).length;
           var commentCount = targetComments.length + targetCommunityComments.length;
 
           var targetCommentIdSet = {};
@@ -799,6 +804,7 @@
           if (commentBadgeEl) commentBadgeEl.textContent = commentCount;
           if (bestBadgeEl) bestBadgeEl.textContent = bestAnswerCount;
           badgesEl.style.display = '';
+          });
         }).catch(function () {});
       })();
 

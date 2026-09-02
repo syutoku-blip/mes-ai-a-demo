@@ -657,9 +657,9 @@
       return;
     }
 
+    // ユーザー認識は必ずユーザーIDのみで行う(ユーザーネームでのフォールバックは廃止)。
     function isMine(authorUserId, authorUsername) {
-      if (uid && authorUserId) return String(authorUserId) === String(uid);
-      return !!(uname && authorUsername && String(authorUsername) === String(uname));
+      return !!(uid && authorUserId && String(authorUserId) === String(uid));
     }
 
     // フォーラム投稿シートの古い投稿には、以前の不具合（添付ファイルJSONが1列ズレて
