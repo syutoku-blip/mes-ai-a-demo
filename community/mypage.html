@@ -108,54 +108,6 @@
     font-weight:600;
     font-size:13px;
   }
-  /* お気に入りにしたトピックの枠 */
-  .el-fav-topic-card{
-    display:block;
-    background:var(--el-cream-deep);
-    border:1px solid var(--el-line-soft);
-    border-radius:var(--el-radius-m);
-    padding:14px 16px;
-    text-decoration:none;
-    color:inherit;
-  }
-  .el-fav-topic-card:hover{ border-color:var(--el-teal-deep); }
-  .el-fav-topic-card .el-fav-topic-badge{
-    display:inline-block;
-    font-size:11px;
-    font-weight:700;
-    padding:2px 8px;
-    border-radius:999px;
-    background:var(--el-teal-tint);
-    color:var(--el-teal-deep);
-    margin-bottom:6px;
-  }
-  .el-fav-topic-card .el-fav-topic-title{
-    display:block;
-    font-size:14px;
-    font-weight:700;
-    color:var(--el-navy);
-    line-height:1.5;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    white-space:nowrap;
-  }
-  .el-fav-topic-empty{
-    padding:14px 4px 4px;
-    text-align:left;
-    color:var(--el-ink-faint);
-    font-size:13px;
-  }
-  /* お気に入りにしたトピック：マイページのフォーラム枠の中に、他の行と同じカードの内側に収める */
-  .el-mypage-fav-topics-wrap{
-    padding:14px 18px 18px;
-    border-top:1px solid var(--el-line-soft);
-  }
-  .el-mypage-fav-topics-label{
-    font-size:13px;
-    font-weight:700;
-    color:var(--el-navy);
-    margin-bottom:10px;
-  }
   /* フッターの背景色が正しく当たらない場合の保険（文字が背景と同化して見えなくなるのを防ぐ） */
   .el-footer{ background:#EDE4D0 !important; border-top:1px solid var(--el-line-soft, #E5DFD2) !important; }
   .el-footer .tag{ color:var(--el-ink-faint, #8A8478) !important; }
@@ -426,11 +378,9 @@
           <a href="my-forum-activity.html?view=bestAnswer" class="el-mypage-list-row">
             <span>ベストアンサーに選ばれたトピック</span><span class="count" id="mypageBestAnswerCount">0件</span>
           </a>
-          <div class="el-mypage-fav-topics-wrap">
-            <div class="el-mypage-fav-topics-label">お気に入りにしたトピック</div>
-            <div id="favTopicsGrid" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:10px;"></div>
-            <div id="favTopicsEmpty" class="el-fav-topic-empty">まだお気に入りに追加したトピックがありません。トピックページの「お気に入り」ボタンから追加できます。</div>
-          </div>
+          <a href="my-forum-activity.html?view=favorite" class="el-mypage-list-row" style="border-bottom:none;">
+            <span>お気に入りにしたトピック</span><span class="count" id="mypageFavoriteCount">0件</span>
+          </a>
         </div>
 
         <div class="el-section-head" style="margin-top:36px;margin-bottom:16px;">
@@ -810,11 +760,11 @@
     }).catch(function () {});
   })();
 
-  // お気に入りにしたトピックの一覧描画
+  // お気に入りにしたトピックの件数表示（他の投稿・返信・いいね・ベストアンサーと同じく
+  // 「N件」の一覧行にし、実際のリストはmy-forum-activity.html?view=favoriteで表示する）。
   function renderFavoriteTopics_(topics, communityTopics) {
-    var grid = document.getElementById('favTopicsGrid');
-    var emptyEl = document.getElementById('favTopicsEmpty');
-    if (!grid) return;
+    var countEl = document.getElementById('mypageFavoriteCount');
+    if (!countEl) return;
     // トピックページ側（topic.html／community-topic.html）と同じく、ログイン中のユーザーごとに
     // キーを分ける（同じ端末で複数の会員がログインし直しても、お気に入りが共有されないように）。
     var favUid = '';
@@ -828,29 +778,12 @@
     var communityTopicsById = {};
     (communityTopics || []).forEach(function (t) { communityTopicsById[String(t.id)] = t; });
 
-    function escFav(s) {
-      return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
-        return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c];
-      });
-    }
-
-    var cards = [];
-    favorites.forEach(function (f) {
+    // 削除済み等、実在しないトピックは件数に含めない（一覧側と数が食い違わないように）。
+    var count = favorites.filter(function (f) {
       var isCommunity = f.type === 'community';
-      var t = isCommunity ? communityTopicsById[String(f.id)] : topicsById[String(f.id)];
-      if (!t) return; // 削除済み等、実在しないトピックは表示しない
-      var href = (isCommunity ? 'community-topic.html?id=' : 'topic.html?id=') + encodeURIComponent(f.id);
-      cards.push(
-        '<a class="el-fav-topic-card" href="' + href + '">' +
-        '<span class="el-fav-topic-badge">' + (isCommunity ? 'コミュニティ' : 'フォーラム') + '</span>' +
-        '<span class="el-fav-topic-title">' + escFav(t.title || '（無題）') + '</span>' +
-        '</a>'
-      );
-    });
-
-    grid.innerHTML = cards.join('');
-    grid.style.display = cards.length ? '' : 'none';
-    if (emptyEl) emptyEl.style.display = cards.length ? 'none' : '';
+      return !!(isCommunity ? communityTopicsById[String(f.id)] : topicsById[String(f.id)]);
+    }).length;
+    countEl.textContent = count + '件';
   }
   // ユーザーモード（ゲスト／登録ユーザー／管理者）の切り替えと共通ゲート処理
   // Googleドライブの共有リンクを、<img>で直接表示できる形式のURLに変換する

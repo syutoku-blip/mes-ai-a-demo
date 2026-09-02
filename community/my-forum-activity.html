@@ -622,13 +622,15 @@
       posted: '投稿したトピック',
       replied: '返信したトピック',
       liked: 'いいねした投稿（トピック・コメント）',
-      bestAnswer: 'ベストアンサーに選ばれたトピック'
+      bestAnswer: 'ベストアンサーに選ばれたトピック',
+      favorite: 'お気に入りにしたトピック'
     };
     var VIEW_EMPTY = {
       posted: 'まだ投稿したトピックがありません。',
       replied: 'まだ返信したトピックがありません。',
       liked: 'まだいいねした投稿がありません。',
-      bestAnswer: 'まだベストアンサーに選ばれたトピックがありません。'
+      bestAnswer: 'まだベストアンサーに選ばれたトピックがありません。',
+      favorite: 'まだお気に入りに追加したトピックがありません。トピックページの「お気に入り」ボタンから追加できます。'
     };
 
     var params = new URLSearchParams(window.location.search);
@@ -729,6 +731,28 @@
         var mine = allTopics.filter(function (t) { return isMine(t.authorUserId, t.authorUsername); });
         mine.sort(function (a, b) { return new Date(b.createdAt) - new Date(a.createdAt); });
         renderRows(mine);
+        return;
+      }
+
+      if (view === 'favorite') {
+        // topic.html／community-topic.html／マイページと同じく、ログイン中のユーザーごとに
+        // キーを分けたお気に入りを参照する（同じ端末で複数の会員がログインし直しても
+        // お気に入りが共有されないように）。
+        var favUid = '';
+        try { favUid = localStorage.getItem('el-user-id') || localStorage.getItem('el-username') || ''; } catch (e) {}
+        var favorites = [];
+        try { favorites = JSON.parse(localStorage.getItem('el-topic-favorites:' + (favUid || 'guest')) || '[]'); } catch (e) { favorites = []; }
+        var topicsById2 = {};
+        topics.forEach(function (t) { topicsById2[String(t.id)] = t; });
+        var communityTopicsById2 = {};
+        communityTopics.forEach(function (t) { communityTopicsById2[String(t.id)] = t; });
+        var favTopics = [];
+        favorites.forEach(function (f) {
+          var t = f.type === 'community' ? communityTopicsById2[String(f.id)] : topicsById2[String(f.id)];
+          if (t) favTopics.push(t); // 削除済み等、実在しないトピックは表示しない
+        });
+        favTopics.sort(function (a, b) { return new Date(b.createdAt) - new Date(a.createdAt); });
+        renderRows(favTopics);
         return;
       }
 

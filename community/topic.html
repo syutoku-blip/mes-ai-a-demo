@@ -1983,13 +1983,23 @@
       }).catch(function () { /* 取得に失敗した場合もパネルは非表示のまま */ });
     }
 
-    // 同じカテゴリの他のトピックを「関連するトピック」として表示する（デモの固定リンクは廃止）
+    // 同じカテゴリの他のトピックを「関連するトピック」として表示する（デモの固定リンクは廃止）。
+    // 同じカテゴリのトピックが3件に満たない場合は、他のカテゴリの新しいトピックで補ってでも
+    // 必ず3件（全体で3件以上ある場合）表示する。
     function loadRelatedTopics(item) {
       apiPost({ action: 'listTopics' }).then(function (res) {
         var items = (res.ok && res.items) ? res.items : [];
-        var related = items.filter(function (t) {
-          return t.id !== item.id && t.category === item.category;
-        }).slice(0, 3);
+        var others = items.filter(function (t) { return t.id !== item.id; });
+        var related = others.filter(function (t) { return t.category === item.category; }).slice(0, 3);
+        if (related.length < 3) {
+          var relatedIds = {};
+          related.forEach(function (t) { relatedIds[String(t.id)] = true; });
+          for (var i = 0; i < others.length && related.length < 3; i++) {
+            if (relatedIds[String(others[i].id)]) continue;
+            related.push(others[i]);
+            relatedIds[String(others[i].id)] = true;
+          }
+        }
         if (!related.length) return; // 関連するトピックが無ければパネルごと非表示のまま
         var panel = document.getElementById('relatedTopicsPanel');
         var listEl = document.getElementById('relatedTopicsList');
