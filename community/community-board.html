@@ -400,7 +400,31 @@
     display:flex;
     gap:8px;
     margin-top:6px;
+    flex-wrap:wrap;
   }
+  /* アイコン画像アップロード：community-new.html（コミュニティ作成）と同じ円形プレビュー＋
+     ファイル選択ボタンの見た目に揃える。以前の編集画面には画像アップロード欄が無く、
+     廃止済みの「アイコンの色」選択だけが残っていたため、作成時と同じ仕組みに置き換える。 */
+  .el-cn-icon-row{
+    display:flex;
+    align-items:center;
+    gap:18px;
+  }
+  .el-cn-icon-preview{
+    width:64px;
+    height:64px;
+    border-radius:50%;
+    flex:none;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#fff;
+    background:var(--el-teal);
+    overflow:hidden;
+  }
+  .el-cn-icon-preview img{ width:100%; height:100%; object-fit:cover; }
+  .el-cn-icon-actions{ display:flex; flex-direction:column; gap:8px; }
+  .el-cn-icon-hint{ font-size:11.5px; color:var(--el-ink-faint); margin:0; }
   /* コミュニティの削除（作成者のみ・重大な操作）：誤操作を防ぐため、通常の編集項目とは
      はっきり区別できるよう赤系の枠で囲んだ「危険な操作」ゾーンとして分離する。 */
   .el-community-danger-zone{
@@ -859,15 +883,20 @@
         </select>
       </div>
       <div class="el-community-edit-field">
-        <span>アイコンの色</span>
-        <select id="ceColor">
-          <option value="var(--el-teal)">ティール</option>
-          <option value="var(--el-sky)">スカイ</option>
-          <option value="var(--el-navy-soft)">ネイビー</option>
-          <option value="var(--el-mustard)">マスタード</option>
-          <option value="var(--el-coral)">コーラル</option>
-          <option value="var(--el-sage)">セージ</option>
-        </select>
+        <span>アイコン画像</span>
+        <div class="el-cn-icon-row">
+          <div class="el-cn-icon-preview" id="ceIconPreview">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20Z"/></svg>
+          </div>
+          <div class="el-cn-icon-actions">
+            <label class="el-file-drop" for="ceIconInput" style="max-width:240px;">
+              <input id="ceIconInput" type="file" accept="image/*">
+              <svg viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5M5 20h14"/></svg>
+              <span><strong>画像を選択</strong> またはドラッグ＆ドロップ</span>
+            </label>
+            <p class="el-cn-icon-hint" id="ceIconClear" style="display:none;cursor:pointer;text-decoration:underline;">画像を削除して既定のアイコンに戻す</p>
+          </div>
+        </div>
       </div>
       <div class="el-community-edit-field">
         <span>紹介文（一覧・見出しに表示されます）</span>
@@ -880,6 +909,7 @@
       <div class="el-community-edit-actions">
         <button type="submit" class="el-btn el-btn--primary el-btn--sm">保存する</button>
         <button type="button" class="el-btn el-btn--ghost el-btn--sm" data-community-edit-close>キャンセル</button>
+        <button type="button" class="el-btn el-btn--ghost el-btn--sm" id="ceOpenMembersBtn" style="margin-left:auto;">メンバーの編集</button>
       </div>
     </form>
     <div class="el-community-danger-zone">
@@ -1304,13 +1334,107 @@
             editModal.classList.remove('is-open');
             editModal.setAttribute('aria-hidden', 'true');
           }
+
+          // アイコン画像：community-new.html（コミュニティ作成）と同じ圧縮方式でdata URL化する。
+          // 以前の編集画面には画像アップロード欄自体が無く、廃止済みの「アイコンの色」選択だけが
+          // 残ったままだったため、作成時と同じ「画像アップロード」に置き換える。
+          var SHEET_CELL_SAFE_LIMIT_CE = 45000;
+          var _webpSupportCacheCe = null;
+          function ceCanvasSupportsWebp() {
+            if (_webpSupportCacheCe !== null) return _webpSupportCacheCe;
+            try {
+              var c = document.createElement('canvas');
+              c.width = c.height = 1;
+              _webpSupportCacheCe = c.toDataURL('image/webp').indexOf('image/webp') === 5;
+            } catch (e) { _webpSupportCacheCe = false; }
+            return _webpSupportCacheCe;
+          }
+          function ceCompressImageFile(file, maxSize) {
+            var target = maxSize || 320;
+            var format = ceCanvasSupportsWebp() ? 'image/webp' : 'image/jpeg';
+            return new Promise(function (resolve, reject) {
+              var reader = new FileReader();
+              reader.onload = function (e) {
+                var img = new Image();
+                img.onload = function () {
+                  function render(size, quality, fmt) {
+                    var scale = Math.min(1, size / Math.max(img.width, img.height));
+                    var canvas = document.createElement('canvas');
+                    canvas.width = Math.max(1, Math.round(img.width * scale));
+                    canvas.height = Math.max(1, Math.round(img.height * scale));
+                    canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+                    return canvas.toDataURL(fmt, quality);
+                  }
+                  var sizeSteps = [];
+                  [1, 0.85, 0.75, 0.65, 0.55, 0.45, 0.35, 0.28].forEach(function (ratio) {
+                    var s = Math.max(200, Math.round(target * ratio));
+                    if (sizeSteps.indexOf(s) === -1) sizeSteps.push(s);
+                  });
+                  var qualitySteps = [0.92, 0.85, 0.78, 0.7, 0.62, 0.55];
+                  var attempts = [];
+                  sizeSteps.forEach(function (s) { qualitySteps.forEach(function (q) { attempts.push([s, q]); }); });
+                  var result = '';
+                  for (var i = 0; i < attempts.length; i++) {
+                    result = render(attempts[i][0], attempts[i][1], format);
+                    if (result.length <= SHEET_CELL_SAFE_LIMIT_CE) break;
+                  }
+                  if (result.length > SHEET_CELL_SAFE_LIMIT_CE && format !== 'image/jpeg') {
+                    for (var j = 0; j < attempts.length; j++) {
+                      result = render(attempts[j][0], attempts[j][1], 'image/jpeg');
+                      if (result.length <= SHEET_CELL_SAFE_LIMIT_CE) break;
+                    }
+                  }
+                  resolve(result);
+                };
+                img.onerror = reject;
+                img.src = e.target.result;
+              };
+              reader.onerror = reject;
+              reader.readAsDataURL(file);
+            });
+          }
+
+          var ceIconUrl = '';
+          var ceIconInput = document.getElementById('ceIconInput');
+          var ceIconPreview = document.getElementById('ceIconPreview');
+          var ceIconClear = document.getElementById('ceIconClear');
+          var ceIconDefaultHtml = ceIconPreview ? ceIconPreview.innerHTML : '';
+          if (ceIconInput) {
+            ceIconInput.addEventListener('change', function () {
+              var file = ceIconInput.files && ceIconInput.files[0];
+              if (!file) return;
+              ceCompressImageFile(file, 320).then(function (dataUrl) {
+                ceIconUrl = dataUrl;
+                ceIconPreview.innerHTML = '<img src="' + dataUrl + '" alt="">';
+                ceIconClear.style.display = 'block';
+              });
+            });
+          }
+          if (ceIconClear) {
+            ceIconClear.addEventListener('click', function () {
+              ceIconUrl = '';
+              if (ceIconInput) ceIconInput.value = '';
+              ceIconPreview.innerHTML = ceIconDefaultHtml;
+              ceIconClear.style.display = 'none';
+            });
+          }
+
           if (editBtn && editModal) {
             editBtn.addEventListener('click', function () {
               document.getElementById('ceTitle').value = community.title || '';
               document.getElementById('ceCategory').value = community.category || '';
-              document.getElementById('ceColor').value = community.color || 'var(--el-teal)';
               document.getElementById('ceDescription').value = community.description || '';
               document.getElementById('ceLongDescription').value = community.longDescription || '';
+              // アイコン画像プレビュー：このコミュニティの現在の値に必ず作り直す（前に開いた
+              // 別のコミュニティの画像がそのまま残って見えてしまうことがないように）。
+              ceIconUrl = community.iconUrl || '';
+              if (ceIconPreview) {
+                ceIconPreview.innerHTML = ceIconUrl
+                  ? '<img src="' + esc(ceIconUrl) + '" alt="">'
+                  : ceIconDefaultHtml;
+              }
+              if (ceIconClear) ceIconClear.style.display = ceIconUrl ? 'block' : 'none';
+              if (ceIconInput) ceIconInput.value = '';
               editModal.classList.add('is-open');
               editModal.setAttribute('aria-hidden', 'false');
             });
@@ -1321,6 +1445,21 @@
               if (e.key === 'Escape') closeEditModal();
             });
           }
+
+          // 「メンバーの編集」ボタン：編集モーダルを閉じ、常設のメンバー編集パネルを表示して
+          // スクロールする（以前はこのパネルが常に画面上部に表示され続けており分かりにくかった）。
+          var ceOpenMembersBtn = document.getElementById('ceOpenMembersBtn');
+          if (ceOpenMembersBtn) {
+            ceOpenMembersBtn.addEventListener('click', function () {
+              closeEditModal();
+              var panel = document.getElementById('communityMemberPanel');
+              if (panel) {
+                panel.style.display = '';
+                panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }
+            });
+          }
+
           if (editForm) {
             editForm.addEventListener('submit', function (e) {
               e.preventDefault();
@@ -1332,7 +1471,7 @@
                 requesterUserId: myUid, requesterUsername: myUname,
                 title: newTitle,
                 category: document.getElementById('ceCategory').value.trim(),
-                color: document.getElementById('ceColor').value,
+                iconUrl: ceIconUrl,
                 description: newDescription,
                 longDescription: document.getElementById('ceLongDescription').value.trim()
               }).then(function (res) {
@@ -1651,7 +1790,10 @@
       var memberPanel = document.getElementById('communityMemberPanel');
       if (memberPanel && isOwner) {
         function renderMemberPanel(members) {
-          memberPanel.style.display = '';
+          // パネル自体の表示/非表示は「メンバーの編集」ボタン（ceOpenMembersBtn）側で制御する。
+          // ここで強制的に表示してしまうと、ページを開いた時点で常にパネルが見えてしまい、
+          // 「編集→メンバーの編集ボタン→編集画面が出る」という意図した導線にならないため、
+          // ここでは表示状態を変更しない（中身の描画のみ行う）。
           var ownerRow =
             '<div class="el-application-row" style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px solid var(--el-line-soft);flex-wrap:wrap;">' +
             '<span style="font-size:13.5px;">' + esc(community.creator || '匿名') + '<span class="el-role-badge el-role-badge--owner">管理者</span></span>' +
@@ -1680,14 +1822,34 @@
               reason = reason.trim();
               if (!reason) { alert('理由を入力してください。'); return; }
               btn.disabled = true;
-              apiPost({
-                action: 'sendDm', senderUserId: myUid, senderUsername: myUname, senderName: myUname,
-                recipientUsername: '運営事務局',
-                body: 'コミュニティ「' + (community.title || '') + '」のメンバー「' + ((target && target.username) || '') + '」の削除を依頼します。\n理由：' + reason
-              }).then(function (res) {
-                btn.disabled = false;
-                if (!res.ok) { alert(res.error || '依頼の送信に失敗しました。'); return; }
-                alert('運営に削除を依頼しました。確認のうえ対応いたします。');
+              var requestBody = 'コミュニティ「' + (community.title || '') + '」のメンバー「' + ((target && target.username) || '') + '」の削除を依頼します。\n理由：' + reason;
+              // 「運営事務局」という名前のユーザーアカウントは実在しない（sendModerationDm_が
+              // 送信者名として使っている表示上の名義に過ぎない）ため、そのままDM送信先に
+              // 指定しても該当ユーザーが見つからず、誰にも通知が届かない不具合があった。
+              // 実際に登録されている管理者（role: 'admin'）アカウント全員へ個別にDMを送る。
+              apiPost({ action: 'getAllMembers' }).then(function (mres) {
+                var admins = ((mres.ok && mres.members) ? mres.members : []).filter(function (m) {
+                  return m.role === 'admin' && m.username;
+                });
+                if (!admins.length) {
+                  btn.disabled = false;
+                  alert('送信先の管理者アカウントが見つかりませんでした。');
+                  return;
+                }
+                Promise.all(admins.map(function (admin) {
+                  return apiPost({
+                    action: 'sendDm', senderUserId: myUid, senderUsername: myUname, senderName: myUname,
+                    recipientUsername: admin.username,
+                    body: requestBody
+                  });
+                })).then(function (results) {
+                  btn.disabled = false;
+                  if (!results.some(function (r) { return r && r.ok; })) {
+                    alert('依頼の送信に失敗しました。');
+                    return;
+                  }
+                  alert('運営に削除を依頼しました。確認のうえ対応いたします。');
+                }).catch(function () { btn.disabled = false; alert('通信エラーが発生しました。'); });
               }).catch(function () { btn.disabled = false; alert('通信エラーが発生しました。'); });
             });
           });
