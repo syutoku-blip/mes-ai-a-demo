@@ -2185,6 +2185,22 @@
   function escHtml(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
   function escAttr(s) { return escHtml(s).replace(/"/g, '&quot;'); }
 
+  // コミュニティメンバー追加の候補<datalist>：USERS（handleGetAllMembersAdmin、loadUsers()で
+  // 非同期に取得）を候補として出す。以前はこの2関数がモデレーション用IIFEの内側だけに
+  // 定義されており、loadUsers()側（トップレベルスコープ）からは見えず、USERSの取得が
+  // 完了しても候補一覧が更新されない（1文字も入力しても候補が出ない）不具合になっていた。
+  // loadUsers()側からも直接呼べるよう、トップレベルスコープに定義する。
+  function populateMemberUserDatalist_() {
+    var datalist = document.getElementById('modMemberUserList');
+    if (!datalist) return;
+    datalist.innerHTML = USERS.map(function (u) {
+      return '<option value="' + escHtml(u.username || '') + '"></option>';
+    }).join('');
+  }
+  function findExistingUsername_(username) {
+    return USERS.some(function (u) { return u.username === username; });
+  }
+
   function resetFormBuilder() {
     editingFormId = '';
     currentFormFields = [];
@@ -3026,16 +3042,8 @@
     // しまっていた（サーバー側は該当ユーザーが見つからなくてもuserId空のまま行を作ってしまう）。
     // ユーザー管理タブ用に取得済みのUSERS（handleGetAllMembersAdmin）を候補として<datalist>に
     // 出し、実際にUSERSの中に完全一致するユーザーネームがある場合のみ送信を許可する。
-    function populateMemberUserDatalist_() {
-      var datalist = document.getElementById('modMemberUserList');
-      if (!datalist) return;
-      datalist.innerHTML = USERS.map(function (u) {
-        return '<option value="' + escHtml(u.username || '') + '"></option>';
-      }).join('');
-    }
-    function findExistingUsername_(username) {
-      return USERS.some(function (u) { return u.username === username; });
-    }
+    // （populateMemberUserDatalist_ / findExistingUsername_ 本体はUSERSの取得完了時にも
+    // 呼べるよう、トップレベルスコープ側に定義してある。）
     var modMemberAddBtn = document.getElementById('modMemberAddBtn');
     if (modMemberAddBtn) {
       modMemberAddBtn.addEventListener('click', function () {

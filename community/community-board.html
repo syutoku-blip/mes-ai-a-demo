@@ -1304,8 +1304,17 @@
           ]).then(function (results) {
             var mdata = results[0];
             var pdata = results[1];
+            // 作成者（管理者）は「コミュニティ参加者」シートに明示的な参加行を持つ場合と
+            // 持たない場合の両方があるため、行を持つ場合はそのまま members 側に数えると
+            // 管理者行（先頭に必ず追加するownerRow）と重複して2回表示されてしまう。
+            // 作成者と一致する行は members 側から除外し、管理者としては常にownerRowの
+            // 1行だけが出るようにする（admin.htmlのモデレーション一覧と同じ考え方）。
+            function isCreatorMember_(m) {
+              if (community.creatorUserId && m.userId) return String(m.userId) === String(community.creatorUserId);
+              return !!(community.creator && m.username && String(m.username) === String(community.creator));
+            }
             var members = ((mdata.ok && mdata.items) ? mdata.items : []).filter(function (m) {
-              return String(m.groupId) === String(community.id) && m.status === 'active';
+              return String(m.groupId) === String(community.id) && m.status === 'active' && !isCreatorMember_(m);
             });
             var photoByUsername = {};
             ((pdata.ok && pdata.members) ? pdata.members : []).forEach(function (p) {

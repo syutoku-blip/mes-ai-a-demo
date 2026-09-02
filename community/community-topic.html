@@ -195,30 +195,35 @@
   .el-visibility-gate-notice strong{ display:block; font-size:14px; margin-bottom:4px; }
   .el-visibility-gate-notice p{ margin:0; font-size:12.5px; color:var(--el-ink-faint, #8A8478); }
   .el-visibility-gate-notice .el-btn{ flex:none; margin-left:auto; white-space:nowrap; text-decoration:none; }
-  /* 返信ボタンを使わない、控えめなコメント欄（あまり使わない想定のため小さく・目立たせない） */
+  /* 返信ボタンを使わない、控えめなコメント欄（あまり使わない想定のため小さめに表示）。
+     返信・投稿編集・コメント編集で使うのと同じリッチエディター（ツールバー含む、DOMは
+     1つだけ）をこの位置に常駐させ、それらの操作で使われている間だけ一時的によそへ移動する。 */
   .el-quick-comment{
-    display:flex !important;
-    align-items:center !important;
-    gap:8px !important;
     margin:8px 0 18px !important;
-    opacity:.8 !important;
+    opacity:.92 !important;
   }
-  .el-quick-comment input[type="text"]{
-    flex:1 1 auto !important;
-    min-width:0 !important;
-    box-sizing:border-box !important;
-    padding:6px 10px !important;
-    border:1px solid var(--el-line-soft, #E5DFD2) !important;
-    border-radius:8px !important;
-    font:inherit !important;
+  .el-quick-comment .el-quick-comment-label{
+    font-size:11.5px !important;
+    color:var(--el-ink-faint, #8b8f9c) !important;
+    margin:0 0 6px 2px !important;
+  }
+  .el-quick-comment .el-editor-toolbar{ padding:4px 6px !important; }
+  .el-quick-comment .el-editor-area{
+    min-height:44px !important;
+    padding:8px 10px !important;
     font-size:12.5px !important;
-    background:transparent !important;
-    color:inherit !important;
+    line-height:1.7 !important;
   }
-  .el-quick-comment .el-btn{ flex:none !important; font-size:12px !important; }
-  /* 権限なし／投稿が見つからない等の非表示制御は、上のdisplay:flex !importantより
-     詳細度が高い複合セレクタでなければ、要素のstyle.displayでの上書きが効かない。 */
-  .el-quick-comment.is-hidden{ display:none !important; }
+  .el-quick-comment-foot{
+    display:flex !important;
+    justify-content:flex-end !important;
+    margin-top:6px !important;
+  }
+  .el-quick-comment-foot .el-btn{ flex:none !important; font-size:12px !important; }
+  /* 権限なし／投稿が見つからない等の非表示制御や、リッチエディターが返信・編集側に
+     移動中の一時非表示は、要素のstyle.displayではなくクラスで行う（詳細度の都合）。 */
+  .el-quick-comment.is-hidden,
+  .el-quick-comment.is-editor-away{ display:none !important; }
   /* 通知からのリンク（例：community-topic.html?id=xxx#コメントID）で該当箇所へスクロールしたときの
      一時的なハイライト。コメントはAJAXで後から描画されるため、ブラウザ標準のハッシュ
      スクロールでは間に合わず、描画完了後にJSで明示的にスクロールする必要がある。 */
@@ -478,22 +483,12 @@
         </div>
 
         <!-- 返信ボタンを押さなくても投稿できる、控えめなコメント欄。基本は各投稿の「返信」マーク
-             （↑の仕組み）を使う想定のため、目立たせずリッチエディターより小さく配置する。 -->
+             （↑の仕組み）を使う想定のため目立たせないが、書式設定ができるよう返信と
+             同じリッチエディター（ツールバー含む、DOMは1つだけ）をこの位置に常駐させる。 -->
         <div class="el-quick-comment" id="quickCommentBox">
-          <input type="text" id="quickCommentInput" placeholder="返信先を指定せずコメントする" maxlength="2000">
-          <button type="button" class="el-btn el-btn--ghost el-btn--sm" id="quickCommentSendBtn">コメントする</button>
-        </div>
-
-        <div class="el-reply-box" id="replyBox" style="display:none;">
-          <div class="el-reply-context" id="replyContext">
-            <a href="#" id="replyContextLink"></a>
-            <button type="button" id="replyContextClear" aria-label="返信を閉じる">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg>
-            </button>
-          </div>
-          <div style="font-size:14px;font-weight:700;margin-bottom:10px;">返信を投稿</div>
-          <div class="el-rich-editor">
-            <div class="el-editor-toolbar" role="toolbar" aria-label="返信の書式">
+          <div class="el-quick-comment-label">返信先を指定せずコメントする</div>
+          <div class="el-rich-editor" id="replyRichEditorWrap">
+            <div class="el-editor-toolbar" role="toolbar" aria-label="コメントの書式">
               <button type="button" data-command="bold" title="太字"><strong>B</strong></button>
               <button type="button" data-command="italic" title="斜体"><em>I</em></button>
               <button type="button" data-command="underline" title="下線"><span style="text-decoration:underline;font-weight:700;">U</span></button>
@@ -535,8 +530,22 @@
               <button type="button" id="replyApplyLinkBtn">リンクを設定</button>
               <button type="button" id="replyRemoveLinkBtn">解除</button>
             </div>
-            <div id="replyEditor" class="el-editor-area" contenteditable="true" data-placeholder="コメントを入力してください…"></div>
+            <div id="replyEditor" class="el-editor-area" contenteditable="true" data-placeholder="返信先を指定せずコメントする…"></div>
           </div>
+          <div class="el-quick-comment-foot">
+            <button type="button" class="el-btn el-btn--ghost el-btn--sm" id="quickCommentSendBtn">コメントする</button>
+          </div>
+        </div>
+
+        <div class="el-reply-box" id="replyBox" style="display:none;">
+          <div class="el-reply-context" id="replyContext">
+            <a href="#" id="replyContextLink"></a>
+            <button type="button" id="replyContextClear" aria-label="返信を閉じる">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg>
+            </button>
+          </div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:10px;">返信を投稿</div>
+          <div id="replyEditorSlot"></div>
           <div class="el-reply-foot">
             <button class="el-btn el-btn--primary el-btn--sm" style="margin-left:auto;">返信を送信</button>
           </div>
@@ -841,11 +850,36 @@
 
   // 返信リッチエディター（topic.htmlの返信エディターと同じ仕組み）
   var replyBox = document.getElementById('replyBox');
+  var replyEditorSlot = document.getElementById('replyEditorSlot');
   var replyEditor = document.getElementById('replyEditor');
   var replyCtx = document.getElementById('replyContext');
   var replyCtxLink = document.getElementById('replyContextLink');
   var replyCtxClear = document.getElementById('replyContextClear');
+  var quickCommentBox = document.getElementById('quickCommentBox');
   var currentReplyToId = 'op';
+
+  // 返信先を指定しないコメント欄とターゲットを指定した返信は、同じリッチエディター
+  // （ツールバー付き）を使い回す。ツールバー自体はDOM上に1つしか無いため
+  // （#replyRichEditorWrap）、通常は#quickCommentBox内に常駐させておき、対象を指定した
+  // 返信を書いている間だけ#replyBox側へ一時的に移動させ、終わったら元の位置へ戻す
+  // （topic.htmlの返信・編集エディターの使い回しと同じ仕組み）。
+  var richEditorWrap = document.getElementById('replyRichEditorWrap');
+  var richEditorHomeParent = richEditorWrap ? richEditorWrap.parentNode : null;
+  var richEditorHomeNextSibling = richEditorWrap ? richEditorWrap.nextSibling : null;
+  var QUICK_COMMENT_PLACEHOLDER = '返信先を指定せずコメントする…';
+  var REPLY_PLACEHOLDER = 'コメントを入力してください…';
+  function moveRichEditorTo(container, beforeNode) {
+    if (!richEditorWrap || !container) return;
+    container.insertBefore(richEditorWrap, beforeNode || null);
+    if (quickCommentBox) quickCommentBox.classList.add('is-editor-away');
+    if (replyEditor) replyEditor.setAttribute('data-placeholder', REPLY_PLACEHOLDER);
+  }
+  function restoreRichEditorHome() {
+    if (!richEditorWrap || !richEditorHomeParent) return;
+    richEditorHomeParent.insertBefore(richEditorWrap, richEditorHomeNextSibling);
+    if (quickCommentBox) quickCommentBox.classList.remove('is-editor-away');
+    if (replyEditor) replyEditor.setAttribute('data-placeholder', QUICK_COMMENT_PLACEHOLDER);
+  }
 
   // 以前は「返信」を押すと本文の先頭に「@ユーザー名 」を自動挿入していたが、これは見た目だけの
   // 飾りで実際には何の機能も持っていなかった（通知・返信先の判定はすべてcurrentReplyToId＝
@@ -959,13 +993,15 @@
       editor.addEventListener('focus', saveSelection);
       editor.addEventListener('input', saveSelection);
 
-      document.querySelectorAll('#replyBox .el-editor-toolbar button').forEach(function (btn) {
+      // ツールバーはページ上に1つだけ（返信先を指定しないコメント欄／返信で共用し、
+      // 使う場面に応じて場所を移動する）なので、常に見つかるよう#replyBoxに絞らず選択する。
+      document.querySelectorAll('.el-editor-toolbar button').forEach(function (btn) {
         btn.addEventListener('pointerdown', function (e) { saveSelection(); e.preventDefault(); });
       });
-      document.querySelectorAll('#replyBox .el-editor-toolbar select, #replyBox .el-editor-toolbar input[type="color"]').forEach(function (control) {
+      document.querySelectorAll('.el-editor-toolbar select, .el-editor-toolbar input[type="color"]').forEach(function (control) {
         control.addEventListener('pointerdown', saveSelection);
       });
-      document.querySelectorAll('#replyBox .el-editor-toolbar [data-command]').forEach(function (btn) {
+      document.querySelectorAll('.el-editor-toolbar [data-command]').forEach(function (btn) {
         btn.addEventListener('click', function () { runCommand(btn.dataset.command, btn.dataset.value || null); });
       });
 
@@ -1050,7 +1086,9 @@
             linkPopover.classList.add('is-centered');
           } else {
             var rect = found.range.getBoundingClientRect();
-            var editorRect = document.querySelector('#replyBox .el-rich-editor').getBoundingClientRect();
+            // リッチエディターは返信先を指定しないコメント欄と対象指定の返信とで共用しており
+            // 現在地が#replyBoxとは限らないため、固定セレクタではなく現在地を直接参照する。
+            var editorRect = (richEditorWrap || document.querySelector('.el-rich-editor')).getBoundingClientRect();
             linkPopover.hidden = false;
             linkPopover.classList.remove('is-centered');
             linkPopover.style.left = Math.max(10, Math.min(rect.left - editorRect.left, editorRect.width - 340)) + 'px';
@@ -1136,6 +1174,7 @@
       var name = nameEl ? nameEl.textContent.trim() : '';
       replyBtn.addEventListener('click', function () {
         if (window.elRequireAuth && !window.elRequireAuth()) return;
+        moveRichEditorTo(replyEditorSlot);
         currentReplyToId = post.id;
         clearReplyEditor();
         replyCtxLink.textContent = name + 'さんの投稿に返信中';
@@ -1155,6 +1194,7 @@
       replyCtx.classList.remove('is-visible');
       clearReplyEditor();
       replyBox.style.display = 'none';
+      restoreRichEditorHome();
     });
   }
   wireReplyButtons();
@@ -1731,28 +1771,27 @@
           currentReplyToId = 'op';
           if (replyCtx) replyCtx.classList.remove('is-visible');
           if (replyBox) replyBox.style.display = 'none';
+          restoreRichEditorHome();
         });
       });
     }
 
     // 返信先を指定しない、控えめなコメント欄：常時表示し、返信ボタンを押さなくてもコメントできる。
-    var quickCommentInput = document.getElementById('quickCommentInput');
+    // 返信と同じリッチエディター（書式設定つき）をここでも使う。
     var quickCommentSendBtn = document.getElementById('quickCommentSendBtn');
     if (quickCommentSendBtn) {
       var sendQuickComment = function () {
         if (window.elRequireAuth && !window.elRequireAuth()) return;
-        var text = (quickCommentInput.value || '').trim();
-        if (!text) return;
+        var plainText = replyEditor ? (replyEditor.textContent || '').trim() : '';
+        if (!plainText) return;
+        var body = replyEditor ? replyEditor.innerHTML.trim() : '';
         quickCommentSendBtn.disabled = true;
-        submitCommunityComment_('op', esc(text)).then(function (sent) {
+        submitCommunityComment_('op', body).then(function (sent) {
           quickCommentSendBtn.disabled = false;
-          if (sent) quickCommentInput.value = '';
+          if (sent) clearReplyEditor();
         });
       };
       quickCommentSendBtn.addEventListener('click', sendQuickComment);
-      quickCommentInput.addEventListener('keydown', function (e) {
-        if (e.key === 'Enter') { e.preventDefault(); sendQuickComment(); }
-      });
     }
   })();
 </script>

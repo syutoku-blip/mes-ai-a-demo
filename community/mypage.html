@@ -699,9 +699,17 @@
       var postedCount = topics.filter(function (t) { return isMine(t.authorUserId, t.authorUsername); }).length
         + communityTopics.filter(function (t) { return isMine(t.authorUserId, t.authorUsername); }).length;
 
+      // 返信したトピックの件数は、返信したコメントの件数をそのまま数えるのではなく、
+      // 実際にmy-forum-activity.html（返信したトピック一覧）で表示できるトピックだけを
+      // 数える。そうしないと、返信先のトピックが削除済み・非表示等で一覧に出てこない
+      // 場合に「1件」等と表示されるのに開くと「ありません」になってしまう
+      // （件数と実際の一覧表示が食い違う）不具合になる。
+      var topicIdSet = {};
+      topics.forEach(function (t) { topicIdSet[String(t.id)] = true; });
+      communityTopics.forEach(function (t) { topicIdSet[String(t.id)] = true; });
       var repliedTopicIds = {};
-      myComments.forEach(function (c) { if (c.topicId) repliedTopicIds[String(c.topicId)] = true; });
-      myCommunityComments.forEach(function (c) { if (c.postId) repliedTopicIds['community:' + String(c.postId)] = true; });
+      myComments.forEach(function (c) { if (c.topicId && topicIdSet[String(c.topicId)]) repliedTopicIds[String(c.topicId)] = true; });
+      myCommunityComments.forEach(function (c) { if (c.postId && topicIdSet[String(c.postId)]) repliedTopicIds['community:' + String(c.postId)] = true; });
       var repliedCount = Object.keys(repliedTopicIds).length;
 
       var likedCount = myLikes.filter(function (l) { return l.targetType === 'topic' || l.targetType === 'comment'; }).length;
