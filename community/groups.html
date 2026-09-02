@@ -297,6 +297,19 @@
     gap:8px;
     margin-top:6px;
   }
+  /* メンバー一覧モーダル：作成者（管理者）／メンバーそれぞれの役割バッジ
+     （コミュニティ掲示板側の参加メンバー一覧と表示を揃える） */
+  .el-role-badge{
+    display:inline-block !important;
+    font-size:10.5px !important;
+    font-weight:700 !important;
+    padding:2px 8px !important;
+    border-radius:999px !important;
+    white-space:nowrap !important;
+    flex:none !important;
+  }
+  .el-role-badge--owner{ background:rgba(185,129,42,.15) !important; color:var(--el-mustard-deep, #B9812A) !important; }
+  .el-role-badge--member{ background:rgba(22,35,63,.08) !important; color:var(--el-navy, #16233F) !important; }
 </style>
 </head>
 <body data-site="community" data-root="..">
@@ -753,6 +766,9 @@
   // コミュニティ詳細モーダル：カードをクリックすると開く。カード自体もシート（コミュニティ）から取得して描画する。
   document.addEventListener('DOMContentLoaded', function () {
     var GROUP_DETAILS = {};
+    // メンバー一覧モーダル（gdmMemberList）でアイコン画像を出すためのユーザーネーム→写真URLの対応表。
+    // カード一覧の読み込みIIFEとモーダル操作のIIFEが別スコープのため、両方から見えるようここで宣言する。
+    var PHOTO_BY_USERNAME_GL = {};
     function esc(s) {
       var d = document.createElement('div');
       d.textContent = s == null ? '' : String(s);
@@ -804,6 +820,15 @@
     function isActiveMember_(groupId) {
       var mine = MY_MEMBERSHIPS[groupId];
       return !!(mine && mine.status === 'active');
+    }
+    // コミュニティの作成者かどうか（creatorUserId優先、無ければcreatorのユーザーネームで判定）。
+    // 作成者は「コミュニティ参加者」シートに明示的な参加行を持たないことが多く（特に
+    // このメンバーシップ機能を追加する前に作られたコミュニティ）、その場合MY_MEMBERSHIPSに
+    // 該当行が無いため、作成者本人にまで「参加する」ボタンが出てしまう不具合があった。
+    function isCreatorOfCommunity_(it) {
+      if (!it) return false;
+      if (myUid && it.creatorUserId) return String(it.creatorUserId) === String(myUid);
+      return !!(myUnameForJoin && it.creator && String(it.creator) === String(myUnameForJoin));
     }
     function communityJoinLabel_(info, groupId) {
       var mine = MY_MEMBERSHIPS[groupId];
@@ -971,11 +996,26 @@
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({ action: 'listContent', type: 'communityGroup', userId: myUid, username: myUnameForJoin })
         }).then(function (res) { return res.json(); }),
-        membershipsReady
+        membershipsReady,
+        fetch(API_URL, {
+          method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action: 'getAllMembers' })
+        }).then(function (res) { return res.json(); }).then(function (pdata) {
+          ((pdata.ok && pdata.members) ? pdata.members : []).forEach(function (p) {
+            if (p.username) PHOTO_BY_USERNAME_GL[p.username] = p.photoUrl || '';
+          });
+        }).catch(function () {})
       ])
         .then(function (results) {
           var data = results[0];
           var items = (data.ok && data.items) ? data.items : [];
+          // 作成者本人は、参加者シートに明示的な行が無くても常に「参加済み」として扱う
+          // （上のisCreatorOfCommunity_参照）。
+          items.forEach(function (it) {
+            if (it.id && isCreatorOfCommunity_(it) && !MY_MEMBERSHIPS[it.id]) {
+              MY_MEMBERSHIPS[it.id] = { id: null, status: 'active' };
+            }
+          });
           var emptyMsg = '<div style="padding:40px 4px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">まだコミュニティがありません。</div>';
           if (newList) {
             var byNew = items.slice().sort(function (a, b) {
@@ -1103,10 +1143,23 @@
       document.getElementById('gdmMemberViewCount').textContent = count + '人が参加しています';
       var shown = detail.members;
       var remaining = Math.max(0, (+count) - shown.length);
+      // 参加中／未参加にかかわらず、コミュニティ掲示板側の参加メンバー一覧（communityMembersModal）と
+      // 同じく、アイコンからプロフィールへのリンクと「管理者／メンバー」バッジを常に表示する
+      // （以前は、参加済みのコミュニティはカードクリックで直接community-board.htmlへ遷移するため
+      // そちら側の一覧＝バッジ付きが見え、未参加のコミュニティだけがこの簡易な一覧＝バッジ無し・
+      // リンク無しになっており、参加の有無で見え方が変わってしまっていた）。
       var html = shown.map(function (m) {
-        return '<div style="display:flex;align-items:center;gap:10px;padding:8px 4px;border-bottom:1px solid var(--el-line-soft);">' +
-          '<div class="el-avatar" style="width:32px;height:32px;font-size:13px;flex:none;">' + m.charAt(0) + '</div>' +
-          '<span style="font-size:13.5px;color:var(--el-navy);">' + m + '</span></div>';
+        var isOwner = !!(detail.creator && m === detail.creator);
+        var photoUrl = PHOTO_BY_USERNAME_GL[m];
+        var avatarInner = photoUrl
+          ? '<img src="' + esc(elDriveImgUrl(photoUrl)) + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt="">'
+          : esc((m || '?').charAt(0));
+        return '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 4px;border-bottom:1px solid var(--el-line-soft);">' +
+          '<a href="profile.html?user=' + encodeURIComponent(m || '') + '" style="display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit;min-width:0;">' +
+          '<span class="el-avatar" style="width:32px;height:32px;font-size:13px;flex:none;overflow:hidden;">' + avatarInner + '</span>' +
+          '<span style="font-size:13.5px;color:var(--el-navy);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + esc(m || '匿名') + '</span></a>' +
+          '<span class="el-role-badge ' + (isOwner ? 'el-role-badge--owner' : 'el-role-badge--member') + '">' + (isOwner ? '管理者' : 'メンバー') + '</span>' +
+          '</div>';
       }).join('');
       if (remaining > 0) {
         html += '<div style="padding:10px 4px;font-size:12.5px;color:var(--el-ink-faint);">ほか' + remaining + '人</div>';

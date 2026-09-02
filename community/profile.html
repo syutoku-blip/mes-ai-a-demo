@@ -278,6 +278,7 @@
           </div>
           <div style="display:flex;gap:8px;">
             <button type="button" class="el-btn el-btn--ghost el-btn--sm" id="editToggleBtn">編集する</button>
+            <button type="button" class="el-btn el-btn--ghost el-btn--sm" id="profileImpersonateBtn" style="display:none;">なりすます</button>
             <a href="#" class="el-btn el-btn--primary el-btn--sm" id="dmSendBtn" style="display:none;">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
               メッセージを送る
@@ -568,6 +569,45 @@
   }
   window.elDriveImgUrl = elDriveImgUrl;
 
+  // なりすまし（admin.htmlのユーザー管理にある機能と全く同じ挙動）：現在の管理者情報を
+  // localStorageに退避してから、対象ユーザーの情報でログイン状態を置き換える。
+  // 終了は全ページ共通で表示されるバナー（なりすましを終了ボタン）から行う。
+  var IMPERSONATE_STASH_KEY = 'el-impersonate-stash';
+  function startImpersonationFromProfile_(u) {
+    if (!u || !u.username) return;
+    var currentUsername = '';
+    try { currentUsername = localStorage.getItem('el-username') || ''; } catch (e) {}
+    var alreadyStashed = null;
+    try { alreadyStashed = localStorage.getItem(IMPERSONATE_STASH_KEY); } catch (e) {}
+    if (!alreadyStashed && currentUsername && currentUsername === u.username) {
+      alert('自分自身にはなりすませません。');
+      return;
+    }
+    if (!confirm('「' + (u.fullname || u.username) + '」（' + u.username + '）としてログインした状態にします。\nよろしいですか？')) return;
+
+    if (!alreadyStashed) {
+      var stashObj = {
+        userId: localStorage.getItem('el-user-id') || '',
+        username: localStorage.getItem('el-username') || '',
+        name: localStorage.getItem('el-user-name') || '',
+        email: localStorage.getItem('el-user-email') || '',
+        role: localStorage.getItem('el-user-role') || 'admin',
+        profile: localStorage.getItem('el-user-profile') || '{}'
+      };
+      try { localStorage.setItem(IMPERSONATE_STASH_KEY, JSON.stringify(stashObj)); } catch (e) {}
+    }
+
+    try {
+      localStorage.setItem('el-user-id', u.userId || '');
+      localStorage.setItem('el-username', u.username || '');
+      localStorage.setItem('el-user-name', u.fullname || u.username || '');
+      localStorage.setItem('el-user-email', u.email || '');
+      localStorage.setItem('el-user-role', u.role || 'member');
+      localStorage.setItem('el-user-profile', JSON.stringify(u));
+    } catch (e) {}
+    window.location.href = 'index.html';
+  }
+
   (function () {
     var role = 'guest';
     var profile = {};
@@ -634,6 +674,33 @@
       if (dmBtn) {
         dmBtn.style.display = '';
         dmBtn.href = 'messages.html?to=' + encodeURIComponent(targetUsername);
+      }
+
+      // 管理者は、admin.htmlのユーザー管理まで行かなくても、このプロフィールページから
+      // 直接そのユーザーへの「なりすまし」を開始できる（admin.htmlの既存のなりすまし機能と
+      // 完全に同じ挙動・同じlocalStorageキーを使い、終了は全ページ共通のバナーから行う）。
+      var impersonateBtn = document.getElementById('profileImpersonateBtn');
+      if (impersonateBtn && role === 'admin') {
+        impersonateBtn.style.display = '';
+        impersonateBtn.addEventListener('click', function () {
+          var myUserId = '', myUsername = '';
+          try {
+            myUserId = localStorage.getItem('el-user-id') || '';
+            myUsername = localStorage.getItem('el-username') || '';
+          } catch (e) {}
+          impersonateBtn.disabled = true;
+          fetch(API_URL, {
+            method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({
+              action: 'getMemberForImpersonation', username: targetUsername,
+              requesterUserId: myUserId, requesterUsername: myUsername
+            })
+          }).then(function (res) { return res.json(); }).then(function (data) {
+            impersonateBtn.disabled = false;
+            if (!data.ok || !data.member) { alert(data.error || 'ユーザー情報の取得に失敗しました。'); return; }
+            startImpersonationFromProfile_(data.member);
+          }).catch(function () { impersonateBtn.disabled = false; alert('通信エラーが発生しました。'); });
+        });
       }
       document.querySelector('[data-field="email"]').style.display = 'none';
       document.querySelectorAll('.el-profile-row').forEach(function (row) {

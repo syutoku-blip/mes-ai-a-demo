@@ -715,6 +715,14 @@
       memberships.forEach(function (m) {
         if (m.status === wantStatus && isMe_(m.userId, m.username)) myGroupIds[m.groupId] = true;
       });
+      // 作成者は「コミュニティ参加者」シートに明示的な参加行を持たないことが多いが、実質的には
+      // 常に参加中（active）とみなす。これが無いと、参加者シートに行を持たない自分が作成した
+      // コミュニティが「参加中のコミュニティ」一覧に出てこない不具合になる。
+      if (wantStatus === 'active') {
+        items.forEach(function (it) {
+          if (it.id && isMyGroup_(it.creatorUserId, it.creator)) myGroupIds[it.id] = true;
+        });
+      }
       renderCards(items.filter(function (it) { return !!myGroupIds[it.id]; }));
     }).catch(function () {
       emptyTextEl.textContent = '読み込みに失敗しました。';

@@ -401,6 +401,58 @@
     gap:8px;
     margin-top:6px;
   }
+  /* コミュニティの削除（作成者のみ・重大な操作）：誤操作を防ぐため、通常の編集項目とは
+     はっきり区別できるよう赤系の枠で囲んだ「危険な操作」ゾーンとして分離する。 */
+  .el-community-danger-zone{
+    margin-top:22px;
+    padding-top:16px;
+    border-top:1px dashed var(--el-line-soft, #E5DFD2);
+  }
+  .el-community-danger-zone h4{
+    margin:0 0 6px;
+    font-size:13px;
+    font-weight:700;
+    color:var(--el-coral, #C85A3E);
+  }
+  .el-community-danger-zone > p{
+    margin:0 0 10px;
+    font-size:12.5px;
+    line-height:1.7;
+    color:var(--el-ink-faint, #8A8478);
+  }
+  .el-community-delete-btn{
+    border-color:var(--el-coral, #C85A3E) !important;
+    color:var(--el-coral, #C85A3E) !important;
+  }
+  .el-community-delete-confirm{
+    margin-top:12px;
+    padding:12px;
+    background:rgba(200,90,62,.07);
+    border:1px solid var(--el-coral, #C85A3E);
+    border-radius:10px;
+  }
+  .el-community-delete-confirm p{
+    margin:0 0 8px;
+    font-size:12.5px;
+    line-height:1.7;
+    color:var(--el-navy, #16233F);
+  }
+  .el-community-delete-confirm input[type="text"]{
+    width:100%;
+    box-sizing:border-box;
+    padding:8px 10px;
+    border:1px solid var(--el-line-soft, #E5DFD2);
+    border-radius:8px;
+    font:inherit;
+    margin-bottom:10px;
+  }
+  .el-community-delete-confirm-actions{ display:flex; gap:8px; }
+  .el-community-delete-confirm-btn{
+    background:var(--el-coral, #C85A3E) !important;
+    border-color:var(--el-coral, #C85A3E) !important;
+    color:#fff !important;
+  }
+  .el-community-delete-confirm-btn:disabled{ opacity:.5; cursor:not-allowed; }
   /* このページ専用：参加状態バッジ（my-group-activity.htmlの同名バッジと同じ配色） */
   .el-cga-badge{
     display:inline-block !important;
@@ -830,6 +882,19 @@
         <button type="button" class="el-btn el-btn--ghost el-btn--sm" data-community-edit-close>キャンセル</button>
       </div>
     </form>
+    <div class="el-community-danger-zone">
+      <h4>危険な操作</h4>
+      <p>コミュニティを削除すると、投稿・コメント・参加メンバーの情報を含め、元に戻すことはできません。</p>
+      <button type="button" class="el-btn el-btn--ghost el-btn--sm el-community-delete-btn" id="communityDeleteBtn">コミュニティを削除する</button>
+      <div class="el-community-delete-confirm" id="communityDeleteConfirm" style="display:none;">
+        <p>本当に削除してよろしいですか。よろしければ、確認のためコミュニティ名「<strong id="communityDeleteConfirmTitle"></strong>」を下に入力してください。</p>
+        <input type="text" id="communityDeleteConfirmInput" autocomplete="off">
+        <div class="el-community-delete-confirm-actions">
+          <button type="button" class="el-btn el-btn--sm el-community-delete-confirm-btn" id="communityDeleteConfirmBtn" disabled>完全に削除する</button>
+          <button type="button" class="el-btn el-btn--ghost el-btn--sm" id="communityDeleteConfirmCancelBtn">キャンセル</button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1269,6 +1334,47 @@
                 if (!res.ok) { alert(res.error || '更新に失敗しました。'); return; }
                 location.reload();
               }).catch(function () { alert('通信エラーが発生しました。'); });
+            });
+          }
+
+          // コミュニティの削除（作成者のみ・重大な操作）：誤操作防止のため、コミュニティ名の
+          // 入力による確認を必須にする（単純なconfirm()ダイアログだけでは押し間違いを防げないため）。
+          var deleteBtn = document.getElementById('communityDeleteBtn');
+          var deleteConfirm = document.getElementById('communityDeleteConfirm');
+          var deleteConfirmTitle = document.getElementById('communityDeleteConfirmTitle');
+          var deleteConfirmInput = document.getElementById('communityDeleteConfirmInput');
+          var deleteConfirmBtn = document.getElementById('communityDeleteConfirmBtn');
+          var deleteConfirmCancelBtn = document.getElementById('communityDeleteConfirmCancelBtn');
+          if (deleteBtn && deleteConfirm && deleteConfirmInput && deleteConfirmBtn) {
+            function resetDeleteConfirm_() {
+              deleteConfirm.style.display = 'none';
+              deleteConfirmInput.value = '';
+              deleteConfirmBtn.disabled = true;
+            }
+            deleteBtn.addEventListener('click', function () {
+              if (deleteConfirmTitle) deleteConfirmTitle.textContent = community.title || '';
+              deleteConfirm.style.display = '';
+              deleteConfirmInput.focus();
+            });
+            deleteConfirmInput.addEventListener('input', function () {
+              deleteConfirmBtn.disabled = deleteConfirmInput.value !== (community.title || '');
+            });
+            if (deleteConfirmCancelBtn) deleteConfirmCancelBtn.addEventListener('click', resetDeleteConfirm_);
+            deleteConfirmBtn.addEventListener('click', function () {
+              if (deleteConfirmInput.value !== (community.title || '')) return;
+              deleteConfirmBtn.disabled = true;
+              apiPost({
+                action: 'deleteContent', type: 'communityGroup', id: community.id,
+                requesterUserId: myUid, requesterUsername: myUname
+              }).then(function (res) {
+                if (!res.ok) { alert(res.error || '削除に失敗しました。'); deleteConfirmBtn.disabled = false; return; }
+                alert('コミュニティを削除しました。');
+                window.location.href = 'groups.html';
+              }).catch(function () { alert('通信エラーが発生しました。'); deleteConfirmBtn.disabled = false; });
+            });
+            // モーダルを閉じたら確認欄の状態もリセットしておく（次回開いたときに前回の入力が残らないように）。
+            editModal.querySelectorAll('[data-community-edit-close]').forEach(function (el) {
+              el.addEventListener('click', resetDeleteConfirm_);
             });
           }
         }
