@@ -254,6 +254,57 @@
      移動中の一時非表示は、要素のstyle.displayではなくクラスで行う（詳細度の都合）。 */
   .el-quick-comment.is-hidden,
   .el-quick-comment.is-editor-away{ display:none !important; }
+  /* 返信・コメント作成時に添付する写真・ファイルのプレビュー（送信前の一覧）。送信後は
+     コメント本文とは別に「添付ファイル」枠として表示するため、本文中には挿入しない。 */
+  .el-editor-attachments-preview{
+    display:flex !important;
+    flex-wrap:wrap !important;
+    gap:6px !important;
+    padding:0 10px 8px !important;
+  }
+  .el-editor-attachments-preview:empty{ display:none !important; padding:0 !important; }
+  .el-editor-attachment-chip{
+    display:flex !important;
+    align-items:center !important;
+    gap:5px !important;
+    padding:4px 8px !important;
+    border:1px solid var(--el-line-soft, #E5DFD2) !important;
+    border-radius:8px !important;
+    font-size:11.5px !important;
+    color:var(--el-ink, #2b2b2b) !important;
+    background:#FAF8F2 !important;
+    max-width:180px !important;
+  }
+  .el-editor-attachment-chip span{
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+    white-space:nowrap !important;
+  }
+  .el-editor-attachment-chip button{
+    flex:none !important;
+    width:16px !important;
+    height:16px !important;
+    padding:0 !important;
+    border:0 !important;
+    background:transparent !important;
+    color:var(--el-ink-faint, #8b8f9c) !important;
+    cursor:pointer !important;
+    line-height:1 !important;
+  }
+  .el-editor-attachment-chip button:hover{ color:var(--el-coral, #B8593D) !important; }
+  /* 送信済みコメントの添付ファイル：OPの添付ファイルと違い、画像であってもその場に画像自体を
+     表示せず、ファイル名だけのファイル枠にして、クリックでダウンロードできるようにする
+     （リッチエディターへの画像貼り付けでそのまま本文に画像が出てしまうのを避けるため）。 */
+  .el-comment-attachments{
+    margin:10px 0 0 !important;
+    display:flex !important;
+    flex-wrap:wrap !important;
+    gap:8px !important;
+  }
+  /* 投稿・コメントの編集フォームへリッチエディターが移動している間は添付機能を使わせない
+     （編集は本文の更新のみに対応しており、添付を選んでも保存されないため）。 */
+  .el-rich-editor.is-edit-mode #replyAttachBtn,
+  .el-rich-editor.is-edit-mode .el-editor-attachments-preview{ display:none !important; }
   /* 通知からのリンク（例：topic.html?id=xxx#コメントID）で該当箇所へスクロールしたときの
      一時的なハイライト。コメントはAJAXで後から描画されるため、ブラウザ標準のハッシュ
      スクロールでは間に合わず、描画完了後にJSで明示的にスクロールする必要がある。 */
@@ -262,6 +313,9 @@
     0%{ background:rgba(255,229,138,.55); }
     100%{ background:transparent; }
   }
+  /* トピックのお気に入りボタン：押した状態は市場（マーケット）のお気に入りと同じ色で塗りつぶす */
+  .el-favorite-btn[data-favorited="1"]{ color:var(--el-coral, #C85A3E) !important; }
+  .el-favorite-btn[data-favorited="1"] svg{ fill:currentColor !important; }
 </style>
 </head>
 <body data-site="community" data-root="..">
@@ -505,6 +559,7 @@
             <div class="el-post-tags"></div>
             <div class="el-post-actions">
               <button class="el-like-btn" id="opLikeBtn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14Z"/></svg> <span class="el-like-count">0</span></button>
+              <button class="el-favorite-btn" id="opFavoriteBtn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z"/></svg> お気に入り</button>
               <button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H4l2.4-3.6A8.5 8.5 0 1 1 21 11.5Z"/></svg> 返信</button>
               <button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13"/></svg> 共有</button>
               <button id="opEditBtn" style="display:none;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg> 編集</button>
@@ -564,6 +619,11 @@
               <button type="button" id="replyClearFormatBtn" title="書式を解除">
                 <svg viewBox="0 0 24 24"><path d="m3 3 18 18M9 5h9M13 5l-3 10M6 19h8"/></svg>
               </button>
+              <span class="sep"></span>
+              <button type="button" id="replyAttachBtn" title="写真・ファイルを添付">
+                <svg viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a5.5 5.5 0 0 1-7.78-7.78l9.19-9.19a3.5 3.5 0 0 1 4.95 4.95l-9.2 9.19a1.5 1.5 0 0 1-2.12-2.12l8.49-8.48"/></svg>
+              </button>
+              <input type="file" id="replyAttachInput" multiple accept="image/*,.pdf" hidden>
             </div>
             <div class="el-link-popover" id="replyLinkPopover" hidden>
               <input type="url" id="replyLinkUrlInput" placeholder="https://example.com" aria-label="リンク先URL">
@@ -571,6 +631,7 @@
               <button type="button" id="replyRemoveLinkBtn">解除</button>
             </div>
             <div id="replyEditor" class="el-editor-area" contenteditable="true" data-placeholder="返信先を指定せずコメントする…"></div>
+            <div class="el-editor-attachments-preview" id="replyAttachmentsPreview"></div>
           </div>
           <div class="el-quick-comment-foot">
             <button type="button" class="el-btn el-btn--ghost el-btn--sm" id="quickCommentSendBtn">コメントする</button>
@@ -975,17 +1036,148 @@
       fn();
     }
   }
-  function moveRichEditorTo(container, beforeNode) {
+  // 添付ファイル欄は「返信先を指定しないコメント」「対象を指定した返信」の新規投稿でのみ
+  // 使う（投稿・コメントの編集は本文の更新のみに対応しており、添付は扱わない）。編集フォーム
+  // 側へエディターを移動する呼び出しだけ opts.editMode:true を渡し、添付ボタン・プレビューを
+  // 隠すとともに、既に選んでいた添付を残さないようクリアする。
+  function moveRichEditorTo(container, beforeNode, opts) {
     if (!richEditorWrap || !container) return;
     container.insertBefore(richEditorWrap, beforeNode || null);
     if (quickCommentBox) quickCommentBox.classList.add('is-editor-away');
     if (replyEditor) replyEditor.setAttribute('data-placeholder', REPLY_EDIT_PLACEHOLDER);
+    var isEditMode = !!(opts && opts.editMode);
+    richEditorWrap.classList.toggle('is-edit-mode', isEditMode);
+    if (isEditMode) clearPendingAttachments_();
   }
   function restoreRichEditorHome() {
     if (!richEditorWrap || !richEditorHomeParent) return;
     richEditorHomeParent.insertBefore(richEditorWrap, richEditorHomeNextSibling);
     if (quickCommentBox) quickCommentBox.classList.remove('is-editor-away');
     if (replyEditor) replyEditor.setAttribute('data-placeholder', QUICK_COMMENT_PLACEHOLDER);
+    richEditorWrap.classList.remove('is-edit-mode');
+  }
+
+  // 返信・コメントへの写真／ファイル添付（forum-new.htmlの投稿添付と同じ圧縮・サイズ上限の
+  // 考え方を、コメント用に移植したもの）。スプレッドシートの1セルに収める必要があるため、
+  // 画像は圧縮し、合計サイズにも上限を設ける。
+  var ATTACHMENT_SHEET_CELL_LIMIT = 45000;
+  var ATTACHMENT_PER_FILE_LIMIT = 15000;
+  var MAX_COMMENT_ATTACHMENTS = 5;
+  var pendingAttachments = [];
+  var attachmentWebpCache_ = null;
+  function attachmentCanvasSupportsWebp_() {
+    if (attachmentWebpCache_ !== null) return attachmentWebpCache_;
+    try {
+      var c = document.createElement('canvas');
+      c.width = c.height = 1;
+      attachmentWebpCache_ = c.toDataURL('image/webp').indexOf('image/webp') === 5;
+    } catch (e) { attachmentWebpCache_ = false; }
+    return attachmentWebpCache_;
+  }
+  function compressAttachmentImage_(file, maxSize) {
+    var target = maxSize || 900;
+    var format = attachmentCanvasSupportsWebp_() ? 'image/webp' : 'image/jpeg';
+    return new Promise(function (resolve, reject) {
+      var reader = new FileReader();
+      reader.onload = function (e) {
+        var img = new Image();
+        img.onload = function () {
+          function render(size, quality, fmt) {
+            var scale = Math.min(1, size / Math.max(img.width, img.height));
+            var canvas = document.createElement('canvas');
+            canvas.width = Math.max(1, Math.round(img.width * scale));
+            canvas.height = Math.max(1, Math.round(img.height * scale));
+            canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+            return canvas.toDataURL(fmt, quality);
+          }
+          var sizeSteps = [];
+          [1, 0.85, 0.7, 0.55, 0.4, 0.3, 0.22].forEach(function (ratio) {
+            var s = Math.max(200, Math.round(target * ratio));
+            if (sizeSteps.indexOf(s) === -1) sizeSteps.push(s);
+          });
+          var qualitySteps = [0.9, 0.8, 0.7, 0.6, 0.5];
+          var attempts = [];
+          sizeSteps.forEach(function (s) { qualitySteps.forEach(function (q) { attempts.push([s, q]); }); });
+          var result = '';
+          for (var i = 0; i < attempts.length; i++) {
+            result = render(attempts[i][0], attempts[i][1], format);
+            if (result.length <= ATTACHMENT_PER_FILE_LIMIT) break;
+          }
+          if (result.length > ATTACHMENT_PER_FILE_LIMIT && format !== 'image/jpeg') {
+            for (var j = 0; j < attempts.length; j++) {
+              result = render(attempts[j][0], attempts[j][1], 'image/jpeg');
+              if (result.length <= ATTACHMENT_PER_FILE_LIMIT) break;
+            }
+          }
+          resolve(result);
+        };
+        img.onerror = reject;
+        img.src = e.target.result;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+  function readFileAsDataUrl_(file) {
+    return new Promise(function (resolve, reject) {
+      var reader = new FileReader();
+      reader.onload = function (e) { resolve(e.target.result); };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+  function escAttachName_(s) {
+    var d = document.createElement('div');
+    d.textContent = s == null ? '' : String(s);
+    return d.innerHTML;
+  }
+  function renderPendingAttachments_() {
+    var preview = document.getElementById('replyAttachmentsPreview');
+    if (!preview) return;
+    preview.innerHTML = pendingAttachments.map(function (a, idx) {
+      return '<span class="el-editor-attachment-chip"><span>' + escAttachName_(a.name || 'ファイル') + '</span>' +
+        '<button type="button" data-remove-attachment="' + idx + '" aria-label="添付を削除" title="添付を削除">' +
+        '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg></button></span>';
+    }).join('');
+    preview.querySelectorAll('[data-remove-attachment]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        pendingAttachments.splice(+btn.dataset.removeAttachment, 1);
+        renderPendingAttachments_();
+      });
+    });
+  }
+  function clearPendingAttachments_() {
+    pendingAttachments = [];
+    renderPendingAttachments_();
+    var input = document.getElementById('replyAttachInput');
+    if (input) input.value = '';
+  }
+  var replyAttachBtn = document.getElementById('replyAttachBtn');
+  var replyAttachInput = document.getElementById('replyAttachInput');
+  if (replyAttachBtn && replyAttachInput) {
+    replyAttachBtn.addEventListener('click', function () { replyAttachInput.click(); });
+    replyAttachInput.addEventListener('change', function () {
+      var files = Array.prototype.slice.call(this.files || []);
+      this.value = '';
+      var room = MAX_COMMENT_ATTACHMENTS - pendingAttachments.length;
+      var skipped = [];
+      if (files.length > room) { skipped.push('一度に添付できるのは' + MAX_COMMENT_ATTACHMENTS + '件までです'); files = files.slice(0, Math.max(0, room)); }
+      files.reduce(function (chain, file) {
+        return chain.then(function () {
+          var isImage = file.type.indexOf('image/') === 0;
+          var task = isImage ? compressAttachmentImage_(file, 900) : readFileAsDataUrl_(file);
+          return task.then(function (dataUrl) {
+            if (!isImage && dataUrl.length > ATTACHMENT_PER_FILE_LIMIT) { skipped.push(file.name + '（ファイルサイズが大きすぎます）'); return; }
+            var used = pendingAttachments.reduce(function (sum, a) { return sum + a.dataUrl.length; }, 0);
+            if (used + dataUrl.length > ATTACHMENT_SHEET_CELL_LIMIT) { skipped.push(file.name + '（添付ファイルの合計サイズの上限を超えました）'); return; }
+            pendingAttachments.push({ name: file.name, type: file.type || '', dataUrl: dataUrl });
+          }).catch(function () { skipped.push(file.name + '（読み込みに失敗しました）'); });
+        });
+      }, Promise.resolve()).then(function () {
+        renderPendingAttachments_();
+        if (skipped.length) alert(skipped.join('\n'));
+      });
+    });
   }
 
   // 以前は「返信」を押すと本文の先頭に「@ユーザー名 」を自動挿入していたが、これは見た目だけの
@@ -995,6 +1187,7 @@
   // 本文を自動的に書き換えるこの挙動は廃止し、エディターは空のまま返信を始められるようにする。
   function clearReplyEditor() {
     if (replyEditor) replyEditor.innerHTML = '';
+    clearPendingAttachments_();
   }
 
   if (replyEditor) {
@@ -1324,6 +1517,14 @@
     var myUsername = elCurrentUsername();
     return !!(myUsername && authorUsername && myUsername === authorUsername);
   }
+  // フォーラム投稿シートの古い投稿には、以前の不具合（添付ファイルJSONが1列ズレて
+  // bestAnswerCommentId列に書き込まれてしまっていた）により、実際にはベストアンサーが
+  // 選ばれていないのにbestAnswerCommentIdが空でない投稿が存在しうる。本物のIDはUUID
+  // （"["で始まることは無い）なので、JSON配列らしき値は本物の回答IDとして扱わない
+  // （board.html等の一覧ページと同じガード。トピック詳細ページ側にも同じ判定が必要）。
+  function hasRealBestAnswer_(id) {
+    return !!id && String(id).charAt(0) !== '[';
+  }
   // ベストアンサーの選定は、以前はブラウザのlocalStorageだけに保存していて他の人からは
   // 見えなかったが、スプレッドシート（フォーラム投稿シートのbestAnswerCommentId列）に
   // 保存するよう変更した。onToggle が渡されたときだけ「選ぶ／解除する」ボタンを表示する。
@@ -1481,6 +1682,18 @@
       d.textContent = s == null ? '' : String(s);
       return d.innerHTML;
     }
+    // コメントへの添付ファイル：OPの添付と違い、画像であってもその場に表示せず、常にファイル名＋
+    // ダウンロードリンクの「添付ファイル枠」として表示する（リッチエディターへの画像貼り付けで
+    // そのまま本文中に画像が表示されてしまうのを避けるため、本文とは別枠で統一的に扱う）。
+    function commentAttachmentsHtml_(attachments) {
+      var list = Array.isArray(attachments) ? attachments : [];
+      if (!list.length) return '';
+      return '<div class="el-comment-attachments">' + list.map(function (a) {
+        return '<a class="el-post-attachment-file" href="' + a.dataUrl + '" download="' + esc(a.name || 'file') + '">' +
+          '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/></svg>' +
+          esc(a.name || 'ファイル') + '</a>';
+      }).join('') + '</div>';
+    }
     // 本文内のリンク（リッチエディターで埋め込まれたもの）は、その場で遷移せず別タブで開くようにする
     function elOpenLinksInNewTab(container) {
       if (!container) return;
@@ -1492,6 +1705,40 @@
     // 投稿者・コメント者のアイコンから、その人のプロフィールページへのリンクを作る
     function elProfileUrl(username) {
       return 'profile.html?user=' + encodeURIComponent(username || '');
+    }
+    // トピックのお気に入り（マイページの「お気に入りにしたトピック」枠と連動）。
+    // マーケットのお気に入り（el-market-favorites）と同じ考え方で、サーバーには保存せず
+    // 端末のlocalStorageに {id, type} の配列として保持する。typeでフォーラム／コミュニティを区別する。
+    var EL_TOPIC_FAVORITES_KEY = 'el-topic-favorites';
+    function getTopicFavorites_() {
+      try { return JSON.parse(localStorage.getItem(EL_TOPIC_FAVORITES_KEY) || '[]'); } catch (e) { return []; }
+    }
+    function setTopicFavorites_(list) {
+      try { localStorage.setItem(EL_TOPIC_FAVORITES_KEY, JSON.stringify(list)); } catch (e) {}
+    }
+    function isTopicFavorited_(id, type) {
+      return getTopicFavorites_().some(function (f) { return String(f.id) === String(id) && f.type === type; });
+    }
+    function toggleTopicFavorite_(id, type) {
+      var list = getTopicFavorites_();
+      var idx = -1;
+      for (var i = 0; i < list.length; i++) { if (String(list[i].id) === String(id) && list[i].type === type) { idx = i; break; } }
+      if (idx >= 0) { list.splice(idx, 1); } else { list.push({ id: String(id), type: type }); }
+      setTopicFavorites_(list);
+      return idx < 0; // true = 今お気に入りにした
+    }
+    function wireFavoriteButton(btn, type, id) {
+      if (!btn) return;
+      function applyState() {
+        var fav = isTopicFavorited_(id, type);
+        btn.dataset.favorited = fav ? '1' : '0';
+      }
+      applyState();
+      btn.addEventListener('click', function () {
+        if (window.elRequireAuth && !window.elRequireAuth()) return;
+        toggleTopicFavorite_(id, type);
+        applyState();
+      });
     }
     // いいねボタンの表示更新（押した状態の色分けと件数）
     function applyLikeButtonState(btn, liked, count) {
@@ -1591,7 +1838,7 @@
 
       editBtn.addEventListener('click', function () {
         reclaimRichEditor();
-        moveRichEditorTo(editSlot);
+        moveRichEditorTo(editSlot, null, { editMode: true });
         if (replyBoxLabel) replyBoxLabel.textContent = 'コメントを編集';
         replyBox.querySelector('.el-reply-foot').style.display = 'none';
         replyEditor.innerHTML = bodyEl.innerHTML;
@@ -1638,7 +1885,10 @@
         var article = document.createElement('article');
         article.className = 'el-post';
         article.id = c.id;
-        article.dataset.replyTo = c.parentId || 'op';
+        // 返信先タグ（↩ 返信 〇〇さん）は、実際に返信ボタンから対象を選んで送られたコメント
+        // （parentIdがOPまたは特定のコメントIDになっている）にだけ付ける。返信先を指定せず
+        // コメントする欄から送られたコメント（parentIdが空）には付けない。
+        if (c.parentId) article.dataset.replyTo = c.parentId;
         var initial = (c.authorName || '?').charAt(0);
         var profileUrl = elProfileUrl(c.authorUsername || c.authorName);
         article.innerHTML =
@@ -1647,6 +1897,7 @@
           '<div class="el-reply-tag-slot"></div>' +
           '<div class="el-post-head"><span class="name">' + esc(c.authorName || '匿名') + '</span><span class="time">' + esc(relativeTime(c.createdAt)) + '</span></div>' +
           '<div class="el-post-body">' + (c.body || '') + '</div>' +
+          commentAttachmentsHtml_(c.attachments) +
           '<div class="el-comment-edit-form" style="display:none;">' +
           '<div class="el-comment-edit-slot"></div>' +
           '<div style="display:flex;gap:8px;margin-top:10px;">' +
@@ -1894,7 +2145,8 @@
         }
 
         wireLikeButton(document.getElementById('opLikeBtn'), 'topic', item.id, !!item.likedByMe, item.likeCount || 0);
-        markThreadSolvedUI(!!item.bestAnswerCommentId);
+        wireFavoriteButton(document.getElementById('opFavoriteBtn'), 'forum', item.id);
+        markThreadSolvedUI(hasRealBestAnswer_(item.bestAnswerCommentId));
 
         var isOwnTopic = elIsSameAuthor(item.authorUserId, item.authorUsername);
         var opEditBtn = document.getElementById('opEditBtn');
@@ -1918,7 +2170,7 @@
           opEditBtn.addEventListener('click', function () {
             reclaimRichEditor();
             opEditTitle.value = item.title || '';
-            moveRichEditorTo(opEditEditorSlot);
+            moveRichEditorTo(opEditEditorSlot, null, { editMode: true });
             if (replyBoxLabel) replyBoxLabel.textContent = '投稿を編集';
             replyBox.querySelector('.el-reply-foot').style.display = 'none';
             replyEditor.innerHTML = opBody ? opBody.innerHTML : (item.body || '');
@@ -1985,7 +2237,8 @@
         authorUsername: authorUsername,
         authorName: authorName,
         authorUserId: authorUserId,
-        body: bodyHtml
+        body: bodyHtml,
+        attachments: pendingAttachments.slice()
       }).then(function (data) {
         if (!data.ok) { alert('送信に失敗しました。時間をおいて再度お試しください。'); return false; }
         reloadComments();
@@ -2027,7 +2280,9 @@
         if (!plainText) return;
         var body = replyEditor ? replyEditor.innerHTML.trim() : '';
         quickCommentSendBtn.disabled = true;
-        submitTopicComment_('op', body).then(function (sent) {
+        // 返信先を指定しないコメントなので、parentIdは（返信ボタンから対象を選んだ場合の
+        // 'op'や特定のコメントIDとは違い）空にする。↩返信タグを付けないためのフラグも兼ねる。
+        submitTopicComment_('', body).then(function (sent) {
           quickCommentSendBtn.disabled = false;
           if (sent) clearReplyEditor();
         });

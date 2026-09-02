@@ -108,6 +108,81 @@
     font-weight:600;
     font-size:13px;
   }
+  /* 投稿・コメント・ベストアンサーの件数をバッジ風に表示するエリア */
+  .el-stat-badges{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-top:16px;
+  }
+  .el-stat-badge{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    background:var(--el-cream-deep);
+    border:1px solid var(--el-line-soft);
+    border-radius:999px;
+    padding:8px 16px 8px 10px;
+    font-size:13px;
+    font-weight:600;
+    color:var(--el-navy);
+  }
+  .el-stat-badge .el-stat-badge-icon{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:26px;
+    height:26px;
+    border-radius:50%;
+    background:var(--el-teal-tint);
+    color:var(--el-teal-deep);
+    flex:none;
+  }
+  .el-stat-badge .el-stat-badge-num{
+    font-size:15px;
+    font-weight:800;
+    color:var(--el-teal-deep);
+  }
+  /* お気に入りにしたトピックの枠 */
+  .el-fav-topic-card{
+    display:block;
+    background:var(--el-paper);
+    border:1px solid var(--el-line-soft);
+    border-radius:var(--el-radius-m);
+    padding:14px 16px;
+    text-decoration:none;
+    color:inherit;
+  }
+  .el-fav-topic-card:hover{ border-color:var(--el-teal-deep); }
+  .el-fav-topic-card .el-fav-topic-badge{
+    display:inline-block;
+    font-size:11px;
+    font-weight:700;
+    padding:2px 8px;
+    border-radius:999px;
+    background:var(--el-teal-tint);
+    color:var(--el-teal-deep);
+    margin-bottom:6px;
+  }
+  .el-fav-topic-card .el-fav-topic-title{
+    display:block;
+    font-size:14px;
+    font-weight:700;
+    color:var(--el-navy);
+    line-height:1.5;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .el-fav-topic-empty{
+    padding:24px;
+    text-align:center;
+    color:var(--el-ink-faint);
+    font-size:13.5px;
+    background:var(--el-paper);
+    border:1px solid var(--el-line-soft);
+    border-radius:var(--el-radius-m);
+  }
   /* フッターの背景色が正しく当たらない場合の保険（文字が背景と同化して見えなくなるのを防ぐ） */
   .el-footer{ background:#EDE4D0 !important; border-top:1px solid var(--el-line-soft, #E5DFD2) !important; }
   .el-footer .tag{ color:var(--el-ink-faint, #8A8478) !important; }
@@ -327,6 +402,20 @@
               <div class="sub" id="profileRoleLabel">一般</div>
             </div>
           </div>
+          <div class="el-stat-badges">
+            <span class="el-stat-badge">
+              <span class="el-stat-badge-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></span>
+              投稿数 <span class="el-stat-badge-num" id="statBadgePosted">0</span>
+            </span>
+            <span class="el-stat-badge">
+              <span class="el-stat-badge-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H4l2.4-3.6A8.5 8.5 0 1 1 21 11.5Z"/></svg></span>
+              コメント数 <span class="el-stat-badge-num" id="statBadgeComment">0</span>
+            </span>
+            <span class="el-stat-badge">
+              <span class="el-stat-badge-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 15.09 8.26 22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2Z"/></svg></span>
+              ベストアンサー数 <span class="el-stat-badge-num" id="statBadgeBestAnswer">0</span>
+            </span>
+          </div>
         </div>
 
         <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:32px;">
@@ -359,6 +448,14 @@
             <span style="display:block;font-size:12.5px;color:var(--el-ink-faint);margin-top:2px;">マーケットの購入記録</span>
           </a>
         </div>
+
+        <div class="el-section-head" style="margin-top:44px;margin-bottom:16px;">
+          <div>
+            <h2>お気に入りにしたトピック</h2>
+          </div>
+        </div>
+        <div id="favTopicsGrid" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px;"></div>
+        <div id="favTopicsEmpty" class="el-fav-topic-empty">まだお気に入りに追加したトピックがありません。トピックページの「お気に入り」ボタンから追加できます。</div>
 
         <div class="el-section-head" style="margin-top:44px;margin-bottom:16px;">
           <div>
@@ -731,8 +828,64 @@
       if (likedEl) likedEl.textContent = likedCount + '件';
       if (repliedEl) repliedEl.textContent = repliedCount + '件';
       if (bestEl) bestEl.textContent = bestAnswerCount + '件';
+
+      // 投稿したトピック数・コメント数・ベストアンサー数のバッジ表示。
+      // コメント数は「返信したトピック」件数（重複トピックはまとめている）とは別に、
+      // 実際に書き込んだコメント総数（フォーラム＋コミュニティ）をそのまま表示する。
+      var commentCount = myComments.length + myCommunityComments.length;
+      var badgePostedEl = document.getElementById('statBadgePosted');
+      var badgeCommentEl = document.getElementById('statBadgeComment');
+      var badgeBestEl = document.getElementById('statBadgeBestAnswer');
+      if (badgePostedEl) badgePostedEl.textContent = postedCount;
+      if (badgeCommentEl) badgeCommentEl.textContent = commentCount;
+      if (badgeBestEl) badgeBestEl.textContent = bestAnswerCount;
+
+      // お気に入りにしたトピック（トピックページの「お気に入り」ボタンで追加、
+      // マーケットのお気に入りと同じくlocalStorage管理）。既に取得済みのtopics／
+      // communityTopicsと突き合わせて、実在するトピックだけを表示する
+      // （削除済み等でもう存在しないトピックは自然に表示されなくなる）。
+      renderFavoriteTopics_(topics, communityTopics);
     }).catch(function () {});
   })();
+
+  // お気に入りにしたトピックの一覧描画
+  function renderFavoriteTopics_(topics, communityTopics) {
+    var grid = document.getElementById('favTopicsGrid');
+    var emptyEl = document.getElementById('favTopicsEmpty');
+    if (!grid) return;
+    var FAV_TOPIC_KEY = 'el-topic-favorites';
+    var favorites = [];
+    try { favorites = JSON.parse(localStorage.getItem(FAV_TOPIC_KEY) || '[]'); } catch (e) { favorites = []; }
+
+    var topicsById = {};
+    (topics || []).forEach(function (t) { topicsById[String(t.id)] = t; });
+    var communityTopicsById = {};
+    (communityTopics || []).forEach(function (t) { communityTopicsById[String(t.id)] = t; });
+
+    function escFav(s) {
+      return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+        return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c];
+      });
+    }
+
+    var cards = [];
+    favorites.forEach(function (f) {
+      var isCommunity = f.type === 'community';
+      var t = isCommunity ? communityTopicsById[String(f.id)] : topicsById[String(f.id)];
+      if (!t) return; // 削除済み等、実在しないトピックは表示しない
+      var href = (isCommunity ? 'community-topic.html?id=' : 'topic.html?id=') + encodeURIComponent(f.id);
+      cards.push(
+        '<a class="el-fav-topic-card" href="' + href + '">' +
+        '<span class="el-fav-topic-badge">' + (isCommunity ? 'コミュニティ' : 'フォーラム') + '</span>' +
+        '<span class="el-fav-topic-title">' + escFav(t.title || '（無題）') + '</span>' +
+        '</a>'
+      );
+    });
+
+    grid.innerHTML = cards.join('');
+    grid.style.display = cards.length ? '' : 'none';
+    if (emptyEl) emptyEl.style.display = cards.length ? 'none' : '';
+  }
   // ユーザーモード（ゲスト／登録ユーザー／管理者）の切り替えと共通ゲート処理
   // Googleドライブの共有リンクを、<img>で直接表示できる形式のURLに変換する
   function elDriveImgUrl(url) {
