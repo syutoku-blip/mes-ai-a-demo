@@ -1001,14 +1001,19 @@
       // 「作成した」絞り込み：コミュニティ概要シートの creatorUserId（無ければ creator 名）を
       // ログイン中のユーザーID／ユーザーネームと突き合わせて判定する。
       // ※ 参加中／申請中はメンバーシップを記録するシートが無いため、判定できず常に0件になる（既存の挙動）。
-      var myUid = '', myUname = '';
+      var myUid = '', myUname = '', myFullname = '';
       try {
         myUid = localStorage.getItem('el-user-id') || '';
         myUname = localStorage.getItem('el-username') || localStorage.getItem('el-user-name') || '';
+        myFullname = localStorage.getItem('el-user-name') || '';
       } catch (e) {}
       function isMyGroup_(creatorUserId, creatorName) {
-        if (myUid && creatorUserId) return String(creatorUserId) === String(myUid);
-        return !!(myUname && creatorName && String(creatorName) === String(myUname));
+        if (myUid && creatorUserId && String(creatorUserId) === String(myUid)) return true;
+        if (myUname && creatorName && String(creatorName) === String(myUname)) return true;
+        // 以前はコミュニティ作成時にユーザーネームではなく氏名を保存してしまっていた時期があり、
+        // その頃に作られたコミュニティはcreatorUserIdが空でcreator列に氏名が残ったままになっている。
+        // ユーザーネームでの比較だけでは本人と判定できないため、氏名でも一致すれば本人とみなす。
+        return !!(myFullname && creatorName && String(creatorName) === String(myFullname));
       }
       Promise.all([
         fetch(API_URL, {

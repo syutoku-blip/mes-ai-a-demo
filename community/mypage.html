@@ -630,9 +630,14 @@
       }
 
       if (createdEl) {
+        var fullnameForCreated_ = '';
+        try { fullnameForCreated_ = localStorage.getItem('el-user-name') || ''; } catch (e) {}
         var mine = items.filter(function (it) {
-          if (uid && it.creatorUserId) return String(it.creatorUserId) === String(uid);
-          return !!(uname && it.creator && String(it.creator) === String(uname));
+          if (uid && it.creatorUserId && String(it.creatorUserId) === String(uid)) return true;
+          if (uname && it.creator && String(it.creator) === String(uname)) return true;
+          // 以前はコミュニティ作成時にユーザーネームではなく氏名を保存してしまっていた時期があり、
+          // その頃に作られたコミュニティはcreatorUserIdが空でcreator列に氏名が残ったままになっている。
+          return !!(fullnameForCreated_ && it.creator && String(it.creator) === String(fullnameForCreated_));
         });
         createdEl.textContent = mine.length + '件';
       }

@@ -820,7 +820,10 @@
             return;
           }
           var p = data.profile;
-          document.querySelector('#profileModeSub').textContent = p.username + ' さんのプロフィール';
+          // 「〇〇さんのプロフィール」という説明文は不要とのことなので、他ユーザーの
+          // プロフィール閲覧時はこの補足テキスト自体を非表示にする。
+          var modeSubEl = document.querySelector('#profileModeSub');
+          if (modeSubEl) modeSubEl.style.display = 'none';
           if (p.photoUrl) {
             var avatarEl2 = document.getElementById('profileAvatarView');
             if (avatarEl2) avatarEl2.innerHTML = '<img src="' + elDriveImgUrl(p.photoUrl) + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';

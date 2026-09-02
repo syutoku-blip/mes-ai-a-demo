@@ -783,10 +783,11 @@
     // ため、バックエンドに実データとして保存するよう変更した。
     // ------------------------------------------------------------
     var MEMBERSHIP_API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
-    var myUid = '', myUnameForJoin = '';
+    var myUid = '', myUnameForJoin = '', myFullnameForJoin = '';
     try {
       myUid = localStorage.getItem('el-user-id') || '';
       myUnameForJoin = localStorage.getItem('el-username') || localStorage.getItem('el-user-name') || '';
+      myFullnameForJoin = localStorage.getItem('el-user-name') || '';
     } catch (e) {}
     var MY_MEMBERSHIPS = {}; // { [groupId]: { id, status } }
     var ACTIVE_MEMBERS_BY_GROUP = {}; // { [groupId]: [username, ...] }（承認待ちは含まない、実際に参加中のメンバーのみ）
@@ -827,8 +828,13 @@
     // 該当行が無いため、作成者本人にまで「参加する」ボタンが出てしまう不具合があった。
     function isCreatorOfCommunity_(it) {
       if (!it) return false;
-      if (myUid && it.creatorUserId) return String(it.creatorUserId) === String(myUid);
-      return !!(myUnameForJoin && it.creator && String(it.creator) === String(myUnameForJoin));
+      if (myUid && it.creatorUserId && String(it.creatorUserId) === String(myUid)) return true;
+      if (myUnameForJoin && it.creator && String(it.creator) === String(myUnameForJoin)) return true;
+      // 以前はコミュニティ作成時にユーザーネームではなく氏名を保存してしまっていた時期があり、
+      // その頃に作られたコミュニティはcreatorUserIdが空でcreator列に氏名が残ったままになっている。
+      // ユーザーネームでの比較だけでは本人と判定できないため、氏名でも一致すれば本人とみなす
+      // （creatorUserIdによる判定が使えるコミュニティには影響しない、あくまで最後のフォールバック）。
+      return !!(myFullnameForJoin && it.creator && String(it.creator) === String(myFullnameForJoin));
     }
     function communityJoinLabel_(info, groupId) {
       var mine = MY_MEMBERSHIPS[groupId];
