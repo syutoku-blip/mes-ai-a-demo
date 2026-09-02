@@ -1546,12 +1546,20 @@
     // トピックのお気に入り（マイページの「お気に入りにしたトピック」枠と連動）。
     // マーケットのお気に入り（el-market-favorites）と同じ考え方で、サーバーには保存せず
     // 端末のlocalStorageに {id, type} の配列として保持する。typeでフォーラム／コミュニティを区別する。
-    var EL_TOPIC_FAVORITES_KEY = 'el-topic-favorites';
+    // キーにはログイン中のユーザーID（無ければユーザーネーム）を含める：同じ端末・同じブラウザで
+    // 複数の会員がログインし直す（このサイトのログインはlocalStorageのみで管理しているため、
+    // なりすまし等も含め頻繁に起こりうる）と、キーが固定だと全員が同じお気に入りを共有してしまう
+    // 不具合になっていた。
+    function topicFavoritesKey_() {
+      var uid = '';
+      try { uid = localStorage.getItem('el-user-id') || localStorage.getItem('el-username') || ''; } catch (e) {}
+      return 'el-topic-favorites:' + (uid || 'guest');
+    }
     function getTopicFavorites_() {
-      try { return JSON.parse(localStorage.getItem(EL_TOPIC_FAVORITES_KEY) || '[]'); } catch (e) { return []; }
+      try { return JSON.parse(localStorage.getItem(topicFavoritesKey_()) || '[]'); } catch (e) { return []; }
     }
     function setTopicFavorites_(list) {
-      try { localStorage.setItem(EL_TOPIC_FAVORITES_KEY, JSON.stringify(list)); } catch (e) {}
+      try { localStorage.setItem(topicFavoritesKey_(), JSON.stringify(list)); } catch (e) {}
     }
     function isTopicFavorited_(id, type) {
       return getTopicFavorites_().some(function (f) { return String(f.id) === String(id) && f.type === type; });

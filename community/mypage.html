@@ -108,45 +108,10 @@
     font-weight:600;
     font-size:13px;
   }
-  /* 投稿・コメント・ベストアンサーの件数をバッジ風に表示するエリア */
-  .el-stat-badges{
-    display:flex;
-    flex-wrap:wrap;
-    gap:10px;
-    margin-top:16px;
-  }
-  .el-stat-badge{
-    display:flex;
-    align-items:center;
-    gap:8px;
-    background:var(--el-cream-deep);
-    border:1px solid var(--el-line-soft);
-    border-radius:999px;
-    padding:8px 16px 8px 10px;
-    font-size:13px;
-    font-weight:600;
-    color:var(--el-navy);
-  }
-  .el-stat-badge .el-stat-badge-icon{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    width:26px;
-    height:26px;
-    border-radius:50%;
-    background:var(--el-teal-tint);
-    color:var(--el-teal-deep);
-    flex:none;
-  }
-  .el-stat-badge .el-stat-badge-num{
-    font-size:15px;
-    font-weight:800;
-    color:var(--el-teal-deep);
-  }
   /* お気に入りにしたトピックの枠 */
   .el-fav-topic-card{
     display:block;
-    background:var(--el-paper);
+    background:var(--el-cream-deep);
     border:1px solid var(--el-line-soft);
     border-radius:var(--el-radius-m);
     padding:14px 16px;
@@ -175,13 +140,21 @@
     white-space:nowrap;
   }
   .el-fav-topic-empty{
-    padding:24px;
-    text-align:center;
+    padding:14px 4px 4px;
+    text-align:left;
     color:var(--el-ink-faint);
-    font-size:13.5px;
-    background:var(--el-paper);
-    border:1px solid var(--el-line-soft);
-    border-radius:var(--el-radius-m);
+    font-size:13px;
+  }
+  /* お気に入りにしたトピック：マイページのフォーラム枠の中に、他の行と同じカードの内側に収める */
+  .el-mypage-fav-topics-wrap{
+    padding:14px 18px 18px;
+    border-top:1px solid var(--el-line-soft);
+  }
+  .el-mypage-fav-topics-label{
+    font-size:13px;
+    font-weight:700;
+    color:var(--el-navy);
+    margin-bottom:10px;
   }
   /* フッターの背景色が正しく当たらない場合の保険（文字が背景と同化して見えなくなるのを防ぐ） */
   .el-footer{ background:#EDE4D0 !important; border-top:1px solid var(--el-line-soft, #E5DFD2) !important; }
@@ -402,20 +375,6 @@
               <div class="sub" id="profileRoleLabel">一般</div>
             </div>
           </div>
-          <div class="el-stat-badges">
-            <span class="el-stat-badge">
-              <span class="el-stat-badge-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></span>
-              投稿数 <span class="el-stat-badge-num" id="statBadgePosted">0</span>
-            </span>
-            <span class="el-stat-badge">
-              <span class="el-stat-badge-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H4l2.4-3.6A8.5 8.5 0 1 1 21 11.5Z"/></svg></span>
-              コメント数 <span class="el-stat-badge-num" id="statBadgeComment">0</span>
-            </span>
-            <span class="el-stat-badge">
-              <span class="el-stat-badge-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 15.09 8.26 22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2Z"/></svg></span>
-              ベストアンサー数 <span class="el-stat-badge-num" id="statBadgeBestAnswer">0</span>
-            </span>
-          </div>
         </div>
 
         <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:32px;">
@@ -451,14 +410,6 @@
 
         <div class="el-section-head" style="margin-top:44px;margin-bottom:16px;">
           <div>
-            <h2>お気に入りにしたトピック</h2>
-          </div>
-        </div>
-        <div id="favTopicsGrid" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px;"></div>
-        <div id="favTopicsEmpty" class="el-fav-topic-empty">まだお気に入りに追加したトピックがありません。トピックページの「お気に入り」ボタンから追加できます。</div>
-
-        <div class="el-section-head" style="margin-top:44px;margin-bottom:16px;">
-          <div>
             <h2>フォーラム</h2>
           </div>
         </div>
@@ -472,9 +423,14 @@
           <a href="my-forum-activity.html?view=replied" class="el-mypage-list-row">
             <span>返信したトピック</span><span class="count" id="mypageRepliedCount">0件</span>
           </a>
-          <a href="my-forum-activity.html?view=bestAnswer" class="el-mypage-list-row" style="border-bottom:none;">
+          <a href="my-forum-activity.html?view=bestAnswer" class="el-mypage-list-row">
             <span>ベストアンサーに選ばれたトピック</span><span class="count" id="mypageBestAnswerCount">0件</span>
           </a>
+          <div class="el-mypage-fav-topics-wrap">
+            <div class="el-mypage-fav-topics-label">お気に入りにしたトピック</div>
+            <div id="favTopicsGrid" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:10px;"></div>
+            <div id="favTopicsEmpty" class="el-fav-topic-empty">まだお気に入りに追加したトピックがありません。トピックページの「お気に入り」ボタンから追加できます。</div>
+          </div>
         </div>
 
         <div class="el-section-head" style="margin-top:36px;margin-bottom:16px;">
@@ -579,9 +535,12 @@
   (function () {
     var name = '';
     var role = 'guest';
+    var photoUrl = '';
     try {
       name = localStorage.getItem('el-username') || localStorage.getItem('el-user-name') || '';
       role = localStorage.getItem('el-user-role') || 'guest';
+      var storedProfile = JSON.parse(localStorage.getItem('el-user-profile') || '{}');
+      photoUrl = storedProfile.photoUrl || '';
     } catch (e) {}
 
     var roleLabels = { member: '一般', shift: 'SHiFT会員', admin: '管理者', guest: 'ゲスト' };
@@ -590,7 +549,16 @@
     var roleEl = document.getElementById('profileRoleLabel');
     if (nameEl) nameEl.textContent = (name || 'りか') + ' さん';
     if (roleEl) roleEl.textContent = roleLabels[role] || '一般';
-    if (avatarEl) avatarEl.textContent = (name || 'り').charAt(0);
+    // プロフィール写真を設定済みの場合はイニシャル文字ではなく実際の写真を表示する
+    // （以前はここで常にイニシャル文字を表示しており、profile.htmlで写真を設定しても
+    // マイページのアイコンに反映されなかった）。
+    if (avatarEl) {
+      if (photoUrl && typeof elDriveImgUrl === 'function') {
+        avatarEl.innerHTML = '<img src="' + elDriveImgUrl(photoUrl) + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
+      } else {
+        avatarEl.textContent = (name || 'り').charAt(0);
+      }
+    }
   })();
 
   // お気に入り件数の表示（マーケットのカード内、localStorageキーを参照）
@@ -829,17 +797,6 @@
       if (repliedEl) repliedEl.textContent = repliedCount + '件';
       if (bestEl) bestEl.textContent = bestAnswerCount + '件';
 
-      // 投稿したトピック数・コメント数・ベストアンサー数のバッジ表示。
-      // コメント数は「返信したトピック」件数（重複トピックはまとめている）とは別に、
-      // 実際に書き込んだコメント総数（フォーラム＋コミュニティ）をそのまま表示する。
-      var commentCount = myComments.length + myCommunityComments.length;
-      var badgePostedEl = document.getElementById('statBadgePosted');
-      var badgeCommentEl = document.getElementById('statBadgeComment');
-      var badgeBestEl = document.getElementById('statBadgeBestAnswer');
-      if (badgePostedEl) badgePostedEl.textContent = postedCount;
-      if (badgeCommentEl) badgeCommentEl.textContent = commentCount;
-      if (badgeBestEl) badgeBestEl.textContent = bestAnswerCount;
-
       // お気に入りにしたトピック（トピックページの「お気に入り」ボタンで追加、
       // マーケットのお気に入りと同じくlocalStorage管理）。既に取得済みのtopics／
       // communityTopicsと突き合わせて、実在するトピックだけを表示する
@@ -853,7 +810,11 @@
     var grid = document.getElementById('favTopicsGrid');
     var emptyEl = document.getElementById('favTopicsEmpty');
     if (!grid) return;
-    var FAV_TOPIC_KEY = 'el-topic-favorites';
+    // トピックページ側（topic.html／community-topic.html）と同じく、ログイン中のユーザーごとに
+    // キーを分ける（同じ端末で複数の会員がログインし直しても、お気に入りが共有されないように）。
+    var favUid = '';
+    try { favUid = localStorage.getItem('el-user-id') || localStorage.getItem('el-username') || ''; } catch (e) {}
+    var FAV_TOPIC_KEY = 'el-topic-favorites:' + (favUid || 'guest');
     var favorites = [];
     try { favorites = JSON.parse(localStorage.getItem(FAV_TOPIC_KEY) || '[]'); } catch (e) { favorites = []; }
 
