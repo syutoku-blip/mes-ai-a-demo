@@ -108,7 +108,7 @@
   .el-footer{ background:#EDE4D0 !important; border-top:1px solid var(--el-line-soft, #E5DFD2) !important; }
   /* .el-post のpaddingが後勝ちで上書きしてしまうため、質問本文（OP）の余白を明示的に復元 */
   .el-post--op{ padding:28px 28px 26px !important; }
-  .el-footer .tag{ color:var(--el-ink-faint, #8A8478) !important; }
+  .el-footer .tag{ color:var(--el-ink-faint, #8A8478) !important; max-width:none !important; white-space:nowrap !important; }
   .el-footer .el-logo{ color:var(--el-navy, #16233F) !important; }
   .el-footer .el-logo .dot{ color:var(--el-mustard-deep, #B9812A) !important; }
   .el-footer-cols a{ color:var(--el-ink-faint, #8A8478) !important; }
@@ -735,12 +735,12 @@
               <a href="guidelines.html">ガイドライン</a>
               <a href="#">よくある質問</a>
               <a href="contact.html">お問い合わせ</a>
+              <a href="https://syutoku-blip.github.io/shiftdev/community/operator-info.html" target="_blank" rel="noopener noreferrer">運営者情報</a>
             </div>
           </div>
         </div>
         <div class="el-footer-bottom">
           <span>© 2026 WorldShift Inc.</span>
-          <span>Export Lab Community</span>
         </div>
       </div>
     </footer>

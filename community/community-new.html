@@ -91,7 +91,7 @@
   }
   /* フッターの背景色が正しく当たらない場合の保険（文字が背景と同化して見えなくなるのを防ぐ） */
   .el-footer{ background:#EDE4D0 !important; border-top:1px solid var(--el-line-soft, #E5DFD2) !important; }
-  .el-footer .tag{ color:var(--el-ink-faint, #8A8478) !important; }
+  .el-footer .tag{ color:var(--el-ink-faint, #8A8478) !important; max-width:none !important; white-space:nowrap !important; }
   .el-footer .el-logo{ color:var(--el-navy, #16233F) !important; }
   .el-footer .el-logo .dot{ color:var(--el-mustard-deep, #B9812A) !important; }
   .el-footer-cols a{ color:var(--el-ink-faint, #8A8478) !important; }
@@ -270,16 +270,16 @@
     font-size:12px !important;
     color:var(--el-ink-faint, #8A8478) !important;
   }
-  /* サイドバーの広告カード：このページは「参加者範囲」の選択によって参加方法欄の表示・非表示が
-     切り替わり、フォーム本体（左カラム）の高さが動的に変わる。position:stickyのサイドバーは
-     CSSグリッドの行（左カラムの高さ）の範囲内で貼り付くため、本体側が短くなった状態でスクロール
-     すると、貼り付いたままのサイドバー広告が下の「投稿する」等のボタン列に重なって見えてしまう
-     不具合があった。フォーラムの新規投稿ページ（forum-new.html）は本体の高さが変わらないため
-     発生しない、このページ固有の問題。stickyをやめて通常の流し込み表示にすることで、本体の高さが
-     どう変化してもボタンに重なることがなくなる。 */
-  .el-compose-side{
-    position:static !important;
-  }
+  /* サイドバー（作成前のチェック＋広告）：フォーラムの新規投稿ページ（forum-new.html）と同じく、
+     スクロールに追尾するposition:stickyに統一する。
+     以前このページでは「参加者範囲」の選択によって参加方法欄の表示・非表示が切り替わり、フォーム
+     本体（左カラム）の高さが動的に変わることで、貼り付いたままのサイドバーが下の「作成する」等の
+     ボタン列に重なって見えてしまう不具合があったため、一時的にstickyを無効化していた。
+     今回、forum-new.html側で使われているのと同じJS（下部script参照：スクロール位置に応じて
+     サイドバーがボタン列の手前で止まるようtranslateYで押し上げる仕組み）をこのページにも導入した
+     ことで、追尾させたままでも重なりが発生しないようになったため、通常のsticky指定（style.css側の
+     デフォルト）に戻す。
+  */
 </style>
 </head>
 <body data-site="community" data-root="..">
@@ -688,12 +688,12 @@
               <a href="guidelines.html">ガイドライン</a>
               <a href="#">よくある質問</a>
               <a href="contact.html">お問い合わせ</a>
+              <a href="https://syutoku-blip.github.io/shiftdev/community/operator-info.html" target="_blank" rel="noopener noreferrer">運営者情報</a>
             </div>
           </div>
         </div>
         <div class="el-footer-bottom">
           <span>© 2026 WorldShift Inc.</span>
-          <span>Export Lab Community</span>
         </div>
       </div>
     </footer>
@@ -1198,6 +1198,45 @@
         showAdWidget();
       })
       .catch(function () { /* 取得に失敗した場合も非表示のまま（既に非表示済み） */ });
+  })();
+
+  // 右側の追尾エリア（作成前のチェック＋広告）は、下の「作成する」等のボタン列の手前で止める。
+  // forum-new.html（フォーラムの新規投稿ページ）と全く同じ仕組み：スクロールのたびにサイドバー
+  // 下端とボタン列上端の重なりを測り、重なる分だけtranslateYで押し上げる。これにより、参加者範囲の
+  // 選択でフォーム本体（左カラム）の高さが動的に変わっても、サイドバーがボタン列に重なることなく
+  // 追尾できる。
+  (function () {
+    var side = document.querySelector('.el-compose-side');
+    var actions = document.querySelector('.el-compose-actions');
+    if (!side || !actions) return;
+
+    var ticking = false;
+    function stopBeforeActions() {
+      side.style.transform = '';
+      var sideRect = side.getBoundingClientRect();
+      var actionsRect = actions.getBoundingClientRect();
+      var gap = 20;
+      var overlap = sideRect.bottom - (actionsRect.top - gap);
+
+      if (overlap > 0) {
+        side.style.transform = 'translateY(-' + overlap + 'px)';
+      }
+      ticking = false;
+    }
+
+    function requestUpdate() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(stopBeforeActions);
+    }
+
+    window.addEventListener('scroll', requestUpdate, { passive: true });
+    window.addEventListener('resize', requestUpdate);
+    // 参加者範囲の切り替えなどでフォーム本体の高さが変わったときにも再計算する。
+    document.querySelectorAll('input[name="visibilityScope"], input[name="joinMethod"]').forEach(function (el) {
+      el.addEventListener('change', requestUpdate);
+    });
+    requestUpdate();
   })();
 </script>
 

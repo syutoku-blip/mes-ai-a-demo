@@ -135,7 +135,7 @@
   }
   /* フッターの背景色が正しく当たらない場合の保険（文字が背景と同化して見えなくなるのを防ぐ） */
   .el-footer{ background:#EDE4D0 !important; border-top:1px solid var(--el-line-soft, #E5DFD2) !important; }
-  .el-footer .tag{ color:var(--el-ink-faint, #8A8478) !important; }
+  .el-footer .tag{ color:var(--el-ink-faint, #8A8478) !important; max-width:none !important; white-space:nowrap !important; }
   .el-footer .el-logo{ color:var(--el-navy, #16233F) !important; }
   .el-footer .el-logo .dot{ color:var(--el-mustard-deep, #B9812A) !important; }
   .el-footer-cols a{ color:var(--el-ink-faint, #8A8478) !important; }
@@ -993,12 +993,12 @@
               <a href="guidelines.html">ガイドライン</a>
               <a href="#">よくある質問</a>
               <a href="contact.html">お問い合わせ</a>
+              <a href="https://syutoku-blip.github.io/shiftdev/community/operator-info.html" target="_blank" rel="noopener noreferrer">運営者情報</a>
             </div>
           </div>
         </div>
         <div class="el-footer-bottom">
           <span>© 2026 WorldShift Inc.</span>
-          <span>Export Lab Community</span>
         </div>
       </div>
     </footer>
@@ -1523,7 +1523,16 @@
     var u = USERS[+btn.dataset.i];
     if (btn.dataset.action === 'view') {
       document.getElementById('udTitle').textContent = (u.fullname || u.username) + ' さんの詳細';
+      var udOnlineBadge = u.isOnline
+        ? '<span style="display:inline-flex;align-items:center;gap:5px;color:#1E6F63;font-weight:700;"><span style="width:8px;height:8px;border-radius:50%;background:#2F8F62;display:inline-block;"></span>オンライン</span>'
+        : '<span style="display:inline-flex;align-items:center;gap:5px;color:var(--el-ink-faint);font-weight:700;"><span style="width:8px;height:8px;border-radius:50%;background:var(--el-line-soft);display:inline-block;"></span>オフライン</span>';
+      var udLastLogin = u.lastLoginAt ? new Date(u.lastLoginAt).toLocaleString('ja-JP') : '-（ログイン履歴なし）';
+      var udForumCount = u.forumPostCount || 0;
+      var udCommunityCount = u.communityPostCount || 0;
       document.getElementById('udBody').innerHTML =
+        '状況：' + udOnlineBadge + '<br>' +
+        '最終ログイン日時：' + udLastLogin + '<br>' +
+        '投稿数：フォーラム ' + udForumCount + '件　／　コミュニティ ' + udCommunityCount + '件　（合計 ' + (udForumCount + udCommunityCount) + '件）<br>' +
         'ユーザーネーム：' + u.username + '<br>' +
         'メールアドレス：' + (u.email || '-') + '<br>' +
         '生年月日：' + (u.birthdate || '-') + '（' + (u.birthdateVisibility || '非公開') + '）<br>' +
