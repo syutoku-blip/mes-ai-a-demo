@@ -593,8 +593,25 @@
 <script>
   var PRODUCTS = {};
 
+  // カートは {id, qty} の配列として保持する（以前は同じidを複数回pushするだけで「数量」の
+  // 概念がなく、カート画面でも数量表示・個別削除ができなかった）。normalizeCart_は、以前の
+  // 「idの文字列をそのまま複数回追加する」形式で既にlocalStorageに保存されている値が残っていても、
+  // 同じidをqtyとして合算し新しい形式に変換する（データを失わない）。
+  function normalizeCart_(raw) {
+    var map = {};
+    var order = [];
+    (raw || []).forEach(function (entry) {
+      var id = typeof entry === 'string' ? entry : (entry && entry.id);
+      if (!id) return;
+      var qty = (entry && typeof entry === 'object' && entry.qty) ? (Number(entry.qty) || 1) : 1;
+      if (!map[id]) { map[id] = { id: id, qty: 0 }; order.push(id); }
+      map[id].qty += qty;
+    });
+    return order.map(function (id) { return map[id]; });
+  }
+
   var cart = [];
-  try { cart = JSON.parse(localStorage.getItem('el-cart') || '[]'); } catch (e) { cart = []; }
+  try { cart = normalizeCart_(JSON.parse(localStorage.getItem('el-cart') || '[]')); } catch (e) { cart = []; }
 
   function saveCart() {
     try { localStorage.setItem('el-cart', JSON.stringify(cart)); } catch (e) {}
@@ -603,12 +620,15 @@
   function updateCartBadge() {
     var el = document.getElementById('headerCartCount');
     if (!el) return;
-    el.textContent = cart.length;
-    el.classList.toggle('is-visible', cart.length > 0);
+    var totalQty = cart.reduce(function (s, it) { return s + (it.qty || 1); }, 0);
+    el.textContent = totalQty;
+    el.classList.toggle('is-visible', totalQty > 0);
   }
   function addToCart(id) {
     if (window.elRequireAuth && !window.elRequireAuth()) return;
-    cart.push(id);
+    var existing = cart.filter(function (it) { return it.id === id; })[0];
+    if (existing) existing.qty = (existing.qty || 1) + 1;
+    else cart.push({ id: id, qty: 1 });
     saveCart();
     showToast('カートに追加しました');
   }

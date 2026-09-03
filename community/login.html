@@ -45,6 +45,12 @@
   .el-footer-cols a{ color:var(--el-ink-faint, #8A8478) !important; }
   .el-footer-cols h6{ color:var(--el-navy, #16233F) !important; }
   .el-footer-bottom{ color:var(--el-ink-faint, #8A8478) !important; border-top-color:var(--el-line-soft, #E5DFD2) !important; }
+  /* フォームがdisplay:flex;flex-direction:columnのため、ボタンが（align-itemsの初期値
+     stretchにより）フォーム幅いっぱいに広がる。.el-btn自体はinline-flexでjustify-contentの
+     指定がないため、文字が左寄りに見えてしまっていた。ここで中央寄せにする。 */
+  #loginSubmitBtn{
+    justify-content:center !important;
+  }
 </style>
 </head>
 <body data-site="community" data-root="..">
