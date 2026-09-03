@@ -966,6 +966,16 @@
       .then(function (res) { return res.json(); })
       .then(function (data) {
         var items = (data.ok && data.items) ? data.items : [];
+        // カートの中身を、今まさに存在する商品IDだけに補正する（管理者が商品を削除した後も
+        // カートにIDだけが残り、実際には何も表示されないのにヘッダーのカート件数だけ
+        // 古い数量を表示し続けてしまう不具合の修正）。
+        (function () {
+          var validIds = {};
+          items.forEach(function (it) { validIds[it.id] = true; });
+          var beforeLen = cart.length;
+          cart = cart.filter(function (it) { return !!validIds[it.id]; });
+          if (cart.length !== beforeLen) saveCart();
+        })();
         if (!items.length) return;
         var emptyEl = document.getElementById('officialMarketEmpty');
         if (emptyEl) emptyEl.style.display = 'none';

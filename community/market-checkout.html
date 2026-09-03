@@ -667,6 +667,19 @@
             PRODUCTS[it.id] = { title: it.title, seller: 'WorldShift公式', price: '¥' + (it.price || 0) };
           }
         });
+        // カート（今すぐ購入の単発フローを除く）の中身を、今まさに存在する商品IDだけに補正する。
+        // 管理者が商品を削除した後もカートにIDだけが残り、実際にはカート画面に何も表示されない
+        // のに、ヘッダーのカート件数だけ古い数量を表示し続けてしまう不具合の修正。
+        // ※ 通信失敗時（.catch側）は「本当に存在しない」のか「一時的に取得できなかっただけ」か
+        //    区別できないため、ここでは成功時のみ補正する。
+        if (!singleItem) {
+          var validIds = {};
+          items.forEach(function (it) { validIds[it.id] = true; });
+          var beforeLen = cart.length;
+          cart = cart.filter(function (it) { return !!validIds[it.id]; });
+          lines = lines.filter(function (l) { return !!validIds[l.id]; });
+          if (cart.length !== beforeLen) saveCart();
+        }
         renderCheckout();
       })
       .catch(renderCheckout);
