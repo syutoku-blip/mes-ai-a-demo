@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>フォーム｜Export Lab</title>
+<title>お問い合わせ｜Export Lab</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&family=Noto+Sans+JP:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&family=Zen+Kurenaido&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&family=Noto+Sans+JP:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&family=Zen+Kurenaido&family=Yomogi&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="../shared/global-header.css">
 <style>
@@ -78,6 +78,8 @@
     padding:4px;
   }
   [data-guest-hide]{ display:none !important; }
+  /* ヘッダーの新規登録／ログイン／ログアウトボタン：背景色に関わらず文字が見えるよう、
+     透過ではなく塗りのボタンにする */
   #headerAuthLinks .el-btn, #headerSignupLink.el-btn, #headerLoginLink.el-btn{
     color:#fff !important;
     background:var(--el-navy, #16233F) !important;
@@ -87,6 +89,7 @@
     background:var(--el-teal-deep, #1E6F63) !important;
     border-color:var(--el-teal-deep, #1E6F63) !important;
   }
+  /* フッターの背景色が正しく当たらない場合の保険（文字が背景と同化して見えなくなるのを防ぐ） */
   .el-footer{ background:#EDE4D0 !important; border-top:1px solid var(--el-line-soft, #E5DFD2) !important; }
   .el-footer .tag{ color:var(--el-ink-faint, #8A8478) !important; }
   .el-footer .el-logo{ color:var(--el-navy, #16233F) !important; }
@@ -94,71 +97,13 @@
   .el-footer-cols a{ color:var(--el-ink-faint, #8A8478) !important; }
   .el-footer-cols h6{ color:var(--el-navy, #16233F) !important; }
   .el-footer-bottom{ color:var(--el-ink-faint, #8A8478) !important; border-top-color:var(--el-line-soft, #E5DFD2) !important; }
-
-  /* ---------- フォーム回答ページ（form.html）独自スタイル ---------- */
-  .el-public-form-card{
-    background:var(--el-paper); border:1.5px solid var(--el-line-soft);
-    border-radius:var(--el-radius-l); padding:36px; box-shadow:var(--el-shadow);
+  /* お問い合わせフォーム：出品申請フォーム（.el-apply-form系）のスタイルをそのまま流用する。 */
+  .el-contact-note{
+    font-size:12.5px;
+    color:var(--el-ink-faint, #8A8478);
+    line-height:1.8;
+    margin:0 0 18px;
   }
-  .el-public-form-head{ margin-bottom:26px; padding-bottom:22px; border-bottom:1px solid var(--el-line-soft); }
-  .el-public-form-context{
-    display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:700;
-    color:var(--el-teal-deep); background:var(--el-teal-tint); padding:4px 11px; border-radius:999px; margin-bottom:10px;
-  }
-  .el-public-form-head h1{ font-family:var(--font-display); font-size:22px; margin:0 0 8px; line-height:1.5; }
-  .el-public-form-head p{ font-size:14px; color:var(--el-navy-soft); line-height:1.8; margin:0; white-space:pre-wrap; }
-  .el-public-form-field{ margin-bottom:22px; }
-  .el-public-form-field.is-heading{ margin-bottom:16px; padding-top:6px; }
-  .el-public-form-field.is-heading:not(:first-child){ padding-top:26px; border-top:1px solid var(--el-line-soft); }
-  .el-public-form-field.is-heading h3{ font-family:var(--font-display); font-size:16.5px; margin:0 0 6px; color:var(--el-navy); }
-  .el-public-form-field.is-heading p{ font-size:13px; color:var(--el-ink-faint); margin:0; line-height:1.7; }
-  .el-public-form-label{
-    display:flex; align-items:center; gap:8px; font-size:13.5px; font-weight:700; color:var(--el-navy); margin-bottom:8px;
-  }
-  .el-public-form-label .req{
-    font-size:10.5px; font-weight:700; color:#fff; background:var(--el-coral);
-    padding:1px 7px; border-radius:999px; letter-spacing:.02em;
-  }
-  .el-public-form-help{ font-size:12px; color:var(--el-ink-faint); margin-top:6px; line-height:1.6; }
-  .el-public-form-field input[type="text"],
-  .el-public-form-field input[type="email"],
-  .el-public-form-field input[type="tel"],
-  .el-public-form-field input[type="number"],
-  .el-public-form-field input[type="url"],
-  .el-public-form-field input[type="date"],
-  .el-public-form-field input[type="datetime-local"],
-  .el-public-form-field textarea,
-  .el-public-form-field select{
-    width:100%; box-sizing:border-box; padding:11px 14px; border:1px solid var(--el-line);
-    border-radius:10px; font:inherit; font-size:14.5px; color:var(--el-navy); background:var(--el-cream);
-  }
-  .el-public-form-field textarea{ min-height:96px; resize:vertical; }
-  .el-public-form-field input:focus, .el-public-form-field textarea:focus, .el-public-form-field select:focus{
-    outline:2px solid var(--el-teal); outline-offset:1px; border-color:transparent; background:var(--el-paper);
-  }
-  .el-public-form-choice-list{ display:flex; flex-direction:column; gap:9px; }
-  .el-public-form-choice{
-    display:flex; align-items:center; gap:9px; font-size:14px; color:var(--el-navy);
-    padding:10px 13px; border:1px solid var(--el-line-soft); border-radius:10px; cursor:pointer;
-    transition:border-color .15s, background .15s;
-  }
-  .el-public-form-choice:hover{ border-color:var(--el-teal); background:var(--el-teal-tint); }
-  .el-public-form-choice input{ flex-shrink:0; accent-color:var(--el-teal); width:16px; height:16px; }
-  .el-public-form-agree{
-    display:flex; align-items:flex-start; gap:10px; font-size:13.5px; color:var(--el-navy);
-    background:var(--el-cream-deep); padding:14px 16px; border-radius:10px; line-height:1.7;
-  }
-  .el-public-form-agree input{ flex-shrink:0; margin-top:3px; accent-color:var(--el-teal); width:16px; height:16px; }
-  .el-public-form-foot{ margin-top:30px; padding-top:22px; border-top:1px solid var(--el-line-soft); }
-  .el-public-form-foot .el-btn{ width:100%; padding:13px; font-size:15px; }
-  .el-public-form-status{
-    text-align:center; padding:60px 24px; color:var(--el-ink-faint); font-size:13.5px;
-  }
-  .el-public-form-status svg{ margin-bottom:12px; }
-  .el-public-form-success{ text-align:center; padding:50px 24px; }
-  .el-public-form-success svg{ color:var(--el-teal); margin-bottom:16px; }
-  .el-public-form-success h2{ font-family:var(--font-display); font-size:20px; margin:0 0 10px; color:var(--el-navy); }
-  .el-public-form-success p{ font-size:14px; color:var(--el-navy-soft); line-height:1.8; margin:0 0 22px; }
 </style>
 </head>
 <body data-site="community" data-root="..">
@@ -210,14 +155,11 @@
 </script>
 <script>
   // なりすまし（管理者がユーザーとしてログイン中の状態を体験する機能）バナー。
-  // 通知ベル未読件数の取得と同じく全ページ共通で読み込まれるこのブロックに追記することで、
-  // サイト全体のどのページからでも「なりすまし中」であることが分かり、いつでも終了できるようにする。
-  // なりすまし開始そのものはadmin.htmlのユーザー管理からのみ行える（このIIFEはバナー表示専用）。
   (function () {
     var STASH_KEY = 'el-impersonate-stash';
     var stash = null;
     try { stash = JSON.parse(localStorage.getItem(STASH_KEY) || 'null'); } catch (e) {}
-    if (!stash) return; // なりすまし中でなければ何もしない
+    if (!stash) return;
 
     var impUsername = '';
     try { impUsername = localStorage.getItem('el-username') || localStorage.getItem('el-user-name') || ''; } catch (e) {}
@@ -352,29 +294,46 @@
   </div>
 
   <div class="el-content">
-    <main class="el-section" style="padding-top:36px;">
+    <main class="el-section" style="padding-top:0;">
+      <div class="el-catch">
+      <span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+      <p>ご不明点やご要望など、お気軽にお問い合わせください。</p>
+    </div>
+
       <div class="wrap" style="max-width:680px;">
+        <nav class="el-breadcrumb el-page-breadcrumb" aria-label="パンくず"><a href="index.html">ホーム</a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg><span>お問い合わせ</span></nav>
 
-        <div id="formStatus" class="el-public-form-status">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
-          <p>フォームを読み込んでいます…</p>
-        </div>
-
-        <div id="formSuccess" class="el-public-form-card el-public-form-success" hidden>
-          <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><path d="m8 12 3 3 5-6"/></svg>
-          <h2>送信しました</h2>
-          <p>ご入力ありがとうございました。内容を受け付けました。</p>
-          <a href="index.html" class="el-btn el-btn--ghost el-btn--sm">Export Labトップへ戻る</a>
-        </div>
-
-        <article class="el-public-form-card" id="formCard" hidden>
-          <div class="el-public-form-head">
-            <div id="formContextTag" class="el-public-form-context" hidden></div>
-            <h1 id="formTitle"></h1>
-            <p id="formDescription"></p>
+        <div class="el-section-head" style="margin-bottom:16px;">
+          <div>
+            <h2>お問い合わせ</h2>
+            <div class="sub">サイトに関するご質問・ご要望はこちらからお送りください</div>
           </div>
-          <form id="publicForm"></form>
-        </article>
+        </div>
+
+        <form class="el-apply-form" id="contactForm">
+          <p class="el-contact-note">会員登録の有無に関わらずどなたでもお送りいただけます。登録会員の方は、入力されたメールアドレスから自動的にご本人を確認しますので、そのまま送信してください。</p>
+          <div class="el-apply-row">
+            <div class="el-apply-field">
+              <label>お名前<span class="req">必須</span></label>
+              <input type="text" name="fullname" placeholder="例：山田太郎" required>
+            </div>
+            <div class="el-apply-field">
+              <label>メールアドレス<span class="req">必須</span></label>
+              <input type="email" name="email" placeholder="example@mail.com" required>
+            </div>
+          </div>
+
+          <div class="el-apply-field">
+            <label>お問い合わせ内容<span class="req">必須</span></label>
+            <textarea name="body" rows="7" placeholder="お問い合わせの内容をできるだけ具体的にご記入ください" required></textarea>
+          </div>
+
+          <div class="el-apply-foot">
+            <p>送信いただいた内容は、お問い合わせへの対応以外の目的では利用しません。ご返信までお時間をいただく場合がございます。</p>
+            <div id="contactStatus" style="font-size:13px;color:var(--el-teal-deep);margin-bottom:4px;"></div>
+            <button type="submit" class="el-btn el-btn--primary" id="contactSubmitBtn">送信する</button>
+          </div>
+        </form>
 
       </div>
     </main>
@@ -426,180 +385,195 @@
     });
   })();
 
-  document.querySelectorAll('.el-side-forum > summary[data-href]').forEach(function (summary) {
-    summary.addEventListener('click', function (e) {
-      if (e.target.closest('svg.chev')) return;
-      e.preventDefault();
-      window.location.href = summary.dataset.href;
-    });
+  // フォーラム／コミュニティ／マーケットのラベルをクリックしたときは開閉させず、そのままページ遷移させる
+  document.querySelectorAll('.el-side-label-link').forEach(function (el) {
+    el.addEventListener('click', function (e) { e.stopPropagation(); });
+  });
+  // ユーザーモード（ゲスト／登録ユーザー／管理者）の切り替えと共通ゲート処理
+  document.addEventListener('DOMContentLoaded', function () {
+    var ROLE_KEY = 'el-user-role';
+    function getRole() {
+      try { return localStorage.getItem(ROLE_KEY) || 'guest'; } catch (e) { return 'guest'; }
+    }
+    function setRole(role) {
+      try {
+        localStorage.setItem(ROLE_KEY, role);
+        if (role === 'guest') {
+          localStorage.removeItem('el-user-id');
+          localStorage.removeItem('el-username');
+          localStorage.removeItem('el-user-name');
+          localStorage.removeItem('el-user-profile');
+        }
+      } catch (e) {}
+    }
+    window.elGetRole = getRole;
+
+    var role = getRole();
+    document.body.setAttribute('data-role', role);
+
+    var bell = document.querySelector('.el-header-bell');
+    if (bell && role === 'guest') bell.style.display = 'none';
+    var headerAvatar = document.getElementById('headerAvatar');
+    if (headerAvatar && role === 'guest') headerAvatar.style.display = 'none';
+    else if (headerAvatar) {
+      try {
+        var hp = JSON.parse(localStorage.getItem('el-user-profile') || '{}');
+        var hUsername = localStorage.getItem('el-username') || hp.username || '';
+        if (hp.photoUrl) headerAvatar.innerHTML = '<img src="' + hp.photoUrl + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
+        else if (hUsername) headerAvatar.textContent = hUsername.charAt(0);
+      } catch (e) {}
+    }
+
+    var authLinksWrap = document.getElementById('headerAuthLinks');
+    var loginLink = document.getElementById('headerLoginLink');
+    var signupLink = document.getElementById('headerSignupLink');
+    if (role !== 'guest' && authLinksWrap) {
+      if (loginLink) loginLink.remove();
+      if (signupLink) {
+        signupLink.textContent = 'ログアウト';
+        signupLink.href = '#';
+        signupLink.addEventListener('click', function (e) {
+          e.preventDefault();
+          setRole('guest');
+          window.location.href = 'index.html';
+        });
+      }
+    }
+
+    var modal = document.getElementById('authModal');
+    window.elRequireAuth = function (e) {
+      if (getRole() !== 'guest') return true;
+      if (e) e.preventDefault();
+      if (modal) { modal.classList.add('is-open'); modal.setAttribute('aria-hidden', 'false'); }
+      return false;
+    };
+    if (modal) {
+      modal.querySelectorAll('[data-auth-close]').forEach(function (el) {
+        el.addEventListener('click', function () {
+          modal.classList.remove('is-open');
+          modal.setAttribute('aria-hidden', 'true');
+        });
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') { modal.classList.remove('is-open'); modal.setAttribute('aria-hidden', 'true'); }
+      });
+    }
+
+    // 管理者にはサイドバーに管理者ページへのリンクを追加
+    if (role === 'admin') {
+      var sideNav = document.querySelector('.el-sidebar nav');
+      if (sideNav && !sideNav.querySelector('#sideAdminSection')) {
+        var isAdminPage = window.location.pathname.indexOf('admin.html') !== -1;
+        var adminTabs = [
+          ['users', '登録ユーザー一覧'], ['announce', 'お知らせ登録'], ['event', 'イベント登録'],
+          ['content', 'コンテンツ登録'], ['forms', 'フォーム管理'], ['community', 'コミュニティ登録'],
+          ['guideline', 'ガイドライン管理'], ['ads', '広告設定'], ['apply', '出品申請の確認'],
+          ['marketOrders', 'マーケット申込み一覧'], ['inquiries', 'お問い合わせ一覧'], ['badge', 'バッジの付与'], ['operator', '運営者情報']
+        ];
+        var adminDetails = document.createElement('details');
+        adminDetails.className = 'el-side-forum';
+        adminDetails.id = 'sideAdminSection';
+        adminDetails.innerHTML = '<summary' + (isAdminPage ? ' class="is-active"' : '') + ' data-href="admin.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 3 7v6c0 5 4 9 9 9s9-4 9-9V7l-9-5Z"/><path d="m9 12 2 2 4-4"/></svg><span class="lbl">管理者ページ</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></summary><div class="el-side-sub">' +
+          adminTabs.map(function (t) { return '<a href="admin.html?tab=' + t[0] + '">' + t[1] + '</a>'; }).join('') +
+          '</div>';
+        sideNav.appendChild(adminDetails);
+        var adminSummary = adminDetails.querySelector('summary[data-href]');
+        adminSummary.addEventListener('click', function (e) {
+          if (e.target.closest('svg.chev')) return;
+          e.preventDefault();
+          window.location.href = adminSummary.dataset.href;
+        });
+      }
+    }
+
+    if (role === 'guest') {
+      document.querySelectorAll('[data-guest-block]').forEach(function (el) {
+        el.addEventListener('click', window.elRequireAuth);
+      });
+    }
   });
 
-  // ------------------------------------------------------------
-  // Google Apps Script のウェブアプリURL（admin.html と同じもの）
-  // ------------------------------------------------------------
-  var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
+  // お問い合わせフォーム：ログイン中の会員であれば、お名前・メールアドレスを分かる範囲で
+  // 先に入力しておく（未ログインでも送信自体は可能。サーバー側でメールアドレスを
+  // ユーザーマスタと突き合わせて、登録会員かどうかを都度判定する）。
+  (function () {
+    var form = document.getElementById('contactForm');
+    if (!form) return;
+    try {
+      var profile = JSON.parse(localStorage.getItem('el-user-profile') || '{}');
+      var emailInput = form.querySelector('input[name="email"]');
+      var nameInput = form.querySelector('input[name="fullname"]');
+      var myEmail = localStorage.getItem('el-user-email') || profile.email || '';
+      var myName = profile.fullname || localStorage.getItem('el-user-name') || '';
+      if (emailInput && myEmail) emailInput.value = myEmail;
+      if (nameInput && myName) nameInput.value = myName;
+    } catch (e) {}
 
-  function apiPost(payload) {
-    return fetch(API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify(payload)
-    }).then(function (res) { return res.json(); });
-  }
-
-  function escHtml(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
-  function escAttr(s) { return escHtml(s).replace(/"/g, '&quot;'); }
-
-  var params = new URLSearchParams(window.location.search);
-  var formId = params.get('formId') || '';
-  var eventId = params.get('eventId') || '';
-  var eventTitle = params.get('eventTitle') || '';
-
-  var statusEl = document.getElementById('formStatus');
-  var cardEl = document.getElementById('formCard');
-  var successEl = document.getElementById('formSuccess');
-
-  function showStatus(message) {
-    statusEl.hidden = false; cardEl.hidden = true; successEl.hidden = true;
-    statusEl.querySelector('p').textContent = message;
-  }
-
-  if (!formId) {
-    showStatus('フォームが指定されていません。イベント詳細ページなど、「申し込む」ボタンからこのページを開いてください。');
-  } else {
-    apiPost({ action: 'getFormTemplate', formId: formId }).then(function (data) {
-      if (!data.ok || !data.item) {
-        showStatus('このフォームは現在ご利用いただけません。URLをご確認いただくか、運営までお問い合わせください。');
-        return;
-      }
-      renderForm(data.item);
-    }).catch(function () {
-      showStatus('サーバーへの接続に失敗しました。時間をおいて再度お試しください。');
-    });
-  }
-
-  function fieldWrapperOpen(field) {
-    var reqTag = field.required ? '<span class="req">必須</span>' : '';
-    return '<div class="el-public-form-field" data-field-id="' + escAttr(field.id) + '">' +
-      '<div class="el-public-form-label">' + escHtml(field.label) + reqTag + '</div>';
-  }
-  function fieldWrapperClose(field) {
-    return (field.helpText ? '<div class="el-public-form-help">' + escHtml(field.helpText) + '</div>' : '') + '</div>';
-  }
-
-  function renderField(field) {
-    var reqAttr = field.required ? 'required' : '';
-    var name = 'f_' + field.id;
-
-    if (field.type === 'heading') {
-      return '<div class="el-public-form-field is-heading"><h3>' + escHtml(field.label) + '</h3>' +
-        (field.helpText ? '<p>' + escHtml(field.helpText) + '</p>' : '') + '</div>';
-    }
-
-    if (field.type === 'agree') {
-      return '<div class="el-public-form-field" data-field-id="' + escAttr(field.id) + '">' +
-        '<label class="el-public-form-agree">' +
-          '<input type="checkbox" name="' + name + '" ' + reqAttr + '>' +
-          '<span>' + escHtml(field.label) + (field.required ? ' <span class="req" style="margin-left:4px;">必須</span>' : '') + '</span>' +
-        '</label>' +
-        (field.helpText ? '<div class="el-public-form-help">' + escHtml(field.helpText) + '</div>' : '') +
-      '</div>';
-    }
-
-    if (field.type === 'textarea') {
-      return fieldWrapperOpen(field) +
-        '<textarea name="' + name + '" placeholder="' + escAttr(field.placeholder) + '" ' + reqAttr + '></textarea>' +
-        fieldWrapperClose(field);
-    }
-
-    if (field.type === 'select') {
-      var opts = (field.options || []).map(function (o) { return '<option value="' + escAttr(o) + '">' + escHtml(o) + '</option>'; }).join('');
-      return fieldWrapperOpen(field) +
-        '<select name="' + name + '" ' + reqAttr + '><option value="">選択してください</option>' + opts + '</select>' +
-        fieldWrapperClose(field);
-    }
-
-    if (field.type === 'radio' || field.type === 'checkbox') {
-      var inputType = field.type === 'radio' ? 'radio' : 'checkbox';
-      var choices = (field.options || []).map(function (o) {
-        return '<label class="el-public-form-choice">' +
-          '<input type="' + inputType + '" name="' + name + (field.type === 'checkbox' ? '[]' : '') + '" value="' + escAttr(o) + '">' +
-          '<span>' + escHtml(o) + '</span></label>';
-      }).join('');
-      // ラジオボタンの required は、選択肢のどれか1つに required を付ければグループ全体に適用される
-      if (field.type === 'radio' && field.required) {
-        choices = choices.replace('<input type="radio"', '<input required type="radio"');
-      }
-      return fieldWrapperOpen(field) + '<div class="el-public-form-choice-list">' + choices + '</div>' + fieldWrapperClose(field);
-    }
-
-    var inputType = { text: 'text', email: 'email', tel: 'tel', number: 'number', date: 'date', datetime: 'datetime-local', url: 'url' }[field.type] || 'text';
-    return fieldWrapperOpen(field) +
-      '<input type="' + inputType + '" name="' + name + '" placeholder="' + escAttr(field.placeholder) + '" ' + reqAttr + '>' +
-      fieldWrapperClose(field);
-  }
-
-  function renderForm(template) {
-    document.title = template.name + '｜Export Lab';
-    document.getElementById('formTitle').textContent = template.name;
-    document.getElementById('formDescription').textContent = template.description || '';
-
-    var contextTag = document.getElementById('formContextTag');
-    if (eventTitle) {
-      contextTag.hidden = false;
-      contextTag.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>' + escHtml(eventTitle) + ' の申し込みフォーム';
-    }
-
-    var formEl = document.getElementById('publicForm');
-    var fields = template.fields || [];
-    var fieldsHtml = fields.map(renderField).join('');
-    var footHtml = '<div class="el-public-form-foot"><button type="submit" class="el-btn el-btn--primary" id="publicFormSubmitBtn">送信する</button></div>';
-    formEl.innerHTML = fieldsHtml + footHtml;
-
-    statusEl.hidden = true; successEl.hidden = true; cardEl.hidden = false;
-
-    formEl.addEventListener('submit', function (e) {
+    var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
+    form.addEventListener('submit', function (e) {
       e.preventDefault();
-      var answers = {};
-      fields.forEach(function (field) {
-        if (field.type === 'heading') return;
-        var name = 'f_' + field.id;
-        if (field.type === 'checkbox') {
-          answers[field.id] = Array.prototype.slice.call(formEl.querySelectorAll('[name="' + CSS.escape(name) + '[]"]:checked')).map(function (el) { return el.value; });
-        } else if (field.type === 'radio') {
-          var checked = formEl.querySelector('[name="' + CSS.escape(name) + '"]:checked');
-          answers[field.id] = checked ? checked.value : '';
-        } else if (field.type === 'agree') {
-          var box = formEl.querySelector('[name="' + CSS.escape(name) + '"]');
-          answers[field.id] = box && box.checked ? '同意する' : '';
-        } else {
-          var input = formEl.querySelector('[name="' + CSS.escape(name) + '"]');
-          answers[field.id] = input ? input.value : '';
-        }
-      });
+      var fd = new FormData(form);
+      var status = document.getElementById('contactStatus');
+      var btn = document.getElementById('contactSubmitBtn');
+      btn.disabled = true;
+      if (status) { status.style.color = 'var(--el-teal-deep)'; status.textContent = '送信中…'; }
 
-      var submitBtn = document.getElementById('publicFormSubmitBtn');
-      submitBtn.disabled = true;
-      submitBtn.textContent = '送信中…';
-
-      apiPost({
-        action: 'submitForm', formId: formId, eventId: eventId, eventTitle: eventTitle, answers: answers
-      }).then(function (data) {
-        if (data.ok) {
-          cardEl.hidden = true;
-          successEl.hidden = false;
-        } else {
-          alert(data.error || '送信に失敗しました。');
-          submitBtn.disabled = false;
-          submitBtn.textContent = '送信する';
-        }
-      }).catch(function () {
-        alert('通信エラーが発生しました。時間をおいて再度お試しください。');
-        submitBtn.disabled = false;
-        submitBtn.textContent = '送信する';
-      });
+      fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({
+          action: 'createContent',
+          type: 'inquiry',
+          email: fd.get('email') || '',
+          fullname: fd.get('fullname') || '',
+          body: fd.get('body') || ''
+          // userId／usernameはこの時点では送らない。送信されたメールアドレスが登録会員の
+          // ものと一致するかどうかは、なりすまし防止のためサーバー側（communitygas.txt）で
+          // 都度判定する。
+        })
+      })
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+          if (data.ok) {
+            if (status) { status.style.color = 'var(--el-teal-deep)'; status.textContent = 'お問い合わせを受け付けました。ご返信までお時間をいただく場合がございます。'; }
+            form.reset();
+            try {
+              var profile2 = JSON.parse(localStorage.getItem('el-user-profile') || '{}');
+              var emailInput2 = form.querySelector('input[name="email"]');
+              var nameInput2 = form.querySelector('input[name="fullname"]');
+              var myEmail2 = localStorage.getItem('el-user-email') || profile2.email || '';
+              var myName2 = profile2.fullname || localStorage.getItem('el-user-name') || '';
+              if (emailInput2 && myEmail2) emailInput2.value = myEmail2;
+              if (nameInput2 && myName2) nameInput2.value = myName2;
+            } catch (e2) {}
+          } else {
+            btn.disabled = false;
+            if (status) { status.style.color = '#B8593D'; status.textContent = '送信に失敗しました。時間をおいて再度お試しください。'; }
+          }
+        })
+        .catch(function () {
+          btn.disabled = false;
+          if (status) { status.style.color = '#B8593D'; status.textContent = '送信に失敗しました。通信環境をご確認の上、再度お試しください。'; }
+        })
+        .finally(function () { btn.disabled = false; });
     });
-  }
+  })();
 </script>
+
+<div class="el-auth-modal" id="authModal" aria-hidden="true">
+  <div class="el-auth-modal-backdrop" data-auth-close></div>
+  <div class="el-auth-modal-panel" role="dialog" aria-modal="true">
+    <button type="button" class="el-auth-modal-close" data-auth-close aria-label="閉じる">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <h3>ユーザー登録してください</h3>
+    <p>この操作を行うには、会員登録（無料）が必要です。登録すると投稿・返信・購入などすべての機能がご利用いただけます。</p>
+    <div class="el-auth-modal-actions">
+      <a href="signup.html" class="el-btn el-btn--primary el-btn--sm">新規登録する</a>
+      <button type="button" class="el-btn el-btn--ghost el-btn--sm" data-auth-close>閉じる</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

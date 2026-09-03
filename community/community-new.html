@@ -685,9 +685,9 @@
             </div>
             <div>
               <h6>サポート</h6>
-              <a href="#">ガイドライン</a>
+              <a href="guidelines.html">ガイドライン</a>
               <a href="#">よくある質問</a>
-              <a href="#">お問い合わせ</a>
+              <a href="contact.html">お問い合わせ</a>
             </div>
           </div>
         </div>
@@ -827,7 +827,7 @@
           ['users', '登録ユーザー一覧'], ['announce', 'お知らせ登録'], ['event', 'イベント登録'],
           ['content', 'コンテンツ登録'], ['forms', 'フォーム管理'], ['community', 'コミュニティ登録'],
           ['guideline', 'ガイドライン管理'], ['ads', '広告設定'], ['apply', '出品申請の確認'],
-          ['marketOrders', 'マーケット申込み一覧'], ['badge', 'バッジの付与'], ['operator', '運営者情報']
+          ['marketOrders', 'マーケット申込み一覧'], ['inquiries', 'お問い合わせ一覧'], ['badge', 'バッジの付与'], ['operator', '運営者情報']
         ];
         var adminDetails = document.createElement('details');
         adminDetails.className = 'el-side-forum';
@@ -1079,6 +1079,14 @@
       var submitBtn = form.querySelector('button[type="submit"]');
       submitBtn.disabled = true;
 
+      // 指定メンバーはユーザーネームで検索・選択させる(その方が探しやすいため)が、保存する値は
+      // ユーザーIDにする(ユーザー認識は必ずIDで行う方針のため。ユーザーネームは後から変更され
+      // うるので、名前の配列のまま保存すると本人が改名した際に招待が外れてしまう)。
+      var selectedMemberIds = selectedMembers.map(function (uname) {
+        var m = allMembers.filter(function (mm) { return mm.username === uname; })[0];
+        return m ? m.userId : '';
+      }).filter(function (id) { return !!id; });
+
       fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -1095,7 +1103,7 @@
           visibilityScope: (form.querySelector('input[name="visibilityScope"]:checked') || {}).value || 'general',
           participationScope: participationScope,
           joinMethod: (form.querySelector('input[name="joinMethod"]:checked') || {}).value || 'anyone',
-          invitedMembers: participationScope === 'invited' ? JSON.stringify(selectedMembers) : '',
+          invitedMembers: participationScope === 'invited' ? JSON.stringify(selectedMemberIds) : '',
           // 作成者は入力式ではなく、ログイン中の自分自身を使う（他人になりすませないように）。
           // 表示は氏名ではなくユーザーネームで統一する（community-board.htmlの「運営：」欄や
           // メンバーの編集パネルの管理者バッジなど、他の場所も全てユーザーネームで表示しているため）。

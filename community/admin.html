@@ -397,6 +397,7 @@
           <a href="#" data-tab="ads">広告設定</a>
           <a href="#" data-tab="apply">出品申請の確認</a>
           <a href="#" data-tab="marketOrders">マーケット申込み一覧</a>
+          <a href="#" data-tab="inquiries">お問い合わせ一覧</a>
           <a href="#" data-tab="badge">バッジの付与</a>
           <a href="#" data-tab="moderation">モデレーション管理</a>
           <a href="#" data-tab="modlog">モデレーション履歴</a>
@@ -837,6 +838,17 @@
           <div id="marketOrdersList" style="display:flex;flex-direction:column;gap:10px;"></div>
         </div>
 
+        <!-- お問い合わせ一覧（contact.html から送信された問い合わせ。スプレッドシートに記録される）。
+             送信されたメールアドレスがユーザーマスタの登録会員と一致する場合、サーバー側
+             （handleCreateContent）が自動的にuserId／usernameを記録しているので、登録会員かどうか
+             と、そのユーザーのマイページへのリンクをここに表示する。 -->
+        <div class="el-admin-panel" data-panel="inquiries" style="display:none;">
+          <p style="font-size:13px;color:var(--el-ink-faint);margin:0 0 16px;line-height:1.8;">
+            お問い合わせフォーム（contact.html）から送信された内容の一覧です。送信されたメールアドレスが登録会員のものと一致する場合は「登録会員」として、そのユーザーのマイページへのリンクを表示します。一致しない場合は「未登録」と表示されます。
+          </p>
+          <div id="inquiriesList" style="display:flex;flex-direction:column;gap:10px;"></div>
+        </div>
+
         <!-- バッジの付与 -->
         <div class="el-admin-panel" data-panel="badge" style="display:none;">
           <form id="badgeForm" style="display:flex;flex-direction:column;gap:16px;max-width:480px;">
@@ -978,9 +990,9 @@
             </div>
             <div>
               <h6>サポート</h6>
-              <a href="#">ガイドライン</a>
+              <a href="guidelines.html">ガイドライン</a>
               <a href="#">よくある質問</a>
-              <a href="#">お問い合わせ</a>
+              <a href="contact.html">お問い合わせ</a>
             </div>
           </div>
         </div>
@@ -2806,6 +2818,54 @@
     }).catch(function () { alert('通信エラーが発生しました。'); });
   });
 
+  // お問い合わせ一覧（contact.html から送信された内容。スプレッドシートに記録される）。
+  // 送信されたメールアドレスがユーザーマスタの登録会員と一致する場合、handleCreateContent側で
+  // 自動的にuserId／usernameが記録されているので、ここでは受け取った値をそのまま「登録会員／
+  // 未登録」の判定と、そのユーザーのマイページ（profile.html?user=）へのリンクに使うだけでよい。
+  (function () {
+    var inquiriesList = document.getElementById('inquiriesList');
+    if (!inquiriesList) return;
+    var loaded = false;
+    function loadInquiries() {
+      apiPost({ action: 'listContent', type: 'inquiry' }).then(function (data) {
+        if (!data.ok) return;
+        var items = data.items || [];
+        if (!items.length) {
+          inquiriesList.innerHTML = '<div style="padding:32px;text-align:center;color:var(--el-ink-faint);font-size:14px;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);">お問い合わせはまだありません。</div>';
+          return;
+        }
+        inquiriesList.innerHTML = items.map(function (q) {
+          var isRegistered = !!q.userId;
+          var badge = isRegistered
+            ? '<span class="el-role-badge el-role-badge--member" style="margin-left:8px;">登録会員</span>'
+            : '<span class="el-role-badge" style="margin-left:8px;background:var(--el-cream-deep);color:var(--el-ink-faint);">未登録</span>';
+          var whoLine = escHtml(q.fullname || '') + '（' + escHtml(q.email || '') + '）' + badge;
+          var linkHtml = isRegistered
+            ? '<a href="profile.html?user=' + encodeURIComponent(q.username || '') + '" class="el-btn el-btn--ghost el-btn--sm" target="_blank" rel="noopener noreferrer">マイページを見る</a>'
+            : '';
+          var when = q.createdAt ? new Date(q.createdAt).toLocaleString('ja-JP') : '';
+          return '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding:16px 18px;background:var(--el-paper);border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);">' +
+            '<div style="min-width:0;">' +
+            '<div style="font-weight:700;color:var(--el-navy);">' + whoLine + '</div>' +
+            '<div style="font-size:12.5px;color:var(--el-ink-faint);margin-top:4px;">' + escHtml(when) + '</div>' +
+            '<div style="font-size:13.5px;color:var(--el-navy);margin-top:10px;white-space:pre-wrap;">' + escHtml(q.body || '') + '</div>' +
+            '</div>' +
+            '<div style="flex:none;">' + linkHtml + '</div>' +
+            '</div>';
+        }).reverse().join('');
+      });
+    }
+    // 他のタブと同じく、初回にこのタブへ切り替えたタイミングで読み込む（他のタブの表示中に
+    // 毎回シートを読みに行くのは無駄なため）。
+    document.querySelectorAll('#adminSideTabs a[data-tab="inquiries"]').forEach(function (t) {
+      t.addEventListener('click', function () {
+        if (loaded) return;
+        loaded = true;
+        loadInquiries();
+      });
+    });
+  })();
+
   // ------------------------------------------------------------
   // モデレーション管理：フォーラム投稿／コメント、コミュニティ、コミュニティ投稿の削除・非公開、
   // コミュニティメンバーの追加・除名。削除・非公開・メンバーの削除は理由の入力が必須で、
@@ -3274,7 +3334,7 @@
           ['users', '登録ユーザー一覧'], ['announce', 'お知らせ登録'], ['event', 'イベント登録'],
           ['content', 'コンテンツ登録'], ['forms', 'フォーム管理'], ['community', 'コミュニティ登録'],
           ['guideline', 'ガイドライン管理'], ['ads', '広告設定'], ['apply', '出品申請の確認'],
-          ['marketOrders', 'マーケット申込み一覧'], ['badge', 'バッジの付与'],
+          ['marketOrders', 'マーケット申込み一覧'], ['inquiries', 'お問い合わせ一覧'], ['badge', 'バッジの付与'],
           ['moderation', 'モデレーション管理'], ['modlog', 'モデレーション履歴'], ['operator', '運営者情報']
         ];
         var adminDetails = document.createElement('details');

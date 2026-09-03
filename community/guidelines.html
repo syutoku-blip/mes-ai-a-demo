@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>通知｜Export Lab</title>
+<title>ガイドライン｜Export Lab</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&family=Noto+Sans+JP:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&family=Zen+Kurenaido&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&family=Noto+Sans+JP:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&family=Zen+Kurenaido&family=Yomogi&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="../shared/global-header.css">
 <style>
@@ -26,81 +26,6 @@
   .el-search input[type="search"]::-webkit-search-cancel-button{
     -webkit-appearance:none;
     display:none;
-  }
-  /* 広告バナー：横長の画像1枚を全面に表示し、CTAボタンとスポンサー表記を重ねる（管理者ページで「横長」「スクエア」を選択） */
-  .el-ad-banner-v2{
-    position:relative !important;
-    display:flex !important;
-    flex-direction:column !important;
-    width:100% !important;
-    border-radius:var(--el-radius-m, 14px) !important;
-    overflow:hidden !important;
-    background:var(--el-cream-deep, #FBF3E3) !important;
-  }
-  .el-ad-image-wrap-v2{
-    position:relative !important;
-    width:100% !important;
-    aspect-ratio:1200 / 200 !important;
-  }
-  .el-ad-banner-v2.is-square{
-    max-width:280px !important;
-    margin:0 auto !important;
-  }
-  .el-ad-banner-v2.is-square .el-ad-image-wrap-v2{
-    aspect-ratio:1 / 1 !important;
-  }
-  /* ADの文字とスポンサー名を1つの帯にまとめて同じ行に表示する（以前は画像に重ねるADバッジと
-     画像下のスポンサー行が上下に分かれていたが、指示により「AD　　　スポンサー：〜」のように
-     1箇所にまとめる）。ADバッジ自体もスクエア広告と同じく、画像の枠外（帯の中）に表示する。 */
-  .el-ad-footer-v2{
-    display:flex !important;
-    align-items:center !important;
-    gap:10px !important;
-    width:100% !important;
-    box-sizing:border-box !important;
-    padding:8px 14px !important;
-    /* 「ベージュではなくグレーがいい」というフィードバックを受け、サイト共通のクリーム系トーン
-       ではなく、中立なグレーの帯に変更。 */
-    background:#EDEDED !important;
-    border-top:1px solid #DDDDDD !important;
-  }
-  .el-ad-tag-v2{
-    position:static !important;
-    flex:none !important;
-    font:700 9px/1.2 var(--font-mono, monospace) !important;
-    letter-spacing:.08em !important;
-    color:var(--el-ink-faint, #8A8478) !important;
-    padding:2px 8px !important;
-    border:1px solid rgba(22,35,63,.1) !important;
-    border-radius:999px !important;
-    background:#fff !important;
-  }
-  .el-ad-image-v2{
-    position:absolute !important;
-    inset:0 !important;
-    /* 「推奨サイズ」通りの画像でも、圧縮時の丸め誤差などでピクセル単位の比率のズレが
-       生じることがあり、cover（はみ出た部分を切り取る）だと必ず何かがトリミングされて
-       しまっていた。containに変更し、画像全体を必ず欠けさせずに表示する
-       （比率が合わない場合は左右または上下に背景色の余白が出るだけにする）。 */
-    background-size:contain !important;
-    background-repeat:no-repeat !important;
-    background-position:center !important;
-    background-color:var(--el-teal, #2F8F82) !important;
-  }
-  /* スポンサー表記は画像の下の帯に独立して表示する（以前は画像に重ねていたため、
-     文字が画像の一部を隠してしまっていた）。 */
-  /* 「前みたいに薄いグレーっぽい感じがいい」というフィードバックを受け、白ではなく
-     薄いグレー寄りのトーン（--el-cream-deep）の帯に変更。 */
-  .el-ad-sponsor-v2{
-    position:static !important;
-    display:block !important;
-    flex:1 !important;
-    min-width:0 !important;
-    font-size:11px !important;
-    color:var(--el-navy, #16233F) !important;
-    padding:0 !important;
-    background:transparent !important;
-    border-top:none !important;
   }
   .el-auth-modal{
     display:none;
@@ -153,6 +78,8 @@
     padding:4px;
   }
   [data-guest-hide]{ display:none !important; }
+  /* ヘッダーの新規登録／ログイン／ログアウトボタン：背景色に関わらず文字が見えるよう、
+     透過ではなく塗りのボタンにする */
   #headerAuthLinks .el-btn, #headerSignupLink.el-btn, #headerLoginLink.el-btn{
     color:#fff !important;
     background:var(--el-navy, #16233F) !important;
@@ -162,6 +89,7 @@
     background:var(--el-teal-deep, #1E6F63) !important;
     border-color:var(--el-teal-deep, #1E6F63) !important;
   }
+  /* フッターの背景色が正しく当たらない場合の保険（文字が背景と同化して見えなくなるのを防ぐ） */
   .el-footer{ background:#EDE4D0 !important; border-top:1px solid var(--el-line-soft, #E5DFD2) !important; }
   .el-footer .tag{ color:var(--el-ink-faint, #8A8478) !important; }
   .el-footer .el-logo{ color:var(--el-navy, #16233F) !important; }
@@ -169,38 +97,48 @@
   .el-footer-cols a{ color:var(--el-ink-faint, #8A8478) !important; }
   .el-footer-cols h6{ color:var(--el-navy, #16233F) !important; }
   .el-footer-bottom{ color:var(--el-ink-faint, #8A8478) !important; border-top-color:var(--el-line-soft, #E5DFD2) !important; }
-
-  /* 通知ページ専用スタイル */
-  .el-notif-row{
-    display:flex;
-    gap:12px;
-    align-items:flex-start;
-    padding:16px 18px;
-    background:var(--el-paper, #fff);
+  /* ガイドライン本文：セクション見出し・本文（bodyHtmlのp/ul/li）の見た目 */
+  .el-guideline-doc{
+    background:#fff;
     border:1px solid var(--el-line-soft, #E5DFD2);
     border-radius:var(--el-radius-m, 14px);
-    text-decoration:none;
-    color:inherit;
-    transition:box-shadow .15s;
+    padding:28px 30px;
   }
-  .el-notif-row:hover{ box-shadow:var(--el-shadow-lift, 0 4px 14px rgba(22,35,63,.08)); }
-  .el-notif-row.is-unread{ background:var(--el-teal-tint, #E4F1EE); border-color:var(--el-teal, #2F8F82); }
-  .el-notif-icon{
-    width:36px;
-    height:36px;
-    border-radius:50%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background:var(--el-cream-deep, #FBF3E3);
+  .el-guideline-section{
+    padding:22px 0;
+    border-bottom:1px solid var(--el-line-soft, #E5DFD2);
+  }
+  .el-guideline-section:first-child{ padding-top:2px; }
+  .el-guideline-section:last-child{ border-bottom:none; padding-bottom:2px; }
+  .el-guideline-section h3{
+    margin:0 0 10px;
+    font-size:15.5px;
+    font-weight:700;
     color:var(--el-navy, #16233F);
-    flex:none;
   }
-  .el-notif-main{ flex:1; min-width:0; }
-  .el-notif-title{ font-size:13.5px; font-weight:700; color:var(--el-navy, #16233F); line-height:1.5; }
-  .el-notif-body{ font-size:12.5px; color:var(--el-ink-faint, #8A8478); margin-top:3px; }
-  .el-notif-time{ font-size:11px; color:var(--el-ink-faint, #8A8478); margin-top:6px; }
-  .el-notif-unread-dot{ width:8px; height:8px; border-radius:50%; background:var(--el-coral, #C1553B); flex:none; margin-top:6px; }
+  .el-guideline-section .body{
+    font-size:13.5px;
+    line-height:1.9;
+    color:var(--el-ink, #3A3529);
+  }
+  .el-guideline-section .body p{ margin:0 0 10px; }
+  .el-guideline-section .body p:last-child{ margin-bottom:0; }
+  .el-guideline-section .body ul{ margin:0 0 10px; padding-left:1.4em; }
+  .el-guideline-section .body ul:last-child{ margin-bottom:0; }
+  .el-guideline-section .body li{ margin:0 0 4px; }
+  #guidelineDocEmpty{
+    display:none;
+    text-align:center;
+    padding:40px 20px;
+    color:var(--el-ink-faint, #8A8478);
+    font-size:13.5px;
+  }
+  #guidelineDocLoading{
+    text-align:center;
+    padding:40px 20px;
+    color:var(--el-ink-faint, #8A8478);
+    font-size:13.5px;
+  }
 </style>
 </head>
 <body data-site="community" data-root="..">
@@ -221,20 +159,42 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
         <span class="count" id="headerBellCount" style="display:none;">0</span>
       </a>
-      <a href="mypage.html" class="el-avatar" id="headerAvatar" aria-label="マイページ">り</a>
-    </div>
-  </div>
-</header>
+<script>
+  // 通知ベルの未読件数（全ページ共通）
+  (function () {
+    var uid = '', uname = '';
+    try {
+      uid = localStorage.getItem('el-user-id') || '';
+      uname = localStorage.getItem('el-username') || '';
+    } catch (e) {}
+    if (!uid && !uname) return;
+    var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
+    fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'listNotifications', userId: uid, username: uname })
+    }).then(function (res) { return res.json(); }).then(function (data) {
+      var items = (data.ok && data.items) ? data.items : [];
+      var seenBroadcast = [];
+      try { seenBroadcast = JSON.parse(localStorage.getItem('el-seen-broadcast-notifications') || '[]'); } catch (e) {}
+      var unread = items.filter(function (n) {
+        return n.broadcast ? seenBroadcast.indexOf(n.id) === -1 : !n.isRead;
+      }).length;
+      var countEl = document.getElementById('headerBellCount');
+      if (countEl) {
+        if (unread > 0) { countEl.textContent = unread > 99 ? '99+' : String(unread); countEl.style.display = ''; }
+        else { countEl.style.display = 'none'; }
+      }
+    }).catch(function () {});
+  })();
+</script>
 <script>
   // なりすまし（管理者がユーザーとしてログイン中の状態を体験する機能）バナー。
-  // 通知ベル未読件数の取得と同じく全ページ共通で読み込まれるこのブロックに追記することで、
-  // サイト全体のどのページからでも「なりすまし中」であることが分かり、いつでも終了できるようにする。
-  // なりすまし開始そのものはadmin.htmlのユーザー管理からのみ行える（このIIFEはバナー表示専用）。
   (function () {
     var STASH_KEY = 'el-impersonate-stash';
     var stash = null;
     try { stash = JSON.parse(localStorage.getItem(STASH_KEY) || 'null'); } catch (e) {}
-    if (!stash) return; // なりすまし中でなければ何もしない
+    if (!stash) return;
 
     var impUsername = '';
     try { impUsername = localStorage.getItem('el-username') || localStorage.getItem('el-user-name') || ''; } catch (e) {}
@@ -271,6 +231,11 @@
     else document.addEventListener('DOMContentLoaded', mountBar);
   })();
 </script>
+
+      <a href="mypage.html" class="el-avatar" id="headerAvatar" aria-label="マイページ">り</a>
+    </div>
+  </div>
+</header>
 
 <div class="el-app" id="appShell">
   <div class="el-sidebar-wrap">
@@ -364,39 +329,23 @@
   </div>
 
   <div class="el-content">
-    <main class="el-section" style="padding-top:36px;">
-      <div class="wrap" style="max-width:760px;">
+    <main class="el-section" style="padding-top:32px;">
+      <div class="wrap" style="max-width:720px;">
+        <nav class="el-breadcrumb el-page-breadcrumb" aria-label="パンくず"><a href="index.html">ホーム</a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg><span>ガイドライン</span></nav>
 
-        <nav class="el-breadcrumb el-page-breadcrumb" aria-label="パンくず"><a href="index.html">ホーム</a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg><a href="mypage.html">マイページ</a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg><span>通知</span></nav>
-
-        <div class="el-section-head" style="margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
-          <div><h1 style="font-family:var(--font-display);font-size:22px;margin:0;">通知</h1></div>
-          <button type="button" class="el-btn el-btn--ghost el-btn--sm" id="markAllReadBtn" hidden>すべて既読にする</button>
+        <div class="el-section-head" style="margin-bottom:16px;">
+          <div>
+            <h2>ガイドライン</h2>
+            <div class="sub">安心してご参加いただくための、コミュニティのご利用ルールです</div>
+          </div>
         </div>
 
-        <div id="notifList" style="display:flex;flex-direction:column;gap:10px;"></div>
-        <div id="notifEmpty" style="padding:60px 20px;text-align:center;color:var(--el-ink-faint);font-size:14px;" hidden>
-          <p id="notifEmptyText">通知はまだありません。</p>
-        </div>
+        <div id="guidelineDocLoading">読み込み中…</div>
+        <div id="guidelineDocEmpty">ガイドラインはまだ登録されていません。</div>
+        <div class="el-guideline-doc" id="guidelineDoc" style="display:none;"></div>
 
       </div>
     </main>
-    <section class="el-section" style="padding-top:0;padding-bottom:24px;">
-      <div class="wrap">
-
-        <a class="el-ad-banner-v2" id="adBanner" href="#" target="_blank" rel="noopener noreferrer" style="margin-top:32px;">
-          <div class="el-ad-image-wrap-v2">
-            <div class="el-ad-image-v2" id="adImageV2"></div>
-          </div>
-          <div class="el-ad-footer-v2">
-            <span class="el-ad-tag-v2">AD</span>
-            <span class="el-ad-sponsor-v2" id="adSponsorV2"></span>
-          </div>
-        </a>
-
-      </div>
-    </section>
-
 
     <footer class="el-footer">
       <div class="wrap">
@@ -445,21 +394,11 @@
     });
   })();
 
-  document.querySelectorAll('.el-side-forum > summary[data-href]').forEach(function (summary) {
-    summary.addEventListener('click', function (e) {
-      if (e.target.closest('svg.chev')) return;
-      e.preventDefault();
-      window.location.href = summary.dataset.href;
-    });
+  // フォーラム／コミュニティ／マーケットのラベルをクリックしたときは開閉させず、そのままページ遷移させる
+  document.querySelectorAll('.el-side-label-link').forEach(function (el) {
+    el.addEventListener('click', function (e) { e.stopPropagation(); });
   });
-  function elDriveImgUrl(url) {
-    if (!url) return url;
-    var m = url.match(/drive\.google\.com\/file\/d\/([^/]+)/) || url.match(/[?&]id=([^&]+)/);
-    if (m && m[1]) return 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w1000';
-    return url;
-  }
-  window.elDriveImgUrl = elDriveImgUrl;
-
+  // ユーザーモード（ゲスト／登録ユーザー／管理者）の切り替えと共通ゲート処理
   document.addEventListener('DOMContentLoaded', function () {
     var ROLE_KEY = 'el-user-role';
     function getRole() {
@@ -468,9 +407,6 @@
     function setRole(role) {
       try {
         localStorage.setItem(ROLE_KEY, role);
-        // ログアウト時は権限だけでなく、以前ログインしていたユーザーの識別情報も
-        // 消しておかないと、いいね等の「ログイン済みか」の判定がユーザーIDの残存で
-        // 誤って通ってしまうため、あわせて削除する。
         if (role === 'guest') {
           localStorage.removeItem('el-user-id');
           localStorage.removeItem('el-username');
@@ -492,7 +428,7 @@
       try {
         var hp = JSON.parse(localStorage.getItem('el-user-profile') || '{}');
         var hUsername = localStorage.getItem('el-username') || hp.username || '';
-        if (hp.photoUrl) headerAvatar.innerHTML = '<img src="' + window.elDriveImgUrl(hp.photoUrl) + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
+        if (hp.photoUrl) headerAvatar.innerHTML = '<img src="' + hp.photoUrl + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
         else if (hUsername) headerAvatar.textContent = hUsername.charAt(0);
       } catch (e) {}
     }
@@ -532,22 +468,7 @@
       });
     }
 
-    var shiftModal = document.getElementById('shiftModal');
-    window.elRequireShift = function () {
-      var r = getRole();
-      if (r === 'shift' || r === 'admin') return true;
-      if (shiftModal) { shiftModal.classList.add('is-open'); shiftModal.setAttribute('aria-hidden', 'false'); }
-      return false;
-    };
-    if (shiftModal) {
-      shiftModal.querySelectorAll('[data-shift-close]').forEach(function (el) {
-        el.addEventListener('click', function () {
-          shiftModal.classList.remove('is-open');
-          shiftModal.setAttribute('aria-hidden', 'true');
-        });
-      });
-    }
-
+    // 管理者にはサイドバーに管理者ページへのリンクを追加
     if (role === 'admin') {
       var sideNav = document.querySelector('.el-sidebar nav');
       if (sideNav && !sideNav.querySelector('#sideAdminSection')) {
@@ -565,9 +486,6 @@
           adminTabs.map(function (t) { return '<a href="admin.html?tab=' + t[0] + '">' + t[1] + '</a>'; }).join('') +
           '</div>';
         sideNav.appendChild(adminDetails);
-        // フォーラム／コミュニティ／マーケットの見出しと同じ「矢印以外は遷移、矢印は開閉のみ」の
-        // 挙動を、動的に追加したこの要素にも個別に設定する（既存のquerySelectorAllによる
-        // 一括設定は、この要素が生成される前に実行済みのため、ここで個別に行う）
         var adminSummary = adminDetails.querySelector('summary[data-href]');
         adminSummary.addEventListener('click', function (e) {
           if (e.target.closest('svg.chev')) return;
@@ -584,213 +502,46 @@
     }
   });
 
-  // 通知一覧
+  // ガイドライン本文：管理者ページで登録された内容を全件取得し、sortOrder順に1ページで通し表示する
   (function () {
+    var loadingEl = document.getElementById('guidelineDocLoading');
+    var emptyEl = document.getElementById('guidelineDocEmpty');
+    var docEl = document.getElementById('guidelineDoc');
+    if (!docEl) return;
     var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
-    function apiPost(payload) {
-      return fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify(payload)
-      }).then(function (res) { return res.json(); });
-    }
+
     function esc(s) {
       var d = document.createElement('div');
       d.textContent = s == null ? '' : String(s);
       return d.innerHTML;
     }
-    function relativeTime(dateStr) {
-      var d = new Date(dateStr);
-      if (isNaN(d.getTime())) return '';
-      var diffMs = Date.now() - d.getTime();
-      var diffDays = Math.floor(diffMs / 86400000);
-      if (diffDays <= 0) return '今日';
-      if (diffDays === 1) return '昨日';
-      if (diffDays < 30) return diffDays + '日前';
-      return d.toLocaleDateString('ja-JP');
-    }
-    var TYPE_ICON = {
-      comment: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>',
-      reply: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 5 5v6"/></svg>',
-      dm: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v12H8l-4 4V4z"/></svg>',
-      announcement: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>'
-    };
-    var DEFAULT_ICON = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>';
 
-    var uid = '', uname = '';
-    try {
-      uid = localStorage.getItem('el-user-id') || '';
-      uname = localStorage.getItem('el-username') || localStorage.getItem('el-user-name') || '';
-    } catch (e) {}
-
-    var listEl = document.getElementById('notifList');
-    var emptyEl = document.getElementById('notifEmpty');
-    var emptyTextEl = document.getElementById('notifEmptyText');
-    var markAllBtn = document.getElementById('markAllReadBtn');
-
-    if (!uid && !uname) {
-      emptyTextEl.textContent = 'ログイン（会員登録）すると、あなた宛の通知が表示されます。';
-      emptyEl.hidden = false;
-      return;
-    }
-
-    function getSeenBroadcast() {
-      try { return JSON.parse(localStorage.getItem('el-seen-broadcast-notifications') || '[]'); } catch (e) { return []; }
-    }
-    function markBroadcastSeen(id) {
-      var seen = getSeenBroadcast();
-      if (seen.indexOf(id) === -1) {
-        seen.push(id);
-        try { localStorage.setItem('el-seen-broadcast-notifications', JSON.stringify(seen)); } catch (e) {}
-      }
-    }
-
-    function updateBellCount(items, seenBroadcast) {
-      var unread = items.filter(function (n) {
-        return n.broadcast ? seenBroadcast.indexOf(n.id) === -1 : !n.isRead;
-      }).length;
-      var countEl = document.getElementById('headerBellCount');
-      if (countEl) {
-        if (unread > 0) { countEl.textContent = unread > 99 ? '99+' : String(unread); countEl.style.display = ''; }
-        else { countEl.style.display = 'none'; }
-      }
-    }
-
-    function render(items) {
-      var seenBroadcast = getSeenBroadcast();
-      if (!items.length) {
-        emptyTextEl.textContent = '通知はまだありません。';
-        emptyEl.hidden = false;
-        updateBellCount(items, seenBroadcast);
-        return;
-      }
-      markAllBtn.hidden = false;
-      listEl.innerHTML = items.map(function (n) {
-        var isUnread = n.broadcast ? seenBroadcast.indexOf(n.id) === -1 : !n.isRead;
-        var icon = TYPE_ICON[n.type] || DEFAULT_ICON;
-        return '<a class="el-notif-row' + (isUnread ? ' is-unread' : '') + '" data-id="' + esc(n.id) + '" data-broadcast="' + (n.broadcast ? '1' : '0') +
-          '" href="' + esc(n.link || '#') + '">' +
-          '<div class="el-notif-icon">' + icon + '</div>' +
-          '<div class="el-notif-main">' +
-          '<div class="el-notif-title">' + esc(n.title) + '</div>' +
-          (n.body ? '<div class="el-notif-body">' + esc(n.body) + '</div>' : '') +
-          '<div class="el-notif-time">' + esc(relativeTime(n.createdAt)) + '</div>' +
-          '</div>' +
-          (isUnread ? '<span class="el-notif-unread-dot"></span>' : '') +
-          '</a>';
-      }).join('');
-      updateBellCount(items, seenBroadcast);
-
-      Array.prototype.forEach.call(listEl.querySelectorAll('.el-notif-row'), function (row) {
-        row.addEventListener('click', function () {
-          var id = row.dataset.id;
-          var isBroadcast = row.dataset.broadcast === '1';
-          if (isBroadcast) {
-            markBroadcastSeen(id);
-          } else {
-            apiPost({ action: 'markNotificationRead', id: id, userId: uid, username: uname }).catch(function () {});
-          }
-        });
-      });
-    }
-
-    apiPost({ action: 'listNotifications', userId: uid, username: uname }).then(function (data) {
-      var items = (data.ok && data.items) ? data.items : [];
-      render(items);
-    }).catch(function () {
-      emptyTextEl.textContent = '読み込みに失敗しました。';
-      emptyEl.hidden = false;
-    });
-
-    markAllBtn.addEventListener('click', function () {
-      markAllBtn.disabled = true;
-      // 全員向け通知は、表示中のものをまとめてローカルの既読リストに追加する
-      Array.prototype.forEach.call(listEl.querySelectorAll('.el-notif-row[data-broadcast="1"]'), function (row) {
-        markBroadcastSeen(row.dataset.id);
-      });
-      apiPost({ action: 'markAllNotificationsRead', userId: uid, username: uname }).then(function () {
-        markAllBtn.disabled = false;
-        return apiPost({ action: 'listNotifications', userId: uid, username: uname });
-      }).then(function (data) {
-        var items = (data.ok && data.items) ? data.items : [];
-        render(items);
-      }).catch(function () { markAllBtn.disabled = false; });
-    });
-  })();
-
-  (function () {
-    var el = document.getElementById('adBanner');
-    if (!el) return;
-    // 実際のリンク先(ctaUrl)が設定されるまでは、バナー全体クリックで# に飛ばないようにする
-    el.addEventListener('click', function (e) {
-      if (!el.dataset.ctaUrl) e.preventDefault();
-      // クリック数・クリックユーザーの記録（広告管理②のデータ用）。表示回数と違い、
-      // クリックは母数が少なく1件ずつ記録しても書き込み負荷は小さいため、都度記録する。
-      if (el.dataset.adId) {
-        fetch(API_URL, {
-          method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({
-            action: 'logAdEvent', adId: el.dataset.adId, eventType: 'click',
-            userId: (localStorage.getItem('el-user-id') || ''), username: (localStorage.getItem('el-username') || '')
-          })
-        }).catch(function () {});
-      }
-    });
-    var imageEl = document.getElementById('adImageV2');
-    var sponsorEl = document.getElementById('adSponsorV2');
-
-    var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
     fetch(API_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({ action: 'listContent', type: 'ad' })
+      body: JSON.stringify({ action: 'listContent', type: 'guideline' })
     })
       .then(function (res) { return res.json(); })
       .then(function (data) {
-        // このバナーは「基本は横長」の広告枠のため、スクエア広告はここでは選ばない
-        // （スクエア広告はフォーラムの新規投稿ページ／コミュニティの新規作成ページの
-        // 専用サイドバー枠にのみ表示する方針のため）。
-        var ads = ((data.ok && data.items) ? data.items : []).filter(function (a) { return a.adType !== 'square'; });
-        if (!ads.length) {
-          // 広告が1件も登録されていない場合は、架空のダミー広告を表示するのではなく、
-          // バナー自体を表示しない（デモ/モックデータを残さない方針のため）
-          el.style.display = 'none';
+        if (loadingEl) loadingEl.style.display = 'none';
+        var items = (data.ok && data.items) ? data.items.slice() : [];
+        items.sort(function (a, b) { return (Number(a.sortOrder) || 0) - (Number(b.sortOrder) || 0); });
+        if (!items.length) {
+          if (emptyEl) emptyEl.style.display = 'block';
           return;
         }
-        var ad = ads[Math.floor(Math.random() * ads.length)];
-        el.dataset.adId = ad.id;
-        // 表示回数の記録：書き込みを抑えるため、同じブラウザタブ（セッション）内で同じ広告IDは
-        // 1回だけ記録する（sessionStorageで重複防止する簡易カウント。Firebase等は使わず、
-        // 引き続きスプレッドシートのまま運用するための対応）。
-        (function () {
-          var seenKey = 'el-ad-impression-seen';
-          var seen = [];
-          try { seen = JSON.parse(sessionStorage.getItem(seenKey) || '[]'); } catch (e) {}
-          if (seen.indexOf(ad.id) !== -1) return;
-          seen.push(ad.id);
-          try { sessionStorage.setItem(seenKey, JSON.stringify(seen)); } catch (e) {}
-          fetch(API_URL, {
-            method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({ action: 'logAdEvent', adId: ad.id, eventType: 'impression' })
-          }).catch(function () {});
-        })();
-        if (ad.imageUrl) {
-          imageEl.style.backgroundImage = 'url(' + ad.imageUrl + ')';
-        } else {
-          imageEl.style.backgroundImage = 'none';
-          imageEl.style.background = 'var(--el-teal)';
-        }
-        if (ad.ctaUrl) {
-          el.href = ad.ctaUrl;
-          el.target = '_blank';
-          el.rel = 'noopener noreferrer';
-          el.dataset.ctaUrl = ad.ctaUrl;
-        }
-        sponsorEl.textContent = 'スポンサー：' + (ad.serviceName || '');
+        docEl.innerHTML = items.map(function (it) {
+          return '<section class="el-guideline-section"><h3>' + esc(it.title) + '</h3><div class="body">' + (it.bodyHtml || '') + '</div></section>';
+        }).join('');
+        docEl.style.display = 'block';
       })
-      .catch(function () { el.style.display = 'none'; });
+      .catch(function () {
+        if (loadingEl) loadingEl.style.display = 'none';
+        if (emptyEl) { emptyEl.style.display = 'block'; emptyEl.textContent = 'ガイドラインの読み込みに失敗しました。時間をおいて再度お試しください。'; }
+      });
   })();
 </script>
+
 <div class="el-auth-modal" id="authModal" aria-hidden="true">
   <div class="el-auth-modal-backdrop" data-auth-close></div>
   <div class="el-auth-modal-panel" role="dialog" aria-modal="true">
@@ -802,21 +553,6 @@
     <div class="el-auth-modal-actions">
       <a href="signup.html" class="el-btn el-btn--primary el-btn--sm">新規登録する</a>
       <button type="button" class="el-btn el-btn--ghost el-btn--sm" data-auth-close>閉じる</button>
-    </div>
-  </div>
-</div>
-
-<div class="el-auth-modal" id="shiftModal" aria-hidden="true">
-  <div class="el-auth-modal-backdrop" data-shift-close></div>
-  <div class="el-auth-modal-panel" role="dialog" aria-modal="true">
-    <button type="button" class="el-auth-modal-close" data-shift-close aria-label="閉じる">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
-    </button>
-    <h3>SHiFT会員限定です</h3>
-    <p>この内容はSHiFT会員（WorldShiftの各種サービスをご利用中の方）だけが閲覧できます。SHiFT会員の方はサポート窓口までお問い合わせください。</p>
-    <div class="el-auth-modal-actions">
-      <a href="#" class="el-btn el-btn--primary el-btn--sm">SHiFT会員について見る</a>
-      <button type="button" class="el-btn el-btn--ghost el-btn--sm" data-shift-close>閉じる</button>
     </div>
   </div>
 </div>
