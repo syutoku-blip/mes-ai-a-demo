@@ -1723,8 +1723,12 @@
         if (c.parentId) article.dataset.replyTo = c.parentId;
         var initial = (c.authorName || '?').charAt(0);
         var profileUrl = elProfileUrl(c.authorUsername || c.authorName);
+        // 投稿者がプロフィールにアイコン画像を設定していれば、イニシャルの代わりにそれを表示する。
+        var avatarInner = c.authorPhotoUrl
+          ? '<img src="' + esc(window.elDriveImgUrl(c.authorPhotoUrl)) + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">'
+          : esc(initial);
         article.innerHTML =
-          '<a class="el-avatar" href="' + esc(profileUrl) + '" style="text-decoration:none;">' + esc(initial) + '</a>' +
+          '<a class="el-avatar" href="' + esc(profileUrl) + '" style="text-decoration:none;">' + avatarInner + '</a>' +
           '<div>' +
           '<div class="el-reply-tag-slot"></div>' +
           '<div class="el-post-head"><span class="name">' + esc(c.authorName || '匿名') + '</span><span class="time">' + esc(relativeTime(c.createdAt)) + '</span></div>' +
@@ -1904,7 +1908,10 @@
         op.dataset.authorUserId = item.authorUserId || '';
         var opAvatar = document.getElementById('opAvatar');
         if (opAvatar) {
-          opAvatar.textContent = (item.authorName || '?').charAt(0);
+          // 投稿者がプロフィールにアイコン画像を設定していれば、イニシャルの代わりにそれを表示する。
+          opAvatar.innerHTML = item.authorPhotoUrl
+            ? '<img src="' + esc(window.elDriveImgUrl(item.authorPhotoUrl)) + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">'
+            : esc((item.authorName || '?').charAt(0));
           opAvatar.href = elProfileUrl(item.authorUsername || item.authorName);
         }
         var opName = document.getElementById('opName');
