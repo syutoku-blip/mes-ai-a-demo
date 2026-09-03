@@ -1,0 +1,2066 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>コミュニティの投稿｜Export Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&family=Noto+Sans+JP:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="../shared/global-header.css">
+<style>
+  /* 検索ボックス：input要素の初期スタイル（黒枠など）を消して馴染ませる */
+  .el-search input[type="search"]{
+    border:none !important;
+    outline:none !important;
+    background:transparent !important;
+    box-shadow:none !important;
+    -webkit-appearance:none !important;
+    appearance:none !important;
+    font:inherit !important;
+    color:inherit !important;
+    padding:0 !important;
+    margin:0 !important;
+    width:100%;
+  }
+  .el-search input[type="search"]::-webkit-search-cancel-button{
+    -webkit-appearance:none;
+    display:none;
+  }
+  [data-guest-hide]{ display:none !important; }
+  #headerAuthLinks .el-btn, #headerSignupLink.el-btn, #headerLoginLink.el-btn{
+    color:#fff !important;
+    background:var(--el-navy, #16233F) !important;
+    border:1px solid var(--el-navy, #16233F) !important;
+  }
+  #headerAuthLinks .el-btn:hover, #headerSignupLink.el-btn:hover, #headerLoginLink.el-btn:hover{
+    background:var(--el-teal-deep, #1E6F63) !important;
+    border-color:var(--el-teal-deep, #1E6F63) !important;
+  }
+  .el-footer{ background:#EDE4D0 !important; border-top:1px solid var(--el-line-soft, #E5DFD2) !important; }
+  /* .el-post のpaddingが後勝ちで上書きしてしまうため、投稿本文（OP）の余白を明示的に復元 */
+  .el-post--op{ padding:28px 28px 26px !important; }
+  .el-footer .tag{ color:var(--el-ink-faint, #8A8478) !important; }
+  .el-footer .el-logo{ color:var(--el-navy, #16233F) !important; }
+  .el-footer .el-logo .dot{ color:var(--el-mustard-deep, #B9812A) !important; }
+  .el-footer-cols a{ color:var(--el-ink-faint, #8A8478) !important; }
+  .el-footer-cols h6{ color:var(--el-navy, #16233F) !important; }
+  .el-footer-bottom{ color:var(--el-ink-faint, #8A8478) !important; border-top-color:var(--el-line-soft, #E5DFD2) !important; }
+  /* 広告バナー：横長の画像1枚を全面に表示し、CTAボタンとスポンサー表記を重ねる（管理者ページで「横長」「スクエア」を選択） */
+  .el-ad-banner-v2{
+    position:relative !important;
+    display:flex !important;
+    flex-direction:column !important;
+    width:100% !important;
+    border-radius:var(--el-radius-m, 14px) !important;
+    overflow:hidden !important;
+    background:var(--el-cream-deep, #FBF3E3) !important;
+  }
+  .el-ad-image-wrap-v2{
+    position:relative !important;
+    width:100% !important;
+    aspect-ratio:1200 / 200 !important;
+  }
+  .el-ad-banner-v2.is-square{
+    max-width:280px !important;
+    margin:0 auto !important;
+  }
+  .el-ad-banner-v2.is-square .el-ad-image-wrap-v2{
+    aspect-ratio:1 / 1 !important;
+  }
+  /* ADの文字とスポンサー名を1つの帯にまとめて同じ行に表示する（以前は画像に重ねるADバッジと
+     画像下のスポンサー行が上下に分かれていたが、指示により「AD　　　スポンサー：〜」のように
+     1箇所にまとめる）。ADバッジ自体もスクエア広告と同じく、画像の枠外（帯の中）に表示する。 */
+  .el-ad-footer-v2{
+    display:flex !important;
+    align-items:center !important;
+    gap:10px !important;
+    width:100% !important;
+    box-sizing:border-box !important;
+    padding:8px 14px !important;
+    /* 「ベージュではなくグレーがいい」というフィードバックを受け、サイト共通のクリーム系トーン
+       ではなく、中立なグレーの帯に変更。 */
+    background:#EDEDED !important;
+    border-top:1px solid #DDDDDD !important;
+  }
+  .el-ad-tag-v2{
+    position:static !important;
+    flex:none !important;
+    font:700 9px/1.2 var(--font-mono, monospace) !important;
+    letter-spacing:.08em !important;
+    color:var(--el-ink-faint, #8A8478) !important;
+    padding:2px 8px !important;
+    border:1px solid rgba(22,35,63,.1) !important;
+    border-radius:999px !important;
+    background:#fff !important;
+  }
+  .el-ad-image-v2{
+    position:absolute !important;
+    inset:0 !important;
+    /* 「推奨サイズ」通りの画像でも、圧縮時の丸め誤差などでピクセル単位の比率のズレが
+       生じることがあり、cover（はみ出た部分を切り取る）だと必ず何かがトリミングされて
+       しまっていた。containに変更し、画像全体を必ず欠けさせずに表示する
+       （比率が合わない場合は左右または上下に背景色の余白が出るだけにする）。 */
+    background-size:contain !important;
+    background-repeat:no-repeat !important;
+    background-position:center !important;
+    background-color:var(--el-teal, #2F8F82) !important;
+  }
+  /* スポンサー表記は画像の下の帯に独立して表示する（以前は画像に重ねていたため、
+     文字が画像の一部を隠してしまっていた）。 */
+  /* 「前みたいに薄いグレーっぽい感じがいい」というフィードバックを受け、白ではなく
+     薄いグレー寄りのトーン（--el-cream-deep）の帯に変更。 */
+  .el-ad-sponsor-v2{
+    position:static !important;
+    display:block !important;
+    flex:1 !important;
+    min-width:0 !important;
+    font-size:11px !important;
+    color:var(--el-navy, #16233F) !important;
+    padding:0 !important;
+    background:transparent !important;
+    border-top:none !important;
+  }
+  .el-auth-modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    z-index:900;
+    align-items:center;
+    justify-content:center;
+  }
+  .el-auth-modal.is-open{ display:flex; }
+  .el-auth-modal-backdrop{
+    position:absolute;
+    inset:0;
+    background:rgba(22,35,63,.45);
+  }
+  .el-auth-modal-panel{
+    position:relative;
+    background:#fff;
+    border-radius:var(--el-radius-m, 14px);
+    padding:28px 26px;
+    max-width:340px;
+    width:90%;
+    text-align:center;
+    box-shadow:0 12px 40px rgba(22,35,63,.25);
+  }
+  .el-auth-modal-panel h3{
+    margin:0 0 10px;
+    font-size:17px;
+    color:var(--el-navy, #16233F);
+  }
+  .el-auth-modal-panel p{
+    margin:0 0 20px;
+    font-size:13px;
+    color:var(--el-ink-faint, #8A8478);
+    line-height:1.7;
+  }
+  .el-auth-modal-actions{
+    display:flex;
+    gap:8px;
+    justify-content:center;
+  }
+  .el-auth-modal-close{
+    position:absolute;
+    top:10px;
+    right:10px;
+    border:none;
+    background:transparent;
+    cursor:pointer;
+    color:var(--el-ink-faint, #8A8478);
+    padding:4px;
+  }
+  /* このページ専用：公開範囲によるぼかし表示。タイトルは見せたまま、本文・コメントのみをぼかす。
+     実際の閲覧制限ではなく、参加を促すためのソフトなUI表現（このサイト全体がクライアント側の
+     ログイン情報を信頼する設計のため、他のページの管理者判定などと同じ考え方）。 */
+  .el-content-blurred{
+    filter: blur(6px);
+    user-select: none;
+    pointer-events: none;
+  }
+  .el-visibility-gate-notice{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    background:var(--el-cream-deep, #F0EAD9);
+    border:1px solid var(--el-line-soft, #E5DFD2);
+    border-radius:var(--el-radius-m, 12px);
+    padding:18px 20px;
+    margin:0 0 20px;
+    color:var(--el-navy, #16233F);
+    flex-wrap:wrap;
+  }
+  .el-visibility-gate-notice svg{ flex:none; color:var(--el-mustard-deep, #B9812A); }
+  .el-visibility-gate-notice strong{ display:block; font-size:14px; margin-bottom:4px; }
+  .el-visibility-gate-notice p{ margin:0; font-size:12.5px; color:var(--el-ink-faint, #8A8478); }
+  .el-visibility-gate-notice .el-btn{ flex:none; margin-left:auto; white-space:nowrap; text-decoration:none; }
+  /* 返信ボタンを使わない、控えめなコメント欄（あまり使わない想定のため小さめに表示）。
+     返信・投稿編集・コメント編集で使うのと同じリッチエディター（ツールバー含む、DOMは
+     1つだけ）をこの位置に常駐させ、それらの操作で使われている間だけ一時的によそへ移動する。 */
+  .el-quick-comment{
+    margin:8px 0 18px !important;
+    opacity:.92 !important;
+  }
+  .el-quick-comment .el-quick-comment-label{
+    font-size:11.5px !important;
+    color:var(--el-ink-faint, #8b8f9c) !important;
+    margin:0 0 6px 2px !important;
+  }
+  .el-quick-comment .el-editor-toolbar{ padding:4px 6px !important; }
+  .el-quick-comment .el-editor-area{
+    min-height:44px !important;
+    padding:8px 10px !important;
+    font-size:12.5px !important;
+    line-height:1.7 !important;
+  }
+  .el-quick-comment-foot{
+    display:flex !important;
+    justify-content:flex-end !important;
+    margin-top:6px !important;
+  }
+  .el-quick-comment-foot .el-btn{ flex:none !important; font-size:12px !important; }
+  /* 権限なし／投稿が見つからない等の非表示制御や、リッチエディターが返信・編集側に
+     移動中の一時非表示は、要素のstyle.displayではなくクラスで行う（詳細度の都合）。 */
+  .el-quick-comment.is-hidden,
+  .el-quick-comment.is-editor-away{ display:none !important; }
+  /* 返信・コメント作成時に添付する写真・ファイルのプレビュー（送信前の一覧）。 */
+  .el-editor-attachments-preview{
+    display:flex !important;
+    flex-wrap:wrap !important;
+    gap:6px !important;
+    padding:0 10px 8px !important;
+  }
+  .el-editor-attachments-preview:empty{ display:none !important; padding:0 !important; }
+  .el-editor-attachment-chip{
+    display:flex !important;
+    align-items:center !important;
+    gap:5px !important;
+    padding:4px 8px !important;
+    border:1px solid var(--el-line-soft, #E5DFD2) !important;
+    border-radius:8px !important;
+    font-size:11.5px !important;
+    color:var(--el-ink, #2b2b2b) !important;
+    background:#FAF8F2 !important;
+    max-width:180px !important;
+  }
+  .el-editor-attachment-chip span{
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+    white-space:nowrap !important;
+  }
+  .el-editor-attachment-chip button{
+    flex:none !important;
+    width:16px !important;
+    height:16px !important;
+    padding:0 !important;
+    border:0 !important;
+    background:transparent !important;
+    color:var(--el-ink-faint, #8b8f9c) !important;
+    cursor:pointer !important;
+    line-height:1 !important;
+  }
+  .el-editor-attachment-chip button:hover{ color:var(--el-coral, #B8593D) !important; }
+  /* コメントへの添付ファイル：画像であってもその場に画像自体を表示せず、ファイル名だけの
+     ファイル枠にして、クリックでダウンロードできるようにする。 */
+  .el-comment-attachments{
+    margin:10px 0 0 !important;
+    display:flex !important;
+    flex-wrap:wrap !important;
+    gap:8px !important;
+  }
+  .el-post-attachment-file{
+    display:flex !important;
+    align-items:center !important;
+    gap:6px !important;
+    padding:8px 12px !important;
+    border:1px solid var(--el-line, #e4e0d8) !important;
+    border-radius:10px !important;
+    font-size:12.5px !important;
+    color:var(--el-ink, #2b2b2b) !important;
+    text-decoration:none !important;
+    background:#fff !important;
+  }
+  .el-post-attachment-file:hover{ border-color:var(--el-teal, #2F8F82) !important; }
+  /* 投稿・コメントの編集フォームへリッチエディターが移動している間は添付機能を使わせない
+     （編集は本文の更新のみに対応しており、添付を選んでも保存されないため）。 */
+  .el-rich-editor.is-edit-mode #replyAttachBtn,
+  .el-rich-editor.is-edit-mode .el-editor-attachments-preview{ display:none !important; }
+  /* 通知からのリンク（例：community-topic.html?id=xxx#コメントID）で該当箇所へスクロールしたときの
+     一時的なハイライト。コメントはAJAXで後から描画されるため、ブラウザ標準のハッシュ
+     スクロールでは間に合わず、描画完了後にJSで明示的にスクロールする必要がある。 */
+  .el-anchor-highlight{ animation: elAnchorFlash 2.2s ease !important; border-radius:var(--el-radius-m, 12px); }
+  @keyframes elAnchorFlash{
+    0%{ background:rgba(255,229,138,.55); }
+    100%{ background:transparent; }
+  }
+  /* トピックのお気に入りボタン：押した状態は市場（マーケット）のお気に入りと同じ色で塗りつぶす */
+  .el-favorite-btn[data-favorited="1"]{ color:var(--el-coral, #C85A3E) !important; }
+  .el-favorite-btn[data-favorited="1"] svg{ fill:currentColor !important; }
+</style>
+</head>
+<body data-site="community" data-root="..">
+
+<header class="el-header">
+  <div class="el-header-inner">
+    <button class="el-menu-toggle" id="sidebarToggle" aria-label="メニュー">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+    <a href="index.html" class="el-logo">Export Lab<span class="dot">.</span></a>
+    <div class="el-header-actions">
+      <form class="el-search" action="search.html" method="get">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input type="search" name="q" placeholder="検索" aria-label="検索" autocomplete="off">
+      </form>
+      <span id="headerAuthLinks" style="display:flex;gap:6px;white-space:nowrap;"><a href="signup.html" class="el-btn el-btn--ghost el-btn--sm" id="headerSignupLink">新規登録</a><a href="login.html" class="el-btn el-btn--ghost el-btn--sm" id="headerLoginLink">ログイン</a></span>
+      <a href="notifications.html" class="el-header-bell" aria-label="通知">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="count" id="headerBellCount" style="display:none;">0</span>
+      </a>
+<script>
+  // 通知ベルの未読件数（全ページ共通）
+  (function () {
+    var uid = '', uname = '';
+    try {
+      uid = localStorage.getItem('el-user-id') || '';
+      uname = localStorage.getItem('el-username') || '';
+    } catch (e) {}
+    if (!uid && !uname) return;
+    var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
+    fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'listNotifications', userId: uid, username: uname })
+    }).then(function (res) { return res.json(); }).then(function (data) {
+      var items = (data.ok && data.items) ? data.items : [];
+      var seenBroadcast = [];
+      try { seenBroadcast = JSON.parse(localStorage.getItem('el-seen-broadcast-notifications') || '[]'); } catch (e) {}
+      var unread = items.filter(function (n) {
+        return n.broadcast ? seenBroadcast.indexOf(n.id) === -1 : !n.isRead;
+      }).length;
+      var countEl = document.getElementById('headerBellCount');
+      if (countEl) {
+        if (unread > 0) { countEl.textContent = unread > 99 ? '99+' : String(unread); countEl.style.display = ''; }
+        else { countEl.style.display = 'none'; }
+      }
+    }).catch(function () {});
+  })();
+</script>
+<script>
+  // なりすまし（管理者がユーザーとしてログイン中の状態を体験する機能）バナー。
+  // 通知ベル未読件数の取得と同じく全ページ共通で読み込まれるこのブロックに追記することで、
+  // サイト全体のどのページからでも「なりすまし中」であることが分かり、いつでも終了できるようにする。
+  // なりすまし開始そのものはadmin.htmlのユーザー管理からのみ行える（このIIFEはバナー表示専用）。
+  (function () {
+    var STASH_KEY = 'el-impersonate-stash';
+    var stash = null;
+    try { stash = JSON.parse(localStorage.getItem(STASH_KEY) || 'null'); } catch (e) {}
+    if (!stash) return; // なりすまし中でなければ何もしない
+
+    var impUsername = '';
+    try { impUsername = localStorage.getItem('el-username') || localStorage.getItem('el-user-name') || ''; } catch (e) {}
+
+    function escBanner(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+    var bar = document.createElement('div');
+    bar.id = 'elImpersonationBar';
+    bar.setAttribute('style', 'position:fixed !important;left:0 !important;right:0 !important;bottom:0 !important;top:auto !important;z-index:2147483000 !important;background:#1f1147 !important;color:#fff !important;padding:10px 16px !important;display:flex !important;align-items:center !important;justify-content:center !important;gap:12px !important;font-size:13px !important;line-height:1.4 !important;font-family:inherit !important;box-shadow:0 -2px 10px rgba(0,0,0,.25) !important;');
+    bar.innerHTML = '<span>「' + escBanner(impUsername) + '」としてログイン中です（管理者によるなりすまし）</span>' +
+      '<button type="button" id="elImpersonationExitBtn" style="background:#fff !important;color:#1f1147 !important;border:none !important;border-radius:6px !important;padding:6px 14px !important;font-weight:700 !important;font-size:13px !important;cursor:pointer !important;white-space:nowrap !important;">なりすましを終了</button>';
+
+    function mountBar() {
+      if (document.getElementById('elImpersonationBar')) return;
+      document.body.appendChild(bar);
+      document.body.style.paddingBottom = '52px';
+      var exitBtn = document.getElementById('elImpersonationExitBtn');
+      if (exitBtn) {
+        exitBtn.addEventListener('click', function () {
+          try {
+            localStorage.setItem('el-user-id', stash.userId || '');
+            localStorage.setItem('el-username', stash.username || '');
+            localStorage.setItem('el-user-name', stash.name || '');
+            localStorage.setItem('el-user-email', stash.email || '');
+            localStorage.setItem('el-user-role', stash.role || 'guest');
+            localStorage.setItem('el-user-profile', stash.profile || '{}');
+            localStorage.removeItem(STASH_KEY);
+          } catch (e) {}
+          window.location.href = 'admin.html';
+        });
+      }
+    }
+    if (document.body) mountBar();
+    else document.addEventListener('DOMContentLoaded', mountBar);
+  })();
+</script>
+
+      <a href="mypage.html" class="el-avatar" id="headerAvatar" aria-label="マイページ">り</a>
+    </div>
+  </div>
+</header>
+
+<div class="el-app" id="appShell">
+  <div class="el-sidebar-wrap">
+    <aside class="el-sidebar" id="sidebar">
+    <nav>
+      <a href="index.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/><path d="M9 22V12h6v10"/></svg>
+        <span class="lbl">ホーム</span>
+      </a>
+
+      <details class="el-side-forum">
+        <summary data-href="forum.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <span class="lbl">フォーラム</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
+        </summary>
+        <div class="el-side-sub">
+          <a href="forum-new.html" class="el-side-cta" data-guest-block>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+            新規投稿をする
+          </a>
+          <a href="board.html">すべて</a>
+          <a href="board.html?sort=new">新着</a>
+          <a href="board.html?sort=hot">人気</a>
+          <a href="board.html?filter=shift&sort=hot">SHiFT member only</a>
+          <a href="board.html?filter=unsolved&sort=hot">未解決</a>
+
+          <a href="forum-categories.html">カテゴリで探す</a>
+          <a href="forum-tags.html">ハッシュタグで探す</a>
+        </div>
+      </details>
+
+      <details class="el-side-forum" open>
+        <summary class="is-active" data-href="groups.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <span class="lbl">コミュニティ</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
+        </summary>
+        <div class="el-side-sub">
+          <a href="community-new.html" class="el-side-cta" data-guest-block>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+            新規コミュニティを作成する
+          </a>
+          <a href="groups-list.html">すべて</a>
+          <a href="groups-list.html?sort=new">新着</a>
+          <a href="groups-list.html?sort=hot">人気</a>
+          <a href="my-group-activity.html?view=joined">参加中のコミュニティ</a>
+          <a href="my-group-activity.html?view=pending">申請中のコミュニティ</a>
+        </div>
+      </details>
+
+      <a href="announcements.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
+        <span class="lbl">公式お知らせ</span>
+      </a>
+
+      <a href="events.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        <span class="lbl">イベント</span>
+      </a>
+
+      <details class="el-side-forum">
+        <summary data-href="market.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/></svg>
+          <span class="lbl">マーケット</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
+        </summary>
+        <div class="el-side-sub">
+          <a href="market-list.html">すべて</a>
+          <a href="market-official.html">ワールドシフト提供</a>
+          <a href="market-apply.html">出品申請</a>
+        </div>
+      </details>
+
+      <a href="members.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M6 16c.5-1.6 1.7-2.5 3-2.5s2.5.9 3 2.5"/><path d="M14 9h4M14 13h4"/></svg>
+        <span class="lbl">メンバー</span>
+      </a>
+
+      <a href="mypage.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+        <span class="lbl">マイページ</span>
+      </a>
+
+      <a href="operator-info.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        <span class="lbl">運営者情報</span>
+      </a>
+    </nav>
+
+  </aside>
+  </div>
+
+  <div class="el-content">
+    <main class="el-section" style="padding-top:0;">
+      <div class="el-thread-layout">
+        <div class="el-thread-main">
+
+        <div class="el-thread-head">
+          <nav class="el-breadcrumb" aria-label="breadcrumb" id="ctBreadcrumb">
+            <a href="index.html">ホーム</a>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
+            <a href="groups.html">コミュニティ</a>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
+            <span>読み込み中…</span>
+          </nav>
+          <div class="el-t-row-badges" style="margin-bottom:12px;" id="ctBadges"></div>
+          <h1 id="ctTitle">読み込み中…</h1>
+          <div class="el-thread-meta" id="ctMeta">
+            <span id="ctCommentCount">0件の返信</span><span>・</span><span id="ctViewCount">0回の閲覧</span><span>・</span><span id="ctUpdated"></span>
+          </div>
+        </div>
+
+        <article class="el-post el-post--op" id="op" data-author-username="">
+          <a class="el-avatar" id="opAvatar" href="#" style="text-decoration:none;">?</a>
+          <div>
+            <div class="el-reply-tag-slot"></div>
+              <div class="el-post-head">
+              <span class="name" id="opName">読み込み中…</span>
+              <span class="role">投稿者</span>
+            </div>
+            <div class="el-post-dates" id="opDates"></div>
+            <div class="el-post-body" id="opBody"></div>
+            <div id="opEditForm" style="display:none;">
+              <input type="text" id="opEditTitle" class="el-form-input el-form-input--title" style="margin-bottom:10px;">
+              <div id="opEditBody" class="el-post-body" contenteditable="true" style="border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);padding:14px;min-height:120px;"></div>
+              <div style="display:flex;gap:8px;margin-top:12px;">
+                <button type="button" class="el-btn el-btn--primary el-btn--sm" id="opEditSaveBtn">保存</button>
+                <button type="button" class="el-btn el-btn--ghost el-btn--sm" id="opEditCancelBtn">キャンセル</button>
+              </div>
+            </div>
+            <div class="el-post-actions">
+              <button class="el-like-btn" id="opLikeBtn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14Z"/></svg> <span class="el-like-count">0</span></button>
+              <button class="el-favorite-btn" id="opFavoriteBtn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z"/></svg> お気に入り</button>
+              <button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H4l2.4-3.6A8.5 8.5 0 1 1 21 11.5Z"/></svg> 返信</button>
+              <button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13"/></svg> 共有</button>
+              <button id="opEditBtn" style="display:none;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg> 編集</button>
+              <button id="opDeleteBtn" style="display:none;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6"/></svg> 削除</button>
+            </div>
+          </div>
+        </article>
+
+        <div class="el-comments-head">
+          <h2>コメント</h2>
+          <span class="count" id="ctCommentsHeadCount">0件</span>
+        </div>
+
+        <div class="el-comments" id="commentsList">
+          <div style="padding:24px 4px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">読み込み中...</div>
+        </div>
+
+        <!-- 返信ボタンを押さなくても投稿できる、控えめなコメント欄。基本は各投稿の「返信」マーク
+             （↑の仕組み）を使う想定のため目立たせないが、書式設定ができるよう返信と
+             同じリッチエディター（ツールバー含む、DOMは1つだけ）をこの位置に常駐させる。 -->
+        <div class="el-quick-comment" id="quickCommentBox">
+          <div class="el-quick-comment-label">返信先を指定せずコメントする</div>
+          <div class="el-rich-editor" id="replyRichEditorWrap">
+            <div class="el-editor-toolbar" role="toolbar" aria-label="コメントの書式">
+              <button type="button" data-command="bold" title="太字"><strong>B</strong></button>
+              <button type="button" data-command="italic" title="斜体"><em>I</em></button>
+              <button type="button" data-command="underline" title="下線"><span style="text-decoration:underline;font-weight:700;">U</span></button>
+              <button type="button" data-command="strikeThrough" title="取り消し線"><span style="text-decoration:line-through;">S</span></button>
+              <span class="sep"></span>
+              <select id="replyFontSizeSelect" class="el-editor-select" title="文字サイズ" aria-label="文字サイズ">
+                <option value="">文字サイズ</option>
+                <option value="12px">小</option>
+                <option value="14px">標準</option>
+                <option value="18px">大</option>
+                <option value="24px">特大</option>
+                <option value="32px">見出し</option>
+              </select>
+              <label class="el-editor-color" title="文字色">A<input type="color" id="replyTextColorPicker" value="#16233f" aria-label="文字色"></label>
+              <label class="el-editor-color el-editor-color--bg" title="背景色"><span>■</span><input type="color" id="replyBgColorPicker" value="#fff3d8" aria-label="背景色"></label>
+              <span class="sep"></span>
+              <button type="button" data-command="insertUnorderedList" title="箇条書き">
+                <svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+              </button>
+              <button type="button" data-command="insertOrderedList" title="番号付きリスト">
+                <svg viewBox="0 0 24 24"><path d="M10 6h11M10 12h11M10 18h11M4 6h1V3M4 3h2M4 12h2l-2 3h2M4 18h2v3H4"/></svg>
+              </button>
+              <button type="button" id="replyQuoteBtn" title="引用">
+                <svg viewBox="0 0 24 24"><path d="M10 11H6a4 4 0 0 1 4-4V5a6 6 0 0 0-6 6v6h6v-6ZM20 11h-4a4 4 0 0 1 4-4V5a6 6 0 0 0-6 6v6h6v-6Z"/></svg>
+              </button>
+              <button type="button" data-command="insertHorizontalRule" title="区切り線">
+                <svg viewBox="0 0 24 24"><path d="M4 12h16"/></svg>
+              </button>
+              <span class="sep"></span>
+              <button type="button" id="replyAddLinkBtn" title="リンク">
+                <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+              </button>
+              <button type="button" id="replyClearFormatBtn" title="書式を解除">
+                <svg viewBox="0 0 24 24"><path d="m3 3 18 18M9 5h9M13 5l-3 10M6 19h8"/></svg>
+              </button>
+              <span class="sep"></span>
+              <button type="button" id="replyAttachBtn" title="写真・ファイルを添付">
+                <svg viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a5.5 5.5 0 0 1-7.78-7.78l9.19-9.19a3.5 3.5 0 0 1 4.95 4.95l-9.2 9.19a1.5 1.5 0 0 1-2.12-2.12l8.49-8.48"/></svg>
+              </button>
+              <input type="file" id="replyAttachInput" multiple accept="image/*,.pdf" hidden>
+            </div>
+            <div class="el-link-popover" id="replyLinkPopover" hidden>
+              <input type="url" id="replyLinkUrlInput" placeholder="https://example.com" aria-label="リンク先URL">
+              <button type="button" id="replyApplyLinkBtn">リンクを設定</button>
+              <button type="button" id="replyRemoveLinkBtn">解除</button>
+            </div>
+            <div id="replyEditor" class="el-editor-area" contenteditable="true" data-placeholder="返信先を指定せずコメントする…"></div>
+            <div class="el-editor-attachments-preview" id="replyAttachmentsPreview"></div>
+          </div>
+          <div class="el-quick-comment-foot">
+            <button type="button" class="el-btn el-btn--ghost el-btn--sm" id="quickCommentSendBtn">コメントする</button>
+          </div>
+        </div>
+
+        <div class="el-reply-box" id="replyBox" style="display:none;">
+          <div class="el-reply-context" id="replyContext">
+            <a href="#" id="replyContextLink"></a>
+            <button type="button" id="replyContextClear" aria-label="返信を閉じる">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg>
+            </button>
+          </div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:10px;">返信を投稿</div>
+          <div id="replyEditorSlot"></div>
+          <div class="el-reply-foot">
+            <button class="el-btn el-btn--primary el-btn--sm" style="margin-left:auto;">返信を送信</button>
+          </div>
+        </div>
+
+        <a class="el-ad-banner-v2" id="adBanner" href="#" target="_blank" rel="noopener noreferrer" style="margin-top:32px;">
+          <div class="el-ad-image-wrap-v2">
+            <div class="el-ad-image-v2" id="adImageV2"></div>
+          </div>
+          <div class="el-ad-footer-v2">
+            <span class="el-ad-tag-v2">AD</span>
+            <span class="el-ad-sponsor-v2" id="adSponsorV2"></span>
+          </div>
+        </a>
+
+        </div>
+
+        <aside class="el-thread-side">
+          <div class="el-side-panel">
+            <h4 id="ctSidePanelTitle">このコミュニティの他の投稿</h4>
+            <div id="ctOtherTopics">
+              <div style="padding:8px 2px;color:var(--el-ink-faint);font-size:12.5px;">読み込み中...</div>
+            </div>
+          </div>
+
+          <div class="el-side-panel">
+            <a href="groups.html" class="el-side-panel-row" id="ctBackToCommunityLink">
+              <span class="title">コミュニティの掲示板に戻る →</span>
+            </a>
+          </div>
+
+          <div class="el-side-panel" id="recommendedCommunitiesPanel" style="display:none;">
+            <h4>おすすめのコミュニティ</h4>
+            <div id="recommendedCommunitiesList"></div>
+          </div>
+        </aside>
+
+      </div>
+    </main>
+
+    <footer class="el-footer">
+      <div class="wrap">
+        <div class="el-footer-grid">
+          <div>
+            <a href="index.html" class="el-logo">Export Lab<span class="dot">.</span></a>
+            <p class="tag">人・モノ・情報がつながる、輸出の共創コミュニティ。運営：WorldShift株式会社</p>
+          </div>
+          <div class="el-footer-cols">
+            <div>
+              <h6>コミュニティ</h6>
+              <a href="board.html">フォーラム</a>
+              <a href="groups.html">コミュニティ</a>
+              <a href="announcements.html">公式お知らせ</a>
+              <a href="events.html">イベント</a>
+              <a href="market.html">マーケット</a>
+            </div>
+            <div>
+              <h6>サポート</h6>
+              <a href="#">ガイドライン</a>
+              <a href="#">よくある質問</a>
+              <a href="#">お問い合わせ</a>
+            </div>
+          </div>
+        </div>
+        <div class="el-footer-bottom">
+          <span>© 2026 WorldShift Inc.</span>
+          <span>Export Lab Community</span>
+        </div>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<div class="el-auth-modal" id="authModal" aria-hidden="true">
+  <div class="el-auth-modal-backdrop" data-auth-close></div>
+  <div class="el-auth-modal-panel" role="dialog" aria-modal="true">
+    <button type="button" class="el-auth-modal-close" data-auth-close aria-label="閉じる">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <h3>ユーザー登録してください</h3>
+    <p>この操作を行うには、会員登録（無料）が必要です。登録すると投稿・返信・購入などすべての機能がご利用いただけます。</p>
+    <div class="el-auth-modal-actions">
+      <a href="signup.html" class="el-btn el-btn--primary el-btn--sm">新規登録する</a>
+      <button type="button" class="el-btn el-btn--ghost el-btn--sm" data-auth-close>閉じる</button>
+    </div>
+  </div>
+</div>
+
+<script src="../shared/global-header.js" defer></script>
+<script>
+  (function () {
+    var appShell = document.getElementById('appShell');
+    var STORAGE_KEY = 'el-sidebar-collapsed';
+    try {
+      if (localStorage.getItem(STORAGE_KEY) === '1') { appShell.classList.add('is-toggled'); }
+    } catch (e) {}
+    document.getElementById('sidebarToggle').addEventListener('click', function () {
+      appShell.classList.toggle('is-toggled');
+      try { localStorage.setItem(STORAGE_KEY, appShell.classList.contains('is-toggled') ? '1' : '0'); } catch (e) {}
+    });
+  })();
+
+  // フォーラム／コミュニティ／マーケットの見出し：矢印以外をクリックしたらページ遷移、矢印は開閉のみ
+  document.querySelectorAll('.el-side-forum > summary[data-href]').forEach(function (summary) {
+    summary.addEventListener('click', function (e) {
+      if (e.target.closest('svg.chev')) return;
+      e.preventDefault();
+      window.location.href = summary.dataset.href;
+    });
+  });
+
+  // ユーザーモード（ゲスト／登録ユーザー／管理者）の切り替えと共通ゲート処理
+  function elDriveImgUrl(url) {
+    if (!url) return url;
+    var m = url.match(/drive\.google\.com\/file\/d\/([^/]+)/) || url.match(/[?&]id=([^&]+)/);
+    if (m && m[1]) return 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w1000';
+    return url;
+  }
+  window.elDriveImgUrl = elDriveImgUrl;
+
+  document.addEventListener('DOMContentLoaded', function () {
+    var ROLE_KEY = 'el-user-role';
+    function getRole() {
+      try { return localStorage.getItem(ROLE_KEY) || 'guest'; } catch (e) { return 'guest'; }
+    }
+    function setRole(role) {
+      try {
+        localStorage.setItem(ROLE_KEY, role);
+        // ログアウト時は権限だけでなく、以前ログインしていたユーザーの識別情報も
+        // 消しておかないと、いいね等の「ログイン済みか」の判定がユーザーIDの残存で
+        // 誤って通ってしまうため、あわせて削除する。
+        if (role === 'guest') {
+          localStorage.removeItem('el-user-id');
+          localStorage.removeItem('el-username');
+          localStorage.removeItem('el-user-name');
+          localStorage.removeItem('el-user-profile');
+        }
+      } catch (e) {}
+    }
+    window.elGetRole = getRole;
+
+    var role = getRole();
+    document.body.setAttribute('data-role', role);
+
+    var bell = document.querySelector('.el-header-bell');
+    if (bell && role === 'guest') bell.style.display = 'none';
+    var headerAvatar = document.getElementById('headerAvatar');
+    if (headerAvatar && role === 'guest') headerAvatar.style.display = 'none';
+    else if (headerAvatar) {
+      try {
+        var hp = JSON.parse(localStorage.getItem('el-user-profile') || '{}');
+        var hUsername = localStorage.getItem('el-username') || hp.username || '';
+        if (hp.photoUrl) headerAvatar.innerHTML = '<img src="' + window.elDriveImgUrl(hp.photoUrl) + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
+        else if (hUsername) headerAvatar.textContent = hUsername.charAt(0);
+      } catch (e) {}
+    }
+
+    var authLinksWrap = document.getElementById('headerAuthLinks');
+    var loginLink = document.getElementById('headerLoginLink');
+    var signupLink = document.getElementById('headerSignupLink');
+    if (role !== 'guest' && authLinksWrap) {
+      if (loginLink) loginLink.remove();
+      if (signupLink) {
+        signupLink.textContent = 'ログアウト';
+        signupLink.href = '#';
+        signupLink.addEventListener('click', function (e) {
+          e.preventDefault();
+          setRole('guest');
+          window.location.href = 'index.html';
+        });
+      }
+    }
+
+    var modal = document.getElementById('authModal');
+    window.elRequireAuth = function (e) {
+      if (getRole() !== 'guest') return true;
+      if (e) e.preventDefault();
+      if (modal) { modal.classList.add('is-open'); modal.setAttribute('aria-hidden', 'false'); }
+      return false;
+    };
+    if (modal) {
+      modal.querySelectorAll('[data-auth-close]').forEach(function (el) {
+        el.addEventListener('click', function () {
+          modal.classList.remove('is-open');
+          modal.setAttribute('aria-hidden', 'true');
+        });
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') { modal.classList.remove('is-open'); modal.setAttribute('aria-hidden', 'true'); }
+      });
+    }
+
+    if (role === 'admin') {
+      var sideNav = document.querySelector('.el-sidebar nav');
+      if (sideNav && !sideNav.querySelector('#sideAdminSection')) {
+        var isAdminPage = window.location.pathname.indexOf('admin.html') !== -1;
+        var adminTabs = [
+          ['users', '登録ユーザー一覧'], ['announce', 'お知らせ登録'], ['event', 'イベント登録'],
+          ['content', 'コンテンツ登録'], ['forms', 'フォーム管理'], ['community', 'コミュニティ登録'],
+          ['guideline', 'ガイドライン管理'], ['ads', '広告設定'], ['apply', '出品申請の確認'],
+          ['marketOrders', 'マーケット申込み一覧'], ['badge', 'バッジの付与'], ['operator', '運営者情報']
+        ];
+        var adminDetails = document.createElement('details');
+        adminDetails.className = 'el-side-forum';
+        adminDetails.id = 'sideAdminSection';
+        adminDetails.innerHTML = '<summary' + (isAdminPage ? ' class="is-active"' : '') + ' data-href="admin.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 3 7v6c0 5 4 9 9 9s9-4 9-9V7l-9-5Z"/><path d="m9 12 2 2 4-4"/></svg><span class="lbl">管理者ページ</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg></summary><div class="el-side-sub">' +
+          adminTabs.map(function (t) { return '<a href="admin.html?tab=' + t[0] + '">' + t[1] + '</a>'; }).join('') +
+          '</div>';
+        sideNav.appendChild(adminDetails);
+        // フォーラム／コミュニティ／マーケットの見出しと同じ「矢印以外は遷移、矢印は開閉のみ」の
+        // 挙動を、動的に追加したこの要素にも個別に設定する（既存のquerySelectorAllによる
+        // 一括設定は、この要素が生成される前に実行済みのため、ここで個別に行う）
+        var adminSummary = adminDetails.querySelector('summary[data-href]');
+        adminSummary.addEventListener('click', function (e) {
+          if (e.target.closest('svg.chev')) return;
+          e.preventDefault();
+          window.location.href = adminSummary.dataset.href;
+        });
+      }
+    }
+
+    if (role === 'guest') {
+      document.querySelectorAll('[data-guest-block]').forEach(function (el) {
+        el.addEventListener('click', window.elRequireAuth);
+      });
+    }
+  });
+
+  (function () {
+    var el = document.getElementById('adBanner');
+    if (!el) return;
+    // 実際のリンク先(ctaUrl)が設定されるまでは、バナー全体クリックで# に飛ばないようにする
+    el.addEventListener('click', function (e) {
+      if (!el.dataset.ctaUrl) e.preventDefault();
+      // クリック数・クリックユーザーの記録（広告管理②のデータ用）。表示回数と違い、
+      // クリックは母数が少なく1件ずつ記録しても書き込み負荷は小さいため、都度記録する。
+      if (el.dataset.adId) {
+        fetch(API_URL, {
+          method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: 'logAdEvent', adId: el.dataset.adId, eventType: 'click',
+            userId: (localStorage.getItem('el-user-id') || ''), username: (localStorage.getItem('el-username') || '')
+          })
+        }).catch(function () {});
+      }
+    });
+    var imageEl = document.getElementById('adImageV2');
+    var sponsorEl = document.getElementById('adSponsorV2');
+
+    // 管理者ページで登録された広告（横長／スクエア）があれば、そちらを優先して表示する
+    var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
+    fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'listContent', type: 'ad' })
+    })
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        // このバナーは「基本は横長」の広告枠のため、スクエア広告はここでは選ばない
+        // （スクエア広告はフォーラムの新規投稿ページ／コミュニティの新規作成ページの
+        // 専用サイドバー枠にのみ表示する方針のため）。
+        var ads = ((data.ok && data.items) ? data.items : []).filter(function (a) { return a.adType !== 'square'; });
+        if (!ads.length) {
+          // 広告が1件も登録されていない場合は、架空のダミー広告を表示するのではなく、
+          // バナー自体を表示しない（デモ/モックデータを残さない方針のため）
+          el.style.display = 'none';
+          return;
+        }
+        var ad = ads[Math.floor(Math.random() * ads.length)];
+        el.dataset.adId = ad.id;
+        // 表示回数の記録：書き込みを抑えるため、同じブラウザタブ（セッション）内で同じ広告IDは
+        // 1回だけ記録する（sessionStorageで重複防止する簡易カウント。Firebase等は使わず、
+        // 引き続きスプレッドシートのまま運用するための対応）。
+        (function () {
+          var seenKey = 'el-ad-impression-seen';
+          var seen = [];
+          try { seen = JSON.parse(sessionStorage.getItem(seenKey) || '[]'); } catch (e) {}
+          if (seen.indexOf(ad.id) !== -1) return;
+          seen.push(ad.id);
+          try { sessionStorage.setItem(seenKey, JSON.stringify(seen)); } catch (e) {}
+          fetch(API_URL, {
+            method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: 'logAdEvent', adId: ad.id, eventType: 'impression' })
+          }).catch(function () {});
+        })();
+        if (ad.imageUrl) {
+          imageEl.style.backgroundImage = 'url(' + ad.imageUrl + ')';
+        } else {
+          imageEl.style.backgroundImage = 'none';
+          imageEl.style.background = 'var(--el-teal)';
+        }
+        if (ad.ctaUrl) {
+          el.href = ad.ctaUrl;
+          el.target = '_blank';
+          el.rel = 'noopener noreferrer';
+          el.dataset.ctaUrl = ad.ctaUrl;
+        }
+        sponsorEl.textContent = 'スポンサー：' + (ad.serviceName || '');
+      })
+      .catch(function () { el.style.display = 'none'; });
+  })();
+
+  // 返信リッチエディター（topic.htmlの返信エディターと同じ仕組み）
+  var replyBox = document.getElementById('replyBox');
+  var replyEditorSlot = document.getElementById('replyEditorSlot');
+  var replyEditor = document.getElementById('replyEditor');
+  var replyCtx = document.getElementById('replyContext');
+  var replyCtxLink = document.getElementById('replyContextLink');
+  var replyCtxClear = document.getElementById('replyContextClear');
+  var quickCommentBox = document.getElementById('quickCommentBox');
+  var currentReplyToId = 'op';
+
+  // 返信先を指定しないコメント欄とターゲットを指定した返信は、同じリッチエディター
+  // （ツールバー付き）を使い回す。ツールバー自体はDOM上に1つしか無いため
+  // （#replyRichEditorWrap）、通常は#quickCommentBox内に常駐させておき、対象を指定した
+  // 返信を書いている間だけ#replyBox側へ一時的に移動させ、終わったら元の位置へ戻す
+  // （topic.htmlの返信・編集エディターの使い回しと同じ仕組み）。
+  var richEditorWrap = document.getElementById('replyRichEditorWrap');
+  var richEditorHomeParent = richEditorWrap ? richEditorWrap.parentNode : null;
+  var richEditorHomeNextSibling = richEditorWrap ? richEditorWrap.nextSibling : null;
+  var QUICK_COMMENT_PLACEHOLDER = '返信先を指定せずコメントする…';
+  var REPLY_PLACEHOLDER = 'コメントを入力してください…';
+  function moveRichEditorTo(container, beforeNode) {
+    if (!richEditorWrap || !container) return;
+    container.insertBefore(richEditorWrap, beforeNode || null);
+    if (quickCommentBox) quickCommentBox.classList.add('is-editor-away');
+    if (replyEditor) replyEditor.setAttribute('data-placeholder', REPLY_PLACEHOLDER);
+  }
+  function restoreRichEditorHome() {
+    if (!richEditorWrap || !richEditorHomeParent) return;
+    richEditorHomeParent.insertBefore(richEditorWrap, richEditorHomeNextSibling);
+    if (quickCommentBox) quickCommentBox.classList.remove('is-editor-away');
+    if (replyEditor) replyEditor.setAttribute('data-placeholder', QUICK_COMMENT_PLACEHOLDER);
+  }
+
+  // コミュニティ投稿への返信・コメントへの写真／ファイル添付（forum-new.htmlの投稿添付と
+  // 同じ圧縮・サイズ上限の考え方を、コメント用に移植したもの）。community-topic.htmlの
+  // 投稿・コメント編集はこのリッチエディターを使い回さない（別の単純なcontenteditableで
+  // 本文のみ編集する）ため、添付機能は常に新規のコメント作成時のみで使われる。
+  var ATTACHMENT_SHEET_CELL_LIMIT = 45000;
+  var ATTACHMENT_PER_FILE_LIMIT = 15000;
+  var MAX_COMMENT_ATTACHMENTS = 5;
+  var pendingAttachments = [];
+  var attachmentWebpCache_ = null;
+  function attachmentCanvasSupportsWebp_() {
+    if (attachmentWebpCache_ !== null) return attachmentWebpCache_;
+    try {
+      var c = document.createElement('canvas');
+      c.width = c.height = 1;
+      attachmentWebpCache_ = c.toDataURL('image/webp').indexOf('image/webp') === 5;
+    } catch (e) { attachmentWebpCache_ = false; }
+    return attachmentWebpCache_;
+  }
+  function compressAttachmentImage_(file, maxSize) {
+    var target = maxSize || 900;
+    var format = attachmentCanvasSupportsWebp_() ? 'image/webp' : 'image/jpeg';
+    return new Promise(function (resolve, reject) {
+      var reader = new FileReader();
+      reader.onload = function (e) {
+        var img = new Image();
+        img.onload = function () {
+          function render(size, quality, fmt) {
+            var scale = Math.min(1, size / Math.max(img.width, img.height));
+            var canvas = document.createElement('canvas');
+            canvas.width = Math.max(1, Math.round(img.width * scale));
+            canvas.height = Math.max(1, Math.round(img.height * scale));
+            canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+            return canvas.toDataURL(fmt, quality);
+          }
+          var sizeSteps = [];
+          [1, 0.85, 0.7, 0.55, 0.4, 0.3, 0.22].forEach(function (ratio) {
+            var s = Math.max(200, Math.round(target * ratio));
+            if (sizeSteps.indexOf(s) === -1) sizeSteps.push(s);
+          });
+          var qualitySteps = [0.9, 0.8, 0.7, 0.6, 0.5];
+          var attempts = [];
+          sizeSteps.forEach(function (s) { qualitySteps.forEach(function (q) { attempts.push([s, q]); }); });
+          var result = '';
+          for (var i = 0; i < attempts.length; i++) {
+            result = render(attempts[i][0], attempts[i][1], format);
+            if (result.length <= ATTACHMENT_PER_FILE_LIMIT) break;
+          }
+          if (result.length > ATTACHMENT_PER_FILE_LIMIT && format !== 'image/jpeg') {
+            for (var j = 0; j < attempts.length; j++) {
+              result = render(attempts[j][0], attempts[j][1], 'image/jpeg');
+              if (result.length <= ATTACHMENT_PER_FILE_LIMIT) break;
+            }
+          }
+          resolve(result);
+        };
+        img.onerror = reject;
+        img.src = e.target.result;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+  function readFileAsDataUrl_(file) {
+    return new Promise(function (resolve, reject) {
+      var reader = new FileReader();
+      reader.onload = function (e) { resolve(e.target.result); };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+  function escAttachName_(s) {
+    var d = document.createElement('div');
+    d.textContent = s == null ? '' : String(s);
+    return d.innerHTML;
+  }
+  function renderPendingAttachments_() {
+    var preview = document.getElementById('replyAttachmentsPreview');
+    if (!preview) return;
+    preview.innerHTML = pendingAttachments.map(function (a, idx) {
+      return '<span class="el-editor-attachment-chip"><span>' + escAttachName_(a.name || 'ファイル') + '</span>' +
+        '<button type="button" data-remove-attachment="' + idx + '" aria-label="添付を削除" title="添付を削除">' +
+        '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg></button></span>';
+    }).join('');
+    preview.querySelectorAll('[data-remove-attachment]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        pendingAttachments.splice(+btn.dataset.removeAttachment, 1);
+        renderPendingAttachments_();
+      });
+    });
+  }
+  function clearPendingAttachments_() {
+    pendingAttachments = [];
+    renderPendingAttachments_();
+    var input = document.getElementById('replyAttachInput');
+    if (input) input.value = '';
+  }
+  var replyAttachBtn = document.getElementById('replyAttachBtn');
+  var replyAttachInput = document.getElementById('replyAttachInput');
+  if (replyAttachBtn && replyAttachInput) {
+    replyAttachBtn.addEventListener('click', function () { replyAttachInput.click(); });
+    replyAttachInput.addEventListener('change', function () {
+      var files = Array.prototype.slice.call(this.files || []);
+      this.value = '';
+      var room = MAX_COMMENT_ATTACHMENTS - pendingAttachments.length;
+      var skipped = [];
+      if (files.length > room) { skipped.push('一度に添付できるのは' + MAX_COMMENT_ATTACHMENTS + '件までです'); files = files.slice(0, Math.max(0, room)); }
+      files.reduce(function (chain, file) {
+        return chain.then(function () {
+          var isImage = file.type.indexOf('image/') === 0;
+          var task = isImage ? compressAttachmentImage_(file, 900) : readFileAsDataUrl_(file);
+          return task.then(function (dataUrl) {
+            if (!isImage && dataUrl.length > ATTACHMENT_PER_FILE_LIMIT) { skipped.push(file.name + '（ファイルサイズが大きすぎます）'); return; }
+            var used = pendingAttachments.reduce(function (sum, a) { return sum + a.dataUrl.length; }, 0);
+            if (used + dataUrl.length > ATTACHMENT_SHEET_CELL_LIMIT) { skipped.push(file.name + '（添付ファイルの合計サイズの上限を超えました）'); return; }
+            pendingAttachments.push({ name: file.name, type: file.type || '', dataUrl: dataUrl });
+          }).catch(function () { skipped.push(file.name + '（読み込みに失敗しました）'); });
+        });
+      }, Promise.resolve()).then(function () {
+        renderPendingAttachments_();
+        if (skipped.length) alert(skipped.join('\n'));
+      });
+    });
+  }
+
+  // 以前は「返信」を押すと本文の先頭に「@ユーザー名 」を自動挿入していたが、これは見た目だけの
+  // 飾りで実際には何の機能も持っていなかった（通知・返信先の判定はすべてcurrentReplyToId＝
+  // parentIdというIDベースの仕組みで行っており、本文中の@表記は一切参照していない）。
+  // 「↩ 返信 〇〇さん」のタグと返信先パネル（replyCtxLink）ですでに返信先が分かるため、
+  // 本文を自動的に書き換えるこの挙動は廃止し、エディターは空のまま返信を始められるようにする。
+  function clearReplyEditor() {
+    if (replyEditor) replyEditor.innerHTML = '';
+    clearPendingAttachments_();
+  }
+
+  if (replyEditor) {
+    (function () {
+      var editor = replyEditor;
+      var savedRange = null;
+
+      function selectionIsInsideEditor(sel) {
+        if (!sel || !sel.rangeCount) return false;
+        var node = sel.anchorNode;
+        return !!node && (node === editor || editor.contains(node.nodeType === 1 ? node : node.parentNode));
+      }
+      function saveSelection() {
+        var sel = window.getSelection();
+        if (selectionIsInsideEditor(sel)) { savedRange = sel.getRangeAt(0).cloneRange(); }
+      }
+      function restoreSelection() {
+        editor.focus({ preventScroll: true });
+        if (!savedRange) return false;
+        try {
+          var sel = window.getSelection();
+          sel.removeAllRanges();
+          sel.addRange(savedRange.cloneRange());
+          return true;
+        } catch (e) { return false; }
+      }
+      function runCommand(cmd, value) {
+        // 太字などの単純なトグル系コマンドは、実行前にマーカー要素を挿入すると
+        // （既に書式が当たっている範囲の内側にマーカーが入れ子になり）ブラウザの
+        // 「すでに適用済みか」の判定が狂い、2回目のクリックで解除できなくなる
+        // 不具合があったため、マーカーを使わず素の選択範囲に対して直接実行する。
+        restoreSelection();
+        document.execCommand('styleWithCSS', false, true);
+        document.execCommand(cmd, false, value == null ? null : value);
+        if (cmd === 'insertHorizontalRule') {
+          // 区切り線がエディターの末尾に挿入されると、その後ろに文字を置ける場所が
+          // 無くなり「線の下に入力できない」状態になるため、末尾に来た場合は
+          // カーソルを置ける空の行を区切り線の直後に必ず用意する。
+          var hrs = editor.querySelectorAll('hr');
+          var lastHr = hrs[hrs.length - 1];
+          if (lastHr && !lastHr.nextSibling) {
+            var afterHr = document.createElement('div');
+            afterHr.innerHTML = '<br>';
+            lastHr.parentNode.insertBefore(afterHr, lastHr.nextSibling);
+            var hrRange = document.createRange();
+            hrRange.setStart(afterHr, 0);
+            hrRange.collapse(true);
+            var hrSel = window.getSelection();
+            hrSel.removeAllRanges();
+            hrSel.addRange(hrRange);
+          }
+        }
+        saveSelection();
+      }
+      function clearMarkers() {
+        editor.querySelectorAll('[data-sel-marker]').forEach(function (m) { m.remove(); });
+      }
+      function insertMarkers() {
+        restoreSelection();
+        clearMarkers();
+        var sel = window.getSelection();
+        if (!sel || !sel.rangeCount || !selectionIsInsideEditor(sel)) return false;
+        var range = sel.getRangeAt(0);
+        var startMarker = document.createElement('span');
+        startMarker.setAttribute('data-sel-marker', 'start');
+        var endMarker = document.createElement('span');
+        endMarker.setAttribute('data-sel-marker', 'end');
+        if (range.collapsed) { range.insertNode(startMarker); return true; }
+        var endRange = range.cloneRange();
+        endRange.collapse(false);
+        endRange.insertNode(endMarker);
+        var startRange = range.cloneRange();
+        startRange.collapse(true);
+        startRange.insertNode(startMarker);
+        return true;
+      }
+      function rangeFromMarkers() {
+        var start = editor.querySelector('[data-sel-marker="start"]');
+        var end = editor.querySelector('[data-sel-marker="end"]');
+        if (!start) return null;
+        var range = document.createRange();
+        if (end) { range.setStartAfter(start); range.setEndBefore(end); }
+        else { range.setStartAfter(start); range.collapse(true); }
+        return { range: range, start: start, end: end };
+      }
+      function restoreFromMarkers() {
+        var found = rangeFromMarkers();
+        if (!found) { saveSelection(); return; }
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(found.range);
+        found.start.remove();
+        if (found.end) found.end.remove();
+        saveSelection();
+      }
+
+      document.addEventListener('selectionchange', function () {
+        var sel = window.getSelection();
+        if (selectionIsInsideEditor(sel)) saveSelection();
+      });
+      editor.addEventListener('keyup', saveSelection);
+      editor.addEventListener('mouseup', saveSelection);
+      editor.addEventListener('focus', saveSelection);
+      editor.addEventListener('input', saveSelection);
+
+      // ツールバーはページ上に1つだけ（返信先を指定しないコメント欄／返信で共用し、
+      // 使う場面に応じて場所を移動する）なので、常に見つかるよう#replyBoxに絞らず選択する。
+      document.querySelectorAll('.el-editor-toolbar button').forEach(function (btn) {
+        btn.addEventListener('pointerdown', function (e) { saveSelection(); e.preventDefault(); });
+      });
+      document.querySelectorAll('.el-editor-toolbar select, .el-editor-toolbar input[type="color"]').forEach(function (control) {
+        control.addEventListener('pointerdown', saveSelection);
+      });
+      document.querySelectorAll('.el-editor-toolbar [data-command]').forEach(function (btn) {
+        btn.addEventListener('click', function () { runCommand(btn.dataset.command, btn.dataset.value || null); });
+      });
+
+      var quoteBtn = document.getElementById('replyQuoteBtn');
+      if (quoteBtn) {
+        quoteBtn.addEventListener('click', function () {
+          insertMarkers();
+          var start = editor.querySelector('[data-sel-marker="start"]');
+          var el = start && start.parentElement;
+          var existing = el && el.closest('blockquote');
+          if (existing && editor.contains(existing)) { document.execCommand('formatBlock', false, 'div'); }
+          else { document.execCommand('formatBlock', false, 'blockquote'); }
+          restoreFromMarkers();
+        });
+      }
+
+      editor.addEventListener('keydown', function (e) {
+        if (e.key !== 'Enter' || e.shiftKey) return;
+        var sel = window.getSelection();
+        if (!sel || !sel.rangeCount || !sel.isCollapsed) return;
+        var node = sel.anchorNode;
+        var el = node && (node.nodeType === 1 ? node : node.parentElement);
+        if (!el) return;
+        var quote = el.closest('blockquote');
+        if (!quote || !editor.contains(quote)) return;
+        e.preventDefault();
+        var normal = document.createElement('div');
+        normal.innerHTML = '<br>';
+        quote.parentNode.insertBefore(normal, quote.nextSibling);
+        var r = document.createRange();
+        r.setStart(normal, 0);
+        r.collapse(true);
+        sel.removeAllRanges();
+        sel.addRange(r);
+        saveSelection();
+      });
+
+      var fontSizeSelect = document.getElementById('replyFontSizeSelect');
+      if (fontSizeSelect) {
+        fontSizeSelect.addEventListener('pointerdown', function () { saveSelection(); });
+        fontSizeSelect.addEventListener('change', function () {
+          var px = this.value;
+          if (!px) return;
+          restoreSelection();
+          document.execCommand('styleWithCSS', false, false);
+          document.execCommand('fontSize', false, '7');
+          editor.querySelectorAll('font[size="7"]').forEach(function (font) {
+            var span = document.createElement('span');
+            span.style.fontSize = px;
+            while (font.firstChild) span.appendChild(font.firstChild);
+            font.replaceWith(span);
+          });
+          document.execCommand('styleWithCSS', false, true);
+          this.value = '';
+          saveSelection();
+        });
+      }
+
+      var textColorPicker = document.getElementById('replyTextColorPicker');
+      if (textColorPicker) textColorPicker.addEventListener('input', function () { runCommand('foreColor', this.value); });
+      var bgColorPicker = document.getElementById('replyBgColorPicker');
+      if (bgColorPicker) {
+        bgColorPicker.addEventListener('input', function () {
+          insertMarkers();
+          document.execCommand('styleWithCSS', false, true);
+          var ok = document.execCommand('hiliteColor', false, this.value);
+          if (!ok) document.execCommand('backColor', false, this.value);
+          restoreFromMarkers();
+        });
+      }
+
+      var linkPopover = document.getElementById('replyLinkPopover');
+      var linkUrlInput = document.getElementById('replyLinkUrlInput');
+      var addLinkBtn = document.getElementById('replyAddLinkBtn');
+      if (addLinkBtn && linkPopover && linkUrlInput) {
+        addLinkBtn.addEventListener('mousedown', function (e) { saveSelection(); e.preventDefault(); });
+        addLinkBtn.addEventListener('click', function () {
+          insertMarkers();
+          var found = rangeFromMarkers();
+          if (!found || !found.end) {
+            linkPopover.hidden = false;
+            linkPopover.classList.add('is-centered');
+          } else {
+            var rect = found.range.getBoundingClientRect();
+            // リッチエディターは返信先を指定しないコメント欄と対象指定の返信とで共用しており
+            // 現在地が#replyBoxとは限らないため、固定セレクタではなく現在地を直接参照する。
+            var editorRect = (richEditorWrap || document.querySelector('.el-rich-editor')).getBoundingClientRect();
+            linkPopover.hidden = false;
+            linkPopover.classList.remove('is-centered');
+            linkPopover.style.left = Math.max(10, Math.min(rect.left - editorRect.left, editorRect.width - 340)) + 'px';
+            linkPopover.style.top = (rect.bottom - editorRect.top + 8) + 'px';
+          }
+          linkUrlInput.value = '';
+          linkUrlInput.focus();
+        });
+        var applyLinkBtn = document.getElementById('replyApplyLinkBtn');
+        applyLinkBtn.addEventListener('mousedown', function (e) { e.preventDefault(); });
+        applyLinkBtn.addEventListener('click', function () {
+          var url = linkUrlInput.value.trim();
+          var start = editor.querySelector('[data-sel-marker="start"]');
+          if (!url || !start) { linkPopover.hidden = true; clearMarkers(); return; }
+          if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+          editor.focus({ preventScroll: true });
+          var end = editor.querySelector('[data-sel-marker="end"]');
+          var a = document.createElement('a');
+          a.href = url;
+          a.target = '_blank';
+          a.rel = 'noopener noreferrer';
+          if (!end) {
+            a.textContent = url;
+            start.parentNode.insertBefore(a, start);
+            start.remove();
+          } else {
+            var range = document.createRange();
+            range.setStartAfter(start);
+            range.setEndBefore(end);
+            try { range.surroundContents(a); }
+            catch (err) { var frag = range.extractContents(); a.appendChild(frag); range.insertNode(a); }
+            start.remove();
+            end.remove();
+          }
+          var after = document.createRange();
+          after.setStartAfter(a);
+          after.collapse(true);
+          var sel = window.getSelection();
+          sel.removeAllRanges();
+          sel.addRange(after);
+          saveSelection();
+          linkPopover.hidden = true;
+        });
+        document.getElementById('replyRemoveLinkBtn').addEventListener('click', function () {
+          runCommand('unlink'); linkPopover.hidden = true;
+        });
+        document.addEventListener('mousedown', function (e) {
+          if (!linkPopover.hidden && !e.target.closest('#replyLinkPopover') && !e.target.closest('#replyAddLinkBtn')) {
+            linkPopover.hidden = true;
+            clearMarkers();
+          }
+        });
+      }
+
+      var clearFormatBtn = document.getElementById('replyClearFormatBtn');
+      if (clearFormatBtn) {
+        clearFormatBtn.addEventListener('mousedown', function (e) { e.preventDefault(); });
+        clearFormatBtn.addEventListener('click', function () {
+          restoreSelection();
+          document.execCommand('removeFormat', false, null);
+          document.execCommand('unlink', false, null);
+          var sel = window.getSelection();
+          if (sel.rangeCount) {
+            var node = sel.anchorNode;
+            var el = node && (node.nodeType === 1 ? node : node.parentElement);
+            var block = el && el.closest('blockquote,pre,h1,h2,h3,h4,h5,h6');
+            if (block && editor.contains(block)) document.execCommand('formatBlock', false, 'div');
+          }
+          saveSelection();
+        });
+      }
+    })();
+  }
+
+  function wireReplyButtons() {
+    if (!replyBox) return;
+    document.querySelectorAll('.el-post').forEach(function (post) {
+      var buttons = post.querySelectorAll('.el-post-actions button');
+      var replyBtn = null;
+      buttons.forEach(function (b) { if (b.textContent.indexOf('返信') !== -1) replyBtn = b; });
+      if (!replyBtn) return;
+      var nameEl = post.querySelector('.name');
+      var name = nameEl ? nameEl.textContent.trim() : '';
+      replyBtn.addEventListener('click', function () {
+        if (window.elRequireAuth && !window.elRequireAuth()) return;
+        moveRichEditorTo(replyEditorSlot);
+        currentReplyToId = post.id;
+        clearReplyEditor();
+        replyCtxLink.textContent = name + 'さんの投稿に返信中';
+        replyCtxLink.href = '#' + post.id;
+        replyCtx.classList.add('is-visible');
+        replyBox.style.display = '';
+        replyBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        if (replyEditor) replyEditor.focus();
+      });
+    });
+  }
+  if (replyBox) {
+    // コメントは必ずトピック本文かいずれかの返信を対象に投稿するため、返信枠は常時表示せず
+    // 各投稿の「返信」ボタンを押したときだけ、その対象を選んだ状態で開く。
+    replyCtxClear.addEventListener('click', function () {
+      currentReplyToId = 'op';
+      replyCtx.classList.remove('is-visible');
+      clearReplyEditor();
+      replyBox.style.display = 'none';
+      restoreRichEditorHome();
+    });
+  }
+  wireReplyButtons();
+
+  // ベストアンサー機能：スレ主のみコメントに「ベストアンサーに選ぶ」ボタンを押せる（ローカル保存）
+  function elCurrentUsername() {
+    try { return localStorage.getItem('el-username') || ''; } catch (e) { return ''; }
+  }
+  // 投稿者本人かどうかの判定は必ずユーザーIDのみで行う（ユーザーネームでのフォールバックは廃止）。
+  function elCurrentUserId() {
+    try { return localStorage.getItem('el-user-id') || ''; } catch (e) { return ''; }
+  }
+  function elIsSameAuthor(authorUserId, authorUsername) {
+    var myId = elCurrentUserId();
+    return !!(myId && authorUserId && myId === authorUserId);
+  }
+  // コミュニティ投稿のbestAnswerCommentIdはhandleCreateCommunityTopicで常に正しく列が
+  // 揃っており、フォーラム投稿のような列ズレの実例は無いが、他の判定箇所（community-board.html
+  // の一覧）と同じ防御的なガードをここにも入れておく（本物のIDはUUIDで"["から始まることは無い）。
+  function hasRealBestAnswer_(id) {
+    return !!id && String(id).charAt(0) !== '[';
+  }
+  // ベストアンサーの選定は、以前はブラウザのlocalStorageだけに保存していて他の人からは
+  // 見えなかったが、スプレッドシート（コミュニティ投稿シートのbestAnswerCommentId列）に
+  // 保存するよう変更した。onToggle が渡されたときだけ「選ぶ／解除する」ボタンを表示する。
+  function markThreadSolvedUI(solved) {
+    var badgesEl = document.getElementById('ctBadges');
+    if (!badgesEl) return;
+    var existing = badgesEl.querySelector('.badge--solved, .badge--unsolved');
+    if (existing) existing.remove();
+    var span = document.createElement('span');
+    span.className = 'badge ' + (solved ? 'badge--solved' : 'badge--unsolved');
+    span.textContent = solved ? '解決' : '未解決';
+    badgesEl.appendChild(span);
+  }
+  function refreshBestAnswerUI(bestAnswerCommentId, isAuthor, onToggle) {
+    document.querySelectorAll('#commentsList .el-post').forEach(function (post) {
+      var head = post.querySelector('.el-post-head');
+      var actions = post.querySelector('.el-post-actions');
+      if (head) {
+        var oldBadge = head.querySelector('.el-best-answer-badge');
+        if (oldBadge) oldBadge.remove();
+      }
+      if (actions) {
+        var oldBtn = actions.querySelector('.el-best-answer-btn');
+        if (oldBtn) oldBtn.remove();
+      }
+      var isBest = !!(bestAnswerCommentId && post.id === bestAnswerCommentId);
+      if (isBest && head) {
+        var badge = document.createElement('span');
+        badge.className = 'badge badge--solved el-best-answer-badge';
+        badge.style.marginLeft = '6px';
+        badge.textContent = 'ベストアンサー';
+        head.appendChild(badge);
+      }
+      if (isAuthor && actions && onToggle) {
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'el-best-answer-btn';
+        btn.innerHTML = isBest
+          ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg> 選択を解除'
+          : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg> ベストアンサーに選ぶ';
+        btn.addEventListener('click', function () { onToggle(isBest ? '' : post.id); });
+        actions.appendChild(btn);
+      }
+    });
+  }
+
+  // 各コメントに「誰への返信か」を常時表示する矢印タグ
+  function wireReplyTags() {
+    document.querySelectorAll('.el-post[data-reply-to]').forEach(function (post) {
+      var slot = post.querySelector('.el-reply-tag-slot');
+      var targetId = post.dataset.replyTo;
+      var target = document.getElementById(targetId);
+      if (!slot || !target || slot.children.length) return;
+      var targetName = target.querySelector('.name');
+      var name = targetName ? targetName.textContent.trim() : '';
+      var tag = document.createElement('a');
+      tag.href = '#' + targetId;
+      tag.className = 'el-reply-tag';
+      tag.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 5 5v6"/></svg>返信 <strong>' + name + '</strong>';
+      tag.addEventListener('click', function (e) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        target.classList.remove('is-highlighted');
+        void target.offsetWidth;
+        target.classList.add('is-highlighted');
+      });
+      slot.appendChild(tag);
+    });
+  }
+
+  // このコミュニティ投稿と、そのコメントをスプレッドシート（コミュニティ投稿／コミュニティコメント）から読み込んで表示する
+  (function () {
+    var params = new URLSearchParams(window.location.search);
+    var topicId = params.get('id');
+    var container = document.getElementById('commentsList');
+    var breadcrumb = document.getElementById('ctBreadcrumb');
+    var CHEV = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>';
+    var currentItem = null;
+
+    if (!topicId) {
+      var head = document.querySelector('.el-thread-head');
+      if (head) head.innerHTML = '<div style="padding:40px 4px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">投稿が指定されていません。<a href="groups.html">コミュニティ一覧に戻る</a></div>';
+      var op0 = document.getElementById('op');
+      if (op0) op0.style.display = 'none';
+      if (container) container.innerHTML = '';
+      var replyBox0 = document.getElementById('replyBox');
+      if (replyBox0) replyBox0.style.display = 'none';
+      return;
+    }
+
+    var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
+    function apiPost(payload) {
+      return fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      }).then(function (res) { return res.json(); });
+    }
+    function esc(s) {
+      var d = document.createElement('div');
+      d.textContent = s == null ? '' : String(s);
+      return d.innerHTML;
+    }
+    // コメントへの添付ファイル：画像であってもその場に表示せず、常にファイル名＋
+    // ダウンロードリンクの「添付ファイル枠」として表示する。
+    function commentAttachmentsHtml_(attachments) {
+      var list = Array.isArray(attachments) ? attachments : [];
+      if (!list.length) return '';
+      return '<div class="el-comment-attachments">' + list.map(function (a) {
+        return '<a class="el-post-attachment-file" href="' + a.dataUrl + '" download="' + esc(a.name || 'file') + '">' +
+          '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/></svg>' +
+          esc(a.name || 'ファイル') + '</a>';
+      }).join('') + '</div>';
+    }
+    // 本文内のリンク（リッチエディターで埋め込まれたもの）は、その場で遷移せず別タブで開くようにする
+    function elOpenLinksInNewTab(container) {
+      if (!container) return;
+      container.querySelectorAll('a[href]').forEach(function (a) {
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+      });
+    }
+    // 投稿者・コメント者のアイコンから、その人のプロフィールページへのリンクを作る
+    function elProfileUrl(username) {
+      return 'profile.html?user=' + encodeURIComponent(username || '');
+    }
+    // トピックのお気に入り（マイページの「お気に入りにしたトピック」枠と連動）。
+    // マーケットのお気に入り（el-market-favorites）と同じ考え方で、サーバーには保存せず
+    // 端末のlocalStorageに {id, type} の配列として保持する。typeでフォーラム／コミュニティを区別する。
+    // キーにはログイン中のユーザーID（無ければユーザーネーム）を含める：同じ端末・同じブラウザで
+    // 複数の会員がログインし直す（このサイトのログインはlocalStorageのみで管理しているため、
+    // なりすまし等も含め頻繁に起こりうる）と、キーが固定だと全員が同じお気に入りを共有してしまう
+    // 不具合になっていた。
+    function topicFavoritesKey_() {
+      var uid = '';
+      try { uid = localStorage.getItem('el-user-id') || localStorage.getItem('el-username') || ''; } catch (e) {}
+      return 'el-topic-favorites:' + (uid || 'guest');
+    }
+    function getTopicFavorites_() {
+      try { return JSON.parse(localStorage.getItem(topicFavoritesKey_()) || '[]'); } catch (e) { return []; }
+    }
+    function setTopicFavorites_(list) {
+      try { localStorage.setItem(topicFavoritesKey_(), JSON.stringify(list)); } catch (e) {}
+    }
+    function isTopicFavorited_(id, type) {
+      return getTopicFavorites_().some(function (f) { return String(f.id) === String(id) && f.type === type; });
+    }
+    function toggleTopicFavorite_(id, type) {
+      var list = getTopicFavorites_();
+      var idx = -1;
+      for (var i = 0; i < list.length; i++) { if (String(list[i].id) === String(id) && list[i].type === type) { idx = i; break; } }
+      if (idx >= 0) { list.splice(idx, 1); } else { list.push({ id: String(id), type: type }); }
+      setTopicFavorites_(list);
+      return idx < 0; // true = 今お気に入りにした
+    }
+    function wireFavoriteButton(btn, type, id) {
+      if (!btn) return;
+      function applyState() {
+        var fav = isTopicFavorited_(id, type);
+        btn.dataset.favorited = fav ? '1' : '0';
+      }
+      applyState();
+      btn.addEventListener('click', function () {
+        if (window.elRequireAuth && !window.elRequireAuth()) return;
+        toggleTopicFavorite_(id, type);
+        applyState();
+      });
+    }
+    // いいねボタンの表示更新（押した状態の色分けと件数）
+    function applyLikeButtonState(btn, liked, count) {
+      if (!btn) return;
+      btn.dataset.liked = liked ? '1' : '0';
+      btn.style.color = liked ? 'var(--el-coral)' : '';
+      var countEl = btn.querySelector('.el-like-count');
+      if (countEl) countEl.textContent = count;
+    }
+    function wireLikeButton(btn, targetType, targetId, initialLiked, initialCount) {
+      if (!btn) return;
+      applyLikeButtonState(btn, initialLiked, initialCount);
+      btn.addEventListener('click', function () {
+        if (window.elRequireAuth && !window.elRequireAuth()) return;
+        var uid = elCurrentUserId(), uname = elCurrentUsername();
+        if (!uid && !uname) { alert('いいねをするにはログイン（会員登録）してください。'); return; }
+        btn.disabled = true;
+        apiPost({ action: 'toggleLike', targetType: targetType, targetId: targetId, userId: uid, username: uname })
+          .then(function (res) {
+            btn.disabled = false;
+            if (!res.ok) return;
+            applyLikeButtonState(btn, res.liked, res.count);
+          }).catch(function () { btn.disabled = false; });
+      });
+    }
+    function relativeTime(dateStr) {
+      var d = new Date(dateStr);
+      if (isNaN(d.getTime())) return '';
+      var diffMs = Date.now() - d.getTime();
+      var diffDays = Math.floor(diffMs / 86400000);
+      if (diffDays <= 0) return '今日';
+      if (diffDays === 1) return '昨日';
+      if (diffDays < 30) return diffDays + '日前';
+      return d.toLocaleDateString('ja-JP');
+    }
+
+    function applyBestAnswerUI() {
+      var isAuthorNow = !!(currentItem && elIsSameAuthor(currentItem.authorUserId, currentItem.authorUsername));
+      refreshBestAnswerUI(currentItem ? currentItem.bestAnswerCommentId : '', isAuthorNow, function (newBestId) {
+        apiPost({
+          // ベストアンサーの選定・解除にあわせてstatusも一緒に更新する（topic.html＝フォーラム側の
+          // 修正と同じ理由：bestAnswerCommentIdだけを送っていると、この詳細ページ内では解決表示に
+          // なるのに、コミュニティ掲示板の一覧（community-board.html）に戻ると未解決／未回答の
+          // ままになってしまう）。
+          action: 'updateCommunityTopic', id: topicId, bestAnswerCommentId: newBestId, status: newBestId ? 'solved' : 'unsolved',
+          requesterUserId: elCurrentUserId(), requesterUsername: elCurrentUsername()
+        }).then(function (res) {
+          if (!res.ok) { alert(res.error || 'ベストアンサーの更新に失敗しました。'); return; }
+          if (currentItem) { currentItem.bestAnswerCommentId = newBestId; currentItem.status = newBestId ? 'solved' : 'unsolved'; }
+          markThreadSolvedUI(!!newBestId);
+          applyBestAnswerUI();
+        }).catch(function () { alert('通信エラーが発生しました。'); });
+      });
+    }
+
+    function reloadComments() {
+      return apiPost({ action: 'listCommunityComments', postId: topicId, userId: elCurrentUserId(), username: elCurrentUsername() }).then(function (cdata) {
+        var items = (cdata.ok && cdata.items) ? cdata.items : [];
+        renderComments(items);
+      });
+    }
+
+    // 通知（例：「〇〇さんがあなたのコメントに返信しました」）のリンク先は
+    // community-topic.html?id=xxx#コメントIDという形式だが、コメントはAJAXで後から描画される
+    // ため、ページ読み込み直後のブラウザ標準のハッシュスクロールでは対象がまだDOMに無く効かない。
+    // 初回のコメント描画が終わったタイミングで改めてURLのハッシュを見て、該当箇所まで手動で
+    // スクロール＋一時ハイライトする。
+    var anchorScrollDone = false;
+    function scrollToHashAnchor_() {
+      if (anchorScrollDone) return;
+      var hash = window.location.hash ? window.location.hash.slice(1) : '';
+      if (!hash) return;
+      var target = document.getElementById(hash);
+      if (!target) return;
+      anchorScrollDone = true;
+      target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      target.classList.add('el-anchor-highlight');
+      setTimeout(function () { target.classList.remove('el-anchor-highlight'); }, 2200);
+    }
+
+    function wireCommentEditDelete(article, c) {
+      var actions = article.querySelector('.el-post-actions');
+      if (!actions || !elIsSameAuthor(c.authorUserId, c.authorUsername)) return;
+      var bodyEl = article.querySelector('.el-post-body');
+      var editForm = article.querySelector('.el-comment-edit-form');
+      var editBody = article.querySelector('.el-comment-edit-body');
+      var editBtn = document.createElement('button');
+      editBtn.type = 'button';
+      editBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg> 編集';
+      var deleteBtn = document.createElement('button');
+      deleteBtn.type = 'button';
+      deleteBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6"/></svg> 削除';
+      editBtn.addEventListener('click', function () {
+        bodyEl.style.display = 'none';
+        editForm.style.display = '';
+        editBody.innerHTML = bodyEl.innerHTML;
+        editBody.focus();
+      });
+      deleteBtn.addEventListener('click', function () {
+        if (!confirm('このコメントを削除しますか？この操作は取り消せません。')) return;
+        apiPost({ action: 'deleteCommunityComment', id: c.id, requesterUserId: elCurrentUserId(), requesterUsername: elCurrentUsername() })
+          .then(function (res) {
+            if (!res.ok) { alert(res.error || '削除に失敗しました。'); return; }
+            reloadComments();
+          }).catch(function () { alert('通信エラーが発生しました。'); });
+      });
+      actions.appendChild(editBtn);
+      actions.appendChild(deleteBtn);
+      var saveBtn = article.querySelector('.el-comment-edit-save');
+      var cancelBtn = article.querySelector('.el-comment-edit-cancel');
+      if (cancelBtn) cancelBtn.addEventListener('click', function () {
+        editForm.style.display = 'none';
+        bodyEl.style.display = '';
+      });
+      if (saveBtn) saveBtn.addEventListener('click', function () {
+        var newBody = editBody.innerHTML.trim();
+        if (!editBody.textContent.trim()) { alert('本文を入力してください。'); return; }
+        apiPost({
+          action: 'updateCommunityComment', id: c.id, body: newBody,
+          requesterUserId: elCurrentUserId(), requesterUsername: elCurrentUsername()
+        }).then(function (res) {
+          if (!res.ok) { alert(res.error || '更新に失敗しました。'); return; }
+          reloadComments();
+        }).catch(function () { alert('通信エラーが発生しました。'); });
+      });
+    }
+
+    function renderComments(items) {
+      container.innerHTML = '';
+      if (!items.length) {
+        container.innerHTML = '<div style="padding:24px 4px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">まだコメントがありません。最初のコメントを投稿してみましょう。</div>';
+      }
+      items.forEach(function (c) {
+        var article = document.createElement('article');
+        article.className = 'el-post';
+        article.id = c.id;
+        // 返信先タグ（↩ 返信 〇〇さん）は、実際に返信ボタンから対象を選んで送られたコメント
+        // にだけ付ける。返信先を指定せずコメントする欄から送られたコメント（parentIdが空）
+        // には付けない。
+        if (c.parentId) article.dataset.replyTo = c.parentId;
+        var initial = (c.authorName || '?').charAt(0);
+        var profileUrl = elProfileUrl(c.authorUsername || c.authorName);
+        // 投稿者がプロフィールにアイコン画像を設定していれば、イニシャルの代わりにそれを表示する。
+        var avatarInner = c.authorPhotoUrl
+          ? '<img src="' + esc(window.elDriveImgUrl(c.authorPhotoUrl)) + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">'
+          : esc(initial);
+        article.innerHTML =
+          '<a class="el-avatar" href="' + esc(profileUrl) + '" style="text-decoration:none;">' + avatarInner + '</a>' +
+          '<div>' +
+          '<div class="el-reply-tag-slot"></div>' +
+          '<div class="el-post-head"><span class="name">' + esc(c.authorName || '匿名') + '</span><span class="time">' + esc(relativeTime(c.createdAt)) + '</span></div>' +
+          '<div class="el-post-body">' + (c.body || '') + '</div>' +
+          commentAttachmentsHtml_(c.attachments) +
+          '<div class="el-comment-edit-form" style="display:none;">' +
+          '<div class="el-comment-edit-body el-post-body" contenteditable="true" style="border:1px solid var(--el-line-soft);border-radius:var(--el-radius-m);padding:12px;min-height:70px;"></div>' +
+          '<div style="display:flex;gap:8px;margin-top:10px;">' +
+          '<button type="button" class="el-btn el-btn--primary el-btn--sm el-comment-edit-save">保存</button>' +
+          '<button type="button" class="el-btn el-btn--ghost el-btn--sm el-comment-edit-cancel">キャンセル</button>' +
+          '</div></div>' +
+          '<div class="el-post-actions">' +
+          '<button class="el-like-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14Z"/></svg> <span class="el-like-count">0</span></button>' +
+          '<button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H4l2.4-3.6A8.5 8.5 0 1 1 21 11.5Z"/></svg> 返信</button>' +
+          '</div></div>';
+        container.appendChild(article);
+        elOpenLinksInNewTab(article.querySelector('.el-post-body'));
+        wireLikeButton(article.querySelector('.el-like-btn'), 'communityComment', c.id, !!c.likedByMe, c.likeCount || 0);
+        wireCommentEditDelete(article, c);
+      });
+      var countEl = document.getElementById('ctCommentsHeadCount');
+      if (countEl) countEl.textContent = items.length + '件';
+      var commentCountEl = document.getElementById('ctCommentCount');
+      if (commentCountEl) commentCountEl.textContent = items.length + '件の返信';
+      wireReplyButtons();
+      wireReplyTags();
+      applyBestAnswerUI();
+    }
+
+    // サイドバーの「おすすめのコミュニティ」：以前は実在しないダミーのコミュニティ名・人数を
+    // 固定表示していたが、実際に登録されているコミュニティ（communityGroup）から表示する。
+    // 今見ているコミュニティ自身と、「指定したメンバーのみ」参加のコミュニティ（一般には参加
+    // できない）は、おすすめから除外する。該当するコミュニティが1件も無ければパネルごと非表示にする。
+    function groupVisibilityLabelForRecommend_(it) {
+      if (it.visibilityScope === 'shift') return 'SHiFT会員限定';
+      if (it.visibilityScope === 'member' || it.visibilityScope === 'members') return 'メンバー限定';
+      if (it.joinMethod === 'apply') return '誰でも申請可';
+      return '誰でも参加可';
+    }
+    // ------------------------------------------------------------
+    // 公開範囲によるぼかし表示：このコミュニティの visibilityScope が「公開」以外の場合、
+    // 「コミュニティ参加者」シート（communityMembership）に基づいて、閲覧者が実際に
+    // このコミュニティに参加しているか（作成者本人・管理者は常に閲覧可）を確認し、
+    // 参加していなければ本文・コメントをぼかして参加を促す。タイトルは常に表示したまま。
+    // ------------------------------------------------------------
+    // ユーザー認識は必ずユーザーIDのみで行う(ユーザーネームでのフォールバックは廃止)。
+    function elSamePerson_(idA, nameA, idB, nameB) {
+      return !!(idA && idB && String(idA) === String(idB));
+    }
+    function showCommunityVisibilityGate_(groupId) {
+      var opBody = document.getElementById('opBody');
+      var commentsList = document.getElementById('commentsList');
+      var replyBox = document.getElementById('replyBox');
+      var op = document.getElementById('op');
+      if (opBody) opBody.classList.add('el-content-blurred');
+      if (commentsList) commentsList.classList.add('el-content-blurred');
+      if (replyBox) replyBox.style.display = 'none';
+      var quickCommentBoxGated = document.getElementById('quickCommentBox');
+      if (quickCommentBoxGated) quickCommentBoxGated.classList.add('is-hidden');
+      if (op && op.parentNode && !document.getElementById('ctVisibilityGateNotice')) {
+        var notice = document.createElement('div');
+        notice.id = 'ctVisibilityGateNotice';
+        notice.className = 'el-visibility-gate-notice';
+        notice.innerHTML =
+          '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>' +
+          '<div><strong>このコミュニティに参加すると閲覧できます</strong><p>本文・コメントは参加しているメンバーのみ表示されます。</p></div>' +
+          '<a href="community-board.html?id=' + encodeURIComponent(groupId || '') + '" class="el-btn el-btn--primary el-btn--sm">コミュニティに参加する</a>';
+        op.parentNode.insertBefore(notice, op);
+      }
+    }
+    function applyCommunityVisibilityGate_(groupId) {
+      if (!groupId) return;
+      apiPost({ action: 'listContent', type: 'communityGroup', userId: elCurrentUserId(), username: elCurrentUsername() }).then(function (gdata) {
+        var groups = (gdata.ok && gdata.items) ? gdata.items : [];
+        var community = null;
+        for (var i = 0; i < groups.length; i++) { if (String(groups[i].id) === String(groupId)) { community = groups[i]; break; } }
+        if (!community || community.visibilityScope === 'general') return; // 公開範囲の制限なし＝ぼかし不要
+
+        var myId = elCurrentUserId(), myName = elCurrentUsername();
+        var isOwner = elSamePerson_(myId, myName, community.creatorUserId, community.creator);
+        var isAdmin = window.elGetRole && window.elGetRole() === 'admin';
+        if (isOwner || isAdmin) return;
+
+        apiPost({ action: 'listContent', type: 'communityMembership' }).then(function (mdata) {
+          var items = (mdata.ok && mdata.items) ? mdata.items : [];
+          var isMember = items.some(function (m) {
+            if (String(m.groupId) !== String(groupId) || m.status !== 'active') return false;
+            return elSamePerson_(myId, myName, m.userId, m.username);
+          });
+          if (isMember) return; // 実際に参加しているので閲覧可能
+          showCommunityVisibilityGate_(groupId);
+        }).catch(function () {});
+      }).catch(function () {});
+    }
+
+    function loadRecommendedCommunities(currentGroupId) {
+      apiPost({ action: 'listContent', type: 'communityGroup', userId: elCurrentUserId(), username: elCurrentUsername() }).then(function (res) {
+        var items = (res.ok && res.items) ? res.items : [];
+        var candidates = items.filter(function (it) {
+          return it.participationScope !== 'invited' && String(it.id) !== String(currentGroupId || '');
+        });
+        candidates.sort(function (a, b) { return (b.postCount || 0) - (a.postCount || 0); });
+        var picks = candidates.slice(0, 2);
+        if (!picks.length) return; // 実在するおすすめが無ければパネルごと非表示のまま
+        var panel = document.getElementById('recommendedCommunitiesPanel');
+        var listEl = document.getElementById('recommendedCommunitiesList');
+        if (!panel || !listEl) return;
+        listEl.innerHTML = picks.map(function (it) {
+          var iconInner = it.iconUrl
+            ? '<img src="' + esc(it.iconUrl) + '" style="width:100%;height:100%;object-fit:cover;">'
+            : '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20Z"/></svg>';
+          var meta = groupVisibilityLabelForRecommend_(it) + '・' + (it.postCount || 0) + '件の投稿';
+          return '<a href="community-board.html?id=' + encodeURIComponent(it.id || '') + '" class="el-side-mini-card">' +
+            '<span class="ic" style="background:' + esc(it.color || 'var(--el-teal)') + ';overflow:hidden;">' + iconInner + '</span>' +
+            '<span class="txt"><strong>' + esc(it.title || '') + '</strong><span>' + esc(meta) + '</span></span>' +
+          '</a>';
+        }).join('');
+        panel.style.display = '';
+      }).catch(function () { /* 取得に失敗した場合もパネルは非表示のまま */ });
+    }
+
+    function loadOtherTopics(groupId) {
+      var wrap = document.getElementById('ctOtherTopics');
+      if (!wrap) return;
+      apiPost({ action: 'listCommunityTopics', groupId: groupId, userId: elCurrentUserId(), username: elCurrentUsername() }).then(function (data) {
+        var items = ((data.ok && data.items) ? data.items : []).filter(function (t) { return String(t.id) !== String(topicId); }).slice(0, 5);
+        if (!items.length) {
+          wrap.innerHTML = '<div style="padding:8px 2px;color:var(--el-ink-faint);font-size:12.5px;">他の投稿はまだありません。</div>';
+          return;
+        }
+        wrap.innerHTML = items.map(function (t) {
+          return '<a href="community-topic.html?id=' + encodeURIComponent(t.id) + '" class="el-side-panel-row">' +
+            '<span class="title">' + esc(t.title) + '</span></a>';
+        }).join('');
+      }).catch(function () {
+        wrap.innerHTML = '<div style="padding:8px 2px;color:var(--el-ink-faint);font-size:12.5px;">読み込みに失敗しました。</div>';
+      });
+    }
+
+    apiPost({ action: 'getCommunityTopic', id: topicId, userId: elCurrentUserId(), username: elCurrentUsername() }).then(function (data) {
+      if (!data.ok || !data.found) {
+        var head = document.querySelector('.el-thread-head');
+        if (head) head.innerHTML = '<div style="padding:40px 4px;text-align:center;color:var(--el-ink-faint);font-size:13.5px;">投稿が見つかりませんでした。<a href="groups.html">コミュニティ一覧に戻る</a></div>';
+        var op0b = document.getElementById('op');
+        if (op0b) op0b.style.display = 'none';
+        container.innerHTML = '';
+        var replyBox0b = document.getElementById('replyBox');
+        if (replyBox0b) replyBox0b.style.display = 'none';
+        var quickCommentBoxNF = document.getElementById('quickCommentBox');
+        if (quickCommentBoxNF) quickCommentBoxNF.classList.add('is-hidden');
+        return;
+      }
+      var item = data.item;
+      currentItem = item;
+      document.title = item.title + '｜Export Lab';
+
+      var backLink = document.getElementById('ctBackToCommunityLink');
+      if (backLink) backLink.href = 'community-board.html?id=' + encodeURIComponent(item.groupId || '');
+
+      var statusBadge = (item.status === 'solved')
+        ? '<span class="badge badge--solved">解決</span>'
+        : '<span class="badge badge--unsolved">未解決</span>';
+      var badgesEl = document.getElementById('ctBadges');
+      if (badgesEl) badgesEl.innerHTML = statusBadge;
+
+      var h1 = document.getElementById('ctTitle');
+      if (h1) h1.textContent = item.title;
+
+      var viewCountEl = document.getElementById('ctViewCount');
+      if (viewCountEl) viewCountEl.textContent = (item.views || 0) + '回の閲覧';
+      var updatedEl = document.getElementById('ctUpdated');
+      if (updatedEl) updatedEl.textContent = '最終更新：' + relativeTime(item.createdAt);
+
+      var op = document.getElementById('op');
+      if (op) {
+        op.dataset.authorUsername = item.authorUsername || '';
+        op.dataset.authorUserId = item.authorUserId || '';
+        var opAvatar = document.getElementById('opAvatar');
+        if (opAvatar) {
+          // 投稿者がプロフィールにアイコン画像を設定していれば、イニシャルの代わりにそれを表示する。
+          opAvatar.innerHTML = item.authorPhotoUrl
+            ? '<img src="' + esc(window.elDriveImgUrl(item.authorPhotoUrl)) + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">'
+            : esc((item.authorName || '?').charAt(0));
+          opAvatar.href = elProfileUrl(item.authorUsername || item.authorName);
+        }
+        var opName = document.getElementById('opName');
+        if (opName) opName.textContent = item.authorName || '匿名';
+        var opDates = document.getElementById('opDates');
+        if (opDates) opDates.textContent = '投稿日：' + relativeTime(item.createdAt);
+        var opBody = document.getElementById('opBody');
+        if (opBody) { opBody.innerHTML = item.body || ''; elOpenLinksInNewTab(opBody); }
+
+        wireLikeButton(document.getElementById('opLikeBtn'), 'communityTopic', item.id, !!item.likedByMe, item.likeCount || 0);
+        wireFavoriteButton(document.getElementById('opFavoriteBtn'), 'community', item.id);
+        markThreadSolvedUI(hasRealBestAnswer_(item.bestAnswerCommentId));
+
+        var isOwnTopic = elIsSameAuthor(item.authorUserId, item.authorUsername);
+        var opEditBtn = document.getElementById('opEditBtn');
+        var opDeleteBtn = document.getElementById('opDeleteBtn');
+        var opEditForm = document.getElementById('opEditForm');
+        var opEditTitle = document.getElementById('opEditTitle');
+        var opEditBody = document.getElementById('opEditBody');
+        if (isOwnTopic && opEditBtn && opDeleteBtn) {
+          opEditBtn.style.display = '';
+          opDeleteBtn.style.display = '';
+          opEditBtn.addEventListener('click', function () {
+            opEditTitle.value = item.title || '';
+            opEditBody.innerHTML = opBody ? opBody.innerHTML : '';
+            opBody.style.display = 'none';
+            if (h1) h1.style.display = 'none';
+            opEditForm.style.display = '';
+          });
+          document.getElementById('opEditCancelBtn').addEventListener('click', function () {
+            opEditForm.style.display = 'none';
+            opBody.style.display = '';
+            if (h1) h1.style.display = '';
+          });
+          document.getElementById('opEditSaveBtn').addEventListener('click', function () {
+            var newTitle = opEditTitle.value.trim();
+            var newBody = opEditBody.innerHTML.trim();
+            if (!newTitle || !opEditBody.textContent.trim()) { alert('タイトルと本文を入力してください。'); return; }
+            apiPost({
+              action: 'updateCommunityTopic', id: topicId, title: newTitle, body: newBody,
+              requesterUserId: elCurrentUserId(), requesterUsername: elCurrentUsername()
+            }).then(function (res) {
+              if (!res.ok) { alert(res.error || '更新に失敗しました。'); return; }
+              location.reload();
+            }).catch(function () { alert('通信エラーが発生しました。'); });
+          });
+          opDeleteBtn.addEventListener('click', function () {
+            if (!confirm('この投稿を削除しますか？この操作は取り消せません。')) return;
+            apiPost({ action: 'deleteCommunityTopic', id: topicId, requesterUserId: elCurrentUserId(), requesterUsername: elCurrentUsername() })
+              .then(function (res) {
+                if (!res.ok) { alert(res.error || '削除に失敗しました。'); return; }
+                window.location.href = 'community-board.html?id=' + encodeURIComponent(item.groupId || '');
+              }).catch(function () { alert('通信エラーが発生しました。'); });
+          });
+        }
+      }
+
+      loadOtherTopics(item.groupId);
+      loadRecommendedCommunities(item.groupId);
+      applyCommunityVisibilityGate_(item.groupId);
+
+      apiPost({ action: 'listContent', type: 'communityGroup', userId: elCurrentUserId(), username: elCurrentUsername() }).then(function (gdata) {
+        var groups = (gdata.ok && gdata.items) ? gdata.items : [];
+        var community = null;
+        for (var i = 0; i < groups.length; i++) { if (String(groups[i].id) === String(item.groupId)) { community = groups[i]; break; } }
+        if (breadcrumb) {
+          breadcrumb.innerHTML = '<a href="index.html">ホーム</a>' + CHEV +
+            '<a href="groups.html">コミュニティ</a>' + CHEV +
+            (community ? '<a href="community-board.html?id=' + encodeURIComponent(item.groupId) + '">' + esc(community.title) + '</a>' + CHEV : '') +
+            '<span>' + esc(item.title) + '</span>';
+        }
+      });
+
+      reloadComments().then(function () {
+        // 通知から来た場合は、URLのハッシュが示すコメントまでスクロールする
+        scrollToHashAnchor_();
+      });
+    });
+
+    // コメント送信の共通処理（返信ボタン経由のリッチエディター、返信先を指定しない控えめな
+    // コメント欄のどちらからも呼び出す。parentIdが'op'ならトピック本文への直接コメントになる）。
+    function submitCommunityComment_(parentId, bodyHtml) {
+      if (window.elRequireAuth && !window.elRequireAuth()) return Promise.resolve(false);
+      var profile = {};
+      try { profile = JSON.parse(localStorage.getItem('el-user-profile') || '{}'); } catch (e) {}
+      // コミュニティ内のコメントは、氏名ではなくユーザーネームで表示する（新規投稿と同様）。
+      var authorUsername = localStorage.getItem('el-username') || profile.username || '';
+      var authorName = authorUsername || 'ゲスト';
+      var authorUserId = localStorage.getItem('el-user-id') || profile.userId || '';
+      return apiPost({
+        action: 'createCommunityComment',
+        postId: topicId,
+        groupId: currentItem ? currentItem.groupId : '',
+        parentId: parentId,
+        authorUsername: authorUsername,
+        authorName: authorName,
+        authorUserId: authorUserId,
+        body: bodyHtml,
+        attachments: pendingAttachments.slice()
+      }).then(function (data) {
+        if (!data.ok) { alert('送信に失敗しました。時間をおいて再度お試しください。'); return false; }
+        reloadComments();
+        return true;
+      }).catch(function () {
+        alert('通信エラーが発生しました。');
+        return false;
+      });
+    }
+
+    // 返信の送信：スプレッドシート（コミュニティコメント）に保存する
+    var sendBtn = replyBox ? replyBox.querySelector('.el-reply-foot button') : null;
+    if (sendBtn) {
+      sendBtn.addEventListener('click', function () {
+        if (window.elRequireAuth && !window.elRequireAuth()) return;
+        var plainText = replyEditor ? (replyEditor.textContent || '').trim() : '';
+        if (!plainText) return;
+        var body = replyEditor ? replyEditor.innerHTML.trim() : '';
+        sendBtn.disabled = true;
+        submitCommunityComment_(currentReplyToId, body).then(function (sent) {
+          sendBtn.disabled = false;
+          if (!sent) return;
+          clearReplyEditor();
+          currentReplyToId = 'op';
+          if (replyCtx) replyCtx.classList.remove('is-visible');
+          if (replyBox) replyBox.style.display = 'none';
+          restoreRichEditorHome();
+        });
+      });
+    }
+
+    // 返信先を指定しない、控えめなコメント欄：常時表示し、返信ボタンを押さなくてもコメントできる。
+    // 返信と同じリッチエディター（書式設定つき）をここでも使う。
+    var quickCommentSendBtn = document.getElementById('quickCommentSendBtn');
+    if (quickCommentSendBtn) {
+      var sendQuickComment = function () {
+        if (window.elRequireAuth && !window.elRequireAuth()) return;
+        var plainText = replyEditor ? (replyEditor.textContent || '').trim() : '';
+        if (!plainText) return;
+        var body = replyEditor ? replyEditor.innerHTML.trim() : '';
+        quickCommentSendBtn.disabled = true;
+        // 返信先を指定しないコメントなので、parentIdは空にする（↩返信タグを付けないため）。
+        submitCommunityComment_('', body).then(function (sent) {
+          quickCommentSendBtn.disabled = false;
+          if (sent) clearReplyEditor();
+        });
+      };
+      quickCommentSendBtn.addEventListener('click', sendQuickComment);
+    }
+  })();
+</script>
+</body>
+</html>
