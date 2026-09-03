@@ -42,13 +42,6 @@
     width:100% !important;
     aspect-ratio:1200 / 200 !important;
   }
-  .el-ad-banner-v2.is-square{
-    max-width:280px !important;
-    margin:0 auto !important;
-  }
-  .el-ad-banner-v2.is-square .el-ad-image-wrap-v2{
-    aspect-ratio:1 / 1 !important;
-  }
   /* ADの文字とスポンサー名を1つの帯にまとめて同じ行に表示する（以前は画像に重ねるADバッジと
      画像下のスポンサー行が上下に分かれていたが、指示により「AD　　　スポンサー：〜」のように
      1箇所にまとめる）。ADバッジ自体もスクエア広告と同じく、画像の枠外（帯の中）に表示する。 */
@@ -206,7 +199,6 @@
     color:var(--el-ink-faint, #8A8478);
     padding:4px;
   }
-  [data-guest-hide]{ display:none !important; }
   /* ヘッダーの新規登録／ログイン／ログアウトボタン：背景色に関わらず文字が見えるよう、
      透過ではなく塗りのボタンにする */
   #headerAuthLinks .el-btn, #headerSignupLink.el-btn, #headerLoginLink.el-btn{
@@ -227,76 +219,6 @@
   .el-footer-cols h6{ color:var(--el-navy, #16233F) !important; }
   .el-footer-bottom{ color:var(--el-ink-faint, #8A8478) !important; border-top-color:var(--el-line-soft, #E5DFD2) !important; }
   .el-group-card{ cursor:pointer !important; }
-  /* 新規コミュニティ作成モーダル：community-board.htmlの編集モーダルとデザインを揃えている */
-  .el-community-edit-modal{
-    display:none;
-    position:fixed;
-    inset:0;
-    z-index:900;
-    align-items:center;
-    justify-content:center;
-    padding:20px;
-  }
-  .el-community-edit-modal.is-open{ display:flex; }
-  .el-community-edit-modal-backdrop{
-    position:absolute;
-    inset:0;
-    background:rgba(22,35,63,.45);
-  }
-  .el-community-edit-modal-panel{
-    position:relative;
-    background:#fff;
-    border-radius:var(--el-radius-m, 14px);
-    padding:28px 26px;
-    max-width:480px;
-    width:100%;
-    max-height:85vh;
-    overflow-y:auto;
-    box-shadow:0 12px 40px rgba(22,35,63,.25);
-  }
-  .el-community-edit-modal-panel h3{
-    margin:0 0 16px;
-    font-family:var(--font-display);
-    font-weight:600;
-    font-size:17px;
-    color:var(--el-navy, #16233F);
-    padding-right:26px;
-  }
-  .el-community-edit-modal-close{
-    position:absolute;
-    top:10px;
-    right:10px;
-    border:none;
-    background:transparent;
-    cursor:pointer;
-    color:var(--el-ink-faint, #8A8478);
-    padding:4px;
-  }
-  .el-community-edit-field{ margin-bottom:14px; }
-  .el-community-edit-field span{
-    display:block;
-    font-weight:700;
-    font-size:12.5px;
-    margin-bottom:6px;
-    color:var(--el-navy, #16233F);
-  }
-  .el-community-edit-field input[type="text"],
-  .el-community-edit-field select,
-  .el-community-edit-field textarea{
-    width:100%;
-    box-sizing:border-box;
-    padding:10px 12px;
-    border:1px solid var(--el-line-soft, #E5DFD2);
-    border-radius:10px;
-    font:inherit;
-    color:inherit;
-  }
-  .el-community-edit-field textarea{ resize:vertical; }
-  .el-community-edit-actions{
-    display:flex;
-    gap:8px;
-    margin-top:6px;
-  }
   /* メンバー一覧モーダル：作成者（管理者）／メンバーそれぞれの役割バッジ
      （コミュニティ掲示板側の参加メンバー一覧と表示を揃える） */
   .el-role-badge{
@@ -761,7 +683,7 @@
       }
     }
 
-    // ゲストには data-guest-hide の要素を隠す（本文はCSSでも隠すが、動的挿入分もここでカバー）
+    // ゲストには data-guest-block の要素にクリック時ログイン要求ガードを付与する
     if (role === 'guest') {
       document.querySelectorAll('[data-guest-block]').forEach(function (el) {
         el.addEventListener('click', window.elRequireAuth);

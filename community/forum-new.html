@@ -77,7 +77,6 @@
     color:var(--el-ink-faint, #8A8478);
     padding:4px;
   }
-  [data-guest-hide]{ display:none !important; }
   /* 編集中の本文にリンクを埋め込んだ際、リンクだと一目でわかるようにする */
   .el-editor-area a{
     color:var(--el-teal-deep, #1E6F63) !important;
@@ -102,62 +101,6 @@
   .el-footer-cols a{ color:var(--el-ink-faint, #8A8478) !important; }
   .el-footer-cols h6{ color:var(--el-navy, #16233F) !important; }
   .el-footer-bottom{ color:var(--el-ink-faint, #8A8478) !important; border-top-color:var(--el-line-soft, #E5DFD2) !important; }
-  /* 広告バナー：横長の画像1枚を全面に表示し、CTAボタンとスポンサー表記を重ねる（管理者ページで「横長」「スクエア」を選択） */
-  .el-ad-banner-v2{
-    position:relative !important;
-    display:block !important;
-    width:100% !important;
-    border-radius:var(--el-radius-m, 14px) !important;
-    overflow:hidden !important;
-    background:var(--el-cream-deep, #FBF3E3) !important;
-    /* 高さはアスペクト比（1200:200＝6:1）で決める。以前は960:220（4.4:1）にしていたが、
-       表示エリアの実際の横幅（最大1116px程度）だと縦幅が256px程度まで伸びてしまい、
-       バナーとして縦に大きすぎたため、より横長の比率に変更した。 */
-    aspect-ratio:1200 / 200;
-  }
-  .el-ad-banner-v2.is-square{
-    aspect-ratio:1 / 1 !important;
-    max-width:280px !important;
-    max-height:none !important;
-    margin:0 auto !important;
-  }
-  .el-ad-tag-v2{
-    position:absolute !important;
-    top:12px !important;
-    left:12px !important;
-    z-index:2 !important;
-    background:rgba(0,0,0,.55) !important;
-    color:#fff !important;
-    font-size:10px !important;
-    font-weight:700 !important;
-    letter-spacing:.08em !important;
-    padding:3px 10px !important;
-    border-radius:999px !important;
-    line-height:1.6 !important;
-  }
-  .el-ad-image-v2{
-    position:absolute !important;
-    inset:0 !important;
-    /* 「推奨サイズ」通りの画像でも、圧縮時の丸め誤差などでピクセル単位の比率のズレが
-       生じることがあり、cover（はみ出た部分を切り取る）だと必ず何かがトリミングされて
-       しまっていた。containに変更し、画像全体を必ず欠けさせずに表示する
-       （比率が合わない場合は左右または上下に背景色の余白が出るだけにする）。 */
-    background-size:contain !important;
-    background-repeat:no-repeat !important;
-    background-position:center !important;
-    background-color:var(--el-teal, #2F8F82) !important;
-  }
-  .el-ad-sponsor-v2{
-    position:absolute !important;
-    left:12px !important;
-    bottom:10px !important;
-    z-index:2 !important;
-    font-size:11px !important;
-    color:rgba(255,255,255,.85) !important;
-    background:rgba(0,0,0,.35) !important;
-    padding:2px 9px !important;
-    border-radius:999px !important;
-  }
   /* スクエア広告：管理者ページのプレビュー（画像全体が見えるcontain表示＋下に説明欄）と
      見た目を揃える。以前は画像をカードいっぱいにcover（はみ出た部分を切り取る）で表示して
      おり、プレビューと大きく異なって見えていた。また「AD」表示が画像に重なっていたため、
@@ -231,7 +174,6 @@
     font-size:11px !important;
     color:var(--el-navy, #16233F) !important;
   }
-  .el-display-ad-label{ display:none !important; }
   /* 「投稿する」ボタン（.el-submit-topic）はstyle.css側でmin-width:150pxが指定されており、
      文字の右側に余白ができる。.el-btnはinline-flexだがjustify-contentの指定がないため、
      文字が左寄りに見えてしまっていた。ここで中央寄せにする。 */
@@ -1744,7 +1686,7 @@
       }
     }
 
-    // ゲストには data-guest-hide の要素を隠す（本文はCSSでも隠すが、動的挿入分もここでカバー）
+    // ゲストには data-guest-block の要素にクリック時ログイン要求ガードを付与する
     if (role === 'guest') {
       document.querySelectorAll('[data-guest-block]').forEach(function (el) {
         el.addEventListener('click', window.elRequireAuth);

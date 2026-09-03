@@ -77,7 +77,6 @@
     color:var(--el-ink-faint, #8A8478);
     padding:4px;
   }
-  [data-guest-hide]{ display:none !important; }
   /* ヘッダーの新規登録／ログイン／ログアウトボタン：背景色に関わらず文字が見えるよう、
      透過ではなく塗りのボタンにする */
   #headerAuthLinks .el-btn, #headerSignupLink.el-btn, #headerLoginLink.el-btn{
@@ -642,7 +641,7 @@
       }
     }
 
-    // ゲストには data-guest-hide の要素を隠す（本文はCSSでも隠すが、動的挿入分もここでカバー）
+    // ゲストには data-guest-block の要素にクリック時ログイン要求ガードを付与する
     if (role === 'guest') {
       document.querySelectorAll('[data-guest-block]').forEach(function (el) {
         el.addEventListener('click', window.elRequireAuth);

@@ -143,7 +143,6 @@
     color:var(--el-ink-faint, #8A8478);
     padding:4px;
   }
-  [data-guest-hide]{ display:none !important; }
   /* ヘッダーの新規登録／ログイン／ログアウトボタン：背景色に関わらず文字が見えるよう、
      透過ではなく塗りのボタンにする */
   #headerAuthLinks .el-btn, #headerSignupLink.el-btn, #headerLoginLink.el-btn{
@@ -177,13 +176,6 @@
     position:relative !important;
     width:100% !important;
     aspect-ratio:1200 / 200 !important;
-  }
-  .el-ad-banner-v2.is-square{
-    max-width:280px !important;
-    margin:0 auto !important;
-  }
-  .el-ad-banner-v2.is-square .el-ad-image-wrap-v2{
-    aspect-ratio:1 / 1 !important;
   }
   /* ADの文字とスポンサー名を1つの帯にまとめて同じ行に表示する（以前は画像に重ねるADバッジと
      画像下のスポンサー行が上下に分かれていたが、指示により「AD　　　スポンサー：〜」のように
@@ -841,7 +833,7 @@
       }
     }
 
-    // ゲストには data-guest-hide の要素を隠す（本文はCSSでも隠すが、動的挿入分もここでカバー）
+    // ゲストには data-guest-block の要素にクリック時ログイン要求ガードを付与する
     if (role === 'guest') {
       document.querySelectorAll('[data-guest-block]').forEach(function (el) {
         el.addEventListener('click', window.elRequireAuth);
