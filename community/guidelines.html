@@ -126,19 +126,6 @@
   .el-guideline-section .body ul{ margin:0 0 10px; padding-left:1.4em; }
   .el-guideline-section .body ul:last-child{ margin-bottom:0; }
   .el-guideline-section .body li{ margin:0 0 4px; }
-  #guidelineDocEmpty{
-    display:none;
-    text-align:center;
-    padding:40px 20px;
-    color:var(--el-ink-faint, #8A8478);
-    font-size:13.5px;
-  }
-  #guidelineDocLoading{
-    text-align:center;
-    padding:40px 20px;
-    color:var(--el-ink-faint, #8A8478);
-    font-size:13.5px;
-  }
 </style>
 </head>
 <body data-site="community" data-root="..">
@@ -340,9 +327,103 @@
           </div>
         </div>
 
-        <div id="guidelineDocLoading">読み込み中…</div>
-        <div id="guidelineDocEmpty">ガイドラインはまだ登録されていません。</div>
-        <div class="el-guideline-doc" id="guidelineDoc" style="display:none;"></div>
+        <div class="el-guideline-doc" id="guidelineDoc">
+          <section class="el-guideline-section">
+            <h3>1. 本コミュニティの目的</h3>
+            <div class="body">
+              <p>本コミュニティは、海外ビジネス・米Amazonを中心とした実務的な知見・経験・情報を共有し、参加者同士が安心して学び合える環境を提供することを目的としています。</p>
+              <p>経験年数や立場に関わらず、相互に尊重し合い、長期的に価値ある情報が蓄積されるコミュニティ運営を目指します。</p>
+            </div>
+          </section>
+
+          <section class="el-guideline-section">
+            <h3>2. 基本方針（行動指針）</h3>
+            <div class="body">
+              <p>本コミュニティでは、以下の姿勢を大切にしています。</p>
+              <ul>
+                <li>他の参加者の立場・経験・意見を尊重すること</li>
+                <li>断定的な正解の押し付けではなく、選択肢として共有すること</li>
+                <li>実体験・根拠に基づいた情報共有を心がけること</li>
+                <li>初心者・これから始める方の質問を歓迎すること</li>
+              </ul>
+              <p>健全な議論・情報交換の場としての維持にご協力ください。</p>
+            </div>
+          </section>
+
+          <section class="el-guideline-section">
+            <h3>3. 投稿可能な内容</h3>
+            <div class="body">
+              <p>以下の内容は、本コミュニティにおいて歓迎されます。</p>
+              <ul>
+                <li>海外ビジネス・米Amazon・越境ECに関する実体験の共有</li>
+                <li>成功事例・失敗事例・学びの共有</li>
+                <li>業界ニュース、ツール、制度変更などの情報提供</li>
+                <li>業務上の疑問・検討段階での相談</li>
+                <li>運営が認めたテーマに基づくディスカッション</li>
+              </ul>
+              <p>※ 投稿内容は、他の参加者にとって有益であるかを意識してください。</p>
+            </div>
+          </section>
+
+          <section class="el-guideline-section">
+            <h3>4. 禁止事項</h3>
+            <div class="body">
+              <p>以下の行為は禁止とします。</p>
+              <ul>
+                <li>他者への誹謗中傷、威圧的・攻撃的な言動</li>
+                <li>マウント行為、過度な否定、煽り目的の投稿</li>
+                <li>根拠のない断定的な情報の拡散</li>
+                <li>他社・他サービスへの不当な批判や信用を損なう表現</li>
+                <li>無断での営業行為、勧誘、スパム投稿</li>
+                <li>法令、公序良俗、各種規約に反する内容の投稿</li>
+              </ul>
+              <p>運営が不適切と判断した投稿は、事前の通知なく非表示・削除される場合があります。</p>
+            </div>
+          </section>
+
+          <section class="el-guideline-section">
+            <h3>5. 宣伝・告知・営業行為について</h3>
+            <div class="body">
+              <p>本コミュニティは情報共有を主目的としています。</p>
+              <ul>
+                <li>自身のサービス・商品の宣伝を主目的とした投稿は禁止</li>
+                <li>価値提供を伴う情報共有の中での言及は、内容により認められる場合があります</li>
+                <li>明確な営業・勧誘行為は、指定の場所以外では禁止とします</li>
+                <li>個別DMによる勧誘行為は禁止です</li>
+              </ul>
+              <p>判断が難しい場合は、事前に運営へご相談ください。</p>
+            </div>
+          </section>
+
+          <section class="el-guideline-section">
+            <h3>6. 情報の取り扱い・免責事項</h3>
+            <div class="body">
+              <p>本コミュニティ内で共有される情報は、参加者個人の経験・見解を含むものであり、その正確性・完全性を保証するものではありません。</p>
+              <p>実際のビジネス判断・実行については、必ずご自身の責任において行ってください。</p>
+              <p>本コミュニティの情報を利用した結果について、運営は一切の責任を負いかねます。</p>
+            </div>
+          </section>
+
+          <section class="el-guideline-section">
+            <h3>7. 運営・管理について</h3>
+            <div class="body">
+              <p>コミュニティの健全な運営を維持するため、ガイドラインに違反する行為が確認された場合、運営判断により以下の対応を行うことがあります。</p>
+              <ul>
+                <li>投稿の削除・修正</li>
+                <li>利用制限・一時停止</li>
+                <li>悪質な場合の強制退会措置</li>
+              </ul>
+              <p>これらの対応に関する判断基準・理由については、原則として開示いたしません。</p>
+            </div>
+          </section>
+
+          <section class="el-guideline-section">
+            <h3>8. ガイドラインの改定</h3>
+            <div class="body">
+              <p>本ガイドラインは、運営方針や環境の変化に応じて、予告なく改定される場合があります。</p>
+            </div>
+          </section>
+        </div>
 
       </div>
     </main>
@@ -502,44 +583,9 @@
     }
   });
 
-  // ガイドライン本文：管理者ページで登録された内容を全件取得し、sortOrder順に1ページで通し表示する
-  (function () {
-    var loadingEl = document.getElementById('guidelineDocLoading');
-    var emptyEl = document.getElementById('guidelineDocEmpty');
-    var docEl = document.getElementById('guidelineDoc');
-    if (!docEl) return;
-    var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
-
-    function esc(s) {
-      var d = document.createElement('div');
-      d.textContent = s == null ? '' : String(s);
-      return d.innerHTML;
-    }
-
-    fetch(API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({ action: 'listContent', type: 'guideline' })
-    })
-      .then(function (res) { return res.json(); })
-      .then(function (data) {
-        if (loadingEl) loadingEl.style.display = 'none';
-        var items = (data.ok && data.items) ? data.items.slice() : [];
-        items.sort(function (a, b) { return (Number(a.sortOrder) || 0) - (Number(b.sortOrder) || 0); });
-        if (!items.length) {
-          if (emptyEl) emptyEl.style.display = 'block';
-          return;
-        }
-        docEl.innerHTML = items.map(function (it) {
-          return '<section class="el-guideline-section"><h3>' + esc(it.title) + '</h3><div class="body">' + (it.bodyHtml || '') + '</div></section>';
-        }).join('');
-        docEl.style.display = 'block';
-      })
-      .catch(function () {
-        if (loadingEl) loadingEl.style.display = 'none';
-        if (emptyEl) { emptyEl.style.display = 'block'; emptyEl.textContent = 'ガイドラインの読み込みに失敗しました。時間をおいて再度お試しください。'; }
-      });
-  })();
+  // ガイドライン本文：この文書は運営から指定された確定文であり、随時編集するものではないため、
+  // シート連携（管理者ページのガイドライン管理）は使わず、ページ内に直接記載している
+  // （groups.html等の「ご利用の前にご確認ください」の簡易ガイドとは別枠の、正式な文書ページ）。
 </script>
 
 <div class="el-auth-modal" id="authModal" aria-hidden="true">

@@ -98,12 +98,6 @@
   .el-footer-cols h6{ color:var(--el-navy, #16233F) !important; }
   .el-footer-bottom{ color:var(--el-ink-faint, #8A8478) !important; border-top-color:var(--el-line-soft, #E5DFD2) !important; }
   /* お問い合わせフォーム：出品申請フォーム（.el-apply-form系）のスタイルをそのまま流用する。 */
-  .el-contact-note{
-    font-size:12.5px;
-    color:var(--el-ink-faint, #8A8478);
-    line-height:1.8;
-    margin:0 0 18px;
-  }
 </style>
 </head>
 <body data-site="community" data-root="..">
@@ -311,7 +305,6 @@
         </div>
 
         <form class="el-apply-form" id="contactForm">
-          <p class="el-contact-note">会員登録の有無に関わらずどなたでもお送りいただけます。登録会員の方は、入力されたメールアドレスから自動的にご本人を確認しますので、そのまま送信してください。</p>
           <div class="el-apply-row">
             <div class="el-apply-field">
               <label>お名前<span class="req">必須</span></label>
@@ -493,21 +486,14 @@
     }
   });
 
-  // お問い合わせフォーム：ログイン中の会員であれば、お名前・メールアドレスを分かる範囲で
-  // 先に入力しておく（未ログインでも送信自体は可能。サーバー側でメールアドレスを
-  // ユーザーマスタと突き合わせて、登録会員かどうかを都度判定する）。
+  // お問い合わせフォーム：お名前・メールアドレスは自動入力しない（毎回ご自身で入力していただく）。
+  // 登録会員かどうかの判定は、入力されたメールアドレスとの突き合わせではなく、送信時点で
+  // 実際にログインしているかどうかで行う（未ログインであればメールアドレスに何を書いても
+  // 「未登録」として扱われる。サーバー側 communitygas.txt でも、渡されたuserIdをそのまま
+  // 信用はせずユーザーマスタと突き合わせて確認する）。
   (function () {
     var form = document.getElementById('contactForm');
     if (!form) return;
-    try {
-      var profile = JSON.parse(localStorage.getItem('el-user-profile') || '{}');
-      var emailInput = form.querySelector('input[name="email"]');
-      var nameInput = form.querySelector('input[name="fullname"]');
-      var myEmail = localStorage.getItem('el-user-email') || profile.email || '';
-      var myName = profile.fullname || localStorage.getItem('el-user-name') || '';
-      if (emailInput && myEmail) emailInput.value = myEmail;
-      if (nameInput && myName) nameInput.value = myName;
-    } catch (e) {}
 
     var API_URL = 'https://script.google.com/macros/s/AKfycbxmuN59Cuokl597j9IZo3HIuYxFK4uZ-t17UFF6IZmBcz7s89-CLTy2stf0bOmVi-z1/exec';
     form.addEventListener('submit', function (e) {
@@ -518,34 +504,34 @@
       btn.disabled = true;
       if (status) { status.style.color = 'var(--el-teal-deep)'; status.textContent = '送信中…'; }
 
+      var payload = {
+        action: 'createContent',
+        type: 'inquiry',
+        email: fd.get('email') || '',
+        fullname: fd.get('fullname') || '',
+        body: fd.get('body') || ''
+      };
+      try {
+        if ((localStorage.getItem('el-user-role') || 'guest') !== 'guest') {
+          var myUserId = localStorage.getItem('el-user-id') || '';
+          var myUsername = localStorage.getItem('el-username') || '';
+          if (myUserId) {
+            payload.userId = myUserId;
+            payload.username = myUsername;
+          }
+        }
+      } catch (e) {}
+
       fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({
-          action: 'createContent',
-          type: 'inquiry',
-          email: fd.get('email') || '',
-          fullname: fd.get('fullname') || '',
-          body: fd.get('body') || ''
-          // userId／usernameはこの時点では送らない。送信されたメールアドレスが登録会員の
-          // ものと一致するかどうかは、なりすまし防止のためサーバー側（communitygas.txt）で
-          // 都度判定する。
-        })
+        body: JSON.stringify(payload)
       })
         .then(function (res) { return res.json(); })
         .then(function (data) {
           if (data.ok) {
             if (status) { status.style.color = 'var(--el-teal-deep)'; status.textContent = 'お問い合わせを受け付けました。ご返信までお時間をいただく場合がございます。'; }
             form.reset();
-            try {
-              var profile2 = JSON.parse(localStorage.getItem('el-user-profile') || '{}');
-              var emailInput2 = form.querySelector('input[name="email"]');
-              var nameInput2 = form.querySelector('input[name="fullname"]');
-              var myEmail2 = localStorage.getItem('el-user-email') || profile2.email || '';
-              var myName2 = profile2.fullname || localStorage.getItem('el-user-name') || '';
-              if (emailInput2 && myEmail2) emailInput2.value = myEmail2;
-              if (nameInput2 && myName2) nameInput2.value = myName2;
-            } catch (e2) {}
           } else {
             btn.disabled = false;
             if (status) { status.style.color = '#B8593D'; status.textContent = '送信に失敗しました。時間をおいて再度お試しください。'; }
